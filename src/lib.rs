@@ -7,12 +7,16 @@
 extern crate libc;
 extern crate chrono;
 extern crate rustc_serialize;
+extern crate backtrace;
+
 use std::{thread, time};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use backtrace::Backtrace;
 
 #[macro_use]
 extern crate log;
+extern crate fern;
 
 use std::fs::{File, OpenOptions, rename};
 use std::io::{Read, Write};
@@ -145,7 +149,7 @@ impl Metadata {
     }
 
     pub fn write_raw(&mut self, name: &str, text: String) {
-        let mut f = File::create(self.make_path(name));
+        let f = File::create(self.make_path(name));
         match f {
             Ok(mut ff) => {
                 ff.write(text.as_bytes()).expect("io error");
@@ -365,6 +369,7 @@ pub trait MartianStage {
 
 pub fn initialize(args: Vec<String>) -> Metadata {
     let mut md = Metadata::new(args);
+    println!("got metadata: {:?}", md);
     md.update_jobinfo();
 
     md.log_time("__start__");
@@ -448,13 +453,32 @@ pub fn log_panic(md: &mut Metadata, panic: &panic::PanicInfo) {
     md.write_raw("errors", msg);
 }
 
+pub fn setup_logging(md: &Metadata)
+{
+    let level = log::LogLevelFilter::Debug;
+    let log_path = md.make_path("log");
+
+    let logger_config = fern::DispatchConfig {
+        format: Box::new(|msg: &str, level: &log::LogLevel, _location: &log::LogLocation| {
+            let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+            format!("[{}][{}] {}", time_str, level, msg)
+        }),
+        output: vec![fern::OutputConfig::stdout(), fern::OutputConfig::file(&log_path)],
+        level: level,
+    };
+
+    if let Err(e) = fern::init_global_logger(logger_config, level) {
+        panic!("Failed to initialize global logger: {}", e);
+    }
+}
+
+
 
 pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianStage>>) {
 
     info!("got args: {:?}", args);
-
     let md = initialize(args);
-    info!("got metadata: {:?}", md);
+    setup_logging(&md);
 
     let stage = stage_map.get(&md.stage_name).expect("couldn't find requested stage");
 
@@ -465,7 +489,7 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     let monitor_handle = thread::spawn(move || {
         loop {
             md_monitor.update_journal_main("heartbeat", true);
-            let four_mins = time::Duration::from_millis(240000);
+            let four_mins = time::Duration::from_millis(120000);
             thread::park_timeout(four_mins);
 
             if stage_done_monitor.load(Ordering::Relaxed) {
@@ -478,19 +502,38 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     // cleanly to martian
     let p = panic::take_hook();
     let mut _panic_md = md.clone();
-    panic::set_hook(Box::new(move |panic| {
+    panic::set_hook(Box::new(move |info| {
         let mut panic_md = _panic_md.clone();
-        let payload =
-            match panic.payload().downcast_ref::<String>() {
-                Some(as_string) => format!("{}", as_string),
-                None => format!("{:?}", panic.payload())
+        let backtrace = Backtrace::new();
+
+        let thread = thread::current();
+        let thread = thread.name().unwrap_or("unnamed");
+
+        let msg = match info.payload().downcast_ref::<&'static str>() {
+            Some(s) => *s,
+            None => match info.payload().downcast_ref::<String>() {
+                Some(s) => &**s,
+                None => "Box<Any>",
+            }
+        };
+
+        let msg =
+            match info.location() {
+                Some(location) => {
+                    format!("thread '{}' panicked at '{}': {}:{}{:?}",
+                           thread,
+                           msg,
+                           location.file(),
+                           location.line(),
+                           backtrace)
+                }
+                None => format!("thread '{}' panicked at '{}'{:?}", thread, msg, backtrace),
             };
 
-        let loc = panic.location().expect("location");
-        let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
+        error!("{}", msg);
         panic_md.write_raw("errors", msg);
-        p(panic);
-     }));
+        p(info);
+    }));
 
 
     if md.stage_type == "split"
@@ -512,5 +555,5 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
 
     stage_done.store(true, Ordering::Relaxed);
     monitor_handle.thread().unpark();
-    monitor_handle.join();
+    monitor_handle.join().unwrap();
 }
