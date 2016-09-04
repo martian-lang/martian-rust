@@ -145,9 +145,14 @@ impl Metadata {
     }
 
     pub fn write_raw(&mut self, name: &str, text: String) {
-        let mut f = File::create(self.make_path(name)).expect("couldn't open file");
-        f.write(text.as_bytes()).expect("io error");
-        self.update_journal(name)
+        let mut f = File::create(self.make_path(name));
+        match f {
+            Ok(mut ff) => {
+                ff.write(text.as_bytes()).expect("io error");
+                self.update_journal(name);
+            },
+            Err(e) => println!("err: {:?}", e)
+        }
     }
 
     // def update_journal(self, name, force=False):
