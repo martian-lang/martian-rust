@@ -7,14 +7,17 @@
 extern crate libc;
 extern crate chrono;
 extern crate rustc_serialize;
+use std::{thread, time};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 #[macro_use]
 extern crate log;
 
-
 use std::fs::{File, OpenOptions, rename};
 use std::io::{Read, Write};
 use std::env;
+use std::panic;
 use std::collections::{BTreeMap, HashSet, HashMap};
 use std::path::PathBuf;
 
@@ -97,7 +100,7 @@ pub fn rusage_to_json(rusage: &rusage) -> Json {
 
 const METADATA_PREFIX: &'static str = "_";
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Metadata {
     stage_name: String,
     stage_type: String,
@@ -426,6 +429,20 @@ pub fn do_join(stage: &MartianStage, mut md: Metadata)
     md.complete();
 }
 
+/// Log a panic to the martian output machinery
+pub fn log_panic(md: &mut Metadata, panic: &panic::PanicInfo) {
+
+    let payload =
+        match panic.payload().downcast_ref::<String>() {
+            Some(as_string) => format!("{}", as_string),
+            None => format!("{:?}", panic.payload())
+        };
+
+    let loc = panic.location().expect("location");
+    let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
+    md.write_raw("errors", msg);
+}
+
 
 pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianStage>>) {
 
@@ -435,6 +452,41 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     info!("got metadata: {:?}", md);
 
     let stage = stage_map.get(&md.stage_name).expect("couldn't find requested stage");
+
+    // Setup monitor thread -- this handles heartbeat & memory checking
+    let stage_done = Arc::new(AtomicBool::new(false));
+    let mut md_monitor = md.clone();
+    let stage_done_monitor = stage_done.clone();
+    let monitor_handle = thread::spawn(move || {
+        loop {
+            md_monitor.update_journal_main("heartbeat", true);
+            let four_mins = time::Duration::from_millis(240000);
+            thread::park_timeout(four_mins);
+
+            if stage_done_monitor.load(Ordering::Relaxed) {
+                break;
+            }
+        }
+    });
+
+    // Setup panic hook. If a stage panics, we'll shutdown
+    // cleanly to martian
+    let p = panic::take_hook();
+    let mut _panic_md = md.clone();
+    panic::set_hook(Box::new(move |panic| {
+        let mut panic_md = _panic_md.clone();
+        let payload =
+            match panic.payload().downcast_ref::<String>() {
+                Some(as_string) => format!("{}", as_string),
+                None => format!("{:?}", panic.payload())
+            };
+
+        let loc = panic.location().expect("location");
+        let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
+        panic_md.write_raw("errors", msg);
+        p(panic);
+     }));
+
 
     if md.stage_type == "split"
     {
@@ -451,5 +503,9 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     else
     {
         panic!("Unrecognized stage type");
-    }
+    };
+
+    stage_done.store(true, Ordering::Relaxed);
+    monitor_handle.thread().unpark();
+    monitor_handle.join();
 }
