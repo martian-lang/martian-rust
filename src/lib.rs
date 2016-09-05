@@ -10,6 +10,7 @@ extern crate rustc_serialize;
 extern crate backtrace;
 
 use std::{thread, time};
+use std::cmp::min;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use backtrace::Backtrace;
@@ -27,7 +28,7 @@ use std::path::PathBuf;
 
 use chrono::*;
 
-use libc::{timeval, rusage, getrusage, getpid};
+use libc::{timeval, rusage, getrusage, getpid, rlimit, c_ulong};
 use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json, ParserError, ToJson};
 
@@ -556,4 +557,17 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     stage_done.store(true, Ordering::Relaxed);
     monitor_handle.thread().unpark();
     monitor_handle.join().unwrap();
+}
+
+pub fn set_file_handle_limit(request: usize) -> isize {
+    let mut req = rlimit {
+        rlim_cur: request as c_ulong,
+        rlim_max: request as c_ulong,
+    };
+
+    unsafe {
+        libc::getrlimit(libc::RLIMIT_NOFILE, &mut req);
+        req.rlim_cur = min(req.rlim_max, request as u64);
+        libc::setrlimit(libc::RLIMIT_NOFILE, &mut req) as isize
+    }
 }
