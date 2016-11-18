@@ -25,6 +25,7 @@ use std::env;
 use std::panic;
 use std::collections::{BTreeMap, HashSet, HashMap};
 use std::path::PathBuf;
+use std::cmp::max;
 
 use chrono::*;
 
@@ -35,7 +36,7 @@ use rustc_serialize::json::{self, Json, ParserError, ToJson};
 
 pub type JsonDict = BTreeMap<String, Json>;
 
-
+/// Empty rustage struct
 pub fn default_rusage() -> rusage {
     rusage {
         ru_utime: timeval {
@@ -63,6 +64,7 @@ pub fn default_rusage() -> rusage {
     }
 }
 
+/// Rusage for self
 pub fn get_rusage_self() -> Json {
     let mut ru: rusage = default_rusage();
     unsafe {
@@ -71,6 +73,8 @@ pub fn get_rusage_self() -> Json {
     rusage_to_json(&ru)
 }
 
+
+/// Rusage for childen
 pub fn get_rusage_child() -> Json {
     let mut ru: rusage = default_rusage();
     unsafe {
@@ -79,6 +83,8 @@ pub fn get_rusage_child() -> Json {
     rusage_to_json(&ru)
 }
 
+
+/// Convert Rusage to json dict
 pub fn rusage_to_json(rusage: &rusage) -> Json {
     let mut d = BTreeMap::new();
     {
@@ -105,6 +111,8 @@ pub fn rusage_to_json(rusage: &rusage) -> Json {
 
 const METADATA_PREFIX: &'static str = "_";
 
+
+/// Tracking the metadata for one Martian chunk invocation
 #[derive(Debug, Clone)]
 pub struct Metadata {
     stage_name: String,
@@ -127,9 +135,9 @@ pub fn make_timestamp_now() -> String {
 
 impl Metadata {
     pub fn new(args: Vec<String>) -> Metadata {
+
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
-
         let md = Metadata {
             stage_name: args[0].clone(),
             stage_type: args[1].clone(),
@@ -143,12 +151,14 @@ impl Metadata {
         md
     }
 
+    /// Path within chunk
     pub fn make_path(&self, name: &str) -> PathBuf {
         let mut pb = PathBuf::from(self.metadata_path.clone());
         pb.push(METADATA_PREFIX.to_string() + name);
         pb
     }
 
+    /// Write to a file inside the chunk
     pub fn write_raw(&mut self, name: &str, text: String) {
         let f = File::create(self.make_path(name));
         match f {
@@ -160,18 +170,7 @@ impl Metadata {
         }
     }
 
-    // def update_journal(self, name, force=False):
-    // if self.run_type != "main":
-    // name = "%s_%s" % (self.run_type, name)
-    // if name not in self.cache or force:
-    // run_file = "%s.%s" % (self.run_file, name)
-    // tmp_run_file = "%s.tmp" % run_file
-    // with open(tmp_run_file, "w") as f:
-    // f.write(self.make_timestamp_now())
-    // os.rename(tmp_run_file, run_file)
-    // self.cache[name] = True
-    //
-
+    /// Update the Martian journal -- so that Martian knows what we've updated
     fn update_journal_main(&mut self, name: &str, force: bool) {
         let journal_name = if self.stage_type != "main" {
             format!("{}_{}", self.stage_type, name)
@@ -205,6 +204,7 @@ impl Metadata {
     }
     */
 
+    /// Write JSON to a chunk file
     fn write_json_obj(&mut self, name: &str, object: &JsonDict) {
         // Serialize using `json::encode`
         let obj = &Json::Object(object.clone());
@@ -212,6 +212,7 @@ impl Metadata {
         self.write_raw(name, format!("{}", encoded));
     }
 
+    /// Read JSON from a chunk file
     fn read_json(&self, name: &str) -> Result<Json, ParserError> {
         let mut f = try!(File::open(self.make_path(name)));
         let mut buf = String::new();
@@ -241,10 +242,9 @@ impl Metadata {
         self.update_journal(name);
     }
 
-
+    /// Write to _log
     pub fn log(&mut self, level: &str, message: &str) {
-        self._append("log",
-                     &format!("{} [{}] {}", make_timestamp_now(), level, message))
+        self._append("log", &format!("{} [{}] {}", make_timestamp_now(), level, message))
     }
 
     pub fn log_time(&mut self, message: &str) {
@@ -259,6 +259,7 @@ impl Metadata {
         self._append("assert", &format!("{} {}", make_timestamp_now(), message))
     }
 
+    /// Write finalized _jobinfo data
     pub fn update_jobinfo(&mut self) {
         let mut jobinfo = self.read_json_obj("jobinfo");
 
@@ -303,11 +304,13 @@ impl Metadata {
         self.jobinfo = jobinfo;
     }
 
+    /// Completed successfully
     pub fn complete(&mut self) {
         self.write_raw("complete", make_timestamp_now());
         self.shutdown();
     }
 
+    /// Shutdown this chunk -- update jobinfo with final stats
     pub fn shutdown(&mut self) {
         self.log_time("__end__");
 
@@ -478,9 +481,22 @@ pub fn setup_logging(md: &Metadata)
 pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianStage>>) {
 
     info!("got args: {:?}", args);
+
+    // setup Martian metadata
     let md = initialize(args);
+
+    let mem_limit_gb = {
+        let args = md.read_json_obj("args");
+        match args.get("__mem_gb") {
+            Some(j) => j.as_f64().unwrap_or(6.0),
+            None => 6.0,
+        }
+    };
+
+    // Hook rust logging up to Martian _log file
     setup_logging(&md);
 
+    // Get the stage implementation
     let stage = stage_map.get(&md.stage_name).expect("couldn't find requested stage");
 
     // Setup monitor thread -- this handles heartbeat & memory checking
@@ -489,9 +505,24 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     let stage_done_monitor = stage_done.clone();
     let monitor_handle = thread::spawn(move || {
         loop {
+
+            // Write to the heartbeat file: so Martian knows we're still alive
             md_monitor.update_journal_main("heartbeat", true);
-            let four_mins = time::Duration::from_millis(120000);
-            thread::park_timeout(four_mins);
+            let one_min = time::Duration::from_millis(60000);
+            thread::park_timeout(one_min);
+
+            // Check the total memory consumption of the stage. Kill ourself if we go over the limit
+            let mut ru_self: rusage = default_rusage();
+            unsafe { getrusage(0, &mut ru_self); }
+
+            let mut ru_child: rusage = default_rusage();
+            unsafe {  getrusage(1, &mut ru_child); }
+
+            let max_rss = max(ru_self.ru_maxrss, ru_child.ru_maxrss);
+            if max_rss > (mem_limit_gb * 1e9) as i64 {
+                // Shutdown the process due to memory
+                panic!("Memory consumption exceed limit. Maxrss: {}, Limit: {}", max_rss, (mem_limit_gb * 1e9) as usize);
+            }
 
             if stage_done_monitor.load(Ordering::Relaxed) {
                 break;
@@ -499,8 +530,7 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
         }
     });
 
-    // Setup panic hook. If a stage panics, we'll shutdown
-    // cleanly to martian
+    // Setup panic hook. If a stage panics, we'll shutdown cleanly to martian
     let p = panic::take_hook();
     let mut _panic_md = md.clone();
     panic::set_hook(Box::new(move |info| {
@@ -559,6 +589,8 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     monitor_handle.join().unwrap();
 }
 
+
+/// Helper function to bump up file handle limit if a stage requires it.
 pub fn set_file_handle_limit(request: usize) -> isize {
     let mut req = rlimit {
         rlim_cur: request as c_ulong,
