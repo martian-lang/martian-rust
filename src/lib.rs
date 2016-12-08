@@ -30,7 +30,7 @@ use std::cmp::max;
 use chrono::*;
 
 use libc::{timeval, rusage, getrusage, getpid, rlimit, c_ulong};
-use rustc_serialize::Decodable;
+use rustc_serialize::{Encodable, Decodable};
 use rustc_serialize::json::{self, Json, ParserError, ToJson};
 
 
@@ -363,6 +363,33 @@ pub fn json_decode<T: Decodable>(s: Json) -> T {
 pub fn obj_encode<T: ToJson>(v: &T) -> Json {
     v.to_json()
 }
+
+pub fn encode_to_json<T: Encodable>(v: &T) -> Json {
+
+    let mut buf = String::new();
+    {
+        let mut encoder = json::Encoder::new(&mut buf);
+        Encodable::encode(v, &mut encoder);
+    }
+
+    Json::from_str(&buf).unwrap()
+}
+
+
+pub struct Resource {
+    pub __mem_gb: Option<f64>,
+    pub __threads: Option<usize>,
+}
+
+impl Resource {
+    pub fn none() -> Resource {
+        Resource { 
+            __mem_gb: None,
+            __threads: None,
+        }
+    }
+}
+
 
 pub trait MartianStage {
     fn split(&self, args: JsonDict) -> JsonDict;
