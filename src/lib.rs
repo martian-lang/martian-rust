@@ -545,9 +545,11 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
             let mut ru_child: rusage = default_rusage();
             unsafe {  getrusage(1, &mut ru_child); }
 
-            let max_rss = max(ru_self.ru_maxrss, ru_child.ru_maxrss);
+            // maxrss is reported in kb
+            let max_rss = max(ru_self.ru_maxrss, ru_child.ru_maxrss) * 1024;
             if max_rss > (mem_limit_gb * 1e9) as i64 {
                 // Shutdown the process due to memory
+                info!("Calling panic due to mem consumption");
                 panic!("Memory consumption exceed limit. Maxrss: {}, Limit: {}", max_rss, (mem_limit_gb * 1e9) as usize);
             }
 
