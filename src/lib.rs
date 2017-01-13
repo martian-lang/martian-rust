@@ -123,6 +123,7 @@ pub struct Metadata {
     jobinfo: JsonDict,
     cache: HashSet<String>,
     start_time: DateTime<Local>,
+    monitor_memory: bool,
 }
 
 pub fn make_timestamp(datetime: DateTime<Local>) -> String {
@@ -147,7 +148,9 @@ impl Metadata {
             cache: HashSet::new(),
             start_time: Local::now(),
             jobinfo: BTreeMap::new(),
+            monitor_memory: false,
         };
+        
         md
     }
 
@@ -304,6 +307,12 @@ impl Metadata {
         self.jobinfo = jobinfo;
     }
 
+    /// Check whether this job has requested memory monitoring (aka kneecapping) 
+    pub fn monitor_memory(&self) -> bool {
+        let jobinfo = self.read_json_obj("jobinfo");
+        jobinfo.get("monitor_flag") == Some(&Json::String("monitor".to_string()))
+    }
+
     /// Completed successfully
     pub fn complete(&mut self) {
         self.write_raw("complete", make_timestamp_now());
@@ -408,15 +417,6 @@ pub fn initialize(args: Vec<String>) -> Metadata {
     md.update_journal("stdout");
     md.update_journal("stderr");
 
-    // md.start_heartbeat();
-
-    // Start monitor thread
-    // monitor_flag = (jobinfo["monitor_flag"] == "monitor");
-    // limit_kb = convert_gb_to_kb(jobinfo["memGB"]);
-    // if monitor_flag {
-    //    start_monitor(limit_kb);
-    // }
-
     // # Increase the maximum open file descriptors to the hard limit
     //
     // let _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
@@ -428,7 +428,6 @@ pub fn initialize(args: Vec<String>) -> Metadata {
     // metadata.log("adapter", "Adapter could not increase file handle ulimit to %s: %s" % (str(hard), str(e)))
     // pass
     //
-
 
     // # Cache invocation and version JSON.
     // invocation = jobinfo["invocation"]
@@ -528,6 +527,7 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
 
     // Setup monitor thread -- this handles heartbeat & memory checking
     let stage_done = Arc::new(AtomicBool::new(false));
+    let monitor_memory = md.monitor_memory();
     let mut md_monitor = md.clone();
     let stage_done_monitor = stage_done.clone();
     let monitor_handle = thread::spawn(move || {
@@ -538,19 +538,21 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
             let one_min = time::Duration::from_millis(60000);
             thread::park_timeout(one_min);
 
-            // Check the total memory consumption of the stage. Kill ourself if we go over the limit
-            let mut ru_self: rusage = default_rusage();
-            unsafe { getrusage(0, &mut ru_self); }
+            if monitor_memory {
+                // Check the total memory consumption of the stage. Kill ourself if we go over the limit
+                let mut ru_self: rusage = default_rusage();
+                unsafe { getrusage(0, &mut ru_self); }
 
-            let mut ru_child: rusage = default_rusage();
-            unsafe {  getrusage(1, &mut ru_child); }
+                let mut ru_child: rusage = default_rusage();
+                unsafe {  getrusage(1, &mut ru_child); }
 
-            // maxrss is reported in kb
-            let max_rss = max(ru_self.ru_maxrss, ru_child.ru_maxrss) * 1024;
-            if max_rss > (mem_limit_gb * 1e9) as i64 {
-                // Shutdown the process due to memory
-                info!("Calling panic due to mem consumption");
-                panic!("Memory consumption exceed limit. Maxrss: {}, Limit: {}", max_rss, (mem_limit_gb * 1e9) as usize);
+                // maxrss is reported in kb
+                let max_rss = max(ru_self.ru_maxrss, ru_child.ru_maxrss) * 1024;
+                if max_rss > (mem_limit_gb * 1e9) as i64 {
+                    // Shutdown the process due to memory
+                    info!("Calling panic due to mem consumption");
+                    panic!("Memory consumption exceed limit. Maxrss: {}, Limit: {}", max_rss, (mem_limit_gb * 1e9) as usize);
+                }
             }
 
             if stage_done_monitor.load(Ordering::Relaxed) {
