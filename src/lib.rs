@@ -535,7 +535,7 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
 
             // Write to the heartbeat file: so Martian knows we're still alive
             md_monitor.update_journal_main("heartbeat", true);
-            let one_min = time::Duration::from_millis(60000);
+            let one_min = time::Duration::from_millis(120000);
             thread::park_timeout(one_min);
 
             if monitor_memory {
@@ -548,6 +548,8 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
 
                 // maxrss is reported in kb
                 let max_rss = max(ru_self.ru_maxrss, ru_child.ru_maxrss) * 1024;
+                info!("maxrss: {}", max_rss);
+
                 if max_rss > (mem_limit_gb * 1e9) as i64 {
                     // Shutdown the process due to memory
                     info!("Calling panic due to mem consumption");
