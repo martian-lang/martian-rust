@@ -7,6 +7,6 @@ authors = ["Patrick Marks <patrick@10xgenomics.com>"]
 libc = "*"
 log = "*"
 fern = "*"
-chrono = "*"
+chrono = ">=0.3.0"
 rustc-serialize = "*"
 backtrace = "*"
