@@ -333,7 +333,7 @@ impl Metadata {
                           Json::String(make_timestamp(self.start_time)));
         wall_clock.insert("end".to_string(), Json::String(make_timestamp(endtime)));
         wall_clock.insert("duration_seconds".to_string(),
-                          Json::I64((endtime - self.start_time).num_seconds()));
+                          Json::I64((endtime.signed_duration_since(self.start_time)).num_seconds()));
         jobinfo.insert("wallclock".to_string(), Json::Object(wall_clock));
 
         let mut rusage = BTreeMap::new();
