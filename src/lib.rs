@@ -6,13 +6,18 @@
 
 extern crate libc;
 extern crate chrono;
-extern crate rustc_serialize;
 extern crate backtrace;
+
+#[macro_use]
+extern crate serde_json;
+
+extern crate serde;
 
 use std::{thread, time};
 use std::cmp::min;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::io;
 use backtrace::Backtrace;
 
 #[macro_use]
@@ -23,18 +28,22 @@ use std::fs::{File, OpenOptions, rename};
 use std::io::{Read, Write};
 use std::env;
 use std::panic;
-use std::collections::{BTreeMap, HashSet, HashMap};
+use std::collections::{HashSet, HashMap};
 use std::path::PathBuf;
 use std::cmp::max;
 
 use chrono::*;
 
 use libc::{timeval, rusage, getrusage, getpid, rlimit, c_ulong};
-use rustc_serialize::{Encodable, Decodable};
-use rustc_serialize::json::{self, Json, ParserError, ToJson};
+
+use serde::de::DeserializeOwned;
+use serde::Serialize;
+use serde_json::Value;
+use serde_json::map::Map;
 
 
-pub type JsonDict = BTreeMap<String, Json>;
+pub type JsonDict = Map<String, Value>;
+pub type Json = Value;
 
 /// Empty rustage struct
 pub fn default_rusage() -> rusage {
@@ -86,9 +95,9 @@ pub fn get_rusage_child() -> Json {
 
 /// Convert Rusage to json dict
 pub fn rusage_to_json(rusage: &rusage) -> Json {
-    let mut d = BTreeMap::new();
+    let mut d = Map::new();
     {
-        let mut ins = |n: &str, v| d.insert(n.to_string(), Json::I64(v as i64));
+        let mut ins = |n: &str, v| d.insert(n.to_string(), json!(v as i64));
         ins("ru_utime", rusage.ru_utime.tv_sec as i64);
         ins("ru_stime", rusage.ru_stime.tv_sec as i64);
         ins("ru_maxrss", rusage.ru_maxrss);
@@ -106,7 +115,7 @@ pub fn rusage_to_json(rusage: &rusage) -> Json {
         ins("ru_nvcsw", rusage.ru_nvcsw);
         ins("ru_nivcsw", rusage.ru_nivcsw);
     }
-    Json::Object(d)
+    json!(d)
 }
 
 const METADATA_PREFIX: &'static str = "_";
@@ -147,8 +156,8 @@ impl Metadata {
             run_file: args[4].clone(),
             cache: HashSet::new(),
             start_time: Local::now(),
-            jobinfo: BTreeMap::new(),
             monitor_memory: false,
+            jobinfo: Map::new(),
         };
         
         md
@@ -210,18 +219,17 @@ impl Metadata {
     /// Write JSON to a chunk file
     fn write_json_obj(&mut self, name: &str, object: &JsonDict) {
         // Serialize using `json::encode`
-        let obj = &Json::Object(object.clone());
-        let encoded = json::as_pretty_json(&obj);
-        self.write_raw(name, format!("{}", encoded));
+        let obj = json!(object.clone());
+        let encoded = serde_json::to_string_pretty(&obj).unwrap();
+        self.write_raw(name, encoded);
     }
 
-    /// Read JSON from a chunk file
-    fn read_json(&self, name: &str) -> Result<Json, ParserError> {
-        let mut f = try!(File::open(self.make_path(name)));
+    fn read_json(&self, name: &str) -> serde_json::Result<Json> {
+        let mut f = File::open(self.make_path(name)).unwrap();
         let mut buf = String::new();
-        try!(f.read_to_string(&mut buf));
+        f.read_to_string(&mut buf);
 
-        Json::from_str(&buf)
+        serde_json::from_str(&buf)
     }
 
     fn read_json_obj(&self, name: &str) -> JsonDict {
@@ -266,24 +274,24 @@ impl Metadata {
     pub fn update_jobinfo(&mut self) {
         let mut jobinfo = self.read_json_obj("jobinfo");
 
-        jobinfo.insert("cwd".to_string(), Json::String(self.files_path.clone()));
+        jobinfo.insert("cwd".to_string(), json!(self.files_path.clone()));
         // jobinfo.insert("host", socket.gethostname());
-        jobinfo.insert("pid".to_string(), Json::I64(unsafe { getpid() } as i64));
+        jobinfo.insert("pid".to_string(), json!(unsafe { getpid() } as i64));
         let exe = env::current_exe().expect("current_exe").to_str().expect("exe").to_string();
-        jobinfo.insert("rust_exe".to_string(), Json::String(exe));
+        jobinfo.insert("rust_exe".to_string(), Value::String(exe));
         // jobinfo.insert("rust_version", sys.version);
 
         let get_env = |k| {
             let v = env::var(k);
             match v {
-                Ok(s) => Json::String(s),
-                Err(_) => Json::Null,
+                Ok(s) => Value::String(s),
+                Err(_) => Value::Null,
             }
         };
 
         match env::var("SGE_ARCH") {
             Ok(_) => {
-                let mut d = BTreeMap::new();
+                let mut d = Map::new();
                 {
                     let mut ins = |n: &str, v| {
                         d.insert(n.to_string(), v);
@@ -298,7 +306,7 @@ impl Metadata {
                     ins("exec_host", get_env("HOSTNAME"));
                     ins("exec_user", get_env("LOGNAME"));
                 }
-                jobinfo.insert("sge".to_string(), Json::Object(d));
+                jobinfo.insert("sge".to_string(), Value::Object(d));
             }
             Err(_) => (),
         }
@@ -310,7 +318,7 @@ impl Metadata {
     /// Check whether this job has requested memory monitoring (aka kneecapping) 
     pub fn monitor_memory(&self) -> bool {
         let jobinfo = self.read_json_obj("jobinfo");
-        jobinfo.get("monitor_flag") == Some(&Json::String("monitor".to_string()))
+        jobinfo.get("monitor_flag") == Some(&json!("monitor"))
     }
 
     /// Completed successfully
@@ -328,18 +336,16 @@ impl Metadata {
 
         let mut jobinfo = self.read_json_obj("jobinfo");
 
-        let mut wall_clock = BTreeMap::new();
-        wall_clock.insert("start".to_string(),
-                          Json::String(make_timestamp(self.start_time)));
-        wall_clock.insert("end".to_string(), Json::String(make_timestamp(endtime)));
-        wall_clock.insert("duration_seconds".to_string(),
-                          Json::I64((endtime.signed_duration_since(self.start_time)).num_seconds()));
-        jobinfo.insert("wallclock".to_string(), Json::Object(wall_clock));
+        let mut wall_clock = Map::new();
+        wall_clock.insert("start".to_string(), json!(make_timestamp(self.start_time)));
+        wall_clock.insert("end".to_string(), json!(make_timestamp(endtime)));
+        wall_clock.insert("duration_seconds".to_string(), json!(endtime.signed_duration_since(self.start_time).num_seconds()));
+        jobinfo.insert("wallclock".to_string(), json!(wall_clock));
 
-        let mut rusage = BTreeMap::new();
+        let mut rusage = Map::new();
         rusage.insert("self".to_string(), get_rusage_self());
         rusage.insert("children".to_string(), get_rusage_child());
-        jobinfo.insert("rusage".to_string(), Json::Object(rusage));
+        jobinfo.insert("rusage".to_string(), json!(rusage));
 
         self.write_json_obj("jobinfo", &jobinfo);
 
@@ -357,33 +363,19 @@ impl Metadata {
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_decode<T: Decodable>(s: JsonDict) -> T {
-    let mut decoder = json::Decoder::new(Json::Object(s));
-    Decodable::decode(&mut decoder).unwrap()
+pub fn obj_decode<T: DeserializeOwned>(s: JsonDict) -> T {
+    json_decode(json!(s))
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn json_decode<T: Decodable>(s: Json) -> T {
-    let mut decoder = json::Decoder::new(s);
-    Decodable::decode(&mut decoder).unwrap()
+pub fn json_decode<T: DeserializeOwned>(s: Json) -> T {
+    serde_json::from_value(s).unwrap()
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_encode<T: ToJson>(v: &T) -> Json {
-    v.to_json()
+pub fn obj_encode<T: Serialize>(v: &T) -> Json {
+    serde_json::to_value(v).unwrap()
 }
-
-pub fn encode_to_json<T: Encodable>(v: &T) -> Json {
-
-    let mut buf = String::new();
-    {
-        let mut encoder = json::Encoder::new(&mut buf);
-        Encodable::encode(v, &mut encoder);
-    }
-
-    Json::from_str(&buf).unwrap()
-}
-
 
 pub struct Resource {
     pub __mem_gb: Option<f64>,
@@ -483,24 +475,29 @@ pub fn log_panic(md: &mut Metadata, panic: &panic::PanicInfo) {
     md.write_raw("errors", msg);
 }
 
-pub fn setup_logging(md: &Metadata)
-{
+fn setup_logging(md: &Metadata) {
+
     let level = log::LogLevelFilter::Debug;
     let log_path = md.make_path("log");
 
-    let logger_config = fern::DispatchConfig {
-        format: Box::new(|msg: &str, level: &log::LogLevel, _location: &log::LogLocation| {
-            let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
-            format!("[{}][{}] {}", time_str, level, msg)
-        }),
-        output: vec![fern::OutputConfig::stdout(), fern::OutputConfig::file(&log_path)],
-        level: level,
-    };
+    let base_config = fern::Dispatch::new().level(level);
 
-    if let Err(e) = fern::init_global_logger(logger_config, level) {
+    let logger_config = fern::Dispatch::new()
+        .format(|out, msg, record| {
+            let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+            out.finish(format_args!("[{}][{}] {}", time_str, record.level(), msg))
+        })
+        .chain(fern::log_file(log_path).expect("couldn't open log file"))
+        .chain(io::stdout());
+
+    let cfg = base_config.chain(logger_config).apply();
+
+    if let Err(e) = cfg {
         panic!("Failed to initialize global logger: {}", e);
     }
 }
+
+
 
 
 

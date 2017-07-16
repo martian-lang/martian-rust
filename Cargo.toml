@@ -6,7 +6,8 @@ authors = ["Patrick Marks <patrick@10xgenomics.com>"]
 [dependencies]
 libc = "*"
 log = "*"
-fern = "0.3.5"
-chrono = ">=0.3.0"
-rustc-serialize = "*"
+fern = "*"
+chrono = "*"
+serde = "^1.0.8"
+serde_json = "*"
 backtrace = "*"

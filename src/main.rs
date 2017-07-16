@@ -1,46 +1,50 @@
-#[allow(unused_variables)]
-
-use martian::*;
-use rustc_serialize::json::Json;
-use std::collections::{BTreeMap, HashMap};
-use std::thread;
-use std::time;
-use std::env::args;
+#![allow(unused_variables)]
 
 #[macro_use]
 extern crate log;
 extern crate martian;
-extern crate rustc_serialize;
+
+#[macro_use]
+extern crate serde_json;
+
+use serde_json::map::Map;
+
+use std::collections::{HashMap};
+use std::thread;
+use std::time;
+use std::env::args;
+
+use martian::*;
 
 pub struct TestStage;
 
 
 fn call_func(v: f32) -> usize {
-    info!("log a message -- call_func");
+    info!("log a message -- call_func: {}", v);
     panic!("failed in call_func");
 }
 
 impl MartianStage for TestStage {
     fn split(&self, args: JsonDict) -> JsonDict {
         info!("Running split!");
-        let mut cc =  BTreeMap::new();
-        cc.insert("chunks".to_string(), Json::F64(1.0));
+        let mut cc =  Map::new();
+        cc.insert("chunks".to_string(), json!(1.0));
         cc
     }
 
     fn main(&self, args: JsonDict, outs: JsonDict) -> JsonDict {
 
         thread::sleep(time::Duration::from_millis(120000));
-        let mut cc =  BTreeMap::new();
-        cc.insert("chunks".to_string(), Json::F64(1.0));
+        let mut cc =  Map::new();
+        cc.insert("chunks".to_string(), json!(1.0));
         cc
     }
 
     fn join(&self, _: JsonDict, _: JsonDict, _: Vec<JsonDict>, chunk_outs: Vec<JsonDict>) -> JsonDict {
 
         call_func(1.0);
-        let mut cc =  BTreeMap::new();
-        cc.insert("chunks".to_string(), Json::F64(1.0));
+        let mut cc =  Map::new();
+        cc.insert("chunks".to_string(), json!(1.0));
         cc
     }
 }
