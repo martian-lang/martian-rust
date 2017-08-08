@@ -13,8 +13,7 @@ extern crate serde_json;
 
 extern crate serde;
 
-use std::{thread, time};
-use std::cmp::min;
+use std::{thread};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::io;
@@ -26,15 +25,13 @@ extern crate fern;
 
 use std::fs::{File, OpenOptions, rename};
 use std::io::{Read, Write};
+use std::os::unix::io::FromRawFd;
 use std::env;
 use std::panic;
 use std::collections::{HashSet, HashMap};
 use std::path::PathBuf;
-use std::cmp::max;
 
 use chrono::*;
-
-use libc::{timeval, rusage, getrusage, getpid, rlimit, c_ulong};
 
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -45,85 +42,11 @@ use serde_json::map::Map;
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
 
-/// Empty rustage struct
-pub fn default_rusage() -> rusage {
-    rusage {
-        ru_utime: timeval {
-            tv_sec: 0,
-            tv_usec: 0,
-        },
-        ru_stime: timeval {
-            tv_sec: 0,
-            tv_usec: 0,
-        },
-        ru_maxrss: 0,
-        ru_ixrss: 0,
-        ru_idrss: 0,
-        ru_isrss: 0,
-        ru_minflt: 0,
-        ru_majflt: 0,
-        ru_nswap: 0,
-        ru_inblock: 0,
-        ru_oublock: 0,
-        ru_msgsnd: 0,
-        ru_msgrcv: 0,
-        ru_nsignals: 0,
-        ru_nvcsw: 0,
-        ru_nivcsw: 0,
-    }
-}
-
-/// Rusage for self
-pub fn get_rusage_self() -> Json {
-    let mut ru: rusage = default_rusage();
-    unsafe {
-        getrusage(0, &mut ru);
-    }
-    rusage_to_json(&ru)
-}
-
-
-/// Rusage for childen
-pub fn get_rusage_child() -> Json {
-    let mut ru: rusage = default_rusage();
-    unsafe {
-        getrusage(1, &mut ru);
-    }
-    rusage_to_json(&ru)
-}
-
-
-/// Convert Rusage to json dict
-pub fn rusage_to_json(rusage: &rusage) -> Json {
-    let mut d = Map::new();
-    {
-        let mut ins = |n: &str, v| d.insert(n.to_string(), json!(v as i64));
-        ins("ru_utime", rusage.ru_utime.tv_sec as i64);
-        ins("ru_stime", rusage.ru_stime.tv_sec as i64);
-        ins("ru_maxrss", rusage.ru_maxrss);
-        ins("ru_ixrss", rusage.ru_ixrss);
-        ins("ru_idrss", rusage.ru_idrss);
-        ins("ru_isrss", rusage.ru_isrss);
-        ins("ru_minflt", rusage.ru_minflt);
-        ins("ru_majflt", rusage.ru_majflt);
-        ins("ru_nswap", rusage.ru_nswap);
-        ins("ru_inblock", rusage.ru_inblock);
-        ins("ru_oublock", rusage.ru_oublock);
-        ins("ru_msgsnd", rusage.ru_msgsnd);
-        ins("ru_msgrcv", rusage.ru_msgrcv);
-        ins("ru_nsignals", rusage.ru_nsignals);
-        ins("ru_nvcsw", rusage.ru_nvcsw);
-        ins("ru_nivcsw", rusage.ru_nivcsw);
-    }
-    json!(d)
-}
-
 const METADATA_PREFIX: &'static str = "_";
-
 
 /// Tracking the metadata for one Martian chunk invocation
 #[derive(Debug, Clone)]
-pub struct Metadata {
+pub struct Metadata<'a> {
     stage_name: String,
     stage_type: String,
     metadata_path: String,
@@ -131,8 +54,7 @@ pub struct Metadata {
     run_file: String,
     jobinfo: JsonDict,
     cache: HashSet<String>,
-    start_time: DateTime<Local>,
-    monitor_memory: bool,
+    log_file: &'a File,
 }
 
 pub fn make_timestamp(datetime: DateTime<Local>) -> String {
@@ -143,8 +65,8 @@ pub fn make_timestamp_now() -> String {
     return make_timestamp(Local::now());
 }
 
-impl Metadata {
-    pub fn new(args: Vec<String>) -> Metadata {
+impl<'a> Metadata<'a> {
+    pub fn new(args: Vec<String>, log_file: &'a File) -> Metadata {
 
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
@@ -155,9 +77,8 @@ impl Metadata {
             files_path: args[3].clone(),
             run_file: args[4].clone(),
             cache: HashSet::new(),
-            start_time: Local::now(),
-            monitor_memory: false,
             jobinfo: Map::new(),
+            log_file: log_file,
         };
         
         md
@@ -254,11 +175,15 @@ impl Metadata {
     }
 
     /// Write to _log
-    pub fn log(&mut self, level: &str, message: &str) {
-        self._append("log", &format!("{} [{}] {}", make_timestamp_now(), level, message))
+    pub fn log(&mut self, level: &str, message: &str) -> std::io::Result<()> {
+        self.log_file.write(&format!("{} [{}] {}",
+                                     make_timestamp_now(),
+                                     level,
+                                     message).as_bytes()).and(
+            self.log_file.flush())
     }
 
-    pub fn log_time(&mut self, message: &str) {
+    pub fn log_time(&mut self, message: &str) -> std::io::Result<()> {
         self.log("time", message)
     }
 
@@ -267,98 +192,26 @@ impl Metadata {
     }
 
     pub fn assert(&mut self, message: &str) {
-        self._append("assert", &format!("{} {}", make_timestamp_now(), message))
+        write_errors(&format!("ASSERT:{} {}", make_timestamp_now(), message));
     }
 
     /// Write finalized _jobinfo data
     pub fn update_jobinfo(&mut self) {
         let mut jobinfo = self.read_json_obj("jobinfo");
 
-        jobinfo.insert("cwd".to_string(), json!(self.files_path.clone()));
-        // jobinfo.insert("host", socket.gethostname());
-        jobinfo.insert("pid".to_string(), json!(unsafe { getpid() } as i64));
         let exe = env::current_exe().expect("current_exe").to_str().expect("exe").to_string();
         jobinfo.insert("rust_exe".to_string(), Value::String(exe));
         // jobinfo.insert("rust_version", sys.version);
-
-        let get_env = |k| {
-            let v = env::var(k);
-            match v {
-                Ok(s) => Value::String(s),
-                Err(_) => Value::Null,
-            }
-        };
-
-        match env::var("SGE_ARCH") {
-            Ok(_) => {
-                let mut d = Map::new();
-                {
-                    let mut ins = |n: &str, v| {
-                        d.insert(n.to_string(), v);
-                    };
-                    ins("root", get_env("SGE_ROOT"));
-                    ins("cell", get_env("SGE_CELL"));
-                    ins("queue", get_env("QUEUE"));
-                    ins("jobid", get_env("JOB_ID"));
-                    ins("jobname", get_env("JOB_NAME"));
-                    ins("sub_host", get_env("SGE_O_HOST"));
-                    ins("sub_user", get_env("SGE_O_LOGNAME"));
-                    ins("exec_host", get_env("HOSTNAME"));
-                    ins("exec_user", get_env("LOGNAME"));
-                }
-                jobinfo.insert("sge".to_string(), Value::Object(d));
-            }
-            Err(_) => (),
-        }
 
         self.write_json_obj("jobinfo", &jobinfo);
         self.jobinfo = jobinfo;
     }
 
-    /// Check whether this job has requested memory monitoring (aka kneecapping) 
-    pub fn monitor_memory(&self) -> bool {
-        let jobinfo = self.read_json_obj("jobinfo");
-        jobinfo.get("monitor_flag") == Some(&json!("monitor"))
-    }
-
     /// Completed successfully
     pub fn complete(&mut self) {
-        self.write_raw("complete", make_timestamp_now());
-        self.shutdown();
-    }
-
-    /// Shutdown this chunk -- update jobinfo with final stats
-    pub fn shutdown(&mut self) {
-        self.log_time("__end__");
-
-        // Common to fail() and complete()
-        let endtime = Local::now();
-
-        let mut jobinfo = self.read_json_obj("jobinfo");
-
-        let mut wall_clock = Map::new();
-        wall_clock.insert("start".to_string(), json!(make_timestamp(self.start_time)));
-        wall_clock.insert("end".to_string(), json!(make_timestamp(endtime)));
-        wall_clock.insert("duration_seconds".to_string(), json!(endtime.signed_duration_since(self.start_time).num_seconds()));
-        jobinfo.insert("wallclock".to_string(), json!(wall_clock));
-
-        let mut rusage = Map::new();
-        rusage.insert("self".to_string(), get_rusage_self());
-        rusage.insert("children".to_string(), get_rusage_child());
-        jobinfo.insert("rusage".to_string(), json!(rusage));
-
-        self.write_json_obj("jobinfo", &jobinfo);
-
-        // sys.exit does not actually exit the process but only exits the thread.
-        // If this thread is not the main thread, use os._exit. This won't call
-        // cleanup handlers, flush stdio buffers, etc. But calling done() from
-        // another thread means the process exited with an error so this is okay.
-        // if isinstance(threading.current_thread(), threading._MainThread)   {
-        //    sys.exit(0);
-        // }
-        // else {
-        //    os._exit(0);
-        // }
+        unsafe {
+            File::from_raw_fd(4);  // Close the error file descriptor.
+        }
     }
 }
 
@@ -399,31 +252,10 @@ pub trait MartianStage {
 }
 
 
-pub fn initialize(args: Vec<String>) -> Metadata {
-    let mut md = Metadata::new(args);
+pub fn initialize(args: Vec<String>, log_file: &File) -> Metadata {
+    let mut md = Metadata::new(args, log_file);
     println!("got metadata: {:?}", md);
     md.update_jobinfo();
-
-    md.log_time("__start__");
-
-    md.update_journal("stdout");
-    md.update_journal("stderr");
-
-    // # Increase the maximum open file descriptors to the hard limit
-    //
-    // let _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    // try:
-    // resource.setrlimit(resource.RLIMIT_NOFILE, (hard, hard))
-    // except Exception as e:
-    // # Since we are still initializing, do not allow an unhandled exception.
-    // # If the limit is not high enough, a preflight will catch it.
-    // metadata.log("adapter", "Adapter could not increase file handle ulimit to %s: %s" % (str(hard), str(e)))
-    // pass
-    //
-
-    // # Cache invocation and version JSON.
-    // invocation = jobinfo["invocation"]
-    // version = jobinfo["version"]
 
     md
 }
@@ -461,8 +293,15 @@ pub fn do_join(stage: &MartianStage, mut md: Metadata)
     md.complete();
 }
 
+fn write_errors(msg: &String) {
+    unsafe {
+        let mut err_file = File::from_raw_fd(4);
+        err_file.write(msg.as_bytes()).expect("Failed to write errors");
+    }
+}
+
 /// Log a panic to the martian output machinery
-pub fn log_panic(md: &mut Metadata, panic: &panic::PanicInfo) {
+pub fn log_panic(panic: &panic::PanicInfo) {
 
     let payload =
         match panic.payload().downcast_ref::<String>() {
@@ -472,13 +311,13 @@ pub fn log_panic(md: &mut Metadata, panic: &panic::PanicInfo) {
 
     let loc = panic.location().expect("location");
     let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
-    md.write_raw("errors", msg);
+
+    write_errors(&msg);
 }
 
-fn setup_logging(md: &Metadata) {
+fn setup_logging(log_file: &File) {
 
     let level = log::LogLevelFilter::Debug;
-    let log_path = md.make_path("log");
 
     let base_config = fern::Dispatch::new().level(level);
 
@@ -487,7 +326,7 @@ fn setup_logging(md: &Metadata) {
             let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
             out.finish(format_args!("[{}][{}] {}", time_str, record.level(), msg))
         })
-        .chain(fern::log_file(log_path).expect("couldn't open log file"))
+        .chain(log_file.try_clone().expect("couldn't open log file"))
         .chain(io::stdout());
 
     let cfg = base_config.chain(logger_config).apply();
@@ -497,74 +336,31 @@ fn setup_logging(md: &Metadata) {
     }
 }
 
-
-
-
-
 pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianStage>>) {
 
     info!("got args: {:?}", args);
 
-    // setup Martian metadata
-    let md = initialize(args);
-
-    let mem_limit_gb = {
-        let args = md.read_json_obj("args");
-        match args.get("__mem_gb") {
-            Some(j) => j.as_f64().unwrap_or(6.0),
-            None => 6.0,
-        }
+    // The log file is opened by the monitor process and should never be closed by
+    // the adapter.
+    let log_file: File = unsafe {
+        File::from_raw_fd(3)
     };
 
     // Hook rust logging up to Martian _log file
-    setup_logging(&md);
+    setup_logging(&log_file);
+
+    // setup Martian metadata
+    let md = initialize(args, &log_file);
 
     // Get the stage implementation
     let stage = stage_map.get(&md.stage_name).expect("couldn't find requested stage");
 
     // Setup monitor thread -- this handles heartbeat & memory checking
     let stage_done = Arc::new(AtomicBool::new(false));
-    let monitor_memory = md.monitor_memory();
-    let mut md_monitor = md.clone();
-    let stage_done_monitor = stage_done.clone();
-    let monitor_handle = thread::spawn(move || {
-        loop {
-
-            // Write to the heartbeat file: so Martian knows we're still alive
-            md_monitor.update_journal_main("heartbeat", true);
-            let one_min = time::Duration::from_millis(120000);
-            thread::park_timeout(one_min);
-
-            if monitor_memory {
-                // Check the total memory consumption of the stage. Kill ourself if we go over the limit
-                let mut ru_self: rusage = default_rusage();
-                unsafe { getrusage(0, &mut ru_self); }
-
-                let mut ru_child: rusage = default_rusage();
-                unsafe {  getrusage(1, &mut ru_child); }
-
-                // maxrss is reported in kb
-                let max_rss = max(ru_self.ru_maxrss, ru_child.ru_maxrss) * 1024;
-                info!("maxrss: {}", max_rss);
-
-                if max_rss > (mem_limit_gb * 1e9) as i64 {
-                    // Shutdown the process due to memory
-                    info!("Calling panic due to mem consumption");
-                    panic!("Memory consumption exceed limit. Maxrss: {}, Limit: {}", max_rss, (mem_limit_gb * 1e9) as usize);
-                }
-            }
-
-            if stage_done_monitor.load(Ordering::Relaxed) {
-                break;
-            }
-        }
-    });
 
     // Setup panic hook. If a stage panics, we'll shutdown cleanly to martian
     let p = panic::take_hook();
-    let mut _panic_md = md.clone();
     panic::set_hook(Box::new(move |info| {
-        let mut panic_md = _panic_md.clone();
         let backtrace = Backtrace::new();
 
         let thread = thread::current();
@@ -592,7 +388,7 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
             };
 
         error!("{}", msg);
-        panic_md.write_raw("errors", msg);
+        write_errors(&msg);
         p(info);
     }));
 
@@ -615,21 +411,4 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     };
 
     stage_done.store(true, Ordering::Relaxed);
-    monitor_handle.thread().unpark();
-    monitor_handle.join().unwrap();
-}
-
-
-/// Helper function to bump up file handle limit if a stage requires it.
-pub fn set_file_handle_limit(request: usize) -> isize {
-    let mut req = rlimit {
-        rlim_cur: request as c_ulong,
-        rlim_max: request as c_ulong,
-    };
-
-    unsafe {
-        libc::getrlimit(libc::RLIMIT_NOFILE, &mut req);
-        req.rlim_cur = min(req.rlim_max, request as u64);
-        libc::setrlimit(libc::RLIMIT_NOFILE, &mut req) as isize
-    }
 }
