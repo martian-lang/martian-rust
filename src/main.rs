@@ -25,27 +25,27 @@ fn call_func(v: f32) -> usize {
 }
 
 impl MartianStage for TestStage {
-    fn split(&self, args: JsonDict) -> JsonDict {
+    fn split(&self, args: JsonDict) -> Result<JsonDict, Error> {
         info!("Running split!");
         let mut cc =  Map::new();
         cc.insert("chunks".to_string(), json!(1.0));
-        cc
+        Ok(cc)
     }
 
-    fn main(&self, args: JsonDict, outs: JsonDict) -> JsonDict {
+    fn main(&self, args: JsonDict, outs: JsonDict) -> Result<JsonDict, Error> {
 
         thread::sleep(time::Duration::from_millis(120000));
         let mut cc =  Map::new();
         cc.insert("chunks".to_string(), json!(1.0));
-        cc
+        Ok(cc)
     }
 
-    fn join(&self, _: JsonDict, _: JsonDict, _: Vec<JsonDict>, chunk_outs: Vec<JsonDict>) -> JsonDict {
+    fn join(&self, _: JsonDict, _: JsonDict, _: Vec<JsonDict>, chunk_outs: Vec<JsonDict>) -> Result<JsonDict, Error> {
 
         call_func(1.0);
         let mut cc =  Map::new();
         cc.insert("chunks".to_string(), json!(1.0));
-        cc
+        Ok(cc)
     }
 }
 

@@ -1,17 +1,32 @@
 //! Martian adapter for Rust code
-//!
-//! WIP.
-//! TODOs: error handling (trap panics?), heartbeat, memory usage monitor.
-
 
 extern crate libc;
 extern crate chrono;
 extern crate backtrace;
-
-#[macro_use]
-extern crate serde_json;
-
+extern crate failure;
 extern crate serde;
+
+#[macro_use] extern crate serde_json;
+#[macro_use] extern crate failure_derive;
+
+pub use failure::Error;
+
+// Ways a stage can fail.
+#[derive(Debug, Fail)]
+pub enum StageError {
+    // Controlled shutdown for known condition in data or config
+    #[fail(display = "{}", message)]
+    MartianExit {
+        message: String,
+    },
+
+    // Unexpected error
+    #[fail(display = "{}", message)]
+    PipelineError {
+        message: String,
+    }
+}
+
 
 use std::{thread};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -148,7 +163,7 @@ impl<'a> Metadata<'a> {
     fn read_json(&self, name: &str) -> serde_json::Result<Json> {
         let mut f = File::open(self.make_path(name)).unwrap();
         let mut buf = String::new();
-        f.read_to_string(&mut buf);
+        f.read_to_string(&mut buf).unwrap();
 
         serde_json::from_str(&buf)
     }
@@ -246,9 +261,9 @@ impl Resource {
 
 
 pub trait MartianStage {
-    fn split(&self, args: JsonDict) -> JsonDict;
-    fn main(&self, args: JsonDict, outs: JsonDict) -> JsonDict;
-    fn join(&self, args: JsonDict, outs: JsonDict, chunk_defs: Vec<JsonDict>, chunk_outs: Vec<JsonDict>) -> JsonDict;
+    fn split(&self, args: JsonDict) -> Result<JsonDict, Error>;
+    fn main(&self, args: JsonDict, outs: JsonDict) -> Result<JsonDict, Error>;
+    fn join(&self, args: JsonDict, outs: JsonDict, chunk_defs: Vec<JsonDict>, chunk_outs: Vec<JsonDict>) -> Result<JsonDict, Error>;
 }
 
 
@@ -260,12 +275,41 @@ pub fn initialize(args: Vec<String>, log_file: &File) -> Metadata {
     md
 }
 
+pub fn handle_stage_error(err: Error) {
+
+    // Try to handle know StageError cases
+    match &err.downcast::<StageError>() {
+        &Ok(ref e) => {
+            match e {
+                &StageError::MartianExit{ message: ref m } => {
+                    write_errors(&format!("ASSERT: {}", m))
+                }
+                // No difference here at this point
+                &StageError::PipelineError{ message: ref m } => {
+                    write_errors(&format!("ASSERT: {}", m))
+                }
+            }
+        }
+        &Err(ref e) => {
+            let msg = format!("stage error:{}\n{}", e.cause(), e.backtrace());
+            write_errors(&msg);
+
+        }
+    }
+}
+
 pub fn do_split(stage: &MartianStage, mut md: Metadata)
 {
     let args = md.read_json_obj("args");
     let stage_defs = stage.split(args);
-    md.write_json_obj("stage_defs", &stage_defs);
-    md.complete();
+
+    match stage_defs {
+        Ok(stage_defs) => {
+            md.write_json_obj("stage_defs", &stage_defs);
+            md.complete();
+        }
+        Err(e) => handle_stage_error(e)
+    }
 }
 
 pub fn do_main(stage: &MartianStage, mut md: Metadata)
@@ -275,8 +319,13 @@ pub fn do_main(stage: &MartianStage, mut md: Metadata)
 
     let outs = stage.main(args, outs);
 
-    md.write_json_obj("outs", &outs);
-    md.complete();
+    match outs {
+        Ok(outs) => {
+            md.write_json_obj("outs", &outs);
+            md.complete();
+        }
+        Err(e) => handle_stage_error(e)
+    }
 }
 
 
@@ -289,11 +338,16 @@ pub fn do_join(stage: &MartianStage, mut md: Metadata)
 
     let outs = stage.join(args, outs, chunk_defs, chunk_outs);
 
-    md.write_json_obj("outs", &outs);
-    md.complete();
+    match outs {
+        Ok(outs) => {
+            md.write_json_obj("outs", &outs);
+            md.complete();
+        }
+        Err(e) => handle_stage_error(e)
+    }
 }
 
-fn write_errors(msg: &String) {
+fn write_errors(msg: &str) {
     unsafe {
         let mut err_file = File::from_raw_fd(4);
         err_file.write(msg.as_bytes()).expect("Failed to write errors");
