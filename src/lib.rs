@@ -317,7 +317,7 @@ pub fn log_panic(panic: &panic::PanicInfo) {
 
 fn setup_logging(log_file: &File) {
 
-    let level = log::LogLevelFilter::Debug;
+    let level = log::LevelFilter::Debug;
 
     let base_config = fern::Dispatch::new().level(level);
 

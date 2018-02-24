@@ -5,8 +5,8 @@ authors = ["Patrick Marks <patrick@10xgenomics.com>"]
 
 [dependencies]
 libc = "*"
-log = "*"
-fern = "*"
+log = "0.4"
+fern = "0.5"
 chrono = "*"
 serde = "^1.0.8"
 serde_json = "*"
