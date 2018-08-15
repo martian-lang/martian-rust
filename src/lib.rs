@@ -31,7 +31,6 @@ pub enum StageError {
 use std::{thread};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use std::io;
 use backtrace::Backtrace;
 
 #[macro_use]
@@ -269,7 +268,6 @@ pub trait MartianStage {
 
 pub fn initialize(args: Vec<String>, log_file: &File) -> Metadata {
     let mut md = Metadata::new(args, log_file);
-    println!("got metadata: {:?}", md);
     md.update_jobinfo();
 
     md
@@ -378,10 +376,9 @@ fn setup_logging(log_file: &File) {
     let logger_config = fern::Dispatch::new()
         .format(|out, msg, record| {
             let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
-            out.finish(format_args!("[{}][{}] {}", time_str, record.level(), msg))
+            out.finish(format_args!("{} [{}] {}", time_str, record.level(), msg))
         })
-        .chain(log_file.try_clone().expect("couldn't open log file"))
-        .chain(io::stdout());
+        .chain(log_file.try_clone().expect("couldn't open log file"));
 
     let cfg = base_config.chain(logger_config).apply();
 
@@ -391,8 +388,6 @@ fn setup_logging(log_file: &File) {
 }
 
 pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianStage>>) {
-
-    info!("got args: {:?}", args);
 
     // The log file is opened by the monitor process and should never be closed by
     // the adapter.
