@@ -230,7 +230,7 @@ impl<'a> Metadata<'a> {
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_decode<T: DeserializeOwned>(s: JsonDict) -> T {
+pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> T {
     json_decode(json!(s))
 }
 
@@ -240,8 +240,12 @@ pub fn json_decode<T: DeserializeOwned>(s: Json) -> T {
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_encode<T: Serialize>(v: &T) -> Json {
+pub fn json_encode<T: Serialize>(v: &T) -> Json {
     serde_json::to_value(v).unwrap()
+}
+
+pub fn obj_encode<T: Serialize>(v: &T) -> JsonDict {
+    json_decode(json_encode(v))
 }
 
 pub struct Resource {
@@ -289,7 +293,7 @@ pub fn handle_stage_error(err: Error) {
             }
         }
         &Err(ref e) => {
-            let msg = format!("stage error:{}\n{}", e.cause(), e.backtrace());
+            let msg = format!("stage error:{}\n{}", e.as_fail(), e.backtrace());
             write_errors(&msg);
 
         }
