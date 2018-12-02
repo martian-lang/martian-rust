@@ -37,6 +37,9 @@ pub use metadata::*;
 mod filetype;
 pub use filetype::MartianFileType;
 
+mod stage;
+pub use stage::*;
+
 // Ways a stage can fail.
 #[derive(Debug, Fail)]
 pub enum StageError {
@@ -67,14 +70,6 @@ pub fn json_decode<T: DeserializeOwned>(s: Json) -> T {
 pub fn obj_encode<T: Serialize>(v: &T) -> Json {
     serde_json::to_value(v).unwrap()
 }
-
-
-pub trait MartianStage {
-    fn split(&self, args: JsonDict) -> Result<JsonDict, Error>;
-    fn main(&self, args: JsonDict, outs: JsonDict) -> Result<JsonDict, Error>;
-    fn join(&self, args: JsonDict, outs: JsonDict, chunk_defs: Vec<JsonDict>, chunk_outs: Vec<JsonDict>) -> Result<JsonDict, Error>;
-}
-
 
 pub fn initialize(args: Vec<String>, log_file: &File) -> Metadata {
     let mut md = Metadata::new(args, log_file);
