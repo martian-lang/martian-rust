@@ -64,18 +64,13 @@ pub fn obj_encode<T: Serialize>(v: &T) -> Json {
     serde_json::to_value(v).unwrap()
 }
 
-pub struct Resource {
-    pub __mem_gb: Option<f64>,
-    pub __threads: Option<usize>,
-}
 
-impl Resource {
-    pub fn none() -> Resource {
-        Resource { 
-            __mem_gb: None,
-            __threads: None,
-        }
-    }
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+pub struct Resource {
+    #[serde(rename = "__mem_gb")]
+    mem_gb: Option<usize>,
+    #[serde(rename = "__threads")]
+    threads: Option<usize>,
 }
 
 
