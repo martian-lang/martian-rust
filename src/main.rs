@@ -52,11 +52,11 @@ impl MartianStage for TestStage {
 
 fn main() {
 
-    let mut stage_registry : HashMap<String, Box<MartianStage>> = HashMap::new();
+    let mut stage_registry : HashMap<String, Box<RawMartianStage>> = HashMap::new();
     stage_registry.insert("test".to_string(), Box::new(TestStage));
 
     let args = args().skip(1).collect();
 
     // Run the built-in martian adapter
-    martian::martian_main(args, stage_registry);
+    let _ = martian::martian_main(args, stage_registry);
 }

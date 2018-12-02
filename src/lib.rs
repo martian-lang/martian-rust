@@ -70,13 +70,12 @@ pub fn json_decode<T: DeserializeOwned>(s: Json) -> T {
 pub fn obj_encode<T: Serialize>(v: &T) -> Json {
     serde_json::to_value(v).unwrap()
 }
-
-pub fn initialize(args: Vec<String>, log_file: &File) -> Metadata {
+pub fn initialize(args: Vec<String>, log_file: &File) -> Result<Metadata, Error> {
     let mut md = Metadata::new(args, log_file);
     println!("got metadata: {:?}", md);
-    md.update_jobinfo();
+    md.update_jobinfo()?;
 
-    md
+    Ok(md)
 }
 
 pub fn handle_stage_error(err: Error) {
@@ -86,75 +85,27 @@ pub fn handle_stage_error(err: Error) {
         &Ok(ref e) => {
             match e {
                 &StageError::MartianExit{ message: ref m } => {
-                    write_errors(&format!("ASSERT: {}", m))
+                    let _  = write_errors(&format!("ASSERT: {}", m));
                 }
                 // No difference here at this point
                 &StageError::PipelineError{ message: ref m } => {
-                    write_errors(&format!("ASSERT: {}", m))
+                    let _ = write_errors(&format!("ASSERT: {}", m));
                 }
             }
         }
         &Err(ref e) => {
-            let msg = format!("stage error:{}\n{}", e.cause(), e.backtrace());
-            write_errors(&msg);
+            let msg = format!("stage error:{}\n{}", e.as_fail(), e.backtrace());
+            let _ = write_errors(&msg);
 
         }
     }
 }
 
-pub fn do_split(stage: &MartianStage, mut md: Metadata)
-{
-    let args = md.read_json_obj("args");
-    let stage_defs = stage.split(args);
-
-    match stage_defs {
-        Ok(stage_defs) => {
-            md.write_json_obj("stage_defs", &stage_defs);
-            md.complete();
-        }
-        Err(e) => handle_stage_error(e)
-    }
-}
-
-pub fn do_main(stage: &MartianStage, mut md: Metadata)
-{
-    let args = md.read_json_obj("args");
-    let outs = md.read_json_obj("outs");
-
-    let outs = stage.main(args, outs);
-
-    match outs {
-        Ok(outs) => {
-            md.write_json_obj("outs", &outs);
-            md.complete();
-        }
-        Err(e) => handle_stage_error(e)
-    }
-}
-
-
-pub fn do_join(stage: &MartianStage, mut md: Metadata)
-{
-    let args = md.read_json_obj("args");
-    let outs = md.read_json_obj("outs");
-    let chunk_defs = md.read_json_obj_array("chunk_defs");
-    let chunk_outs = md.read_json_obj_array("chunk_outs");
-
-    let outs = stage.join(args, outs, chunk_defs, chunk_outs);
-
-    match outs {
-        Ok(outs) => {
-            md.write_json_obj("outs", &outs);
-            md.complete();
-        }
-        Err(e) => handle_stage_error(e)
-    }
-}
-
-pub(crate) fn write_errors(msg: &str) {
+fn write_errors(msg: &str) -> Result<(), Error> {
     unsafe {
         let mut err_file = File::from_raw_fd(4);
-        err_file.write(msg.as_bytes()).expect("Failed to write errors");
+        let _ = err_file.write(msg.as_bytes())?;
+        Ok(())
     }
 }
 
@@ -170,7 +121,7 @@ pub fn log_panic(panic: &panic::PanicInfo) {
     let loc = panic.location().expect("location");
     let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
 
-    write_errors(&msg);
+    let _ = write_errors(&msg);
 }
 
 fn setup_logging(log_file: &File) {
@@ -194,7 +145,7 @@ fn setup_logging(log_file: &File) {
     }
 }
 
-pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianStage>>) {
+pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<RawMartianStage>>) -> Result<(), Error> {
 
     info!("got args: {:?}", args);
 
@@ -208,10 +159,10 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     setup_logging(&log_file);
 
     // setup Martian metadata
-    let md = initialize(args, &log_file);
+    let md = initialize(args, &log_file)?;
 
     // Get the stage implementation
-    let stage = stage_map.get(&md.stage_name).expect("couldn't find requested stage");
+    let stage = stage_map.get(&md.stage_name).ok_or(failure::err_msg("couldn't find requested stage"))?;
 
     // Setup monitor thread -- this handles heartbeat & memory checking
     let stage_done = Arc::new(AtomicBool::new(false));
@@ -246,22 +197,22 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
             };
 
         error!("{}", msg);
-        write_errors(&msg);
+        let _ = write_errors(&msg);
         p(info);
     }));
 
 
     if md.stage_type == "split"
     {
-        do_split(stage.as_ref(), md);
+        stage.split(md)?;
     }
     else if md.stage_type == "main"
     {
-        do_main(stage.as_ref(), md);
+        stage.main(md)?;
     }
     else if md.stage_type == "join"
     {
-        do_join(stage.as_ref(), md);
+        stage.join(md)?;
     }
     else
     {
@@ -269,4 +220,5 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
     };
 
     stage_done.store(true, Ordering::Relaxed);
+    Ok(())
 }
