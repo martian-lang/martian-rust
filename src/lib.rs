@@ -7,6 +7,7 @@ extern crate failure;
 extern crate serde;
 
 #[macro_use] extern crate serde_json;
+#[macro_use] extern crate serde_derive;
 #[macro_use] extern crate failure_derive;
 
 pub use failure::Error;
@@ -32,6 +33,9 @@ use serde::Serialize;
 
 mod metadata;
 pub use metadata::*;
+
+mod filetype;
+pub use filetype::MartianFileType;
 
 // Ways a stage can fail.
 #[derive(Debug, Fail)]
@@ -62,15 +66,6 @@ pub fn json_decode<T: DeserializeOwned>(s: Json) -> T {
 /// Shortcut function to decode a JSON `&str` into an object
 pub fn obj_encode<T: Serialize>(v: &T) -> Json {
     serde_json::to_value(v).unwrap()
-}
-
-
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
-pub struct Resource {
-    #[serde(rename = "__mem_gb")]
-    mem_gb: Option<usize>,
-    #[serde(rename = "__threads")]
-    threads: Option<usize>,
 }
 
 
