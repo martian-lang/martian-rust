@@ -11,23 +11,6 @@ extern crate serde;
 
 pub use failure::Error;
 
-// Ways a stage can fail.
-#[derive(Debug, Fail)]
-pub enum StageError {
-    // Controlled shutdown for known condition in data or config
-    #[fail(display = "{}", message)]
-    MartianExit {
-        message: String,
-    },
-
-    // Unexpected error
-    #[fail(display = "{}", message)]
-    PipelineError {
-        message: String,
-    }
-}
-
-
 use std::{thread};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -49,6 +32,22 @@ use serde::Serialize;
 
 mod metadata;
 pub use metadata::*;
+
+// Ways a stage can fail.
+#[derive(Debug, Fail)]
+pub enum StageError {
+    // Controlled shutdown for known condition in data or config
+    #[fail(display = "{}", message)]
+    MartianExit {
+        message: String,
+    },
+
+    // Unexpected error
+    #[fail(display = "{}", message)]
+    PipelineError {
+        message: String,
+    }
+}
 
 /// Shortcut function to decode a JSON `&str` into an object
 pub fn obj_decode<T: DeserializeOwned>(s: JsonDict) -> T {
