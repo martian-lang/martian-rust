@@ -34,8 +34,8 @@ use serde::Serialize;
 mod metadata;
 pub use metadata::*;
 
-mod filetype;
-pub use filetype::MartianFileType;
+mod types;
+pub use types::MartianFileType;
 
 mod stage;
 pub use stage::*;

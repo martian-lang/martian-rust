@@ -1,6 +1,9 @@
 
 use std::path::Path;
 
+#[derive(Serialize, Deserialize)]
+pub struct MartianVoid;
+
 pub trait MartianFileType {
     fn extension() -> &'static str;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
