@@ -26,7 +26,7 @@ pub struct Metadata<'a> {
     pub stage_name: String,
     pub stage_type: String,
     metadata_path: String,
-    files_path: String,
+    pub files_path: String,
     run_file: String,
     jobinfo: JsonDict,
     cache: HashSet<String>,

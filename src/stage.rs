@@ -6,6 +6,9 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use JsonDict;
 use Metadata;
+use obj_decode;
+use obj_encode;
+use json_decode;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Resource {
@@ -24,12 +27,12 @@ struct ChunkDef<T> {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct SplitDef<T> {
+pub struct StageDef<T> {
     chunks: Vec<ChunkDef<T>>,
     join: Resource,
 }
 
-pub trait TypedMartianStage {
+pub trait MartianStage {
     type StageInputs: Serialize + DeserializeOwned;
     type StageOutputs: Serialize + DeserializeOwned;
     type ChunkInputs: Serialize + DeserializeOwned;
@@ -39,7 +42,7 @@ pub trait TypedMartianStage {
         &self,
         args: Self::StageInputs,
         out_dir: impl AsRef<Path>,
-    ) -> Result<SplitDef<Self::ChunkInputs>, Error>;
+    ) -> Result<StageDef<Self::ChunkInputs>, Error>;
 
     fn main(
         &self,
@@ -59,12 +62,6 @@ pub trait TypedMartianStage {
     ) -> Result<Self::StageOutputs, Error>;
 }
 
-pub trait MartianStage {
-    fn split(&self, args: JsonDict) -> Result<JsonDict, Error>;
-    fn main(&self, args: JsonDict, outs: JsonDict) -> Result<JsonDict, Error>;
-    fn join(&self, args: JsonDict, outs: JsonDict, chunk_defs: Vec<JsonDict>, chunk_outs: Vec<JsonDict>) -> Result<JsonDict, Error>;
-}
-
 pub trait RawMartianStage {
     fn split(&self, metdata: Metadata) -> Result<(), Error>;
     fn main(&self, metadata: Metadata) -> Result<(), Error>;
@@ -74,29 +71,63 @@ pub trait RawMartianStage {
 impl<T> RawMartianStage for T where T: MartianStage {
 
     fn split(&self, mut md: Metadata) -> Result<(), Error> {
-        let args = md.read_json_obj("args")?;
-        let stage_defs = MartianStage::split(self, args)?;
-        md.write_json_obj("stage_defs", &stage_defs)?;
+        let args_obj = md.read_json_obj("args")?;
+        let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
+        let stage_defs = {
+            let out_dir = Path::new(&md.files_path);
+            MartianStage::split(self, args, out_dir)?
+        };
+        let stage_def_obj = obj_encode(&stage_defs)?;
+        md.write_json_obj("stage_defs", &stage_def_obj)?;
         md.complete();
         Ok(())
     }
 
     fn main(&self, mut md: Metadata) -> Result<(), Error> {
-        let args = md.read_json_obj("args")?;
-        let outs = md.read_json_obj("outs")?;
-        let outs = MartianStage::main(self, args, outs)?;
-        md.write_json_obj("outs", &outs)?;
+        let args_obj = md.read_json_obj("args")?;
+        let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
+        let split_args: <T as MartianStage>::ChunkInputs = obj_decode(&args_obj)?;
+        let resource: Resource = obj_decode(&args_obj)?;
+        // let outs = md.read_json_obj("outs")?;
+        let outs = {
+            let out_dir = Path::new(&md.files_path);
+            MartianStage::main(self, args, split_args, resource, out_dir)?
+        };
+        let outs_obj = obj_encode(&outs)?;
+        md.write_json_obj("outs", &outs_obj)?;
         md.complete();
         Ok(())
     }
 
     fn join(&self, mut md: Metadata) -> Result<(), Error> {
-        let args = md.read_json_obj("args")?;
-        let outs = md.read_json_obj("outs")?;
-        let chunk_defs = md.read_json_obj_array("chunk_defs")?;
-        let chunk_outs = md.read_json_obj_array("chunk_outs")?;
-        let outs = MartianStage::join(self, args, outs, chunk_defs, chunk_outs)?;
-        md.write_json_obj("outs", &outs)?;
+        let args_obj = md.read_json_obj("args")?;
+        let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
+        let resource: Resource = obj_decode(&args_obj)?;
+        // let outs = md.read_json_obj("outs")?;
+        let chunk_defs = {
+            let chunk_defs_obj = md.read_json_obj_array("chunk_defs")?;
+            let mut defs = Vec::new();
+            for obj in chunk_defs_obj {
+                let def: <T as MartianStage>::ChunkInputs = obj_decode(&obj)?;
+                defs.push(def);
+            }
+            defs
+        };
+        let chunk_outs = {
+            let chunk_outs_obj = md.read_json_obj_array("chunk_outs")?;
+            let mut outs = Vec::new();
+            for obj in chunk_outs_obj {
+                let out: <T as MartianStage>::ChunkOutputs = obj_decode(&obj)?;
+                outs.push(out);
+            }
+            outs
+        };
+        let outs = {
+            let out_dir = Path::new(&md.files_path);
+            MartianStage::join(self, args, chunk_defs, chunk_outs, resource, out_dir)?;
+        };
+        let outs_obj = obj_encode(&outs)?;
+        md.write_json_obj("outs", &outs_obj)?;
         md.complete();
         Ok(())
     }

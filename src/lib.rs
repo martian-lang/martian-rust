@@ -57,19 +57,25 @@ pub enum StageError {
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_decode<T: DeserializeOwned>(s: JsonDict) -> T {
-    json_decode(json!(s))
+pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {
+    Ok(json_decode(json!(s))?)
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn json_decode<T: DeserializeOwned>(s: Json) -> T {
-    serde_json::from_value(s).unwrap()
+pub fn json_decode<T: DeserializeOwned>(s: Json) -> Result<T, Error> {
+    Ok(serde_json::from_value(s)?)
 }
 
 /// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_encode<T: Serialize>(v: &T) -> Json {
-    serde_json::to_value(v).unwrap()
+pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {
+    Ok(json_encode(v)?.as_object().unwrap().clone())
 }
+
+/// Shortcut function to decode a JSON `&str` into an object
+pub fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
+    Ok(serde_json::to_value(v)?)
+}
+
 pub fn initialize(args: Vec<String>, log_file: &File) -> Result<Metadata, Error> {
     let mut md = Metadata::new(args, log_file);
     println!("got metadata: {:?}", md);
