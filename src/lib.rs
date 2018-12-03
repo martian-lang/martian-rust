@@ -29,8 +29,6 @@ use std::os::unix::io::FromRawFd;
 use std::panic;
 use std::collections::{HashMap};
 use chrono::*;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 
 mod metadata;
 pub use metadata::*;
@@ -57,26 +55,6 @@ pub enum StageError {
     PipelineError {
         message: String,
     }
-}
-
-/// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {
-    Ok(json_decode(json!(s))?)
-}
-
-/// Shortcut function to decode a JSON `&str` into an object
-pub fn json_decode<T: DeserializeOwned>(s: Json) -> Result<T, Error> {
-    Ok(serde_json::from_value(s)?)
-}
-
-/// Shortcut function to decode a JSON `&str` into an object
-pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {
-    Ok(json_encode(v)?.as_object().unwrap().clone())
-}
-
-/// Shortcut function to decode a JSON `&str` into an object
-pub fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
-    Ok(serde_json::to_value(v)?)
 }
 
 pub fn initialize(args: Vec<String>, log_file: &File) -> Result<Metadata, Error> {

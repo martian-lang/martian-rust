@@ -4,11 +4,8 @@ use std::path::{Path};
 use failure::Error;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use JsonDict;
 use Metadata;
-use obj_decode;
-use obj_encode;
-use json_decode;
+use utils::{obj_decode, obj_encode};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Resource {
