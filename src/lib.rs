@@ -21,6 +21,7 @@ use backtrace::Backtrace;
 #[macro_use]
 extern crate log;
 extern crate fern;
+extern crate heck;
 
 use std::fs::{File};
 use std::io::{Write};
@@ -34,9 +35,11 @@ use serde::Serialize;
 mod metadata;
 pub use metadata::*;
 
-mod types;
+#[macro_use] mod macros;
+pub mod types;
 pub use types::MartianFileType;
 
+pub mod utils;
 mod stage;
 pub use stage::*;
 
