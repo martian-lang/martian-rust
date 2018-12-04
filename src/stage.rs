@@ -1,11 +1,12 @@
 
 
-use std::path::{Path};
+use std::path::{Path, PathBuf};
 use failure::Error;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use Metadata;
 use utils::{obj_decode, obj_encode};
+use types::MartianMakePath;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Resource {
@@ -88,6 +89,55 @@ impl<T> StageDef<T> {
     }
 }
 
+pub struct MartianRover {
+    files_path: PathBuf,
+    mem_gb: usize,
+    threads: usize,
+}
+
+impl MartianRover {
+    pub fn new(files_path: impl AsRef<Path>, resource: Resource) -> Self {
+        // Resource should both be full populated befor creating a rover
+        assert!(resource.mem_gb.is_some());
+        assert!(resource.threads.is_some());
+        MartianRover {
+            files_path: PathBuf::from(files_path.as_ref()),
+            mem_gb: resource.mem_gb.unwrap(),
+            threads: resource.threads.unwrap(),
+        }
+    }
+    ///
+    /// ```rust
+    /// use martian::{MartianRover, Resource};
+    /// use martian::types::CsvFile;
+    /// use std::path::{Path, PathBuf};
+    /// let resource = Resource::new().mem_gb(2).threads(1);
+    /// let rover = MartianRover::new("/some/path", resource);
+    /// 
+    /// // The right extension is added for types which implement
+    /// // `MartianFileType` trait.
+    /// let csv_file: CsvFile = rover.make_path("summary");
+    /// assert_eq!(csv_file.as_ref(), Path::new("/some/path/summary.csv"));
+    /// 
+    /// // You can also create a file with a custom name by using a
+    /// // PathBuf (preferred) or a String
+    /// let path_name: PathBuf = rover.make_path("bar.lz4");
+    /// assert_eq!(path_name.as_path(), Path::new("/some/path/bar.lz4"));
+    /// 
+    /// let file_name: String = rover.make_path("wl.txt"); // NOT Recommended. Prefer a PathBuf.
+    /// assert_eq!(file_name, String::from("/some/path/wl.txt"));
+    /// ```
+    pub fn make_path<T>(&self, filename: impl AsRef<Path>) -> T where T: MartianMakePath {
+        <T as MartianMakePath>::make_path(&self.files_path, filename)
+    }
+    pub fn get_mem_gb(&self) -> usize {
+        self.mem_gb
+    }
+    pub fn get_threads(&self) -> usize {
+        self.threads
+    }
+}
+
 pub trait MartianStage {
     type StageInputs: Serialize + DeserializeOwned;
     type StageOutputs: Serialize + DeserializeOwned;
@@ -97,15 +147,14 @@ pub trait MartianStage {
     fn split(
         &self,
         args: Self::StageInputs,
-        out_dir: impl AsRef<Path>,
+        rover: MartianRover,
     ) -> Result<StageDef<Self::ChunkInputs>, Error>;
 
     fn main(
         &self,
         args: Self::StageInputs,
         split_args: Self::ChunkInputs,
-        resource: Resource,
-        out_dir: impl AsRef<Path>,
+        rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error>;
 
     fn join(
@@ -113,8 +162,7 @@ pub trait MartianStage {
         args: Self::StageInputs,
         chunk_defs: Vec<Self::ChunkInputs>,
         chunk_outs: Vec<Self::ChunkOutputs>,
-        resource: Resource,
-        out_dir: impl AsRef<Path>,
+        rover: MartianRover,
     ) -> Result<Self::StageOutputs, Error>;
 }
 
@@ -129,10 +177,9 @@ impl<T> RawMartianStage for T where T: MartianStage {
     fn split(&self, mut md: Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
-        let stage_defs = {
-            let out_dir = Path::new(&md.files_path);
-            MartianStage::split(self, args, out_dir)?
-        };
+        let resource: Resource = obj_decode(&args_obj)?;
+        let rover = MartianRover::new(&md.files_path, resource);
+        let stage_defs = MartianStage::split(self, args, rover)?;
         let stage_def_obj = obj_encode(&stage_defs)?;
         md.write_json_obj("stage_defs", &stage_def_obj)?;
         md.complete();
@@ -144,11 +191,9 @@ impl<T> RawMartianStage for T where T: MartianStage {
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
         let split_args: <T as MartianStage>::ChunkInputs = obj_decode(&args_obj)?;
         let resource: Resource = obj_decode(&args_obj)?;
+        let rover = MartianRover::new(&md.files_path, resource);
         // let outs = md.read_json_obj("outs")?;
-        let outs = {
-            let out_dir = Path::new(&md.files_path);
-            MartianStage::main(self, args, split_args, resource, out_dir)?
-        };
+        let outs = MartianStage::main(self, args, split_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
         md.write_json_obj("outs", &outs_obj)?;
         md.complete();
@@ -159,6 +204,7 @@ impl<T> RawMartianStage for T where T: MartianStage {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
         let resource: Resource = obj_decode(&args_obj)?;
+        let rover = MartianRover::new(&md.files_path, resource);
         // let outs = md.read_json_obj("outs")?;
         let chunk_defs = {
             let chunk_defs_obj = md.read_json_obj_array("chunk_defs")?;
@@ -178,10 +224,7 @@ impl<T> RawMartianStage for T where T: MartianStage {
             }
             outs
         };
-        let outs = {
-            let out_dir = Path::new(&md.files_path);
-            MartianStage::join(self, args, chunk_defs, chunk_outs, resource, out_dir)?
-        };
+        let outs = MartianStage::join(self, args, chunk_defs, chunk_outs, rover)?;
         let outs_obj = obj_encode(&outs)?;
         md.write_json_obj("outs", &outs_obj)?;
         md.complete();

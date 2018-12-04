@@ -42,7 +42,7 @@ impl MartianStage for TestStage {
     fn split(
         &self,
         args: Self::StageInputs,
-        out_dir: impl AsRef<Path>,
+        rover: MartianRover,
     ) -> Result<StageDef<Self::ChunkInputs>, Error> {
         // info!("Running split!");
         // let mut cc =  Map::new();
@@ -55,8 +55,7 @@ impl MartianStage for TestStage {
         &self,
         args: Self::StageInputs,
         split_args: Self::ChunkInputs,
-        resource: Resource,
-        out_dir: impl AsRef<Path>,
+        rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error> {
 
         // thread::sleep(time::Duration::from_millis(12000));
@@ -71,8 +70,7 @@ impl MartianStage for TestStage {
         args: Self::StageInputs,
         chunk_defs: Vec<Self::ChunkInputs>,
         chunk_outs: Vec<Self::ChunkOutputs>,
-        resource: Resource,
-        out_dir: impl AsRef<Path>,
+        rover: MartianRover,
     ) -> Result<Self::StageOutputs, Error> {
 
         // call_func(1.0);
