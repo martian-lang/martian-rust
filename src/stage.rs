@@ -15,6 +15,32 @@ pub struct Resource {
     threads: Option<usize>,
 }
 
+impl Resource {
+    pub fn new() -> Self {
+        Resource::default()
+    }
+    pub fn mem_gb(mut self, mem_gb: usize) -> Self {
+        self.mem_gb = Some(mem_gb);
+        self
+    }
+    pub fn threads(mut self, threads: usize) -> Self {
+        self.threads = Some(threads);
+        self
+    }
+    pub fn with_mem_gb(mem_gb: usize) -> Self {
+        Resource {
+            mem_gb: Some(mem_gb),
+            threads: None,
+        }
+    }
+    pub fn with_threads(threads: usize) -> Self {
+        Resource {
+            mem_gb: None,
+            threads: Some(threads),
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct ChunkDef<T> {
     #[serde(flatten)]
@@ -26,7 +52,40 @@ struct ChunkDef<T> {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageDef<T> {
     chunks: Vec<ChunkDef<T>>,
-    join: Resource,
+    join_resource: Resource,
+}
+
+impl<T> StageDef<T> {
+    pub fn new() -> Self {
+        StageDef {
+            chunks: Vec::new(),
+            join_resource: Resource::default(),
+        }
+    }
+
+    pub fn with_join_resource(join_resource: Resource) -> Self {
+        StageDef {
+            chunks: Vec::new(),
+            join_resource,
+        }
+    }
+
+    pub fn add_chunk(&mut self, inputs: T) {
+        let chunk_def = ChunkDef {
+            inputs,
+            resource: Resource::default(),
+        };
+        self.chunks.push(chunk_def);
+    }
+
+    pub fn add_chunk_with_resource(&mut self, inputs: T, resource: Resource) {
+        let chunk_def = ChunkDef { inputs, resource };
+        self.chunks.push(chunk_def);
+    }
+
+    pub fn set_join_resource(&mut self, join_resource: Resource) {
+        self.join_resource = join_resource;
+    }
 }
 
 pub trait MartianStage {
@@ -121,7 +180,7 @@ impl<T> RawMartianStage for T where T: MartianStage {
         };
         let outs = {
             let out_dir = Path::new(&md.files_path);
-            MartianStage::join(self, args, chunk_defs, chunk_outs, resource, out_dir)?;
+            MartianStage::join(self, args, chunk_defs, chunk_outs, resource, out_dir)?
         };
         let outs_obj = obj_encode(&outs)?;
         md.write_json_obj("outs", &outs_obj)?;
