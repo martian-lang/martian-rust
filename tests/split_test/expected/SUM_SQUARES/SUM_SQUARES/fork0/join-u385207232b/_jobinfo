@@ -1,0 +1,110 @@
+{
+    "name": "ID.expected.SUM_SQUARES.SUM_SQUARES.fork0",
+    "pid": 80154,
+    "host": "bespin1.fuzzplex.com",
+    "type": "local",
+    "cwd": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES/fork0/join-u385207232b/files",
+    "rusage": {
+        "self": {
+            "ru_maxrss": 16240,
+            "ru_ixrss": 0,
+            "ru_idrss": 0,
+            "ru_minflt": 625,
+            "ru_majflt": 0,
+            "ru_nswap": 0,
+            "ru_utime": 0.004,
+            "ru_stime": 0,
+            "ru_inblock": 0,
+            "ru_oublock": 48,
+            "ru_msgsnd": 0,
+            "ru_msgrcv": 0,
+            "ru_nsignals": 0
+        },
+        "children": {
+            "ru_maxrss": 5772,
+            "ru_ixrss": 0,
+            "ru_idrss": 0,
+            "ru_minflt": 576,
+            "ru_majflt": 0,
+            "ru_nswap": 0,
+            "ru_utime": 0.004,
+            "ru_stime": 0,
+            "ru_inblock": 8,
+            "ru_oublock": 40,
+            "ru_msgsnd": 0,
+            "ru_msgrcv": 0,
+            "ru_nsignals": 0
+        }
+    },
+    "used_bytes": {
+        "rss": 16629760,
+        "shared": 0,
+        "vmem": 2637824,
+        "text": 2166784,
+        "stack": 323584,
+        "proc_count": 1
+    },
+    "io": {
+        "total": {
+            "read": {
+                "sysc": 6,
+                "bytes": 0
+            },
+            "write": {
+                "sysc": 0,
+                "bytes": 0
+            }
+        },
+        "max": {
+            "read": {
+                "sysc": 690.4700063856968,
+                "bytes": 0
+            },
+            "write": {
+                "sysc": 0,
+                "bytes": 0
+            }
+        },
+        "dev": {
+            "read": {
+                "sysc": 0,
+                "bytes": 0
+            },
+            "write": {
+                "sysc": 0,
+                "bytes": 0
+            }
+        }
+    },
+    "wallclock": {
+        "start": "2018-12-04 17:00:33",
+        "end": "2018-12-04 17:00:33",
+        "duration_seconds": 0.021639873
+    },
+    "threads": 1,
+    "memGB": 2,
+    "profile_mode": "disable",
+    "stackvars_flag": "stackvars",
+    "monitor_flag": "monitor",
+    "invocation": {
+        "call": "SUM_SQUARES",
+        "args": {
+            "values": [
+                1,
+                2,
+                3
+            ]
+        },
+        "sweepargs": [],
+        "incpaths": []
+    },
+    "version": {
+        "martian": "'master-v3.1.0-pre2-5-gd60eb195'",
+        "pipelines": "af683fb-dirty"
+    },
+    "sge": {
+        "SGE_CELL": "default",
+        "SGE_CLUSTER_NAME": "razor",
+        "SGE_ROOT": "/mnt/opt/sge/razor"
+    }
+}

@@ -1,0 +1,23 @@
+# What it tests
+
+Tests for a pipeline with splits.  It consists of a single stage, SUM_SQUARES,
+which splits, computes the square of each argument in the input list in a
+separate chunk, and then sums the chunk outputs in a join phase.
+
+split_test.json tests normal operation
+
+# How to test
+
+1. Compile the example 
+```
+cargo b --release --example sum_sq
+```
+
+2. Copy `target/release/examples/sum_sq` binary to somewhere in your `$PATH` or add that directory to PATH
+
+3. Make sure `mrp` is in your path
+
+4. Run the test
+```
+../martian_test.py split_test.json
+```
