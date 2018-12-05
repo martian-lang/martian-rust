@@ -8,7 +8,7 @@ use Metadata;
 use utils::{obj_decode, obj_encode};
 use types::MartianMakePath;
 
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
 pub struct Resource {
     #[serde(rename = "__mem_gb")]
     mem_gb: Option<usize>,
@@ -95,9 +95,19 @@ pub struct MartianRover {
     threads: usize,
 }
 
+impl<'a> From<&'a Metadata<'a>> for MartianRover {
+    fn from(md: &Metadata) -> MartianRover {
+        MartianRover {
+            files_path: PathBuf::from(&md.files_path),
+            mem_gb: md.get_memory_allocation(),
+            threads: md.get_threads_allocation(),
+        }
+    }
+}
+
 impl MartianRover {
     pub fn new(files_path: impl AsRef<Path>, resource: Resource) -> Self {
-        // Resource should both be full populated befor creating a rover
+        // Resource should both be full populated before creating a rover
         assert!(resource.mem_gb.is_some());
         assert!(resource.threads.is_some());
         MartianRover {
@@ -167,7 +177,7 @@ pub trait MartianStage {
 }
 
 pub trait RawMartianStage {
-    fn split(&self, metdata: Metadata) -> Result<(), Error>;
+    fn split(&self, metadata: Metadata) -> Result<(), Error>;
     fn main(&self, metadata: Metadata) -> Result<(), Error>;
     fn join(&self, metadata: Metadata) -> Result<(), Error>;
 }
@@ -177,8 +187,7 @@ impl<T> RawMartianStage for T where T: MartianStage {
     fn split(&self, mut md: Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
-        let resource: Resource = obj_decode(&args_obj)?;
-        let rover = MartianRover::new(&md.files_path, resource);
+        let rover = MartianRover::from(&md);
         let stage_defs = MartianStage::split(self, args, rover)?;
         let stage_def_obj = obj_encode(&stage_defs)?;
         md.write_json_obj("stage_defs", &stage_def_obj)?;
@@ -190,8 +199,7 @@ impl<T> RawMartianStage for T where T: MartianStage {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
         let split_args: <T as MartianStage>::ChunkInputs = obj_decode(&args_obj)?;
-        let resource: Resource = obj_decode(&args_obj)?;
-        let rover = MartianRover::new(&md.files_path, resource);
+        let rover = MartianRover::from(&md);
         // let outs = md.read_json_obj("outs")?;
         let outs = MartianStage::main(self, args, split_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
@@ -203,8 +211,7 @@ impl<T> RawMartianStage for T where T: MartianStage {
     fn join(&self, mut md: Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
-        let resource: Resource = obj_decode(&args_obj)?;
-        let rover = MartianRover::new(&md.files_path, resource);
+        let rover = MartianRover::from(&md);
         // let outs = md.read_json_obj("outs")?;
         let chunk_defs = {
             let chunk_defs_obj = md.read_json_obj_array("chunk_defs")?;

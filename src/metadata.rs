@@ -193,4 +193,14 @@ impl<'a> Metadata<'a> {
             File::from_raw_fd(4);  // Close the error file descriptor.
         }
     }
+
+    /// Get the amount of memory in GB allocated to this job by the runtime.
+    pub fn get_memory_allocation(&self) -> usize {
+        self.jobinfo.get("memGB").and_then(|x| x.as_u64()).unwrap() as usize
+    }
+
+    /// Get the number of threads allocated to this job by the runtime.
+    pub fn get_threads_allocation(&self) -> usize {
+        self.jobinfo.get("threads").and_then(|x| x.as_u64()).unwrap() as usize
+    }
 }

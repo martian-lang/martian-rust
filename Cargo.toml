@@ -15,3 +15,6 @@ backtrace = "*"
 failure = "*"
 failure_derive = "*"
 heck = "*"
+
+[dev-dependencies]
+docopt = "*"
