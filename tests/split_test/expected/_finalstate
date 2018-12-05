@@ -1,12 +1,12 @@
 [
     {
         "name": "SUM_SQUARES",
-        "fqname": "ID.expected.SUM_SQUARES",
+        "fqname": "ID.pipeline_test.SUM_SQUARES",
         "type": "pipeline",
-        "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES",
+        "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES",
         "state": "complete",
         "metadata": {
-            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES",
+            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES",
             "names": []
         },
         "sweepbindings": [],
@@ -17,7 +17,7 @@
                 "joinDef": null,
                 "state": "complete",
                 "metadata": {
-                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/fork0",
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/fork0",
                     "names": [
                         "complete",
                         "invocation",
@@ -26,11 +26,11 @@
                     ]
                 },
                 "split_metadata": {
-                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/fork0/split",
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/fork0/split",
                     "names": []
                 },
                 "join_metadata": {
-                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/fork0/join",
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/fork0/join",
                     "names": []
                 },
                 "chunks": [],
@@ -74,8 +74,8 @@
         ],
         "edges": [
             {
-                "from": "ID.expected.SUM_SQUARES.SUM_SQUARES",
-                "to": "ID.expected.SUM_SQUARES"
+                "from": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES",
+                "to": "ID.pipeline_test.SUM_SQUARES"
             }
         ],
         "stagecodeLang": "",
@@ -83,12 +83,12 @@
     },
     {
         "name": "SUM_SQUARES",
-        "fqname": "ID.expected.SUM_SQUARES.SUM_SQUARES",
+        "fqname": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES",
         "type": "stage",
-        "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES",
+        "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES",
         "state": "complete",
         "metadata": {
-            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES",
+            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES",
             "names": []
         },
         "sweepbindings": [],
@@ -102,7 +102,7 @@
                 },
                 "state": "complete",
                 "metadata": {
-                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES/fork0",
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0",
                     "names": [
                         "complete",
                         "invocation",
@@ -111,7 +111,7 @@
                     ]
                 },
                 "split_metadata": {
-                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES/fork0/split",
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/split",
                     "names": [
                         "args",
                         "complete",
@@ -123,7 +123,7 @@
                     ]
                 },
                 "join_metadata": {
-                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES/fork0/join",
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/join",
                     "names": [
                         "args",
                         "chunk_defs",
@@ -146,7 +146,7 @@
                         },
                         "state": "complete",
                         "metadata": {
-                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES/fork0/chnk0",
+                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/chnk0",
                             "names": [
                                 "args",
                                 "complete",
@@ -167,7 +167,7 @@
                         },
                         "state": "complete",
                         "metadata": {
-                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES/fork0/chnk1",
+                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/chnk1",
                             "names": [
                                 "args",
                                 "complete",
@@ -188,7 +188,7 @@
                         },
                         "state": "complete",
                         "metadata": {
-                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/expected/SUM_SQUARES/SUM_SQUARES/fork0/chnk2",
+                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/chnk2",
                             "names": [
                                 "args",
                                 "complete",

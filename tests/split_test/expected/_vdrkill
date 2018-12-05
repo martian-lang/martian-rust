@@ -1,21 +1,21 @@
 {
     "count": 0,
     "size": 0,
-    "timestamp": "2018-12-04 17:00:36",
+    "timestamp": "2018-12-04 17:20:25",
     "paths": null,
     "errors": null,
     "events": [
         {
-            "Timestamp": "2018-12-04T17:00:27-08:00",
-            "DeltaBytes": 3976
+            "Timestamp": "2018-12-04T17:20:16-08:00",
+            "DeltaBytes": 4009
         },
         {
-            "Timestamp": "2018-12-04T17:00:30-08:00",
-            "DeltaBytes": 11235
+            "Timestamp": "2018-12-04T17:20:19-08:00",
+            "DeltaBytes": 11348
         },
         {
-            "Timestamp": "2018-12-04T17:00:33-08:00",
-            "DeltaBytes": 4064
+            "Timestamp": "2018-12-04T17:20:22-08:00",
+            "DeltaBytes": 4100
         }
     ]
 }

@@ -8,33 +8,35 @@ use Metadata;
 use utils::{obj_decode, obj_encode};
 use types::MartianMakePath;
 
+/// Memory/ thread request can be negative in matrian 
+/// http://martian-lang.org/advanced-features/#resource-consumption
 #[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
 pub struct Resource {
     #[serde(rename = "__mem_gb")]
-    mem_gb: Option<usize>,
+    mem_gb: Option<isize>,
     #[serde(rename = "__threads")]
-    threads: Option<usize>,
+    threads: Option<isize>,
 }
 
 impl Resource {
     pub fn new() -> Self {
         Resource::default()
     }
-    pub fn mem_gb(mut self, mem_gb: usize) -> Self {
+    pub fn mem_gb(mut self, mem_gb: isize) -> Self {
         self.mem_gb = Some(mem_gb);
         self
     }
-    pub fn threads(mut self, threads: usize) -> Self {
+    pub fn threads(mut self, threads: isize) -> Self {
         self.threads = Some(threads);
         self
     }
-    pub fn with_mem_gb(mem_gb: usize) -> Self {
+    pub fn with_mem_gb(mem_gb: isize) -> Self {
         Resource {
             mem_gb: Some(mem_gb),
             threads: None,
         }
     }
-    pub fn with_threads(threads: usize) -> Self {
+    pub fn with_threads(threads: isize) -> Self {
         Resource {
             mem_gb: None,
             threads: Some(threads),
@@ -109,11 +111,13 @@ impl MartianRover {
     pub fn new(files_path: impl AsRef<Path>, resource: Resource) -> Self {
         // Resource should both be full populated before creating a rover
         assert!(resource.mem_gb.is_some());
+        assert!(resource.mem_gb.unwrap() >= 0);
         assert!(resource.threads.is_some());
+        assert!(resource.threads.unwrap() >= 0);
         MartianRover {
             files_path: PathBuf::from(files_path.as_ref()),
-            mem_gb: resource.mem_gb.unwrap(),
-            threads: resource.threads.unwrap(),
+            mem_gb: resource.mem_gb.unwrap() as usize,
+            threads: resource.threads.unwrap() as usize,
         }
     }
     ///
