@@ -13,9 +13,9 @@ split_test.json tests normal operation
 cargo b --release --example sum_sq
 ```
 
-2. Copy `target/release/examples/sum_sq` binary to somewhere in your `$PATH` or add that directory to PATH
+2. Navigate to the `split_test` directory
 
-3. Make sure `mrp` is in your path
+3. Make sure `mrp` is in your path. You also need `realpath`
 
 4. Run the test
 ```
