@@ -1,0 +1,20 @@
+# What it tests
+
+Tests for a pipeline with just a main.  It consists of a single stage, SUM_SQUARES,
+which computes the sum of square the input list.
+
+# How to test
+
+1. Compile the example 
+```
+cargo b --release --example sum_sq_main
+```
+
+2. Navigate to the `main_test` directory
+
+3. Make sure `mrp` is in your path. You also need `realpath`
+
+4. Run the test
+```
+../martian_test.py main_test.json
+```

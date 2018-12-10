@@ -1,0 +1,20 @@
+# A super-simple test pipeline with splits.
+
+# Computes the sum of each value in a separate chunk, and
+# sums the squares in the join phase.
+stage SUM_SQUARES(
+    in  float[] input,
+    out float   sum,
+    src comp    "sum_sq_main martian sum_squares",
+) using (
+    mem_gb = 1,
+)
+
+
+call SUM_SQUARES(        
+    input = [
+        1,
+        2,
+        3,
+    ],
+)
