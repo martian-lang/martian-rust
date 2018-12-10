@@ -2,7 +2,11 @@
 use std::path::{Path, PathBuf};
 
 #[derive(Serialize, Deserialize)]
-pub struct MartianVoid;
+pub struct MartianVoid {
+    // Adding a field as a hack so that this can be deserialized
+    // from the json args object martian creates
+    __null__: Option<bool>,
+}
 
 pub trait MartianFileType {
     fn extension() -> &'static str;

@@ -6,7 +6,7 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use Metadata;
 use utils::{obj_decode, obj_encode};
-use types::MartianMakePath;
+use types::{MartianMakePath, MartianVoid};
 
 /// Memory/ thread request can be negative in matrian 
 /// http://martian-lang.org/advanced-features/#resource-consumption
@@ -152,6 +152,17 @@ impl MartianRover {
     }
 }
 
+pub trait MartianMain {
+    type StageInputs: Serialize + DeserializeOwned;
+    type StageOutputs: Serialize + DeserializeOwned;
+
+    fn main(
+        &self,
+        args: Self::StageInputs,
+        rover: MartianRover,
+    ) -> Result<Self::StageOutputs, Error>;
+}
+
 pub trait MartianStage {
     type StageInputs: Serialize + DeserializeOwned;
     type StageOutputs: Serialize + DeserializeOwned;
@@ -184,6 +195,40 @@ pub trait RawMartianStage {
     fn split(&self, metadata: Metadata) -> Result<(), Error>;
     fn main(&self, metadata: Metadata) -> Result<(), Error>;
     fn join(&self, metadata: Metadata) -> Result<(), Error>;
+}
+
+impl<T> MartianStage for T where T: MartianMain {
+    type StageInputs = <T as MartianMain>::StageInputs;
+    type StageOutputs = MartianVoid;
+    type ChunkInputs = MartianVoid;
+    type ChunkOutputs = <T as MartianMain>::StageOutputs;
+
+    fn split(
+        &self,
+        _: Self::StageInputs,
+        _: MartianRover
+    ) -> Result<StageDef<MartianVoid>, Error> {
+        unimplemented!()
+    }
+
+    fn main(
+        &self,
+        args: Self::StageInputs,
+        _: MartianVoid,
+        rover: MartianRover,
+    ) -> Result<Self::ChunkOutputs, Error> {
+        <T as MartianMain>::main(self, args, rover)
+    }
+
+    fn join(
+        &self,
+        _: Self::StageInputs,
+        _: Vec<MartianVoid>,
+        _: Vec<Self::ChunkOutputs>,
+        _: MartianRover,
+    ) -> Result<MartianVoid, Error> {
+        unimplemented!()
+    }
 }
 
 impl<T> RawMartianStage for T where T: MartianStage {
