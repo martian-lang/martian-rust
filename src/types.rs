@@ -40,3 +40,10 @@ impl<T: MartianFileType> MartianMakePath for T {
 martian_filetype!(CsvFile, "csv");
 martian_filetype!(JsonFile, "json");
 martian_filetype!(BamFile, "bam");
+martian_filetype!(BamIndexFile, "bam.bai");
+martian_filetype!(FastaFile, "fasta");
+martian_filetype!(FastaIndexFile, "fasta.fai");
+martian_filetype!(FastqFile, "fastq");
+martian_filetype!(H5File, "h5");
+martian_filetype!(TxtFile, "txt");
+martian_filetype!(TsvFile, "tsv");
