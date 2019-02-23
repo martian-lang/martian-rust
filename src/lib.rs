@@ -5,6 +5,7 @@ extern crate chrono;
 extern crate backtrace;
 extern crate failure;
 extern crate serde;
+extern crate tempdir;
 
 #[macro_use] extern crate serde_json;
 #[macro_use] extern crate serde_derive;
@@ -40,6 +41,9 @@ pub use types::MartianFileType;
 pub mod utils;
 mod stage;
 pub use stage::*;
+
+#[cfg(test)]
+mod test;
 
 // Ways a stage can fail.
 #[derive(Debug, Fail)]

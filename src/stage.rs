@@ -298,6 +298,8 @@ fn prep_path(path: impl AsRef<Path>, subdir: &str) -> Result<PathBuf, Error> {
     Ok(sub_path)
 }
 
+/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+/// Executes `stage` with arguments `args` in temporary directory that will always be cleaned up.
 pub fn test_run_stage_tmpdir<T: MartianStage>(stage: T, args: T::StageInputs) -> Result<T::StageOutputs, Error>
 where T::ChunkInputs: Clone, T::StageInputs: Clone 
 {
@@ -305,7 +307,8 @@ where T::ChunkInputs: Clone, T::StageInputs: Clone
     test_run_stage(tmp_dir.path(), stage, args)
 }
 
-/// In-process stage runner, useful for writing unit tests that excercise one of more stages purely from Rust.
+/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+/// Executes `stage` with arguments `args` in directory `path`.
 pub fn test_run_stage<T: MartianStage>(path: impl AsRef<Path>, stage: T, args: T::StageInputs) -> Result<T::StageOutputs, Error>
 where T::ChunkInputs: Clone, T::StageInputs: Clone 
 {
