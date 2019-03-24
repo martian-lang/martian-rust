@@ -55,6 +55,7 @@ struct ChunkDef<T> {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageDef<T> {
     chunks: Vec<ChunkDef<T>>,
+    #[serde(rename = "join")]
     join_resource: Resource,
 }
 
