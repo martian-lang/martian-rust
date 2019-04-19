@@ -282,11 +282,11 @@ pub fn handle_stage_error(err: Error) {
         &Ok(ref e) => {
             match e {
                 &StageError::MartianExit{ message: ref m } => {
-                    write_errors(&format!("ASSERT: {}", m))
+                    write_errors(&format!("ASSERT:{}", m))
                 }
                 // No difference here at this point
                 &StageError::PipelineError{ message: ref m } => {
-                    write_errors(&format!("ASSERT: {}", m))
+                    write_errors(&format!("ASSERT:{}", m))
                 }
             }
         }
