@@ -430,14 +430,14 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<MartianSta
         let msg =
             match info.location() {
                 Some(location) => {
-                    format!("thread '{}' panicked at '{}': {}:{}, {:?}",
+                    format!("thread '{}' panicked with '{}' at {}:{}, {:?}",
                            thread,
                            msg,
                            location.file(),
                            location.line(),
                            backtrace)
                 }
-                None => format!("thread '{}' panicked at '{}'{:?}", thread, msg, backtrace),
+                None => format!("thread '{}' panicked with '{}', {:?}", thread, msg, backtrace),
             };
 
         error!("{}", msg);
