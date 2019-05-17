@@ -16,7 +16,7 @@
       "value": 3.0
     }
   ],
-  "join_resource": {
+  "join": {
     "__mem_gb": null,
     "__threads": null
   }
