@@ -137,7 +137,7 @@ impl MartianRover {
     /// use martian::{MartianRover, Resource};
     /// use martian::types::CsvFile;
     /// use std::path::{Path, PathBuf};
-    /// let resource = Resource::new().mem_gb(2).threads(1);
+    /// let resource = Resource::new().mem_gb(2).threads(1).vmem_gb(5);
     /// let rover = MartianRover::new("/some/path", resource);
     /// 
     /// // The right extension is added for types which implement
