@@ -16,6 +16,8 @@ pub struct Resource {
     mem_gb: Option<isize>,
     #[serde(rename = "__threads")]
     threads: Option<isize>,
+    #[serde(rename = "__vmem_gb")]
+    vmem_gb: Option<isize>,
 }
 
 impl Resource {
@@ -30,16 +32,22 @@ impl Resource {
         self.threads = Some(threads);
         self
     }
+    pub fn vmem_gb(mut self, vmem_gb: isize) -> Self {
+        self.vmem_gb = Some(vmem_gb);
+        self
+    }
     pub fn with_mem_gb(mem_gb: isize) -> Self {
         Resource {
             mem_gb: Some(mem_gb),
             threads: None,
+            vmem_gb: None,
         }
     }
     pub fn with_threads(threads: isize) -> Self {
         Resource {
             mem_gb: None,
             threads: Some(threads),
+            vmem_gb: None,
         }
     }
 }
@@ -96,6 +104,7 @@ pub struct MartianRover {
     files_path: PathBuf,
     mem_gb: usize,
     threads: usize,
+    vmem_gb: usize,
 }
 
 impl<'a> From<&'a Metadata<'a>> for MartianRover {
@@ -104,6 +113,7 @@ impl<'a> From<&'a Metadata<'a>> for MartianRover {
             files_path: PathBuf::from(&md.files_path),
             mem_gb: md.get_memory_allocation(),
             threads: md.get_threads_allocation(),
+            vmem_gb: md.get_virtual_memory_allocation(),
         }
     }
 }
@@ -119,6 +129,7 @@ impl MartianRover {
             files_path: PathBuf::from(files_path.as_ref()),
             mem_gb: resource.mem_gb.unwrap() as usize,
             threads: resource.threads.unwrap() as usize,
+            vmem_gb: resource.vmem_gb.unwrap() as usize,
         }
     }
     ///
@@ -150,6 +161,9 @@ impl MartianRover {
     }
     pub fn get_threads(&self) -> usize {
         self.threads
+    }
+    pub fn get_vmem_gb(&self) -> usize {
+        self.vmem_gb
     }
 }
 

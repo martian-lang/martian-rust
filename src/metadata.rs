@@ -203,4 +203,9 @@ impl<'a> Metadata<'a> {
     pub fn get_threads_allocation(&self) -> usize {
         self.jobinfo.get("threads").and_then(|x| x.as_u64()).unwrap() as usize
     }
+
+    /// Get the amount of virtual memory in GB allocated to this job by the runtime.
+    pub fn get_virtual_memory_allocation(&self) -> usize {
+        self.jobinfo.get("vmemGB").and_then(|x| x.as_u64()).unwrap() as usize
+    }
 }
