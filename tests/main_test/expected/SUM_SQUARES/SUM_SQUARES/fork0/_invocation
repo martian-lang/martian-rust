@@ -1,0 +1,9 @@
+@include "pipeline.mro"
+
+call SUM_SQUARES(
+    input = [
+        1,
+        2,
+        3
+    ],
+)

@@ -9,7 +9,12 @@ log = "0.4"
 fern = "0.5"
 chrono = "*"
 serde = "^1.0.8"
+serde_derive = "^1.0.8"
 serde_json = "*"
 backtrace = "*"
 failure = "*"
 failure_derive = "*"
+heck = "*"
+
+[dev-dependencies]
+docopt = "*"

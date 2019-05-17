@@ -1,0 +1,168 @@
+[
+    {
+        "name": "SUM_SQUARES",
+        "fqname": "ID.pipeline_test.SUM_SQUARES",
+        "type": "pipeline",
+        "forks": [
+            {
+                "stages": [
+                    {
+                        "name": "SUM_SQUARES",
+                        "fqname": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES",
+                        "forki": 0
+                    }
+                ],
+                "index": 0,
+                "chunks": [],
+                "split_stats": null,
+                "join_stats": null,
+                "fork_stats": {
+                    "num_jobs": 1,
+                    "num_threads": 1,
+                    "duration": 0.026953575,
+                    "core_hours": 0.0000074871041666666665,
+                    "maxrss": 13484,
+                    "maxvmem": 2564,
+                    "in_blocks": 8,
+                    "out_blocks": 88,
+                    "total_blocks": 96,
+                    "in_blocks_rate": 296.8066388224939,
+                    "out_blocks_rate": 3264.8730270474325,
+                    "total_blocks_rate": 3561.6796658699263,
+                    "in_bytes": 0,
+                    "out_bytes": 0,
+                    "in_bytes_rate": 0,
+                    "out_bytes_rate": 0,
+                    "in_bytes_peak": 0,
+                    "out_bytes_peak": 0,
+                    "start": "2018-12-10T13:03:59Z",
+                    "end": "2018-12-10T13:03:59Z",
+                    "walltime": 0,
+                    "usertime": 0.008,
+                    "systemtime": 0,
+                    "total_files": 0,
+                    "total_bytes": 0,
+                    "output_files": 0,
+                    "output_bytes": 0,
+                    "vdr_files": 0,
+                    "vdr_bytes": 0,
+                    "in_bytes_dev": 0,
+                    "out_bytes_dev": 0
+                }
+            }
+        ],
+        "maxbytes": 3946,
+        "bytehist": [
+            {
+                "ts": "2018-12-10T13:03:59-08:00",
+                "bytes": 3754,
+                "desc": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES alloc"
+            },
+            {
+                "ts": "2018-12-10T13:04:02-08:00",
+                "bytes": 3946,
+                "desc": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES alloc"
+            }
+        ],
+        "highmem": {
+            "rss": 0,
+            "shared": 0,
+            "vmem": 0,
+            "text": 0,
+            "stack": 0,
+            "proc_count": 18
+        }
+    },
+    {
+        "name": "SUM_SQUARES",
+        "fqname": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES",
+        "type": "stage",
+        "forks": [
+            {
+                "stages": [
+                    {
+                        "name": "SUM_SQUARES",
+                        "fqname": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES",
+                        "forki": 0
+                    }
+                ],
+                "index": 0,
+                "chunks": [
+                    {
+                        "index": 0,
+                        "chunk_stats": {
+                            "num_jobs": 1,
+                            "num_threads": 1,
+                            "duration": 0.026953575,
+                            "core_hours": 0.0000074871041666666665,
+                            "maxrss": 13484,
+                            "maxvmem": 2564,
+                            "in_blocks": 8,
+                            "out_blocks": 88,
+                            "total_blocks": 96,
+                            "in_blocks_rate": 296.8066388224939,
+                            "out_blocks_rate": 3264.8730270474325,
+                            "total_blocks_rate": 3561.6796658699263,
+                            "in_bytes": 0,
+                            "out_bytes": 0,
+                            "in_bytes_rate": 0,
+                            "out_bytes_rate": 0,
+                            "in_bytes_peak": 0,
+                            "out_bytes_peak": 0,
+                            "start": "2018-12-10T13:03:59Z",
+                            "end": "2018-12-10T13:03:59Z",
+                            "walltime": 0,
+                            "usertime": 0.008,
+                            "systemtime": 0,
+                            "total_files": 0,
+                            "total_bytes": 0,
+                            "output_files": 0,
+                            "output_bytes": 0,
+                            "vdr_files": 0,
+                            "vdr_bytes": 0,
+                            "in_bytes_dev": 0,
+                            "out_bytes_dev": 0
+                        }
+                    }
+                ],
+                "split_stats": null,
+                "join_stats": null,
+                "fork_stats": {
+                    "num_jobs": 1,
+                    "num_threads": 1,
+                    "duration": 0.026953575,
+                    "core_hours": 0.0000074871041666666665,
+                    "maxrss": 13484,
+                    "maxvmem": 2564,
+                    "in_blocks": 8,
+                    "out_blocks": 88,
+                    "total_blocks": 96,
+                    "in_blocks_rate": 296.8066388224939,
+                    "out_blocks_rate": 3264.8730270474325,
+                    "total_blocks_rate": 3561.6796658699263,
+                    "in_bytes": 0,
+                    "out_bytes": 0,
+                    "in_bytes_rate": 0,
+                    "out_bytes_rate": 0,
+                    "in_bytes_peak": 0,
+                    "out_bytes_peak": 0,
+                    "start": "2018-12-10T13:03:59Z",
+                    "end": "2018-12-10T13:03:59Z",
+                    "walltime": 0,
+                    "usertime": 0.008,
+                    "systemtime": 0,
+                    "total_files": 0,
+                    "total_bytes": 0,
+                    "output_files": 0,
+                    "output_bytes": 0,
+                    "vdr_files": 0,
+                    "vdr_bytes": 0,
+                    "in_bytes_dev": 0,
+                    "out_bytes_dev": 0
+                }
+            }
+        ],
+        "maxbytes": 0,
+        "bytehist": null
+    }
+]

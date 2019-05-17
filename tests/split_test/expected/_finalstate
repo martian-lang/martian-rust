@@ -1,0 +1,232 @@
+[
+    {
+        "name": "SUM_SQUARES",
+        "fqname": "ID.pipeline_test.SUM_SQUARES",
+        "type": "pipeline",
+        "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES",
+        "state": "complete",
+        "metadata": {
+            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES",
+            "names": []
+        },
+        "sweepbindings": [],
+        "forks": [
+            {
+                "index": 0,
+                "argPermute": {},
+                "joinDef": null,
+                "state": "complete",
+                "metadata": {
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/fork0",
+                    "names": [
+                        "complete",
+                        "invocation",
+                        "outs",
+                        "vdrkill"
+                    ]
+                },
+                "split_metadata": {
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/fork0/split",
+                    "names": []
+                },
+                "join_metadata": {
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/fork0/join",
+                    "names": []
+                },
+                "chunks": [],
+                "bindings": {
+                    "Argument": [
+                        {
+                            "id": "values",
+                            "type": "float",
+                            "valexp": "",
+                            "mode": "value",
+                            "output": "",
+                            "sweep": false,
+                            "sweepRootId": "values",
+                            "node": "SUM_SQUARES",
+                            "matchedFork": 0,
+                            "value": [
+                                1,
+                                2,
+                                3
+                            ],
+                            "waiting": false
+                        }
+                    ],
+                    "Return": [
+                        {
+                            "id": "sum",
+                            "type": "float",
+                            "valexp": "SUM_SQUARES.sum",
+                            "mode": "reference",
+                            "output": "sum",
+                            "sweep": false,
+                            "sweepRootId": "sum",
+                            "node": "SUM_SQUARES",
+                            "matchedFork": 0,
+                            "value": 14.0,
+                            "waiting": false
+                        }
+                    ]
+                }
+            }
+        ],
+        "edges": [
+            {
+                "from": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES",
+                "to": "ID.pipeline_test.SUM_SQUARES"
+            }
+        ],
+        "stagecodeLang": "",
+        "stagecodeCmd": ""
+    },
+    {
+        "name": "SUM_SQUARES",
+        "fqname": "ID.pipeline_test.SUM_SQUARES.SUM_SQUARES",
+        "type": "stage",
+        "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES",
+        "state": "complete",
+        "metadata": {
+            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES",
+            "names": []
+        },
+        "sweepbindings": [],
+        "forks": [
+            {
+                "index": 0,
+                "argPermute": {},
+                "joinDef": {
+                    "__threads": 1,
+                    "__mem_gb": 2
+                },
+                "state": "complete",
+                "metadata": {
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0",
+                    "names": [
+                        "complete",
+                        "invocation",
+                        "outs",
+                        "vdrkill"
+                    ]
+                },
+                "split_metadata": {
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/split",
+                    "names": [
+                        "args",
+                        "complete",
+                        "jobinfo",
+                        "log",
+                        "stage_defs",
+                        "stderr",
+                        "stdout"
+                    ]
+                },
+                "join_metadata": {
+                    "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/join",
+                    "names": [
+                        "args",
+                        "chunk_defs",
+                        "chunk_outs",
+                        "complete",
+                        "jobinfo",
+                        "log",
+                        "outs",
+                        "stderr",
+                        "stdout"
+                    ]
+                },
+                "chunks": [
+                    {
+                        "index": 0,
+                        "chunkDef": {
+                            "__mem_gb": 1,
+                            "__threads": 1,
+                            "value": 1.0
+                        },
+                        "state": "complete",
+                        "metadata": {
+                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/chnk0",
+                            "names": [
+                                "args",
+                                "complete",
+                                "jobinfo",
+                                "log",
+                                "outs",
+                                "stderr",
+                                "stdout"
+                            ]
+                        }
+                    },
+                    {
+                        "index": 1,
+                        "chunkDef": {
+                            "__mem_gb": 1,
+                            "__threads": 1,
+                            "value": 2.0
+                        },
+                        "state": "complete",
+                        "metadata": {
+                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/chnk1",
+                            "names": [
+                                "args",
+                                "complete",
+                                "jobinfo",
+                                "log",
+                                "outs",
+                                "stderr",
+                                "stdout"
+                            ]
+                        }
+                    },
+                    {
+                        "index": 2,
+                        "chunkDef": {
+                            "__mem_gb": 1,
+                            "__threads": 1,
+                            "value": 3.0
+                        },
+                        "state": "complete",
+                        "metadata": {
+                            "path": "/mnt/home/sreenath.krishnan/codes/cargo_martian_dev/martian-rust/tests/split_test/pipeline_test/SUM_SQUARES/SUM_SQUARES/fork0/chnk2",
+                            "names": [
+                                "args",
+                                "complete",
+                                "jobinfo",
+                                "log",
+                                "outs",
+                                "stderr",
+                                "stdout"
+                            ]
+                        }
+                    }
+                ],
+                "bindings": {
+                    "Argument": [
+                        {
+                            "id": "values",
+                            "type": "float",
+                            "valexp": "",
+                            "mode": "value",
+                            "output": "",
+                            "sweep": false,
+                            "sweepRootId": "values",
+                            "node": "SUM_SQUARES",
+                            "matchedFork": 0,
+                            "value": [
+                                1,
+                                2,
+                                3
+                            ],
+                            "waiting": false
+                        }
+                    ],
+                    "Return": []
+                }
+            }
+        ],
+        "edges": [],
+        "stagecodeLang": "Compiled",
+        "stagecodeCmd": "/mnt/home/sreenath/bin/sum_sq martian sum_squares"
+    }
+]
