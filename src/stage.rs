@@ -165,6 +165,9 @@ impl MartianRover {
     pub fn get_vmem_gb(&self) -> usize {
         self.vmem_gb
     }
+    pub fn files_path(&self) -> &Path {
+        self.files_path.as_path()
+    }
 }
 
 pub trait MartianMain {
