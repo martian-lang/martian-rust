@@ -1,7 +1,4 @@
 
-// Enable this if you are using mro_using attribute to specify
-#![cfg_attr(feature = "mro", feature(custom_attribute))]
-
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
@@ -48,7 +45,7 @@ fn main() -> Result<(), Error> {
     ];
 
     // Call the martian adapter
-    martian::martian_main(args.arg_adapter, registry)?;
+    martian::martian_main_with_log_level(args.arg_adapter, registry, martian::LevelFilter::Off)?;
 
     Ok(())
 }

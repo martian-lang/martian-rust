@@ -9,3 +9,4 @@ This is an adapter file for Rust stages to integrate with the
 ## TODO
 
 [] Allow negative mem and threads
+[] Support vmem_gb

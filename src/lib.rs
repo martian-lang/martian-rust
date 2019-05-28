@@ -44,6 +44,7 @@ pub use stage::*;
 
 #[cfg(test)]
 mod test;
+pub use log::LevelFilter;
 
 // Ways a stage can fail.
 #[derive(Debug, Fail)]
@@ -115,9 +116,7 @@ pub fn log_panic(panic: &panic::PanicInfo) {
     let _ = write_errors(&msg);
 }
 
-fn setup_logging(log_file: &File) {
-
-    let level = log::LevelFilter::Debug;
+fn setup_logging(log_file: &File, level: LevelFilter) {
 
     let base_config = fern::Dispatch::new().level(level);
 
@@ -137,6 +136,14 @@ fn setup_logging(log_file: &File) {
 }
 
 pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<RawMartianStage>>) -> Result<(), Error> {
+    martian_main_with_log_level(args, stage_map, LevelFilter::Debug)
+}
+
+pub fn martian_main_with_log_level(
+        args: Vec<String>, 
+        stage_map: HashMap<String, Box<RawMartianStage>>, 
+        level: LevelFilter
+    ) -> Result<(), Error> {
 
     info!("got args: {:?}", args);
 
@@ -147,7 +154,7 @@ pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<RawMartian
     };
 
     // Hook rust logging up to Martian _log file
-    setup_logging(&log_file);
+    setup_logging(&log_file, level);
 
     // setup Martian metadata
     let md = initialize(args, &log_file)?;

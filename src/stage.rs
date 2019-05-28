@@ -16,6 +16,8 @@ pub struct Resource {
     mem_gb: Option<isize>,
     #[serde(rename = "__threads")]
     threads: Option<isize>,
+    #[serde(rename = "__vmem_gb")]
+    vmem_gb: Option<isize>,
 }
 
 impl Resource {
@@ -30,16 +32,22 @@ impl Resource {
         self.threads = Some(threads);
         self
     }
+    pub fn vmem_gb(mut self, vmem_gb: isize) -> Self {
+        self.vmem_gb = Some(vmem_gb);
+        self
+    }
     pub fn with_mem_gb(mem_gb: isize) -> Self {
         Resource {
             mem_gb: Some(mem_gb),
             threads: None,
+            vmem_gb: None,
         }
     }
     pub fn with_threads(threads: isize) -> Self {
         Resource {
             mem_gb: None,
             threads: Some(threads),
+            vmem_gb: None,
         }
     }
 }
@@ -55,6 +63,7 @@ struct ChunkDef<T> {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageDef<T> {
     chunks: Vec<ChunkDef<T>>,
+    #[serde(rename = "join")]
     join_resource: Resource,
 }
 
@@ -95,6 +104,7 @@ pub struct MartianRover {
     files_path: PathBuf,
     mem_gb: usize,
     threads: usize,
+    vmem_gb: usize,
 }
 
 impl<'a> From<&'a Metadata<'a>> for MartianRover {
@@ -103,6 +113,7 @@ impl<'a> From<&'a Metadata<'a>> for MartianRover {
             files_path: PathBuf::from(&md.files_path),
             mem_gb: md.get_memory_allocation(),
             threads: md.get_threads_allocation(),
+            vmem_gb: md.get_virtual_memory_allocation(),
         }
     }
 }
@@ -118,6 +129,7 @@ impl MartianRover {
             files_path: PathBuf::from(files_path.as_ref()),
             mem_gb: resource.mem_gb.unwrap() as usize,
             threads: resource.threads.unwrap() as usize,
+            vmem_gb: resource.vmem_gb.unwrap() as usize,
         }
     }
     ///
@@ -125,7 +137,7 @@ impl MartianRover {
     /// use martian::{MartianRover, Resource};
     /// use martian::types::CsvFile;
     /// use std::path::{Path, PathBuf};
-    /// let resource = Resource::new().mem_gb(2).threads(1);
+    /// let resource = Resource::new().mem_gb(2).threads(1).vmem_gb(5);
     /// let rover = MartianRover::new("/some/path", resource);
     /// 
     /// // The right extension is added for types which implement
@@ -149,6 +161,12 @@ impl MartianRover {
     }
     pub fn get_threads(&self) -> usize {
         self.threads
+    }
+    pub fn get_vmem_gb(&self) -> usize {
+        self.vmem_gb
+    }
+    pub fn files_path(&self) -> &Path {
+        self.files_path.as_path()
     }
 }
 
@@ -288,7 +306,6 @@ impl<T> RawMartianStage for T where T: MartianStage {
     }
 }
 
-
 // Prep a path for a test run of a stage.
 fn prep_path(path: impl AsRef<Path>, subdir: &str) -> Result<PathBuf, Error> {
     let mut sub_path = PathBuf::from(path.as_ref());
@@ -314,7 +331,7 @@ where T::ChunkInputs: Clone, T::StageInputs: Clone
 {
 
     // Use default resource for split
-    let default_resource = Resource::with_mem_gb(1).threads(1);
+    let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
     let split_path = prep_path(path.as_ref(), "split")?;
     let rover = MartianRover::new(split_path, default_resource);
 
@@ -352,7 +369,7 @@ where T::StageInputs: Clone
 {
 
     // Use default resource for split
-    let default_resource = Resource::with_mem_gb(1).threads(1);
+    let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
     let main_path = prep_path(path.as_ref(), "main")?;
     let rover = MartianRover::new(main_path, default_resource);
 
@@ -365,6 +382,10 @@ fn fill_defaults(mut resource: Resource) -> Resource {
 
     if resource.mem_gb.is_none() {
         resource.mem_gb.replace(1);
+    }
+
+    if resource.vmem_gb.is_none() {
+        resource.vmem_gb.replace(2);
     }
 
     if resource.threads.is_none() {
