@@ -315,23 +315,23 @@ where T::ChunkInputs: Clone, T::StageInputs: Clone
 
     // Use default resource for split
     let default_resource = Resource::with_mem_gb(1).threads(1);
-
     let split_path = prep_path(path.as_ref(), "split")?;
     let rover = MartianRover::new(split_path, default_resource);
 
+    println!("running split");
     let stage_defs = stage.split(args.clone(), rover)?;
 
     let mut chunk_outs = Vec::new();
 
     for (chunk_idx, chunk) in stage_defs.chunks.iter().enumerate() {
-        println!("running stage {}", chunk_idx);
+        println!("running chunk {}", chunk_idx);
         let chunk_path = prep_path(path.as_ref(), &format!("chnk{}", chunk_idx))?;
         let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
         let outs = stage.main(args.clone(), chunk.inputs.clone(), rover)?;
         chunk_outs.push(outs);
     }
 
-    let join_path = prep_path(path, "join")?;
+    let join_path = prep_path(path.as_ref(), "join")?;
     let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
     
     let mut chunk_defs = Vec::new();
@@ -339,7 +339,25 @@ where T::ChunkInputs: Clone, T::StageInputs: Clone
         chunk_defs.push(c.inputs);
     }
 
+    println!("running join");
     let outs = stage.join(args, chunk_defs, chunk_outs, rover)?;
+    Ok(outs)
+}
+
+/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+/// Executes `stage` with arguments `args` in directory `path`. Use this method with main-only stages that
+/// implement MartianMain
+pub fn test_run_main_stage<T: MartianMain>(path: impl AsRef<Path>, stage: T, args: T::StageInputs) -> Result<T::StageOutputs, Error>
+where T::StageInputs: Clone 
+{
+
+    // Use default resource for split
+    let default_resource = Resource::with_mem_gb(1).threads(1);
+    let main_path = prep_path(path.as_ref(), "main")?;
+    let rover = MartianRover::new(main_path, default_resource);
+
+    println!("running main");
+    let outs = stage.main(args.clone(), rover)?;
     Ok(outs)
 }
 
