@@ -46,8 +46,6 @@ mod stage;
 pub mod utils;
 pub use stage::*;
 
-#[cfg(test)]
-mod test;
 pub use log::LevelFilter;
 
 // Ways a stage can fail.
