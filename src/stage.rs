@@ -1,14 +1,12 @@
-
-
-use std::path::{Path, PathBuf};
 use failure::Error;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use Metadata;
-use utils::{obj_decode, obj_encode};
+use std::path::{Path, PathBuf};
 use types::{MartianMakePath, MartianVoid};
+use utils::{obj_decode, obj_encode};
+use Metadata;
 
-/// Memory/ thread request can be negative in matrian 
+/// Memory/ thread request can be negative in matrian
 /// http://martian-lang.org/advanced-features/#resource-consumption
 #[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
 pub struct Resource {
@@ -139,21 +137,24 @@ impl MartianRover {
     /// use std::path::{Path, PathBuf};
     /// let resource = Resource::new().mem_gb(2).threads(1).vmem_gb(5);
     /// let rover = MartianRover::new("/some/path", resource);
-    /// 
+    ///
     /// // The right extension is added for types which implement
     /// // `MartianFileType` trait.
     /// let csv_file: CsvFile = rover.make_path("summary");
     /// assert_eq!(csv_file.as_ref(), Path::new("/some/path/summary.csv"));
-    /// 
+    ///
     /// // You can also create a file with a custom name by using a
     /// // PathBuf (preferred) or a String
     /// let path_name: PathBuf = rover.make_path("bar.lz4");
     /// assert_eq!(path_name.as_path(), Path::new("/some/path/bar.lz4"));
-    /// 
+    ///
     /// let file_name: String = rover.make_path("wl.txt"); // NOT Recommended. Prefer a PathBuf.
     /// assert_eq!(file_name, String::from("/some/path/wl.txt"));
     /// ```
-    pub fn make_path<T>(&self, filename: impl AsRef<Path>) -> T where T: MartianMakePath {
+    pub fn make_path<T>(&self, filename: impl AsRef<Path>) -> T
+    where
+        T: MartianMakePath,
+    {
         <T as MartianMakePath>::make_path(&self.files_path, filename)
     }
     pub fn get_mem_gb(&self) -> usize {
@@ -211,8 +212,14 @@ pub trait MartianStage {
     /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
     /// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split
     /// to get the stage definition (chunks), executes each chunk one after another and finally calls the join function.
-    fn test_run(&self, run_directory: impl AsRef<Path>, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
-        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    fn test_run(
+        &self,
+        run_directory: impl AsRef<Path>,
+        args: Self::StageInputs,
+    ) -> Result<Self::StageOutputs, Error>
+    where
+        Self::ChunkInputs: Clone,
+        Self::StageInputs: Clone,
     {
         // Use default resource for split
         let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
@@ -234,7 +241,7 @@ pub trait MartianStage {
 
         let join_path = prep_path(run_directory.as_ref(), "join")?;
         let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
-        
+
         let mut chunk_defs = Vec::new();
         for c in stage_defs.chunks {
             chunk_defs.push(c.inputs);
@@ -246,7 +253,9 @@ pub trait MartianStage {
     /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
     /// Executes stage with arguments `args` in temporary directory that will always be cleaned up.
     fn test_run_tmpdir(&self, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
-        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    where
+        Self::ChunkInputs: Clone,
+        Self::StageInputs: Clone,
     {
         let tmp_dir = tempdir::TempDir::new("__test_stage_run__")?;
         self.test_run(tmp_dir.path(), args)
@@ -259,17 +268,16 @@ pub trait RawMartianStage {
     fn join(&self, metadata: Metadata) -> Result<(), Error>;
 }
 
-impl<T> MartianStage for T where T: MartianMain {
+impl<T> MartianStage for T
+where
+    T: MartianMain,
+{
     type StageInputs = <T as MartianMain>::StageInputs;
     type StageOutputs = <T as MartianMain>::StageOutputs;
     type ChunkInputs = MartianVoid;
     type ChunkOutputs = <T as MartianMain>::StageOutputs;
 
-    fn split(
-        &self,
-        _: Self::StageInputs,
-        _: MartianRover
-    ) -> Result<StageDef<MartianVoid>, Error> {
+    fn split(&self, _: Self::StageInputs, _: MartianRover) -> Result<StageDef<MartianVoid>, Error> {
         unimplemented!()
     }
 
@@ -292,8 +300,14 @@ impl<T> MartianStage for T where T: MartianMain {
         unimplemented!()
     }
 
-    fn test_run(&self, run_directory: impl AsRef<Path>, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
-        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    fn test_run(
+        &self,
+        run_directory: impl AsRef<Path>,
+        args: Self::StageInputs,
+    ) -> Result<Self::StageOutputs, Error>
+    where
+        Self::ChunkInputs: Clone,
+        Self::StageInputs: Clone,
     {
         // Use default resource for main
         let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
@@ -304,8 +318,10 @@ impl<T> MartianStage for T where T: MartianMain {
     }
 }
 
-impl<T> RawMartianStage for T where T: MartianStage {
-
+impl<T> RawMartianStage for T
+where
+    T: MartianStage,
+{
     fn split(&self, mut md: Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
@@ -365,15 +381,12 @@ impl<T> RawMartianStage for T where T: MartianStage {
 fn prep_path(path: impl AsRef<Path>, subdir: &str) -> Result<PathBuf, Error> {
     let mut sub_path = PathBuf::from(path.as_ref());
     sub_path.push(subdir);
-    
+
     std::fs::create_dir(&sub_path)?;
     Ok(sub_path)
 }
 
-
-
 fn fill_defaults(mut resource: Resource) -> Resource {
-
     if resource.mem_gb.is_none() {
         resource.mem_gb.replace(1);
     }

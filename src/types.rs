@@ -1,4 +1,3 @@
-
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -27,7 +26,10 @@ impl MartianMakePath for PathBuf {
 
 impl MartianMakePath for String {
     fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
-        <PathBuf as MartianMakePath>::make_path(directory, file_name).to_str().unwrap().to_string()
+        <PathBuf as MartianMakePath>::make_path(directory, file_name)
+            .to_str()
+            .unwrap()
+            .to_string()
     }
 }
 
