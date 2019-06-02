@@ -1,45 +1,49 @@
 //! Martian adapter for Rust code
 
-extern crate libc;
-extern crate chrono;
 extern crate backtrace;
+extern crate chrono;
 extern crate failure;
+extern crate libc;
 extern crate serde;
 extern crate tempdir;
 
-#[macro_use] extern crate serde_json;
-#[macro_use] extern crate serde_derive;
-#[macro_use] extern crate failure_derive;
+#[macro_use]
+extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate failure_derive;
 
 pub use failure::Error;
 
-use std::{thread};
+use backtrace::Backtrace;
+use std::io;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use std::io;
-use backtrace::Backtrace;
+use std::thread;
 
 #[macro_use]
 extern crate log;
 extern crate fern;
 extern crate heck;
 
-use std::fs::{File};
-use std::io::{Write};
+use chrono::*;
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
 use std::os::unix::io::FromRawFd;
 use std::panic;
-use std::collections::{HashMap};
-use chrono::*;
 
 mod metadata;
 pub use metadata::*;
 
-#[macro_use] mod macros;
+#[macro_use]
+mod macros;
 pub mod types;
 pub use types::MartianFileType;
 
-pub mod utils;
 mod stage;
+pub mod utils;
 pub use stage::*;
 
 #[cfg(test)]
@@ -51,15 +55,11 @@ pub use log::LevelFilter;
 pub enum StageError {
     // Controlled shutdown for known condition in data or config
     #[fail(display = "{}", message)]
-    MartianExit {
-        message: String,
-    },
+    MartianExit { message: String },
 
     // Unexpected error
     #[fail(display = "{}", message)]
-    PipelineError {
-        message: String,
-    }
+    PipelineError { message: String },
 }
 
 pub fn initialize(args: Vec<String>, log_file: &File) -> Result<Metadata, Error> {
@@ -71,16 +71,15 @@ pub fn initialize(args: Vec<String>, log_file: &File) -> Result<Metadata, Error>
 }
 
 pub fn handle_stage_error(err: Error) {
-
     // Try to handle know StageError cases
     match &err.downcast::<StageError>() {
         &Ok(ref e) => {
             match e {
-                &StageError::MartianExit{ message: ref m } => {
-                    let _  = write_errors(&format!("ASSERT: {}", m));
+                &StageError::MartianExit { message: ref m } => {
+                    let _ = write_errors(&format!("ASSERT: {}", m));
                 }
                 // No difference here at this point
-                &StageError::PipelineError{ message: ref m } => {
+                &StageError::PipelineError { message: ref m } => {
                     let _ = write_errors(&format!("ASSERT: {}", m));
                 }
             }
@@ -88,7 +87,6 @@ pub fn handle_stage_error(err: Error) {
         &Err(ref e) => {
             let msg = format!("stage error:{}\n{}", e.as_fail(), e.backtrace());
             let _ = write_errors(&msg);
-
         }
     }
 }
@@ -103,12 +101,10 @@ fn write_errors(msg: &str) -> Result<(), Error> {
 
 /// Log a panic to the martian output machinery
 pub fn log_panic(panic: &panic::PanicInfo) {
-
-    let payload =
-        match panic.payload().downcast_ref::<String>() {
-            Some(as_string) => format!("{}", as_string),
-            None => format!("{:?}", panic.payload())
-        };
+    let payload = match panic.payload().downcast_ref::<String>() {
+        Some(as_string) => format!("{}", as_string),
+        None => format!("{:?}", panic.payload()),
+    };
 
     let loc = panic.location().expect("location");
     let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
@@ -117,7 +113,6 @@ pub fn log_panic(panic: &panic::PanicInfo) {
 }
 
 fn setup_logging(log_file: &File, level: LevelFilter) {
-
     let base_config = fern::Dispatch::new().level(level);
 
     let logger_config = fern::Dispatch::new()
@@ -135,23 +130,23 @@ fn setup_logging(log_file: &File, level: LevelFilter) {
     }
 }
 
-pub fn martian_main(args: Vec<String>, stage_map: HashMap<String, Box<RawMartianStage>>) -> Result<(), Error> {
+pub fn martian_main(
+    args: Vec<String>,
+    stage_map: HashMap<String, Box<RawMartianStage>>,
+) -> Result<(), Error> {
     martian_main_with_log_level(args, stage_map, LevelFilter::Debug)
 }
 
 pub fn martian_main_with_log_level(
-        args: Vec<String>, 
-        stage_map: HashMap<String, Box<RawMartianStage>>, 
-        level: LevelFilter
-    ) -> Result<(), Error> {
-
+    args: Vec<String>,
+    stage_map: HashMap<String, Box<RawMartianStage>>,
+    level: LevelFilter,
+) -> Result<(), Error> {
     info!("got args: {:?}", args);
 
     // The log file is opened by the monitor process and should never be closed by
     // the adapter.
-    let log_file: File = unsafe {
-        File::from_raw_fd(3)
-    };
+    let log_file: File = unsafe { File::from_raw_fd(3) };
 
     // Hook rust logging up to Martian _log file
     setup_logging(&log_file, level);
@@ -160,7 +155,9 @@ pub fn martian_main_with_log_level(
     let md = initialize(args, &log_file)?;
 
     // Get the stage implementation
-    let stage = stage_map.get(&md.stage_name).ok_or(failure::err_msg("couldn't find requested stage"))?;
+    let stage = stage_map
+        .get(&md.stage_name)
+        .ok_or(failure::err_msg("couldn't find requested stage"))?;
 
     // Setup monitor thread -- this handles heartbeat & memory checking
     let stage_done = Arc::new(AtomicBool::new(false));
@@ -178,42 +175,33 @@ pub fn martian_main_with_log_level(
             None => match info.payload().downcast_ref::<String>() {
                 Some(s) => &**s,
                 None => "Box<Any>",
-            }
+            },
         };
 
-        let msg =
-            match info.location() {
-                Some(location) => {
-                    format!("thread '{}' panicked at '{}': {}:{}{:?}",
-                           thread,
-                           msg,
-                           location.file(),
-                           location.line(),
-                           backtrace)
-                }
-                None => format!("thread '{}' panicked at '{}'{:?}", thread, msg, backtrace),
-            };
+        let msg = match info.location() {
+            Some(location) => format!(
+                "thread '{}' panicked at '{}': {}:{}{:?}",
+                thread,
+                msg,
+                location.file(),
+                location.line(),
+                backtrace
+            ),
+            None => format!("thread '{}' panicked at '{}'{:?}", thread, msg, backtrace),
+        };
 
         error!("{}", msg);
         let _ = write_errors(&msg);
         p(info);
     }));
 
-
-    if md.stage_type == "split"
-    {
+    if md.stage_type == "split" {
         stage.split(md)?;
-    }
-    else if md.stage_type == "main"
-    {
+    } else if md.stage_type == "main" {
         stage.main(md)?;
-    }
-    else if md.stage_type == "join"
-    {
+    } else if md.stage_type == "join" {
         stage.join(md)?;
-    }
-    else
-    {
+    } else {
         panic!("Unrecognized stage type");
     };
 

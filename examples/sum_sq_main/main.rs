@@ -1,4 +1,3 @@
-
 // Enable this if you are using mro_using attribute to specify
 // #![cfg_attr(feature = "mro", feature(custom_attribute))]
 // #![cfg_attr(feature = "mro", allow(unused_attributes))]
@@ -33,7 +32,6 @@ struct Args {
 }
 
 fn main() -> Result<(), Error> {
-
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
@@ -42,10 +40,7 @@ fn main() -> Result<(), Error> {
         panic!("NOT IMPLEMENTED");
     }
 
-    
-    let registry = martian_stages![
-        sum_squares::SumSquares
-    ];
+    let registry = martian_stages![sum_squares::SumSquares];
 
     // Call the martian adapter
     martian::martian_main(args.arg_adapter, registry)?;

@@ -1,9 +1,7 @@
-
 use failure::Error;
-use {Json, JsonDict};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-
+use {Json, JsonDict};
 
 /// Shortcut function to decode a JSON `&str` into an object
 pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {
@@ -25,9 +23,13 @@ pub fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
     Ok(serde_json::to_value(v)?)
 }
 
-
 pub fn to_exec_name(struct_name: &str) -> String {
-    let last_name = struct_name.split("::").collect::<Vec<_>>().last().unwrap().to_string();
+    let last_name = struct_name
+        .split("::")
+        .collect::<Vec<_>>()
+        .last()
+        .unwrap()
+        .to_string();
     to_snake_case(&last_name)
 }
 

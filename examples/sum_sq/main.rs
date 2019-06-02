@@ -1,4 +1,3 @@
-
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
@@ -29,7 +28,6 @@ struct Args {
 }
 
 fn main() -> Result<(), Error> {
-
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
@@ -38,7 +36,6 @@ fn main() -> Result<(), Error> {
         panic!("NOT IMPLEMENTED");
     }
 
-    
     let registry = martian_stages![
         sum_squares::SumSquares
         // TODO: Add the stages here

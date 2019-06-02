@@ -1,22 +1,20 @@
-
 use std;
-use std::fs::{File, OpenOptions, rename};
+use std::collections::HashSet;
+use std::env;
+use std::fs::{rename, File, OpenOptions};
 use std::io::{Read, Write};
 use std::os::unix::io::FromRawFd;
-use std::env;
-use std::collections::{HashSet};
 use std::path::PathBuf;
 
 use chrono::*;
 use failure::Error;
-use serde_json::{self, Value};
 use serde_json::map::Map;
-use ::write_errors;
+use serde_json::{self, Value};
+use write_errors;
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
 type Result<T> = std::result::Result<T, Error>;
-
 
 const METADATA_PREFIX: &'static str = "_";
 
@@ -43,7 +41,6 @@ pub fn make_timestamp_now() -> String {
 
 impl<'a> Metadata<'a> {
     pub fn new(args: Vec<String>, log_file: &'a File) -> Metadata {
-
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
         let md = Metadata {
@@ -56,7 +53,7 @@ impl<'a> Metadata<'a> {
             jobinfo: Map::new(),
             log_file: log_file,
         };
-        
+
         md
     }
 
@@ -93,7 +90,6 @@ impl<'a> Metadata<'a> {
             };
             rename(&tmp_run_file, &run_file)?;
             self.cache.insert(journal_name);
-
         }
 
         Ok(())
@@ -137,14 +133,19 @@ impl<'a> Metadata<'a> {
     pub(crate) fn read_json_obj_array(&self, name: &str) -> Result<Vec<JsonDict>> {
         let json = self.read_json(name)?;
         let arr = json.as_array().unwrap();
-        let r : Vec<JsonDict> = arr.into_iter().map(|o| o.as_object().unwrap().clone()).collect();
+        let r: Vec<JsonDict> = arr
+            .into_iter()
+            .map(|o| o.as_object().unwrap().clone())
+            .collect();
         Ok(r)
     }
 
-
     fn _append(&mut self, name: &str, message: &str) -> Result<()> {
         let filename = self.make_path(name);
-        let mut file = OpenOptions::new().create(true).append(true).open(filename)?;
+        let mut file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(filename)?;
         file.write(message.as_bytes())?;
         file.write("\n".as_bytes())?;
         self.update_journal(name)?;
@@ -153,13 +154,12 @@ impl<'a> Metadata<'a> {
 
     /// Write to _log
     pub fn log(&mut self, level: &str, message: &str) -> Result<()> {
-        let _ = self.log_file.write(&format!("{} [{}] {}",
-                                     make_timestamp_now(),
-                                     level,
-                                     message).as_bytes()).and(
-            self.log_file.flush())?;
+        let _ = self
+            .log_file
+            .write(&format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
+            .and(self.log_file.flush())?;
 
-            Ok(())
+        Ok(())
     }
 
     pub fn log_time(&mut self, message: &str) -> Result<()> {
@@ -190,7 +190,7 @@ impl<'a> Metadata<'a> {
     /// Completed successfully
     pub fn complete(&mut self) {
         unsafe {
-            File::from_raw_fd(4);  // Close the error file descriptor.
+            File::from_raw_fd(4); // Close the error file descriptor.
         }
     }
 
@@ -201,7 +201,10 @@ impl<'a> Metadata<'a> {
 
     /// Get the number of threads allocated to this job by the runtime.
     pub fn get_threads_allocation(&self) -> usize {
-        self.jobinfo.get("threads").and_then(|x| x.as_u64()).unwrap() as usize
+        self.jobinfo
+            .get("threads")
+            .and_then(|x| x.as_u64())
+            .unwrap() as usize
     }
 
     /// Get the amount of virtual memory in GB allocated to this job by the runtime.

@@ -1,4 +1,4 @@
-use ::{MartianStage, Error, Resource, StageDef, MartianRover};
+use {Error, MartianRover, MartianStage, Resource, StageDef};
 
 pub struct SumSquares;
 
@@ -64,14 +64,17 @@ impl MartianStage for SumSquares {
             sum: chunk_outs.iter().map(|x| x.square).sum(),
         })
     }
-
 }
 
 #[test]
 fn run_stage() {
-    let args = SumSquaresStageInputs { values: vec![1.0,2.0,3.0,4.0,5.0] };
+    let args = SumSquaresStageInputs {
+        values: vec![1.0, 2.0, 3.0, 4.0, 5.0],
+    };
     let stage = SumSquares;
     let res = stage.test_run_tmpdir(args).unwrap();
-    assert_eq!(res.sum, 1.0*1.0 + 2.0*2.0 + 3.0*3.0 + 4.0*4.0 + 5.0*5.0);
+    assert_eq!(
+        res.sum,
+        1.0 * 1.0 + 2.0 * 2.0 + 3.0 * 3.0 + 4.0 * 4.0 + 5.0 * 5.0
+    );
 }
-
