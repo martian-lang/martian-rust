@@ -3,7 +3,7 @@ use martian::{MartianStage, Error, Resource, StageDef, MartianRover};
 
 pub struct SumSquares;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct SumSquaresStageInputs {
     values: Vec<f64>,
 }
@@ -13,7 +13,7 @@ pub struct SumSquaresStageOutputs {
     sum: f64,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct SumSquaresChunkInputs {
     value: f64,
 }
@@ -68,3 +68,10 @@ impl MartianStage for SumSquares {
 
 }
 
+#[test]
+fn run_stage() {
+    let args = SumSquaresStageInputs { values: vec![1.0,2.0,3.0,4.0,5.0] };
+    let stage = SumSquares;
+    let res = stage.test_run_tmpdir(args).unwrap();
+    assert_eq!(res.sum, 1.0*1.0 + 2.0*2.0 + 3.0*3.0 + 4.0*4.0 + 5.0*5.0);
+}

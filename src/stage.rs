@@ -207,6 +207,50 @@ pub trait MartianStage {
         chunk_outs: Vec<Self::ChunkOutputs>,
         rover: MartianRover,
     ) -> Result<Self::StageOutputs, Error>;
+
+    /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+    /// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split
+    /// to get the stage definition (chunks), executes each chunk one after another and finally calls the join function.
+    fn test_run(&self, run_directory: impl AsRef<Path>, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    {
+        // Use default resource for split
+        let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
+        let split_path = prep_path(run_directory.as_ref(), "split")?;
+        let rover = MartianRover::new(split_path, default_resource);
+
+        println!("running split");
+        let stage_defs = self.split(args.clone(), rover)?;
+
+        let mut chunk_outs = Vec::new();
+
+        for (chunk_idx, chunk) in stage_defs.chunks.iter().enumerate() {
+            println!("running chunk {}", chunk_idx);
+            let chunk_path = prep_path(run_directory.as_ref(), &format!("chnk{}", chunk_idx))?;
+            let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
+            let outs = self.main(args.clone(), chunk.inputs.clone(), rover)?;
+            chunk_outs.push(outs);
+        }
+
+        let join_path = prep_path(run_directory.as_ref(), "join")?;
+        let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
+        
+        let mut chunk_defs = Vec::new();
+        for c in stage_defs.chunks {
+            chunk_defs.push(c.inputs);
+        }
+
+        println!("running join");
+        self.join(args, chunk_defs, chunk_outs, rover)
+    }
+    /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+    /// Executes stage with arguments `args` in temporary directory that will always be cleaned up.
+    fn test_run_tmpdir(&self, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    {
+        let tmp_dir = tempdir::TempDir::new("__test_stage_run__")?;
+        self.test_run(tmp_dir.path(), args)
+    }
 }
 
 pub trait RawMartianStage {
@@ -217,7 +261,7 @@ pub trait RawMartianStage {
 
 impl<T> MartianStage for T where T: MartianMain {
     type StageInputs = <T as MartianMain>::StageInputs;
-    type StageOutputs = MartianVoid;
+    type StageOutputs = <T as MartianMain>::StageOutputs;
     type ChunkInputs = MartianVoid;
     type ChunkOutputs = <T as MartianMain>::StageOutputs;
 
@@ -244,8 +288,19 @@ impl<T> MartianStage for T where T: MartianMain {
         _: Vec<MartianVoid>,
         _: Vec<Self::ChunkOutputs>,
         _: MartianRover,
-    ) -> Result<MartianVoid, Error> {
+    ) -> Result<Self::StageOutputs, Error> {
         unimplemented!()
+    }
+
+    fn test_run(&self, run_directory: impl AsRef<Path>, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    {
+        // Use default resource for main
+        let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
+        let main_path = prep_path(run_directory.as_ref(), "main")?;
+        let rover = MartianRover::new(main_path, default_resource);
+        println!("running main");
+        self.main(args.clone(), rover)
     }
 }
 
@@ -315,68 +370,7 @@ fn prep_path(path: impl AsRef<Path>, subdir: &str) -> Result<PathBuf, Error> {
     Ok(sub_path)
 }
 
-/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
-/// Executes `stage` with arguments `args` in temporary directory that will always be cleaned up.
-pub fn test_run_stage_tmpdir<T: MartianStage>(stage: T, args: T::StageInputs) -> Result<T::StageOutputs, Error>
-where T::ChunkInputs: Clone, T::StageInputs: Clone 
-{
-    let tmp_dir = tempdir::TempDir::new("test_stage_run")?;
-    test_run_stage(tmp_dir.path(), stage, args)
-}
 
-/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
-/// Executes `stage` with arguments `args` in directory `path`.
-pub fn test_run_stage<T: MartianStage>(path: impl AsRef<Path>, stage: T, args: T::StageInputs) -> Result<T::StageOutputs, Error>
-where T::ChunkInputs: Clone, T::StageInputs: Clone 
-{
-
-    // Use default resource for split
-    let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
-    let split_path = prep_path(path.as_ref(), "split")?;
-    let rover = MartianRover::new(split_path, default_resource);
-
-    println!("running split");
-    let stage_defs = stage.split(args.clone(), rover)?;
-
-    let mut chunk_outs = Vec::new();
-
-    for (chunk_idx, chunk) in stage_defs.chunks.iter().enumerate() {
-        println!("running chunk {}", chunk_idx);
-        let chunk_path = prep_path(path.as_ref(), &format!("chnk{}", chunk_idx))?;
-        let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
-        let outs = stage.main(args.clone(), chunk.inputs.clone(), rover)?;
-        chunk_outs.push(outs);
-    }
-
-    let join_path = prep_path(path.as_ref(), "join")?;
-    let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
-    
-    let mut chunk_defs = Vec::new();
-    for c in stage_defs.chunks {
-        chunk_defs.push(c.inputs);
-    }
-
-    println!("running join");
-    let outs = stage.join(args, chunk_defs, chunk_outs, rover)?;
-    Ok(outs)
-}
-
-/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
-/// Executes `stage` with arguments `args` in directory `path`. Use this method with main-only stages that
-/// implement MartianMain
-pub fn test_run_main_stage<T: MartianMain>(path: impl AsRef<Path>, stage: T, args: T::StageInputs) -> Result<T::StageOutputs, Error>
-where T::StageInputs: Clone 
-{
-
-    // Use default resource for split
-    let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
-    let main_path = prep_path(path.as_ref(), "main")?;
-    let rover = MartianRover::new(main_path, default_resource);
-
-    println!("running main");
-    let outs = stage.main(args.clone(), rover)?;
-    Ok(outs)
-}
 
 fn fill_defaults(mut resource: Resource) -> Resource {
 

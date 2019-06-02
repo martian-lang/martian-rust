@@ -19,3 +19,11 @@ tempdir = "*"
 
 [dev-dependencies]
 docopt = "*"
+
+[[example]]
+name = "sum_sq"
+test = true
+
+[[example]]
+name = "sum_sq_main"
+test = true
