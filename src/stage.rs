@@ -207,6 +207,50 @@ pub trait MartianStage {
         chunk_outs: Vec<Self::ChunkOutputs>,
         rover: MartianRover,
     ) -> Result<Self::StageOutputs, Error>;
+
+    /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+    /// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split
+    /// to get the stage definition (chunks), executes each chunk one after another and finally calls the join function.
+    fn test_run(&self, run_directory: impl AsRef<Path>, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    {
+        // Use default resource for split
+        let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
+        let split_path = prep_path(run_directory.as_ref(), "split")?;
+        let rover = MartianRover::new(split_path, default_resource);
+
+        println!("running split");
+        let stage_defs = self.split(args.clone(), rover)?;
+
+        let mut chunk_outs = Vec::new();
+
+        for (chunk_idx, chunk) in stage_defs.chunks.iter().enumerate() {
+            println!("running chunk {}", chunk_idx);
+            let chunk_path = prep_path(run_directory.as_ref(), &format!("chnk{}", chunk_idx))?;
+            let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
+            let outs = self.main(args.clone(), chunk.inputs.clone(), rover)?;
+            chunk_outs.push(outs);
+        }
+
+        let join_path = prep_path(run_directory.as_ref(), "join")?;
+        let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
+        
+        let mut chunk_defs = Vec::new();
+        for c in stage_defs.chunks {
+            chunk_defs.push(c.inputs);
+        }
+
+        println!("running join");
+        self.join(args, chunk_defs, chunk_outs, rover)
+    }
+    /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+    /// Executes stage with arguments `args` in temporary directory that will always be cleaned up.
+    fn test_run_tmpdir(&self, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    {
+        let tmp_dir = tempdir::TempDir::new("__test_stage_run__")?;
+        self.test_run(tmp_dir.path(), args)
+    }
 }
 
 pub trait RawMartianStage {
@@ -217,7 +261,7 @@ pub trait RawMartianStage {
 
 impl<T> MartianStage for T where T: MartianMain {
     type StageInputs = <T as MartianMain>::StageInputs;
-    type StageOutputs = MartianVoid;
+    type StageOutputs = <T as MartianMain>::StageOutputs;
     type ChunkInputs = MartianVoid;
     type ChunkOutputs = <T as MartianMain>::StageOutputs;
 
@@ -244,8 +288,19 @@ impl<T> MartianStage for T where T: MartianMain {
         _: Vec<MartianVoid>,
         _: Vec<Self::ChunkOutputs>,
         _: MartianRover,
-    ) -> Result<MartianVoid, Error> {
+    ) -> Result<Self::StageOutputs, Error> {
         unimplemented!()
+    }
+
+    fn test_run(&self, run_directory: impl AsRef<Path>, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+        where Self::ChunkInputs: Clone, Self::StageInputs: Clone 
+    {
+        // Use default resource for main
+        let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
+        let main_path = prep_path(run_directory.as_ref(), "main")?;
+        let rover = MartianRover::new(main_path, default_resource);
+        println!("running main");
+        self.main(args.clone(), rover)
     }
 }
 
@@ -304,4 +359,32 @@ impl<T> RawMartianStage for T where T: MartianStage {
         md.complete();
         Ok(())
     }
+}
+
+// Prep a path for a test run of a stage.
+fn prep_path(path: impl AsRef<Path>, subdir: &str) -> Result<PathBuf, Error> {
+    let mut sub_path = PathBuf::from(path.as_ref());
+    sub_path.push(subdir);
+    
+    std::fs::create_dir(&sub_path)?;
+    Ok(sub_path)
+}
+
+
+
+fn fill_defaults(mut resource: Resource) -> Resource {
+
+    if resource.mem_gb.is_none() {
+        resource.mem_gb.replace(1);
+    }
+
+    if resource.vmem_gb.is_none() {
+        resource.vmem_gb.replace(2);
+    }
+
+    if resource.threads.is_none() {
+        resource.threads.replace(1);
+    }
+
+    resource
 }

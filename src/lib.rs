@@ -5,6 +5,7 @@ extern crate chrono;
 extern crate backtrace;
 extern crate failure;
 extern crate serde;
+extern crate tempdir;
 
 #[macro_use] extern crate serde_json;
 #[macro_use] extern crate serde_derive;
@@ -41,6 +42,8 @@ pub mod utils;
 mod stage;
 pub use stage::*;
 
+#[cfg(test)]
+mod test;
 pub use log::LevelFilter;
 
 // Ways a stage can fail.

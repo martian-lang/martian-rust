@@ -1,10 +1,9 @@
 
 use martian::{MartianMain, Error, MartianRover};
 
-// #[cfg_attr(feature = "mro", mro_using(mem=1, threads=1, volatile=true))]
 pub struct SumSquares;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct SumSquaresStageInputs {
     input: Vec<f64>,
 }
@@ -32,3 +31,11 @@ impl MartianMain for SumSquares {
 
 }
 
+#[test]
+fn run_stage() {
+    use martian::MartianStage;
+    let args = SumSquaresStageInputs { input: vec![1.0,2.0,3.0,4.0,5.0] };
+    let stage = SumSquares;
+    let res = stage.test_run_tmpdir(args).unwrap();
+    assert_eq!(res.sum, 1.0*1.0 + 2.0*2.0 + 3.0*3.0 + 4.0*4.0 + 5.0*5.0);
+}
