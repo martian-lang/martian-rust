@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! martian_filetype {
     ($struct_name: ident, $extension:expr) => {
-        #[derive(Debug, Clone, Serialize, Deserialize)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
         pub struct $struct_name(std::path::PathBuf);
         impl MartianFileType for $struct_name {
             fn extension() -> &'static str {
@@ -22,6 +22,14 @@ macro_rules! martian_filetype {
                 &self.0
             }
         }
+        impl<T> From<T> for $struct_name
+        where
+            std::path::PathBuf: From<T>,
+        {
+            fn from(source: T) -> Self {
+                $struct_name(std::path::PathBuf::from(source))
+            }
+        }
     };
 }
 
@@ -36,4 +44,38 @@ macro_rules! martian_stages {
             stage_registry
         }
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use std::path::PathBuf;
+    use types::MartianFileType;
+    #[test]
+    fn test_martian_filetype_simple() {
+        martian_filetype!(FastqFile, "fastq");
+        assert_eq!(<FastqFile as MartianFileType>::extension(), "fastq");
+        let some_file: FastqFile = MartianFileType::new("/some/path", "file");
+        assert_eq!(some_file, FastqFile(PathBuf::from("/some/path/file.fastq")));
+
+        let some_file = FastqFile::from("/some/path/file.fastq");
+        assert_eq!(some_file, FastqFile(PathBuf::from("/some/path/file.fastq")));
+    }
+
+    #[test]
+    fn test_martian_filetype_double() {
+        martian_filetype!(FaiFile, "fasta.fai");
+        assert_eq!(<FaiFile as MartianFileType>::extension(), "fasta.fai");
+
+        let some_file: FaiFile = MartianFileType::new("/some/path", "file");
+        assert_eq!(
+            some_file,
+            FaiFile(PathBuf::from("/some/path/file.fasta.fai"))
+        );
+
+        let some_file = FaiFile::from("/some/path/file.fasta.fai");
+        assert_eq!(
+            some_file,
+            FaiFile(PathBuf::from("/some/path/file.fasta.fai"))
+        );
+    }
 }
