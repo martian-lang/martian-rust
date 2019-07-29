@@ -171,6 +171,12 @@ impl MartianRover {
     }
 }
 
+#[derive(Debug)]
+pub enum StageKind {
+    MainOnly,
+    WithSplit,
+}
+
 pub trait MartianMain {
     type StageInputs: Serialize + DeserializeOwned;
     type StageOutputs: Serialize + DeserializeOwned;
@@ -260,6 +266,9 @@ pub trait MartianStage {
         let tmp_dir = tempdir::TempDir::new("__test_stage_run__")?;
         self.test_run(tmp_dir.path(), args)
     }
+    fn stage_kind() -> StageKind {
+        StageKind::WithSplit
+    }
 }
 
 pub trait RawMartianStage {
@@ -315,6 +324,9 @@ where
         let rover = MartianRover::new(main_path, default_resource);
         println!("running main");
         self.main(args.clone(), rover)
+    }
+    fn stage_kind() -> StageKind {
+        StageKind::MainOnly
     }
 }
 
