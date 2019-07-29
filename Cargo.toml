@@ -19,6 +19,7 @@ tempdir = "*"
 
 [dev-dependencies]
 docopt = "*"
+indoc = "0.3.3"
 
 [[example]]
 name = "sum_sq"

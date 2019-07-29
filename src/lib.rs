@@ -27,6 +27,10 @@ extern crate log;
 extern crate fern;
 extern crate heck;
 
+#[cfg(test)]
+#[macro_use]
+extern crate indoc;
+
 use chrono::*;
 use std::collections::HashMap;
 use std::fs::File;
@@ -45,6 +49,9 @@ pub use types::MartianFileType;
 mod stage;
 pub mod utils;
 pub use stage::*;
+
+pub mod mro;
+pub use mro::*;
 
 pub use log::LevelFilter;
 
