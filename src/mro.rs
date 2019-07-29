@@ -43,9 +43,9 @@ pub trait MroDisplay {
             None => self.mro_string_no_width(),
         }
     }
-    fn min_width(&self) -> Self::FieldLen;
+    fn min_width(&self) -> usize;
     fn mro_string_no_width(&self) -> String;
-    fn mro_string_with_width(&self, Self::FieldLen) -> String;
+    fn mro_string_with_width(&self, usize) -> String;
 }
 
 /// A generic display impl for MroDisplay does not work due
@@ -63,7 +63,6 @@ macro_rules! mro_display_to_display {
 
 macro_rules! usize_field_len {
     () => {
-        type FieldLen = usize;
         fn min_width(&self) -> usize {
             self.mro_string_no_width().len()
         }
@@ -230,8 +229,8 @@ pub struct MroField {
     ty: MartianType,
 }
 
+/// `field_width` will decide the length of the type column
 impl MroDisplay for MroField {
-    type FieldLen = usize; // Width of the type field
     fn mro_string_no_width(&self) -> String {
         format!("{ty} {name}", ty = self.ty.to_string(), name = &self.name)
     }
@@ -343,13 +342,12 @@ macro_rules! mro_using {
         /// followed by a line which has two configurable widths
         /// ```md
         /// using (
-        ///          mem_gb = 1,
-        ///      )
-        /// <---><-->
-        ///   w1  tab
+        ///       mem_gb = 1,
+        /// )
+        /// <---->
+        ///   w1
         /// ```
         impl MroDisplay for MroUsing {
-            type FieldLen = usize; // w1: See comments above
             fn min_width(&self) -> usize {
                 0
             }
@@ -375,14 +373,14 @@ macro_rules! mro_using {
                             &mut result,
                             "{blank:indent$}{key:<width$} = {value},",
                             blank = "",
-                            indent = w1 + INDENT_TAB_WIDTH_FOR_MRO,
+                            indent = w1,
                             key=stringify!($property),
                             width=w2,
                             value=$property
                         ).unwrap()
                     }
                 )*
-                writeln!(&mut result, "{blank:indent$})", blank = "", indent = w1).unwrap();
+                writeln!(&mut result, ")").unwrap();
                 result
             }
         }
@@ -402,7 +400,6 @@ pub struct StageVariables {
 }
 
 impl MroDisplay for StageVariables {
-    type FieldLen = usize; // the indendation level
     fn min_width(&self) -> usize {
         0
     }
@@ -457,11 +454,48 @@ impl MroDisplay for StageVariables {
         unimplemented!()
     }
 }
-///
+/// Input and outputs together
 #[derive(Debug)]
 struct InAndOut {
     inputs: Vec<MroField>,
     outputs: Vec<MroField>,
+}
+
+impl MroDisplay for InAndOut {
+    fn min_width(&self) -> usize {
+        std::cmp::max(
+            self.inputs
+                .iter()
+                .map(|field| field.min_width())
+                .max()
+                .unwrap_or(0),
+            self.outputs
+                .iter()
+                .map(|field| field.min_width())
+                .max()
+                .unwrap_or(0),
+        )
+    }
+
+    fn mro_string_no_width(&self) -> String {
+        self.mro_string_with_width(self.min_width())
+    }
+
+    fn mro_string_with_width(&self, field_width: usize) -> String {
+        let mut result = String::new();
+        for (key, fields) in &[("in", &self.inputs), ("out", &self.outputs)] {
+            for field in *fields {
+                writeln!(
+                    &mut result,
+                    "{key:3} {f}",
+                    key = key,
+                    f = field.mro_string_with_width(field_width)
+                )
+                .unwrap();
+            }
+        }
+        result
+    }
 }
 
 /// All the data needed to create a stage definition mro.
@@ -477,9 +511,8 @@ pub struct StageMro {
                                     // TODO: Retain
 }
 
-impl MroDisplay for StageMro {
-    type FieldLen = usize;
-}
+// impl MroDisplay for StageMro {
+// }
 
 // impl Stage {
 //     fn to_mro_string(&self) -> String {
@@ -622,7 +655,7 @@ mod tests {
             indoc!(
                 "
                 using (
-                    mem_gb = 1,
+                mem_gb = 1,
                 )
             "
             )
@@ -639,9 +672,9 @@ mod tests {
             indoc!(
                 "
                 using (
-                    mem_gb   = 1,
-                    vmem_gb  = 4,
-                    volatile = strict,
+                mem_gb   = 1,
+                vmem_gb  = 4,
+                volatile = strict,
                 )
             "
             )
@@ -656,8 +689,8 @@ mod tests {
             indoc!(
                 "
                 using (
-                            threads = 2,
-                        )
+                        threads = 2,
+                )
             "
             )
         );
