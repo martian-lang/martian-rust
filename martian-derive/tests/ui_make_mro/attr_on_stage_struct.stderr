@@ -1,0 +1,5 @@
+error: The attribute #[make_mro] should only be applied to `martian::MartianMain` or `martian::MartianStage` trait implementation of a stage struct
+ --> $DIR/attr_on_stage_struct.rs:4:1
+  |
+4 | struct StageFoo;
+  | ^^^^^^
