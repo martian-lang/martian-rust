@@ -1,19 +1,18 @@
 #![recursion_limit = "128"]
 
 /// TODO:
-/// - Check MartianStruct field names against martian tokens
 /// - Filetypes at the top - add a test
 /// - Retain attribute
 /// - Handle default values for FileType
 /// - Handle duplicate names in chunk and stage inouts
-/// - Move this to martian-lang and reorganize
 /// - Derive AsMartianPrimary
 /// - Handle attributes in MartianStruct
 /// - Martian filetype as a procedural macro
 /// - Error message MartianStruct showing MartianFiletype
 extern crate proc_macro;
-use martian::{utils, StageKind, Volatile};
+use martian::{utils, StageKind, Volatile, MARTIAN_TOKENS};
 use quote::quote;
+use std::collections::HashSet;
 use std::str::FromStr;
 use syn::{Error, Fields, Ident, ImplItem, ItemImpl, ItemStruct, Type};
 
@@ -407,9 +406,22 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     // STEP 3
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // Generate tokenstream for `MroField` calls for each field
+    // Make sure that none of the field names are martian keywords
     let mut vec_inner = Vec::new();
+    let blacklist: HashSet<String> = MARTIAN_TOKENS.iter().map(|x| x.to_string()).collect();
     for field in fields {
-        let name = field.ident.unwrap().to_string();
+        let name = field.ident.clone().unwrap().to_string();
+        if blacklist.contains(&name) {
+            return syn::Error::new(
+                field.ident.unwrap().span(),
+                format!(
+                    "Field name {} is not allowed here since it is a martian keyword",
+                    name
+                ),
+            )
+            .to_compile_error()
+            .into();
+        }
         let ty = field.ty;
         vec_inner.push(quote![
             <::martian::MroField>::new(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_type())
