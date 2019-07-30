@@ -1,0 +1,5 @@
+error: `stage_name` needs to be in SHOUTY_SNAKE_CASE (without any surrounding quotes). Found MyStage, use MY_STAGE instead
+ --> $DIR/attr_invalid_stage_name.rs:7:24
+  |
+7 | #[make_mro(mem_gb = 2, stage_name = MyStage)]
+  |                        ^^^^^^^^^^
