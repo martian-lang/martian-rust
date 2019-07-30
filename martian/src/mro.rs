@@ -26,9 +26,9 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::string::ToString;
 
-const MARTIAN_TOKENS: &[&str] = &[
+pub const MARTIAN_TOKENS: &[&str] = &[
     "in", "out", "stage", "volatile", "strict", "true", "split", "filetype", "src", "py", "comp",
-    "retain",
+    "retain", "mro", "using", "int", "float", "string", "map", "bool", "path",
 ];
 
 /// Defines how an entity that denotes some part of the mro is displayed

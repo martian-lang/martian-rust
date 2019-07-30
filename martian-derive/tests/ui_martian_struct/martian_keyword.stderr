@@ -1,0 +1,5 @@
+error: Field name stage is not allowed here since it is a martian keyword
+ --> $DIR/martian_keyword.rs:6:5
+  |
+6 |     stage: String, // This should trigger a compile error
+  |     ^^^^^

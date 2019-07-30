@@ -1,4 +1,4 @@
-use martian::{martian_filetype, Error, MakeMro, MartianFileType, MartianMain, MartianRover};
+use martian::{Error, MakeMro, MartianMain, MartianRover};
 use martian_derive::{make_mro, MartianStruct};
 use serde::{Deserialize, Serialize};
 
