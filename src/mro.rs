@@ -13,6 +13,9 @@
 //! - Source for execution
 //! - Attributes (mem_gb, vmem_gb, threads, volatile etc.)
 //!
+//! TODO
+//! - Simplify MroDisplay trait
+//! - Minify and verify
 
 use crate::types::MartianVoid;
 use crate::MartianFileType;
@@ -23,7 +26,7 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::string::ToString;
 
-const MARTIAN_TOKENS: &'static [&'static str] = &[
+const MARTIAN_TOKENS: &[&str] = &[
     "in", "out", "stage", "volatile", "strict", "true", "split", "filetype", "src", "py", "comp",
     "retain",
 ];
@@ -112,21 +115,21 @@ mro_display_to_display! {MartianPrimaryType}
 
 /// Primary Data type + Arrays (which are derived from primary types)
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub enum MartianType {
+pub enum MartianBlanketType {
     Primary(MartianPrimaryType),
     Array(MartianPrimaryType),
 }
 
-impl MroDisplay for MartianType {
+impl MroDisplay for MartianBlanketType {
     usize_field_len! {}
     fn mro_string_no_width(&self) -> String {
         match *self {
-            MartianType::Primary(ref primary) => primary.to_string(),
-            MartianType::Array(ref primary) => format!("{}[]", primary.to_string()),
+            MartianBlanketType::Primary(ref primary) => primary.to_string(),
+            MartianBlanketType::Array(ref primary) => format!("{}[]", primary.to_string()),
         }
     }
 }
-mro_display_to_display! {MartianType}
+mro_display_to_display! {MartianBlanketType}
 
 /// A trait that tells you how to convert a Rust data type to a
 /// basic Martian type.
@@ -134,17 +137,17 @@ pub trait AsMartianPrimaryType {
     fn as_martian_primary_type() -> MartianPrimaryType;
 }
 
-/// A trait that defines how to convert this Rust type into an `MartianType`.
-/// Not all rust types can be converted to an `MartianType`.
+/// A trait that defines how to convert this Rust type into an `MartianBlanketType`.
+/// Not all rust types can be converted to an `MartianBlanketType`.
 /// Not defined for
 /// - Unit, the type of () in Rust.
 /// - Unit Struct For example `struct Unit` or `PhantomData<T>`. It represents
 ///     a named value containing no data.
-/// Any type which implements `AsMartianPrimaryType` also implements `AsMartianType`
+/// Any type which implements `AsMartianPrimaryType` also implements `AsMartianBlanketType`
 /// It is stringly recommended not to extend any types with this trait, instead
 /// use the `AsMartianPrimaryType` trait.
-pub trait AsMartianType {
-    fn as_martian_type() -> MartianType;
+pub trait AsMartianBlanketType {
+    fn as_martian_type() -> MartianBlanketType;
 }
 
 /// Macro for implementing `AsMartianPrimaryType` trait
@@ -179,28 +182,28 @@ impl_primary_mro_type!(&'static str, MartianPrimaryType::Str);
 impl_primary_mro_type!(Path, MartianPrimaryType::Path);
 impl_primary_mro_type!(PathBuf, MartianPrimaryType::Path);
 
-impl<T: AsMartianPrimaryType> AsMartianType for T {
-    fn as_martian_type() -> MartianType {
-        MartianType::Primary(T::as_martian_primary_type())
+impl<T: AsMartianPrimaryType> AsMartianBlanketType for T {
+    fn as_martian_type() -> MartianBlanketType {
+        MartianBlanketType::Primary(T::as_martian_primary_type())
     }
 }
 
-impl<T: AsMartianType> AsMartianType for Option<T> {
-    fn as_martian_type() -> MartianType {
+impl<T: AsMartianBlanketType> AsMartianBlanketType for Option<T> {
+    fn as_martian_type() -> MartianBlanketType {
         // Any variable can be `null` in Martian
         T::as_martian_type()
     }
 }
 
-impl<T: AsMartianPrimaryType> AsMartianType for Vec<T> {
-    fn as_martian_type() -> MartianType {
-        MartianType::Array(T::as_martian_primary_type())
+impl<T: AsMartianPrimaryType> AsMartianBlanketType for Vec<T> {
+    fn as_martian_type() -> MartianBlanketType {
+        MartianBlanketType::Array(T::as_martian_primary_type())
     }
 }
 
-impl<K: AsMartianPrimaryType, H> AsMartianType for HashSet<K, H> {
-    fn as_martian_type() -> MartianType {
-        MartianType::Array(K::as_martian_primary_type())
+impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
+    fn as_martian_type() -> MartianBlanketType {
+        MartianBlanketType::Array(K::as_martian_primary_type())
     }
 }
 
@@ -227,13 +230,13 @@ impl<T: MartianFileType> AsMartianPrimaryType for T {
 /// )
 /// ```
 /// contains 3 `MroFields`
-/// - MroField { name: unsorted, ty: MartianType::Array(MartianPrimaryType::Int)}
-/// - MroField { name: reverse, ty: MartianType::Primary(MartianPrimaryType::Bool)}
-/// - MroField { name: sorted, ty: MartianType::Array(MartianPrimaryType::Int)}
+/// - MroField { name: unsorted, ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
+/// - MroField { name: reverse, ty: MartianBlanketType::Primary(MartianPrimaryType::Bool)}
+/// - MroField { name: sorted, ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
 #[derive(Debug, Serialize, Clone, Deserialize, PartialEq, Eq)]
 pub struct MroField {
     name: String,
-    ty: MartianType,
+    ty: MartianBlanketType,
 }
 
 /// `field_width` will decide the length of the type column
@@ -257,7 +260,7 @@ impl MroDisplay for MroField {
 mro_display_to_display! {MroField}
 
 impl MroField {
-    pub fn new(name: impl ToString, ty: MartianType) -> Self {
+    pub fn new(name: impl ToString, ty: MartianBlanketType) -> Self {
         let field = MroField {
             name: name.to_string(),
             ty,
@@ -284,7 +287,7 @@ impl MroField {
 /// this trait, then we can readily generate all the mro variables with the appropriate
 /// type and put them at the right place (withing stage def or chunk def).
 ///
-/// TODO : Auto derive for structs with named fields if all the fields implement `AsMartianType`
+/// TODO : Auto derive for structs with named fields if all the fields implement `AsMartianBlanketType`
 pub trait MartianStruct {
     /// How to convert this struct into a list of `MroField`s
     fn mro_fields() -> Vec<MroField>;
@@ -617,8 +620,8 @@ mro_display_to_display! {StageMro, TAB_WIDTH_FOR_MRO}
 #[cfg(test)]
 mod tests {
     use super::*;
+    use MartianBlanketType::*;
     use MartianPrimaryType::*;
-    use MartianType::*;
 
     #[test]
     fn test_martian_primary_type_display() {
