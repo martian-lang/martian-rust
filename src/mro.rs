@@ -59,6 +59,13 @@ macro_rules! mro_display_to_display {
             }
         }
     };
+    ($type:ty, $width:ident) => {
+        impl Display for $type {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.write_str(&self.mro_string_with_width($width))
+            }
+        }
+    };
 }
 
 macro_rules! usize_field_len {
@@ -315,7 +322,7 @@ impl MroDisplay for Volatile {
 
 mro_display_to_display! {Volatile}
 
-const INDENT_TAB_WIDTH_FOR_MRO: usize = 4;
+const TAB_WIDTH_FOR_MRO: usize = 4;
 macro_rules! mro_using {
     ($($property:ident: $type:ty),*) => {
         /// Stuff that comes in the `using` section of a stage definition
@@ -384,14 +391,14 @@ macro_rules! mro_using {
                 result
             }
         }
-        mro_display_to_display! {MroUsing}
+        mro_display_to_display! {MroUsing, TAB_WIDTH_FOR_MRO}
     };
 }
 
 mro_using! {mem_gb: i16, vmem_gb: i16, threads: i16, volatile: Volatile}
 
 /// Input and outputs together
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct InAndOut {
     pub inputs: Vec<MroField>,
     pub outputs: Vec<MroField>,
@@ -423,7 +430,7 @@ impl MroDisplay for InAndOut {
             for field in *fields {
                 writeln!(
                     &mut result,
-                    "{key:3} {f}",
+                    "{key:3} {f},",
                     key = key,
                     f = field.mro_string_with_width(field_width)
                 )
@@ -433,6 +440,7 @@ impl MroDisplay for InAndOut {
         result
     }
 }
+mro_display_to_display! {InAndOut}
 
 /// Can be auto generated using proc macro attribute
 /// #[make_mro] on MartianMain or MartianStage
@@ -447,6 +455,9 @@ pub trait MakeMro {
             chunk_in_out: Self::chunk_in_and_out(),
             using_attrs: Self::using_attributes(),
         }
+    }
+    fn mro(adapter_name: impl ToString, stage_key: impl ToString) -> String {
+        Self::stage_mro(adapter_name, stage_key).to_string()
     }
     fn stage_name() -> String;
     fn stage_in_and_out() -> InAndOut;
@@ -492,7 +503,7 @@ impl MroDisplay for StageMro {
         }
         writeln!(
             &mut result,
-            r#"{space}src {comp:ty_width$} "{adapter} martian {stage_key}""#,
+            r#"{space}src {comp:ty_width$} "{adapter} martian {stage_key}","#,
             space = indent,
             comp = "comp",
             ty_width = ty_width,
@@ -509,7 +520,7 @@ impl MroDisplay for StageMro {
         }
 
         if self.using_attrs.need_using() {
-            writeln!(
+            write!(
                 &mut result,
                 ") {}",
                 self.using_attrs.mro_string(Some(field_width))
@@ -522,6 +533,8 @@ impl MroDisplay for StageMro {
         result
     }
 }
+
+mro_display_to_display! {StageMro, TAB_WIDTH_FOR_MRO}
 
 // impl Stage {
 //     fn to_mro_string(&self) -> String {
@@ -604,10 +617,11 @@ impl MroDisplay for StageMro {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use MartianPrimaryType::*;
+    use MartianType::*;
 
     #[test]
     fn test_martian_primary_type_display() {
-        use MartianPrimaryType::*;
         assert_eq!(Int.mro_string_no_width(), "int");
         assert_eq!(Int.mro_string(Some(4)), "int ");
         assert_eq!(FileType("txt".into()).mro_string_with_width(5), "txt  ");
@@ -616,8 +630,6 @@ mod tests {
 
     #[test]
     fn test_martian_type_display() {
-        use MartianPrimaryType::*;
-        use MartianType::*;
         assert_eq!(Primary(Int).mro_string_no_width(), "int");
         assert_eq!(Array(Int).mro_string(Some(7)), "int[]  ");
         assert_eq!(
@@ -656,7 +668,7 @@ mod tests {
             indoc!(
                 "
                 using (
-                mem_gb = 1,
+                    mem_gb = 1,
                 )
             "
             )
@@ -721,8 +733,6 @@ mod tests {
 
     #[test]
     fn test_in_and_out_display() {
-        use MartianPrimaryType::*;
-        use MartianType::*;
         let in_out = InAndOut {
             inputs: vec![
                 MroField::new("unsorted", Array(Float)),
@@ -742,6 +752,129 @@ mod tests {
         "
         );
         assert_eq!(in_out.mro_string(None), expected);
+        assert_eq!(in_out.to_string(), expected);
+    }
+
+    #[test]
+    fn test_stage_mro_display_1() {
+        let expected_mro = indoc!(
+            r#"
+            stage SUM_SQUARES(
+                in  float[] values,
+                out float   sum,
+                src comp    "my_adapter martian sum_squares",
+            ) split (
+                in  float   value,
+                out float   value,
+            )
+            "#
+        );
+
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: Some(InAndOut {
+                inputs: vec![MroField::new("value", Primary(Float))],
+                outputs: vec![MroField::new("value", Primary(Float))],
+            }),
+            using_attrs: MroUsing::default(),
+        };
+
+        assert_eq!(stage_mro.to_string(), expected_mro);
+    }
+
+    #[test]
+    fn test_stage_mro_display_2() {
+        let expected_mro = indoc!(
+            r#"
+            stage SUM_SQUARES(
+                in  float[] values,
+                out float   sum,
+                src comp    "my_adapter martian sum_squares",
+            ) split (
+            )
+            "#
+        );
+
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: Some(InAndOut::default()),
+            using_attrs: MroUsing::default(),
+        };
+
+        assert_eq!(stage_mro.to_string(), expected_mro);
+    }
+
+    #[test]
+    fn test_stage_mro_display_3() {
+        let expected_mro = indoc!(
+            r#"
+            stage SUM_SQUARES(
+                in  float[] values,
+                out float   sum,
+                src comp    "my_adapter martian sum_squares",
+            )
+            "#
+        );
+
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: None,
+            using_attrs: MroUsing::default(),
+        };
+
+        assert_eq!(stage_mro.to_string(), expected_mro);
+    }
+
+    #[test]
+    fn test_stage_mro_display_4() {
+        let expected_mro = indoc!(
+            r#"
+            stage SUM_SQUARES(
+                in  float[] values,
+                out float   sum,
+                src comp    "my_adapter martian sum_squares",
+            ) using (
+                mem_gb  = 1,
+                threads = 2,
+            )
+            "#
+        );
+
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: None,
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+
+        assert_eq!(stage_mro.to_string(), expected_mro);
     }
 
 }
