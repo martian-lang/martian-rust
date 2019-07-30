@@ -15,10 +15,10 @@
 //!
 
 use crate::types::MartianVoid;
-use crate::{MartianFileType, StageKind};
+use crate::MartianFileType;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
-use std::fmt::{Debug, Display, Write};
+use std::fmt::{Display, Write};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::string::ToString;
@@ -36,7 +36,7 @@ pub trait MroDisplay {
                 let min_width = self.min_width();
                 assert!(
                     width >= min_width,
-                    format!("Need a minimum width of {:?}. Found {:?}", min_width, width)
+                    format!("Need a minimum width of {}. Found {}", min_width, width)
                 );
                 self.mro_string_with_width(width)
             }
@@ -390,75 +390,11 @@ macro_rules! mro_using {
 
 mro_using! {mem_gb: i16, vmem_gb: i16, threads: i16, volatile: Volatile}
 
-/// All the variables in the mro per stage/chunk inputs and outputs.
-#[derive(Debug)]
-pub struct StageVariables {
-    pub stage_inputs: Vec<MroField>,
-    pub stage_outputs: Vec<MroField>,
-    pub chunk_inputs: Option<Vec<MroField>>,
-    pub chunk_outputs: Option<Vec<MroField>>,
-}
-
-impl MroDisplay for StageVariables {
-    fn min_width(&self) -> usize {
-        0
-    }
-    fn mro_string_no_width(&self) -> String {
-        self.mro_string_with_width(0)
-    }
-    fn mro_string_with_width(&self, field_width: usize) -> String {
-        let mut result = String::new();
-        // First compute the minimum width needed for the type column
-        let mut min_w = 0;
-        for field in &self.stage_inputs {
-            min_w = std::cmp::max(min_w, field.ty.min_width())
-        }
-        for field in &self.stage_outputs {
-            min_w = std::cmp::max(min_w, field.ty.min_width())
-        }
-        if let Some(ref chunk_inputs) = self.chunk_inputs {
-            for field in chunk_inputs {
-                min_w = std::cmp::max(min_w, field.ty.min_width())
-            }
-        }
-        if let Some(ref chunk_outputs) = self.chunk_outputs {
-            for field in chunk_outputs {
-                min_w = std::cmp::max(min_w, field.ty.min_width())
-            }
-        }
-        writeln!(&mut result, "(").unwrap();
-        for field in &self.stage_inputs {
-            writeln!(
-                &mut result,
-                "{blank:indent$}{key:<3} {ty} {name},",
-                key = "in",
-                blank = "",
-                indent = INDENT_TAB_WIDTH_FOR_MRO,
-                ty = field.ty.mro_string_with_width(min_w),
-                name = field.name,
-            )
-            .unwrap();
-        }
-        for field in &self.stage_outputs {
-            writeln!(
-                &mut result,
-                "{blank:indent$}{key:<3} {ty} {name},",
-                key = "out",
-                blank = "",
-                indent = INDENT_TAB_WIDTH_FOR_MRO,
-                ty = field.ty.mro_string_with_width(min_w),
-                name = field.name,
-            )
-            .unwrap();
-        }
-        unimplemented!()
-    }
-}
 /// Input and outputs together
 #[derive(Debug)]
-struct InAndOut {
-    inputs: Vec<MroField>,
-    outputs: Vec<MroField>,
+pub struct InAndOut {
+    pub inputs: Vec<MroField>,
+    pub outputs: Vec<MroField>,
 }
 
 impl MroDisplay for InAndOut {
@@ -498,8 +434,28 @@ impl MroDisplay for InAndOut {
     }
 }
 
+/// Can be auto generated using proc macro attribute
+/// #[make_mro] on MartianMain or MartianStage
+/// implementations if the associated types implement `MartianStruct`
+pub trait MakeMro {
+    fn stage_mro(adapter_name: impl ToString, stage_key: impl ToString) -> StageMro {
+        StageMro {
+            stage_name: Self::stage_name(),
+            adapter_name: adapter_name.to_string(),
+            stage_key: stage_key.to_string(),
+            stage_in_out: Self::stage_in_and_out(),
+            chunk_in_out: Self::chunk_in_and_out(),
+            using_attrs: Self::using_attributes(),
+        }
+    }
+    fn stage_name() -> String;
+    fn stage_in_and_out() -> InAndOut;
+    fn chunk_in_and_out() -> Option<InAndOut>;
+    fn using_attributes() -> MroUsing;
+}
+
 /// All the data needed to create a stage definition mro.
-///
+/// TODO: Retain
 #[derive(Debug)]
 pub struct StageMro {
     stage_name: String,     // e.g CORRECT_BARCODES in `stage CORRECT_BARCODES(..)`
@@ -508,11 +464,64 @@ pub struct StageMro {
     stage_in_out: InAndOut, // Inputs and outputs of the stage
     chunk_in_out: Option<InAndOut>, // Inputs and outputs of the chunk. None indicates a stage with only a main
     using_attrs: MroUsing,          // Things coming under using
-                                    // TODO: Retain
 }
 
-// impl MroDisplay for StageMro {
-// }
+impl MroDisplay for StageMro {
+    fn min_width(&self) -> usize {
+        0
+    }
+    fn mro_string_no_width(&self) -> String {
+        self.mro_string_with_width(self.min_width())
+    }
+
+    fn mro_string_with_width(&self, field_width: usize) -> String {
+        let mut result = String::new();
+        // Determing the field width for the type field
+        let ty_width = std::cmp::max(
+            self.stage_in_out.min_width(),
+            self.chunk_in_out
+                .as_ref()
+                .map(|chunk| chunk.min_width())
+                .unwrap_or(0),
+        );
+        let indent = format!("{blank:indent$}", blank = "", indent = field_width);
+        writeln!(&mut result, "stage {}(", self.stage_name).unwrap();
+
+        for line in self.stage_in_out.mro_string(Some(ty_width)).lines() {
+            writeln!(&mut result, "{}{}", indent, line).unwrap();
+        }
+        writeln!(
+            &mut result,
+            r#"{space}src {comp:ty_width$} "{adapter} martian {stage_key}""#,
+            space = indent,
+            comp = "comp",
+            ty_width = ty_width,
+            adapter = self.adapter_name,
+            stage_key = self.stage_key,
+        )
+        .unwrap();
+
+        if let Some(ref chunk_in_out) = self.chunk_in_out {
+            writeln!(&mut result, ") split (").unwrap();
+            for line in chunk_in_out.mro_string(Some(ty_width)).lines() {
+                writeln!(&mut result, "{}{}", indent, line).unwrap();
+            }
+        }
+
+        if self.using_attrs.need_using() {
+            writeln!(
+                &mut result,
+                ") {}",
+                self.using_attrs.mro_string(Some(field_width))
+            )
+            .unwrap();
+        } else {
+            writeln!(&mut result, ")").unwrap();
+        }
+
+        result
+    }
+}
 
 // impl Stage {
 //     fn to_mro_string(&self) -> String {
@@ -591,14 +600,6 @@ pub struct StageMro {
 //         write!(f, "{}", self.to_mro_string())
 //     }
 // }
-
-/// Can be auto generated using proc macro attribute
-/// #[make_mro] on MartianMain or MartianStage
-/// implementations if the associated types implement `MartianStruct`
-pub trait MakeMro {
-    // fn stage_mro() -> StageMro;
-    fn stage_variables() -> StageVariables;
-}
 
 #[cfg(test)]
 mod tests {
@@ -695,6 +696,7 @@ mod tests {
             )
         );
     }
+
     #[test]
     fn test_mro_using_need_using() {
         assert_eq!(MroUsing::default().need_using(), false);
@@ -716,4 +718,30 @@ mod tests {
             true
         );
     }
+
+    #[test]
+    fn test_in_and_out_display() {
+        use MartianPrimaryType::*;
+        use MartianType::*;
+        let in_out = InAndOut {
+            inputs: vec![
+                MroField::new("unsorted", Array(Float)),
+                MroField::new("reverse", Primary(Bool)),
+            ],
+            outputs: vec![
+                MroField::new("sorted", Array(Float)),
+                MroField::new("sum", Primary(Float)),
+            ],
+        };
+        let expected = indoc!(
+            "
+            in  float[] unsorted,
+            in  bool    reverse,
+            out float[] sorted,
+            out float   sum,
+        "
+        );
+        assert_eq!(in_out.mro_string(None), expected);
+    }
+
 }
