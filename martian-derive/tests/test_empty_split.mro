@@ -1,0 +1,10 @@
+stage CHUNK_READS(
+    in  map[] chunks,
+    in  int   reads_per_file,
+    out map[] out_chunks,
+    src comp  "my_adapter martian chunker",
+) split (
+) using (
+    mem_gb   = 1,
+    volatile = strict,
+)

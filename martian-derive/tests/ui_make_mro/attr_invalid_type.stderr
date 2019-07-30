@@ -1,0 +1,5 @@
+error: Unable to parse mem_gb as i16 from `mem_gb=foo`
+ --> $DIR/attr_invalid_type.rs:7:12
+  |
+7 | #[make_mro(mem_gb=foo)]
+  |            ^^^^^^
