@@ -1,19 +1,17 @@
 #![recursion_limit = "128"]
 
 /// TODO:
-/// - Filetypes at the top - add a test
 /// - Retain attribute
 /// - Handle default values for FileType
-/// - Derive AsMartianPrimary
 /// - Handle attributes in MartianStruct
 /// - Martian filetype as a procedural macro
 /// - Error message MartianStruct showing MartianFiletype
 extern crate proc_macro;
-use martian::{utils, StageKind, Volatile, MARTIAN_TOKENS};
+use martian::{utils, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
 use quote::quote;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
-use syn::{Error, Fields, Ident, ImplItem, ItemImpl, ItemStruct, Type};
+use syn::{Data, DeriveInput, Error, Fields, Ident, ImplItem, ItemImpl, ItemStruct, Type};
 
 const ATTR_NOT_ON_TRAIT_IMPL_ERROR: &'static str = r#"The attribute #[make_mro] should only be applied to `martian::MartianMain` or `martian::MartianStage` trait implementation of a stage struct"#;
 const MARTIAN_MAIN_TRAIT: &'static str = "MartianMain";
@@ -46,8 +44,8 @@ pub fn make_mro(
     let parsed_attr: MakeMroAttr = match attr.to_string().parse() {
         Ok(parsed) => parsed,
         Err(e) => {
-            let span = attr.into_iter().next().unwrap().span().into();
-            return syn::Error::new(span, e).to_compile_error().into();
+            let attr2 = proc_macro2::TokenStream::from(attr);
+            return syn::Error::new_spanned(attr2, e).to_compile_error().into();
         }
     };
 
@@ -120,8 +118,8 @@ pub fn make_mro(
     let item_impl = match syn::parse::<ItemImpl>(item.clone()) {
         Ok(item_impl) => item_impl,
         Err(_) => {
-            let span = item_clone.into_iter().next().unwrap().span().into();
-            return syn::Error::new(span, ATTR_NOT_ON_TRAIT_IMPL_ERROR)
+            let span = proc_macro2::TokenStream::from(item_clone);
+            return syn::Error::new_spanned(span, ATTR_NOT_ON_TRAIT_IMPL_ERROR)
                 .to_compile_error()
                 .into();
         }
@@ -156,8 +154,8 @@ pub fn make_mro(
             segments.iter().last().unwrap().ident.to_string()
         }
         _ => {
-            let span = item_clone.into_iter().next().unwrap().span().into();
-            return syn::Error::new(span, "Expecting the impl for a struct.")
+            let span = proc_macro2::TokenStream::from(item_clone);
+            return syn::Error::new_spanned(span, "Expecting the impl for a struct.")
                 .to_compile_error()
                 .into();
         }
@@ -379,8 +377,8 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     let item_struct = match syn::parse::<ItemStruct>(item.clone()) {
         Ok(item_struct) => item_struct,
         Err(_) => {
-            let span = item.into_iter().next().unwrap().span().into();
-            return syn::Error::new(span, MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR)
+            let span = proc_macro2::TokenStream::from(item);
+            return syn::Error::new_spanned(span, MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR)
                 .to_compile_error()
                 .into();
         }
@@ -394,8 +392,8 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     let fields = match item_struct.fields.clone() {
         Fields::Named(f) => f.named,
         _ => {
-            let span = item.into_iter().next().unwrap().span().into();
-            return syn::Error::new(span, MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR)
+            let span = proc_macro2::TokenStream::from(item);
+            return syn::Error::new_spanned(span, MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR)
                 .to_compile_error()
                 .into();
         }
@@ -423,7 +421,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
         }
         let ty = field.ty;
         vec_inner.push(quote![
-            <::martian::MroField>::new(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_type())
+            <::martian::MroField>::new(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type())
         ]);
     }
 
@@ -447,6 +445,107 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     proc_macro::TokenStream::from(final_token)
 }
 
+#[proc_macro_derive(MartianType)]
+pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let input = syn::parse_macro_input!(item as DeriveInput);
+    let ident = input.ident.clone();
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+
+    match input.data {
+        Data::Union(_) => {
+            syn::Error::new_spanned(
+                input,
+                "Usage of union is highly discouraged. MartianType cannot be derived for a Union",
+            )
+            .to_compile_error()
+            .into()
+        },
+        Data::Struct(ref struct_data) => match struct_data.fields {
+            Fields::Unit => {
+                syn::Error::new_spanned(
+                    input,
+                    "MartianType cannot be derived for a unit struct. Unit structs don't store any data, so they are most likely not useful as a MartianType.",
+                )
+                .to_compile_error()
+                .into()
+            }
+            Fields::Named(_) => {
+                quote![
+                    impl #impl_generics ::martian::AsMartianPrimaryType for #ident #ty_generics #where_clause {
+                        fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
+                            ::martian::MartianPrimaryType::Map
+                        }
+                    }
+                ].into()
+            },
+            Fields::Unnamed(_) => {
+                syn::Error::new_spanned(
+                    input,
+                    "Using an tuple struct as an mro field is not recommended. The reason is that serde serializes unnamed structs as vectors and it can be represented as a type in martian only if all the fields serialize to the same martian type. i.e `struct Good(u8, u16, i32);` can be represented as `int[]`, but there is no martian representation for `struct Bad(u8, String, Foo)`. This property is hard to check in a procedural macro. Hence it is strongly recommended to use a named struct. Naming the fields would also improve the readability of the code.",
+                )
+                .to_compile_error()
+                .into()
+            },
+        },
+        Data::Enum(ref enum_data) => {
+            let mut variant_type_map = HashMap::new();
+            for variant in &enum_data.variants {
+                let this_type = match variant.fields {
+                    Fields::Named(_) => MartianPrimaryType::Map,
+                    Fields::Unnamed(_) => MartianPrimaryType::Map,
+                    Fields::Unit => MartianPrimaryType::Str,
+                };
+                variant_type_map.entry(this_type).or_insert(Vec::new()).push(variant.ident.to_string());
+            }
+            match variant_type_map.len() {
+                0 => { // Empty Enum
+                    syn::Error::new_spanned(
+                        input,
+                        "MartianType cannot be derived on enums with no variants. They are most likely not useful as a MartianType."
+                    )
+                    .to_compile_error()
+                    .into()
+                },
+                1 => { // All variants mape to either Str or Map, we can generate the derive
+                    if variant_type_map.contains_key(&MartianPrimaryType::Str) {
+                        quote![
+                            impl #impl_generics ::martian::AsMartianPrimaryType for #ident #ty_generics #where_clause {
+                                fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
+                                    ::martian::MartianPrimaryType::Str
+                                }
+                            }
+                        ].into()
+                    } else {
+                        quote![
+                            impl #impl_generics ::martian::AsMartianPrimaryType for #ident #ty_generics #where_clause {
+                                fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
+                                    ::martian::MartianPrimaryType::Map
+                                }
+                            }
+                        ].into()
+                    }
+                }
+                2 => {
+                    let map_fields = variant_type_map.get(&MartianPrimaryType::Map).unwrap().join(", ");
+                    let str_fields = variant_type_map.get(&MartianPrimaryType::Str).unwrap().join(", ");
+                    syn::Error::new_spanned(
+                        input,
+                        format!(
+                            "Deriving MartianType on enum {} failed because some of the variants in this enum map to MartianPrimaryType::Map while other variants map to MartianPrimaryType::Str.\n    1) MartianPrimaryType::Map -> [{}]\n    2) MartianPrimaryType::Str -> {}\nThe reason this happens is because serde will deserialize different variants of an enum differently. As a result, we cannot assign a unique martian type for this enum. Consider redesigning your enum to account for this.",
+                            ident.to_string(),
+                            map_fields,
+                            str_fields
+                        )
+                    )
+                    .to_compile_error()
+                    .into()
+                }
+                _ => unreachable!(),
+            }
+        },
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -459,6 +558,7 @@ mod tests {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/ui_make_mro/*.rs");
         t.compile_fail("tests/ui_martian_struct/*.rs");
+        t.compile_fail("tests/ui_martian_type/*.rs");
     }
 
     #[test]

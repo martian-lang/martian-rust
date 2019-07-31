@@ -1,0 +1,5 @@
+error: MartianType cannot be derived on enums with no variants. They are most likely not useful as a MartianType.
+ --> $DIR/derive_on_empty_enum.rs:4:1
+  |
+4 | enum Foo {}
+  | ^^^^^^^^^^^

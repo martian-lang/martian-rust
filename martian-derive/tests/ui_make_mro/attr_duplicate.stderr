@@ -2,4 +2,4 @@ error: Found multiple assignments for mem_gb.
  --> $DIR/attr_duplicate.rs:7:12
   |
 7 | #[make_mro(mem_gb = 4, mem_gb = 2)]
-  |            ^^^^^^
+  |            ^^^^^^^^^^^^^^^^^^^^^^
