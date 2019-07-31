@@ -14,8 +14,7 @@
 //! - Attributes (mem_gb, vmem_gb, threads, volatile etc.)
 //!
 //! TODO
-//! - Simplify MroDisplay trait
-//! - Minify and verify
+//! - Simplify MroDisplay trait?
 
 use crate::types::MartianVoid;
 use crate::MartianFileType;
@@ -445,6 +444,79 @@ impl MroDisplay for InAndOut {
 }
 mro_display_to_display! {InAndOut}
 
+/// The list of filetypes we list at the top of the mro
+/// A simple wrapper around a HashSet of all file extensions.
+#[derive(Debug, PartialEq)]
+pub struct FiletypeHeader(HashSet<String>);
+
+impl From<&MroField> for FiletypeHeader {
+    fn from(field: &MroField) -> FiletypeHeader {
+        let mut result = HashSet::new();
+        match field.ty {
+            MartianBlanketType::Primary(MartianPrimaryType::FileType(ref ext)) => {
+                result.insert(ext.to_string());
+            }
+            MartianBlanketType::Array(MartianPrimaryType::FileType(ref ext)) => {
+                result.insert(ext.to_string());
+            }
+            _ => {}
+        }
+        FiletypeHeader(result)
+    }
+}
+
+impl From<&InAndOut> for FiletypeHeader {
+    fn from(in_out: &InAndOut) -> FiletypeHeader {
+        let mut result = HashSet::new();
+        for field in in_out.inputs.iter().chain(in_out.outputs.iter()) {
+            result.extend(FiletypeHeader::from(field).0);
+        }
+        FiletypeHeader(result)
+    }
+}
+
+impl From<&StageMro> for FiletypeHeader {
+    fn from(stage_mro: &StageMro) -> FiletypeHeader {
+        let mut result = FiletypeHeader::from(&stage_mro.stage_in_out);
+        if let Some(ref chunk_in_out) = stage_mro.chunk_in_out {
+            result.0.extend(FiletypeHeader::from(chunk_in_out).0)
+        }
+        result
+    }
+}
+
+impl FiletypeHeader {
+    pub fn add_stage(&mut self, stage_mro: &StageMro) {
+        self.0.extend(FiletypeHeader::from(stage_mro).0);
+    }
+}
+
+impl MroDisplay for FiletypeHeader {
+    fn min_width(&self) -> usize {
+        // No configuration here
+        0
+    }
+    fn mro_string_no_width(&self) -> String {
+        let mut result = String::new();
+        if self.0.is_empty() {
+            return result;
+        }
+        let mut extensions: Vec<_> = self.0.iter().collect();
+        writeln!(&mut result, "").unwrap();
+        extensions.sort();
+        for ext in extensions {
+            writeln!(&mut result, "filetype {};", ext).unwrap();
+        }
+        writeln!(&mut result, "").unwrap();
+        result
+    }
+    fn mro_string_with_width(&self, _: usize) -> String {
+        self.mro_string_no_width()
+    }
+}
+
+mro_display_to_display! { FiletypeHeader }
+
 /// Can be auto generated using proc macro attribute
 /// #[make_mro] on MartianMain or MartianStage
 /// implementations if the associated types implement `MartianStruct`
@@ -462,7 +534,9 @@ pub trait MakeMro {
         result
     }
     fn mro(adapter_name: impl ToString, stage_key: impl ToString) -> String {
-        Self::stage_mro(adapter_name, stage_key).to_string()
+        let stage_mro = Self::stage_mro(adapter_name, stage_key);
+        let filetype = FiletypeHeader::from(&stage_mro);
+        format!("{}{}", filetype.to_string(), stage_mro.to_string())
     }
     fn stage_name() -> String;
     fn stage_in_and_out() -> InAndOut;
@@ -894,6 +968,66 @@ mod tests {
             },
         };
         stage_mro.verify();
+    }
+
+    #[test]
+    fn test_filetype_header_from_mro_field() {
+        assert_eq!(
+            FiletypeHeader::from(&MroField::new("foo", Array(Float))),
+            FiletypeHeader(HashSet::new())
+        );
+        assert_eq!(
+            FiletypeHeader::from(&MroField::new("foo", Array(FileType("txt".into())))),
+            FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
+        );
+        assert_eq!(
+            FiletypeHeader::from(&MroField::new("foo", Primary(FileType("json".into())))),
+            FiletypeHeader(vec!["json".to_string()].into_iter().collect())
+        );
+    }
+
+    #[test]
+    fn test_filetype_header_from_in_out() {
+        let filetype = FiletypeHeader::from(&InAndOut {
+            inputs: vec![
+                MroField::new("summary", Primary(FileType("json".into()))),
+                MroField::new("contigs", Primary(FileType("bam".into()))),
+            ],
+            outputs: vec![MroField::new("contigs", Primary(FileType("bam".into())))],
+        });
+        let expected = FiletypeHeader(
+            vec!["json".to_string(), "bam".to_string()]
+                .into_iter()
+                .collect(),
+        );
+        assert_eq!(filetype, expected);
+    }
+
+    #[test]
+    fn test_filetype_header_display() {
+        assert_eq!(FiletypeHeader(HashSet::new()).to_string(), "");
+        assert_eq!(
+            FiletypeHeader(vec!["txt"].into_iter().map(|x| x.to_string()).collect()).to_string(),
+            "\nfiletype txt;\n\n"
+        );
+        assert_eq!(
+            FiletypeHeader(
+                vec!["txt", "json", "bam"]
+                    .into_iter()
+                    .map(|x| x.to_string())
+                    .collect()
+            )
+            .to_string(),
+            indoc![
+                "
+
+            filetype bam;
+            filetype json;
+            filetype txt;
+            
+            "
+            ]
+        );
     }
 
 }

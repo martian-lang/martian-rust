@@ -10,28 +10,26 @@ use std::path::PathBuf;
 use MartianBlanketType::*;
 use MartianPrimaryType::*;
 
-#[derive(MartianStruct)]
-pub struct SimpleVec {
-    #[allow(dead_code)]
-    values: Vec<f64>,
-}
-
 #[test]
 fn test_simple_vec() {
+    #[derive(MartianStruct)]
+    struct SimpleVec {
+        #[allow(dead_code)]
+        values: Vec<f64>,
+    }
     let expected = vec![MroField::new("values", Array(Float))];
     assert_eq!(expected, SimpleVec::mro_fields())
 }
 
-#[derive(MartianStruct)]
-pub struct Generic<T: AsMartianBlanketType> {
-    #[allow(dead_code)]
-    param: T,
-}
-
-martian_filetype! {TxtFile, "txt"}
-
 #[test]
 fn test_generic() {
+    #[derive(MartianStruct)]
+    struct Generic<T: AsMartianBlanketType> {
+        #[allow(dead_code)]
+        param: T,
+    }
+    martian_filetype! {TxtFile, "txt"}
+
     assert_eq!(
         Generic::<i32>::mro_fields(),
         vec![MroField::new("param", Primary(Int))]
@@ -62,16 +60,15 @@ fn test_generic() {
     );
 }
 
-#[allow(dead_code)]
-#[derive(MartianStruct)]
-pub struct GenericTwo<T: AsMartianBlanketType, U: AsMartianBlanketType> {
-    foo: T,
-    bar: U,
-    far: String,
-}
-
 #[test]
 fn test_generic_two() {
+    #[allow(dead_code)]
+    #[derive(MartianStruct)]
+    struct GenericTwo<T: AsMartianBlanketType, U: AsMartianBlanketType> {
+        foo: T,
+        bar: U,
+        far: String,
+    }
     assert_eq!(
         GenericTwo::<i32, PathBuf>::mro_fields(),
         vec![

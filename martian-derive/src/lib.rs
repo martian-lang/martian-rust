@@ -4,7 +4,6 @@
 /// - Filetypes at the top - add a test
 /// - Retain attribute
 /// - Handle default values for FileType
-/// - Handle duplicate names in chunk and stage inouts
 /// - Derive AsMartianPrimary
 /// - Handle attributes in MartianStruct
 /// - Martian filetype as a procedural macro
