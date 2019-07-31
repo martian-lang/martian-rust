@@ -2,4 +2,4 @@ error: #[derive(MartianStruct)] can only be used on structs with named fields.
  --> $DIR/derive_on_unit.rs:4:1
   |
 4 | struct UnitStruct;
-  | ^^^^^^
+  | ^^^^^^^^^^^^^^^^^^

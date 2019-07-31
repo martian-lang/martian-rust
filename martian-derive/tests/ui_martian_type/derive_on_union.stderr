@@ -1,0 +1,8 @@
+error: Usage of union is highly discouraged. MartianType cannot be derived for a Union
+ --> $DIR/derive_on_union.rs:4:1
+  |
+4 | / union MyUnion {
+5 | |     f1: u32,
+6 | |     f2: f32,
+7 | | }
+  | |_^
