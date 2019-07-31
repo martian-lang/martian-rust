@@ -3,9 +3,10 @@
 /// TODO:
 /// - Retain attribute
 /// - Handle default values for FileType
-/// - Handle attributes in MartianStruct
+/// - Handle serde attributes in MartianStruct
 /// - Martian filetype as a procedural macro
 /// - Error message MartianStruct showing MartianFiletype
+/// - Support `mro` in addition to split/main/join
 extern crate proc_macro;
 use martian::{utils, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
 use quote::quote;
@@ -546,6 +547,175 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     }
 }
 
+#[proc_macro]
+pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let item2 = proc_macro2::TokenStream::from(item.clone());
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 1
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Convert the tokenstream representing the inputs to the macro as a string.
+    // Do incremental manual parsing instead of a single regex because we want
+    // to generate compile errors that are very specific
+    let input = item.to_string();
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 2
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Check that the input is two items separated by a comma. Generate a compile
+    // error if it is not in the expected format. First part is the struct name
+    // and the second part is the extension
+    let parts = input.split(",").collect::<Vec<_>>();
+    if parts.len() != 2 {
+        return syn::Error::new_spanned(item2, "The input to the martian_filetype! macro needs to be two items separated by a comma.\n\tThe first item is the struct name that will be generated and the second item is the filetype extension within double quotes.\n\tFor example martian_filetype! {TxtFile, \"txt\"}")
+            .to_compile_error()
+            .into();
+    }
+    let struct_name = parts[0].trim();
+    let extension = parts[1].trim();
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 3
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Check that the struct name is not empty. Generate a compiler error
+    // otherwise.
+    let struct_ident = match syn::parse_str::<Ident>(struct_name) {
+        Ok(ident) => ident,
+        Err(e) => return syn::Error::new_spanned(item2, format!("The first item `{}` in the martian_filetype! macro should be a valid identifier used as a struct name.\nGot an error `{}` when parsing it.", struct_name, e))
+                .to_compile_error()
+                .into(),
+    };
+    // if struct_name.is_empty() {
+    //     return syn::Error::new_spanned(item2, "The first item in the martian_filetype! macro should be a valid struct name and cannot be empty.")
+    //             .to_compile_error()
+    //             .into();
+    // }
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 4
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Check that the struct name is alphanumeric starting with an alphabet.
+    // Generate a compiler error otherwise.
+    // for (i, c) in struct_name.chars().enumerate() {
+    //     if !((i > 0 && c.is_ascii_alphanumeric()) || c.is_ascii_alphabetic()) {
+    //         return syn::Error::new_spanned(item2, format!("The first item `{}` in the martian_filetype! macro should be alphanumeric starting with an alphabet\n\t(not allowing underscores because CamelCase is recommended) since it should be a valid struct name.\n\tFound invalid character `{}`.", struct_name, c))
+    //             .to_compile_error()
+    //             .into();
+    //     }
+    // }
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 5
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // The struct name is in good shape now. Check that the extension is a
+    // string literal enclosed in double quotes. Generate a compiler error
+    // otherwise.
+    if !(extension.starts_with('"') && extension.ends_with('"')) {
+        return syn::Error::new_spanned(item2, "The second item in the martian_filetype! macro should be a string literal enclosed in double quotes.")
+                .to_compile_error()
+                .into();
+    }
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 6
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Make sure that the string literal within the quotes in the extension
+    // is not empty. Generate a compiler error otherwise.
+    let chars_within_quotes: Vec<_> = {
+        let mut chars: Vec<_> = extension.chars().skip(1).collect();
+        chars.pop();
+        chars
+    };
+    if chars_within_quotes.is_empty() {
+        return syn::Error::new_spanned(
+                item2,
+                "The extension for a filetype cannot be empty. Consider using a PathBuf for filenames without any extension."
+            )
+            .to_compile_error()
+            .into();
+    }
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 7
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Make sure that the extension specified but does not start or end with a
+    // dot (.). Generate a compiler error otherwise.
+    if chars_within_quotes[0] == '.' {
+        return syn::Error::new_spanned(
+            item2,
+            "No need to specify the leading dot(.) in the extension",
+        )
+        .to_compile_error()
+        .into();
+    }
+    if *chars_within_quotes.last().unwrap() == '.' {
+        return syn::Error::new_spanned(item2, "Extensions cannot end in a dot(.)")
+            .to_compile_error()
+            .into();
+    }
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 8
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Make sure that the extension is ascii alphanumeric or a dot (.). We have
+    // already checked for leading/trailing dots
+    for (i, c) in chars_within_quotes.iter().enumerate() {
+        if !((i > 0 && (c.is_ascii_alphanumeric() || *c == '.')) || c.is_ascii_alphabetic()) {
+            return syn::Error::new_spanned(
+                    item2,
+                    format!("The extension `{}` in the martian_filetype! macro should be alphanumeric (internal dots(.) are okay) starting with an alphabet.\n\tFound invalid character `{}` at position {}", extension, c, i))
+                .to_compile_error()
+                .into();
+        }
+    }
+
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // STEP 9
+    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    // Now we are ready to actually generate the code.
+    let extension: String = chars_within_quotes.iter().collect();
+    quote![
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+        pub struct #struct_ident(::std::path::PathBuf);
+        impl ::martian::MartianFileType for #struct_ident {
+            fn extension() -> &'static str {
+                #extension
+            }
+            fn new(
+                file_path: impl ::std::convert::AsRef<::std::path::Path>,
+                file_name: impl ::std::convert::AsRef<::std::path::Path>,
+            ) -> Self {
+                let mut path = ::std::path::PathBuf::from(file_path.as_ref());
+                path.push(file_name);
+                println!("{:?}, {:?}", path, path.extension());
+                let full_extension = match path.extension() {
+                    Some(ext) => {
+                        let curr_ext = ext.to_string_lossy().into_owned();
+                        format!("{}.{}", curr_ext, Self::extension())
+                    },
+                    None => Self::extension().to_string(),
+                };
+                path.set_extension(full_extension);
+                #struct_ident(path)
+            }
+        }
+        impl ::std::convert::AsRef<::std::path::Path> for #struct_ident {
+            fn as_ref(&self) -> &::std::path::Path {
+                &self.0
+            }
+        }
+        impl<T> ::std::convert::From<T> for #struct_ident
+        where
+            ::std::path::PathBuf: ::std::convert::From<T>,
+        {
+            fn from(source: T) -> Self {
+                #struct_ident(::std::path::PathBuf::from(source))
+            }
+        }
+    ]
+    .into()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -559,6 +729,7 @@ mod tests {
         t.compile_fail("tests/ui_make_mro/*.rs");
         t.compile_fail("tests/ui_martian_struct/*.rs");
         t.compile_fail("tests/ui_martian_type/*.rs");
+        t.compile_fail("tests/ui_martian_filetype/*.rs");
     }
 
     #[test]
