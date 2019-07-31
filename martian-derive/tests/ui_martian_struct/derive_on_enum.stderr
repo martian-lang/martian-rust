@@ -1,5 +1,8 @@
 error: #[derive(MartianStruct)] can only be used on structs with named fields.
  --> $DIR/derive_on_enum.rs:4:1
   |
-4 | enum Foo {
-  | ^^^^
+4 | / enum Foo {
+5 | |     A,
+6 | |     B,
+7 | | }
+  | |_^

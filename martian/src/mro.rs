@@ -83,7 +83,7 @@ macro_rules! usize_field_len {
 }
 
 /// Primary data types in Martian world
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub enum MartianPrimaryType {
     Int,
     Float,
@@ -146,7 +146,7 @@ pub trait AsMartianPrimaryType {
 /// It is stringly recommended not to extend any types with this trait, instead
 /// use the `AsMartianPrimaryType` trait.
 pub trait AsMartianBlanketType {
-    fn as_martian_type() -> MartianBlanketType;
+    fn as_martian_blanket_type() -> MartianBlanketType;
 }
 
 /// Macro for implementing `AsMartianPrimaryType` trait
@@ -182,26 +182,26 @@ impl_primary_mro_type!(Path, MartianPrimaryType::Path);
 impl_primary_mro_type!(PathBuf, MartianPrimaryType::Path);
 
 impl<T: AsMartianPrimaryType> AsMartianBlanketType for T {
-    fn as_martian_type() -> MartianBlanketType {
+    fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::Primary(T::as_martian_primary_type())
     }
 }
 
 impl<T: AsMartianBlanketType> AsMartianBlanketType for Option<T> {
-    fn as_martian_type() -> MartianBlanketType {
+    fn as_martian_blanket_type() -> MartianBlanketType {
         // Any variable can be `null` in Martian
-        T::as_martian_type()
+        T::as_martian_blanket_type()
     }
 }
 
 impl<T: AsMartianPrimaryType> AsMartianBlanketType for Vec<T> {
-    fn as_martian_type() -> MartianBlanketType {
+    fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::Array(T::as_martian_primary_type())
     }
 }
 
 impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
-    fn as_martian_type() -> MartianBlanketType {
+    fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::Array(K::as_martian_primary_type())
     }
 }

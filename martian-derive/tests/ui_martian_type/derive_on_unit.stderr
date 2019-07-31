@@ -1,0 +1,5 @@
+error: MartianType cannot be derived for a unit struct. Unit structs don't store any data, so they are most likely not useful as a MartianType.
+ --> $DIR/derive_on_unit.rs:4:1
+  |
+4 | struct UnitStruct;
+  | ^^^^^^^^^^^^^^^^^^

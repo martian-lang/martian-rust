@@ -1,0 +1,5 @@
+error: Using an tuple struct as an mro field is not recommended. The reason is that serde serializes unnamed structs as vectors and it can be represented as a type in martian only if all the fields serialize to the same martian type. i.e `struct Good(u8, u16, i32);` can be represented as `int[]`, but there is no martian representation for `struct Bad(u8, String, Foo)`. This property is hard to check in a procedural macro. Hence it is strongly recommended to use a named struct. Naming the fields would also improve the readability of the code.
+ --> $DIR/derive_on_tuple.rs:4:1
+  |
+4 | struct TupleStruct(u8, i32, String);
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
