@@ -1,6 +1,6 @@
 // TODO
 // - Make this a proc macro
-// - Disallow empty finetype extensions
+// - Disallow empty filetype extensions
 #[macro_export]
 macro_rules! martian_filetype {
     ($struct_name: ident, $extension:expr) => {
