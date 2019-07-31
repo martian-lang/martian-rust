@@ -28,7 +28,7 @@ use std::string::ToString;
 
 pub const MARTIAN_TOKENS: &[&str] = &[
     "in", "out", "stage", "volatile", "strict", "true", "split", "filetype", "src", "py", "comp",
-    "retain", "mro", "using", "int", "float", "string", "map", "bool", "path",
+    "retain", "mro", "using", "int", "float", "string", "map", "bool", "path", "__null__",
 ];
 
 /// Defines how an entity that denotes some part of the mro is displayed
@@ -450,14 +450,16 @@ mro_display_to_display! {InAndOut}
 /// implementations if the associated types implement `MartianStruct`
 pub trait MakeMro {
     fn stage_mro(adapter_name: impl ToString, stage_key: impl ToString) -> StageMro {
-        StageMro {
+        let result = StageMro {
             stage_name: Self::stage_name(),
             adapter_name: adapter_name.to_string(),
             stage_key: stage_key.to_string(),
             stage_in_out: Self::stage_in_and_out(),
             chunk_in_out: Self::chunk_in_and_out(),
             using_attrs: Self::using_attributes(),
-        }
+        };
+        result.verify();
+        result
     }
     fn mro(adapter_name: impl ToString, stage_key: impl ToString) -> String {
         Self::stage_mro(adapter_name, stage_key).to_string()
@@ -539,77 +541,43 @@ impl MroDisplay for StageMro {
 
 mro_display_to_display! {StageMro, TAB_WIDTH_FOR_MRO}
 
-// impl Stage {
-//     fn to_mro_string(&self) -> String {
-//         let mut mro = String::new();
-//         let stage_name = to_shouty_snake_case(&self.name);
-//         writeln!(&mut mro, "stage {}(", stage_name).unwrap();
-//         for data in &self.stage_inputs {
-//             writeln!(&mut mro, "    in {} {},", data.ty, data.name).unwrap();
-//         }
-//         for data in &self.stage_outputs {
-//             writeln!(&mut mro, "    out {} {},", data.ty, data.name).unwrap();
-//         }
-//         let exec_name = to_snake_case(&self.name);
-//         writeln!(&mut mro, "    src comp \"{} martian {}\",", self.binary, exec_name).unwrap();
-//         // Split only if either chunk_inputs or chunk_outputs is not MartianVoid
-//         if self.chunk_inputs.is_some() || self.chunk_outputs.is_some() {
-//             writeln!(&mut mro, ") split (").unwrap();
-//             for data in self.chunk_inputs.as_ref().unwrap() {
-//                 writeln!(&mut mro, "    in {} {},", data.ty, data.name).unwrap();
-//             }
-//             for data in self.chunk_outputs.as_ref().unwrap() {
-//                 writeln!(&mut mro, "    out {} {},", data.ty, data.name).unwrap();
-//             }
-//         }
-//         writeln!(&mut mro, ") {}", self.using_attrs.to_mro_string()).unwrap();
-//         mro
-//     }
+impl StageMro {
+    fn verify(&self) {
+        // By design, all the field names are guaranteed to be not
+        // any of the martian tokens. It raises a compile error when
+        // deriving MartianStruct and is checked when creating a
+        // MaroField wusing new() which is the only public entry point.
+        // So we don't have anything to check for a MainOnly stage
+        if self.chunk_in_out.is_none() {
+            return;
+        }
 
-//     fn verify_and_minify(&mut self) {
-//         // Make sure none of the fields have an invalid name
-//         let verify_fields = |fields: &[MroField]| {
-//             for f in fields {
-//                 f.verify();
-//             }
-//         };
-//         verify_fields(&self.stage_inputs);
-//         verify_fields(&self.stage_outputs);
+        let chunk_in_out = self.chunk_in_out.as_ref().unwrap();
+        // Do not allow the same field name in stage and chunk inputs
+        // O(mn) is good enough
+        for f_chunk in chunk_in_out.inputs.iter() {
+            for f_stage in self.stage_in_out.inputs.iter() {
+                assert!(
+                    !(f_chunk.name == f_stage.name),
+                    "ERROR: Found identical field {} in stage and chunk inputs",
+                    f_chunk.name
+                )
+            }
+        }
 
-//         if self.chunk_inputs.is_none() && self.chunk_outputs.is_none() {
-//             return;
-//         }
-//         verify_fields(self.chunk_inputs.as_ref().unwrap());
-//         verify_fields(self.chunk_outputs.as_ref().unwrap());
-
-//         // Do not allow the same field name in stage and chunk inputs
-//         // O(mn) is good enough
-//         for f_chunk in self.chunk_inputs.as_ref().unwrap() {
-//             for f_stage in &self.stage_inputs {
-//                 assert!(!(f_chunk.name==f_stage.name), "ERROR: Found identical field {} in stage and chunk inputs", f_chunk.name)
-//             }
-//         }
-
-//         // If the same field name appears in stage and chunk outputs,
-//         // make sure they are of the same type and remove the field
-//         // from the chunk outputs
-//         let mut min_chunk_outputs = Vec::new();
-//         for f_chunk in self.chunk_outputs.as_ref().unwrap() {
-//             let mut found = false;
-//             for f_stage in &self.stage_outputs {
-//                 if f_chunk.name==f_stage.name {
-//                     found = true;
-//                     assert!(f_chunk.ty==f_stage.ty, "ERROR: Identical field names in stage and chunk outputs need to have identical type. Offending field -> {}", f_chunk.name);
-//                 }
-//             }
-//             if !found {
-//                 min_chunk_outputs.push(f_chunk.clone());
-//             }
-//         }
-
-//         self.chunk_outputs = Some(min_chunk_outputs);
-//     }
-// }
+        // Do not allow the same field name in stage and chunk outputs
+        // O(mn) is good enough
+        for f_chunk in chunk_in_out.outputs.iter() {
+            for f_stage in self.stage_in_out.outputs.iter() {
+                assert!(
+                    !(f_chunk.name == f_stage.name),
+                    "ERROR: Found identical field {} in stage and chunk outputs",
+                    f_chunk.name
+                )
+            }
+        }
+    }
+}
 
 // impl std::fmt::Display for Stage {
 //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -878,6 +846,54 @@ mod tests {
         };
 
         assert_eq!(stage_mro.to_string(), expected_mro);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_stage_mro_display_duplicate_inputs() {
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: Some(InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: Vec::new(),
+            }),
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+        stage_mro.verify();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_stage_mro_display_duplicate_outputs() {
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: Some(InAndOut {
+                inputs: Vec::new(),
+                outputs: vec![MroField::new("sum", Primary(Int))],
+            }),
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+        stage_mro.verify();
     }
 
 }
