@@ -1,0 +1,5 @@
+error: The second item in the martian_filetype! macro should be a string literal enclosed in double quotes.
+ --> $DIR/test_extension_no_quotes.rs:3:20
+  |
+3 | martian_filetype! {TxtFile, txt}
+  |                    ^^^^^^^^^^^^

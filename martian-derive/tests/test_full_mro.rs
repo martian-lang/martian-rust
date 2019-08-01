@@ -1,9 +1,6 @@
 use martian::types::MartianVoid;
-use martian::{
-    martian_filetype, Error, MakeMro, MartianFileType, MartianMain, MartianRover, MartianStage,
-    StageDef,
-};
-use martian_derive::{make_mro, MartianStruct};
+use martian::{Error, MakeMro, MartianMain, MartianRover, MartianStage, StageDef};
+use martian_derive::{make_mro, martian_filetype, MartianStruct};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -130,11 +127,11 @@ fn test_non_empty_split() {
     assert_eq!(ChunkerStage::mro("my_adapter", "chunker"), expected)
 }
 
+martian_filetype! {TxtFile, "txt"}
+martian_filetype! {JsonFile, "json"}
+
 #[test]
 fn test_with_filetype() {
-    martian_filetype! {TxtFile, "txt"};
-    martian_filetype! {JsonFile, "json"};
-
     #[derive(Serialize, Deserialize, MartianStruct)]
     pub struct SumSquaresStageInputs {
         values: Vec<f64>,

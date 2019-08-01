@@ -1,0 +1,5 @@
+error: The first item `4File` in the martian_filetype! macro should be a valid identifier that can be used as a struct name.
+ --> $DIR/test_number_structname.rs:4:20
+  |
+4 | martian_filetype! {4File, txt}
+  |                    ^^^^^^^^^^

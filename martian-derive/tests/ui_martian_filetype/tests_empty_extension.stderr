@@ -1,0 +1,5 @@
+error: The extension for a filetype cannot be empty. Consider using a PathBuf for filenames without any extension.
+ --> $DIR/tests_empty_extension.rs:3:20
+  |
+3 | martian_filetype! {TxtFile, ""}
+  |                    ^^^^^^^^^^^
