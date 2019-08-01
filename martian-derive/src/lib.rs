@@ -4,9 +4,8 @@
 /// - Retain attribute
 /// - Handle default values for FileType
 /// - Handle serde attributes in MartianStruct
-/// - Martian filetype as a procedural macro
-/// - Error message MartianStruct showing MartianFiletype
 /// - Support `mro` in addition to split/main/join
+/// - Repo wide reorganization
 extern crate proc_macro;
 use martian::{utils, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
 use quote::quote;
@@ -191,10 +190,11 @@ pub fn make_mro(
     // STEP 5
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // Stitch the quotes together
+    let (impl_generics, _, where_clause) = item_impl.generics.split_for_impl();
     let item_clone2 = proc_macro2::TokenStream::from(item_clone);
     let final_token = quote![
         #item_clone2
-        impl ::martian::MakeMro for #stage_struct {
+        impl #impl_generics ::martian::MakeMro for #stage_struct #where_clause {
             #stage_var_fn
             #stage_name_fn
             #using_attributes_fn

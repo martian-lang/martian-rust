@@ -123,6 +123,8 @@ impl MartianRover {
         assert!(resource.mem_gb.unwrap() >= 0);
         assert!(resource.threads.is_some());
         assert!(resource.threads.unwrap() >= 0);
+        assert!(resource.vmem_gb.is_some());
+        assert!(resource.vmem_gb.unwrap() >= 0);
         MartianRover {
             files_path: PathBuf::from(files_path.as_ref()),
             mem_gb: resource.mem_gb.unwrap() as usize,
