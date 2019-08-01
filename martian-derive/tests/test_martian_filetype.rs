@@ -17,6 +17,10 @@ fn test_extension() {
 #[test]
 fn test_new() {
     assert_eq!(
+        TxtFile::new("/some/folder", "file"),
+        TxtFile(PathBuf::from("/some/folder/file.txt"))
+    );
+    assert_eq!(
         TxtFile::new("/some/folder", "file").as_ref(),
         &PathBuf::from("/some/folder/file.txt")
     );

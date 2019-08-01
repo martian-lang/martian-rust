@@ -133,15 +133,12 @@ impl MartianRover {
     ///
     /// ```rust
     /// use martian::{MartianRover, Resource};
-    /// use martian::types::CsvFile;
     /// use std::path::{Path, PathBuf};
     /// let resource = Resource::new().mem_gb(2).threads(1).vmem_gb(5);
     /// let rover = MartianRover::new("/some/path", resource);
     ///
-    /// // The right extension is added for types which implement
+    /// // Note: The right extension is added for types which implement
     /// // `MartianFileType` trait.
-    /// let csv_file: CsvFile = rover.make_path("summary");
-    /// assert_eq!(csv_file.as_ref(), Path::new("/some/path/summary.csv"));
     ///
     /// // You can also create a file with a custom name by using a
     /// // PathBuf (preferred) or a String

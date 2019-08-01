@@ -1,0 +1,5 @@
+error: Extensions cannot end in a dot(.)
+ --> $DIR/test_trailing_dot.rs:3:20
+  |
+3 | martian_filetype! {TxtFile, "txt."}
+  |                    ^^^^^^^^^^^^^^^

@@ -581,28 +581,10 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
     // otherwise.
     let struct_ident = match syn::parse_str::<Ident>(struct_name) {
         Ok(ident) => ident,
-        Err(e) => return syn::Error::new_spanned(item2, format!("The first item `{}` in the martian_filetype! macro should be a valid identifier used as a struct name.\nGot an error `{}` when parsing it.", struct_name, e))
+        Err(_) => return syn::Error::new_spanned(item2, format!("The first item `{}` in the martian_filetype! macro should be a valid identifier that can be used as a struct name.", struct_name))
                 .to_compile_error()
                 .into(),
     };
-    // if struct_name.is_empty() {
-    //     return syn::Error::new_spanned(item2, "The first item in the martian_filetype! macro should be a valid struct name and cannot be empty.")
-    //             .to_compile_error()
-    //             .into();
-    // }
-
-    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    // STEP 4
-    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    // Check that the struct name is alphanumeric starting with an alphabet.
-    // Generate a compiler error otherwise.
-    // for (i, c) in struct_name.chars().enumerate() {
-    //     if !((i > 0 && c.is_ascii_alphanumeric()) || c.is_ascii_alphabetic()) {
-    //         return syn::Error::new_spanned(item2, format!("The first item `{}` in the martian_filetype! macro should be alphanumeric starting with an alphabet\n\t(not allowing underscores because CamelCase is recommended) since it should be a valid struct name.\n\tFound invalid character `{}`.", struct_name, c))
-    //             .to_compile_error()
-    //             .into();
-    //     }
-    // }
 
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 5
@@ -687,12 +669,8 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
             ) -> Self {
                 let mut path = ::std::path::PathBuf::from(file_path.as_ref());
                 path.push(file_name);
-                println!("{:?}, {:?}", path, path.extension());
                 let full_extension = match path.extension() {
-                    Some(ext) => {
-                        let curr_ext = ext.to_string_lossy().into_owned();
-                        format!("{}.{}", curr_ext, Self::extension())
-                    },
+                    Some(ext) => format!("{}.{}", ext.to_string_lossy(), Self::extension()),
                     None => Self::extension().to_string(),
                 };
                 path.set_extension(full_extension);
@@ -710,6 +688,11 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
         {
             fn from(source: T) -> Self {
                 #struct_ident(::std::path::PathBuf::from(source))
+            }
+        }
+        impl ::martian::AsMartianPrimaryType for #struct_ident {
+            fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
+                ::martian::MartianPrimaryType::FileType(String::from(<#struct_ident as ::martian::MartianFileType>::extension()))
             }
         }
     ]
