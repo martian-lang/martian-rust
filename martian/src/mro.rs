@@ -17,7 +17,6 @@
 //! - Simplify MroDisplay trait?
 
 use crate::types::MartianVoid;
-use crate::MartianFileType;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Display, Write};
@@ -209,12 +208,6 @@ impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
 impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
     fn as_martian_primary_type() -> MartianPrimaryType {
         MartianPrimaryType::Map
-    }
-}
-
-impl<T: MartianFileType> AsMartianPrimaryType for T {
-    fn as_martian_primary_type() -> MartianPrimaryType {
-        MartianPrimaryType::FileType(String::from(<T as MartianFileType>::extension()))
     }
 }
 

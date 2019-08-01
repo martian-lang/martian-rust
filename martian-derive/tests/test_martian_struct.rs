@@ -1,9 +1,7 @@
-use martian::martian_filetype;
 use martian::{
-    AsMartianBlanketType, MartianBlanketType, MartianFileType, MartianPrimaryType, MartianStruct,
-    MroField,
+    AsMartianBlanketType, MartianBlanketType, MartianPrimaryType, MartianStruct, MroField,
 };
-use martian_derive::MartianStruct;
+use martian_derive::{martian_filetype, MartianStruct};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -21,6 +19,7 @@ fn test_simple_vec() {
     assert_eq!(expected, SimpleVec::mro_fields())
 }
 
+martian_filetype! {TxtFile, "txt"}
 #[test]
 fn test_generic() {
     #[derive(MartianStruct)]
@@ -28,7 +27,6 @@ fn test_generic() {
         #[allow(dead_code)]
         param: T,
     }
-    martian_filetype! {TxtFile, "txt"}
 
     assert_eq!(
         Generic::<i32>::mro_fields(),

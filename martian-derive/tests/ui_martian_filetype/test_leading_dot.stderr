@@ -1,0 +1,5 @@
+error: No need to specify the leading dot(.) in the extension
+ --> $DIR/test_leading_dot.rs:3:20
+  |
+3 | martian_filetype! {TxtFile, ".txt"}
+  |                    ^^^^^^^^^^^^^^^
