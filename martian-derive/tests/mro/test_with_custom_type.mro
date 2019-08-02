@@ -1,0 +1,13 @@
+
+filetype json;
+
+stage DETECT_CHEMISTRY(
+    in  string sample_id,
+    in  map[]  read_data,
+    out string chemistry,
+    out json   summary,
+    src comp   "adapter martian detect_chemistry",
+) using (
+    mem_gb   = 8,
+    volatile = strict,
+)
