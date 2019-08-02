@@ -1,8 +1,8 @@
 use martian::types::MartianVoid;
 use martian::{
-    AsMartianBlanketType, Error, MakeMro, MartianMain, MartianRover, MartianStage, StageDef,
+    AsMartianBlanketType, Error, MartianMain, MartianRover, MartianStage, MroMaker, StageDef,
 };
-use martian_derive::{make_mro, martian_filetype, MartianStruct};
+use martian_derive::{make_mro, martian_filetype, MartianStruct, MartianType};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -29,6 +29,32 @@ fn test_main_only() {
             unimplemented!()
         }
     }
+
+    // The generated code would look like this
+    // ```
+    // impl ::martian::MroMaker for SumSquares {
+    //     fn stage_in_and_out() -> ::martian::InAndOut {
+    //         ::martian::InAndOut {
+    //             inputs: <SumSquaresStageInputs as ::martian::MartianStruct>::mro_fields(),
+    //             outputs: <SumSquaresStageOutputs as ::martian::MartianStruct>::mro_fields(),
+    //         }
+    //     }
+    //     fn chunk_in_and_out() -> Option<::martian::InAndOut> {
+    //         None
+    //     }
+    //     fn stage_name() -> String {
+    //         String::from("SUM_SQUARES")
+    //     }
+    //     fn using_attributes() -> ::martian::MroUsing {
+    //         ::martian::MroUsing {
+    //             mem_gb: Some(4i16),
+    //             threads: Some(2i16),
+    //             volatile: None,
+    //             ..Default::default()
+    //         }
+    //     }
+    // }
+    // ```
 
     let expected = include_str!("mro/test_main_only.mro");
 
@@ -224,4 +250,52 @@ fn test_with_filetype() {
     let expected = include_str!("mro/test_with_filetype.mro");
 
     assert_eq!(SumSquares::mro("adapter", "sum_squares"), expected);
+}
+
+martian_filetype! {FastqFile, "fastq"}
+#[test]
+fn test_with_custom_type() {
+    #[derive(Serialize, Deserialize, MartianType)]
+    enum Chemistry {
+        SC5p,
+        SC3p,
+        SCVdj,
+    }
+
+    #[derive(Serialize, Deserialize, MartianType)]
+    struct ReadData {
+        r1: FastqFile,
+        r2: Option<FastqFile>,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SI {
+        sample_id: String,
+        read_data: Vec<ReadData>,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SO {
+        chemistry: Chemistry,
+        summary: JsonFile,
+    }
+
+    pub struct DetectChemistry;
+
+    #[make_mro(mem_gb = 8, volatile = strict)]
+    impl MartianMain for DetectChemistry {
+        type StageInputs = SI;
+        type StageOutputs = SO;
+
+        fn main(&self, _: Self::StageInputs, _: MartianRover) -> Result<Self::StageOutputs, Error> {
+            unimplemented!()
+        }
+    }
+
+    let expected = include_str!("mro/test_with_custom_type.mro");
+
+    assert_eq!(
+        DetectChemistry::mro("adapter", "detect_chemistry"),
+        expected
+    );
 }
