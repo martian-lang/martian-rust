@@ -194,7 +194,7 @@ pub fn make_mro(
     let item_clone2 = proc_macro2::TokenStream::from(item_clone);
     let final_token = quote![
         #item_clone2
-        impl #impl_generics ::martian::MakeMro for #stage_struct #where_clause {
+        impl #impl_generics ::martian::MroMaker for #stage_struct #where_clause {
             #stage_var_fn
             #stage_name_fn
             #using_attributes_fn

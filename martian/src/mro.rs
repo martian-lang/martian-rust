@@ -306,6 +306,7 @@ impl FromStr for Volatile {
     }
 }
 
+// Maybe just need display?
 impl MroDisplay for Volatile {
     usize_field_len! {}
     fn mro_string_no_width(&self) -> String {
@@ -484,6 +485,7 @@ impl FiletypeHeader {
     }
 }
 
+// Just need display here
 impl MroDisplay for FiletypeHeader {
     fn min_width(&self) -> usize {
         // No configuration here
@@ -513,7 +515,7 @@ mro_display_to_display! { FiletypeHeader }
 /// Can be auto generated using proc macro attribute
 /// #[make_mro] on MartianMain or MartianStage
 /// implementations if the associated types implement `MartianStruct`
-pub trait MakeMro {
+pub trait MroMaker {
     fn stage_mro(adapter_name: impl ToString, stage_key: impl ToString) -> StageMro {
         let result = StageMro {
             stage_name: Self::stage_name(),
