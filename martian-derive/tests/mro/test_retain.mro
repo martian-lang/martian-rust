@@ -1,0 +1,18 @@
+
+filetype bam;
+filetype bam.bai;
+
+stage SORT_BY_POS(
+    in  bam[]   inputs,
+    in  int     num_threads,
+    in  int     mem_gb,
+    out bam     output,
+    out bam.bai index,
+    src comp    "adapter martian sort_reads_by_pos",
+) split (
+    in  bam     chunk_input,
+) using (
+    volatile = strict,
+) retain (
+    index,
+)

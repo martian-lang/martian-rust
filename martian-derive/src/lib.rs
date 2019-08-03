@@ -1,10 +1,7 @@
 #![recursion_limit = "128"]
 
 /// TODO:
-/// - Retain attribute
 /// - Handle default values for FileType
-/// - Handle serde attributes in MartianStruct
-/// - Support `mro` in addition to split/main/join
 /// - Repo wide reorganization
 extern crate proc_macro;
 use martian::{utils, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
@@ -25,8 +22,10 @@ const MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR: &'static str =
     r#"#[derive(MartianStruct)] can only be used on structs with named fields."#;
 
 /// When this attribute is applied to the `MartianMain` or `MartianStage` trait implementation of
-/// a stage struct, it derives the trait `MakeMro` to the stage struct, which lets you generate
+/// a stage struct, it derives the trait `MroMaker` to the stage struct, which lets you generate
 /// the mro corresponding to the stage.
+///
+/// For examples on how to use it and customize, take a look at `tests/test_full_mro.rs`
 #[proc_macro_attribute]
 pub fn make_mro(
     attr: proc_macro::TokenStream,
@@ -368,7 +367,9 @@ attr_parse!(
     stage_name: String
 );
 
-#[proc_macro_derive(MartianStruct)]
+/// Structs which are used as associated types in `MartianMain` or `MartianStage`
+/// traits need to implement `MartianStruct`. You can derive it using `#[derive(MartianStruct)]`
+#[proc_macro_derive(MartianStruct, attributes(mro_retain))]
 pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 1
@@ -405,11 +406,29 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     // STEP 3
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // Generate tokenstream for `MroField` calls for each field
-    // Make sure that none of the field names are martian keywords
+    // Make sure that none of the field names are martian keywords.
+    // Parse the #[mro_retian] attributes attached to the field, and make sure
+    // that no serde field attributes are used
     let mut vec_inner = Vec::new();
     let blacklist: HashSet<String> = MARTIAN_TOKENS.iter().map(|x| x.to_string()).collect();
     for field in fields {
         let name = field.ident.clone().unwrap().to_string();
+        let mut retain = false;
+        for attr in &field.attrs {
+            if let Ok(meta) = attr.parse_meta() {
+                match meta {
+                    syn::Meta::Word(ref attr_ident) if attr_ident == "mro_retain" => {
+                        retain = true;
+                    }
+                    syn::Meta::List(ref list) if list.ident == "serde" => {
+                        return syn::Error::new_spanned(field, "Cannot use serde attributes here. This might be okay, but it's hard to guarantee that deriving MartianStruct would work correctly when using serde attributes.")
+                            .to_compile_error()
+                            .into();
+                    }
+                    _ => {}
+                }
+            }
+        }
         if blacklist.contains(&name) {
             return syn::Error::new(
                 field.ident.unwrap().span(),
@@ -422,9 +441,15 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
             .into();
         }
         let ty = field.ty;
-        vec_inner.push(quote![
-            <::martian::MroField>::new(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type())
-        ]);
+        vec_inner.push(if retain {
+            quote![
+                <::martian::MroField>::retained(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type())
+            ]
+        } else {
+            quote![
+                <::martian::MroField>::new(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type())
+            ]
+        });
     }
 
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -448,6 +473,8 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     proc_macro::TokenStream::from(final_token)
 }
 
+/// Custom types which are fields of a `MartianStruct` need to implement `AsMartianBlanketType`.
+/// You can derive that trait on an enum or struct using `#[derive(MartianType)]`
 #[proc_macro_derive(MartianType)]
 pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = syn::parse_macro_input!(item as DeriveInput);
@@ -552,6 +579,24 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     }
 }
 
+/// A macro to define a new struct that implements `MartianFileType` trait
+///
+/// Because this is a procedural macro, as of now, you can only define it
+/// outside functions because they cannopt be expanded to statements.
+/// ```rust
+/// use serde::{Serialize, Deserialize};
+/// use martian_derive::martian_filetype;
+/// use martian::types::MartianFileType;
+/// martian_filetype! { TxtFile, "txt" }
+/// martian_filetype! { BamIndexFile, "bam.bai" }
+/// fn main() {
+///     assert_eq!(TxtFile::extension(), "txt");
+///     assert_eq!(
+///         BamIndexFile::new("/path/to/folder", "filename").as_ref(),
+///         std::path::Path::new("/path/to/folder/filename.bam.bai")
+///     )
+/// }
+/// ```
 #[proc_macro]
 pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let item2 = proc_macro2::TokenStream::from(item.clone());
