@@ -54,6 +54,10 @@
         * `T`, `Option<T>`, `Vec<T>`, `HashSet<T>`
     * Not recommended to `impl` this for custom types.
 
+
+
+# Examples of generated code by the above proc macros
+
 ### make_mro generated code
 
 ```rust
@@ -103,6 +107,62 @@ impl ::martian::AsMartianPrimaryType for Chemistry {
     }
 }
 ```
+
+
+
+### `martian_filetype!{TxtFile, "txt"}` generated code
+
+```rust
+impl ::martian::MartianFileType for TxtFile {
+    fn extension() -> &'static str {
+        "txt"
+    }
+    fn new(
+        file_path: impl ::std::convert::AsRef<::std::path::Path>,
+        file_name: impl ::std::convert::AsRef<::std::path::Path>,
+    ) -> Self {
+        let mut path = ::std::path::PathBuf::from(file_path.as_ref());
+        path.push(file_name);
+        let full_extension = match path.extension() {
+            Some(ext) => ::alloc::fmt::format(::std::fmt::Arguments::new_v1(
+                &["", "."],
+                &match (&ext.to_string_lossy(), &Self::extension()) {
+                    (arg0, arg1) => [
+                        ::std::fmt::ArgumentV1::new(arg0, ::std::fmt::Display::fmt),
+                        ::std::fmt::ArgumentV1::new(arg1, ::std::fmt::Display::fmt),
+                    ],
+                },
+            )),
+            None => Self::extension().to_string(),
+        };
+        path.set_extension(full_extension);
+        TxtFile(path)
+    }
+}
+impl ::std::convert::AsRef<::std::path::Path> for TxtFile {
+    fn as_ref(&self) -> &::std::path::Path {
+        &self.0
+    }
+}
+impl<T> ::std::convert::From<T> for TxtFile
+where
+    ::std::path::PathBuf: ::std::convert::From<T>,
+{
+    fn from(source: T) -> Self {
+        TxtFile(::std::path::PathBuf::from(source))
+    }
+}
+impl ::martian::AsMartianPrimaryType for TxtFile {
+    fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
+        ::martian::MartianPrimaryType::FileType(String::from(
+            <TxtFile as ::martian::MartianFileType>::extension(),
+        ))
+    }
+}
+
+```
+
+
 
 
 
