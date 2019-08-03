@@ -229,6 +229,7 @@ impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
 pub struct MroField {
     name: String,
     ty: MartianBlanketType,
+    retain: bool,
 }
 
 /// `field_width` will decide the length of the type column
@@ -256,8 +257,15 @@ impl MroField {
         let field = MroField {
             name: name.to_string(),
             ty,
+            retain: false,
         };
         field.verify(); // No use case to resultify this so far
+        field
+    }
+
+    pub fn retained(name: impl ToString, ty: MartianBlanketType) -> Self {
+        let mut field = Self::new(name, ty);
+        field.retain = true;
         field
     }
     // Check that name does not match any martian token.
@@ -341,53 +349,44 @@ macro_rules! mro_using {
             }
         }
 
-        /// Using section starts with `using (`
-        /// followed by a line which has two configurable widths
+        /// Using section
         /// ```md
-        /// using (
-        ///       mem_gb = 1,
-        /// )
-        /// <---->
-        ///   w1
+        /// mem_gb = 1,
         /// ```
         impl MroDisplay for MroUsing {
             fn min_width(&self) -> usize {
-                0
+                let mut w = 0;
+                $(if self.$property.is_some() {
+                    w = std::cmp::max(w, stringify!($property).len());
+                })*
+                w
             }
 
             fn mro_string_no_width(&self) -> String {
                 self.mro_string_with_width(self.min_width())
             }
 
-            fn mro_string_with_width(&self, w1: usize) -> String {
+            fn mro_string_with_width(&self, field_width: usize) -> String {
                 let mut result = String::new();
                 // If every field is None, return empty String
                 if !self.need_using() {
                     return result;
                 }
-                let mut w2 = 0;
-                $(if self.$property.is_some() {
-                    w2 = std::cmp::max(w2, stringify!($property).len());
-                })*
-                writeln!(&mut result, "using (").unwrap();
                 $(
                     if let Some($property) = self.$property {
                         writeln!(
                             &mut result,
-                            "{blank:indent$}{key:<width$} = {value},",
-                            blank = "",
-                            indent = w1,
+                            "{key:<width$} = {value},",
                             key=stringify!($property),
-                            width=w2,
+                            width=field_width,
                             value=$property
                         ).unwrap()
                     }
                 )*
-                writeln!(&mut result, ")").unwrap();
                 result
             }
         }
-        mro_display_to_display! {MroUsing, TAB_WIDTH_FOR_MRO}
+        mro_display_to_display! {MroUsing}
     };
 }
 
@@ -398,6 +397,16 @@ mro_using! {mem_gb: i16, vmem_gb: i16, threads: i16, volatile: Volatile}
 pub struct InAndOut {
     pub inputs: Vec<MroField>,
     pub outputs: Vec<MroField>,
+}
+
+impl InAndOut {
+    fn retain_field_names(&self) -> Vec<String> {
+        self.outputs
+            .iter()
+            .filter(|field| field.retain)
+            .map(|field| field.name.clone())
+            .collect()
+    }
 }
 
 impl MroDisplay for InAndOut {
@@ -594,15 +603,19 @@ impl MroDisplay for StageMro {
         }
 
         if self.using_attrs.need_using() {
-            write!(
-                &mut result,
-                ") {}",
-                self.using_attrs.mro_string(Some(field_width))
-            )
-            .unwrap();
-        } else {
-            writeln!(&mut result, ")").unwrap();
+            writeln!(&mut result, ") using (").unwrap();
+            for line in self.using_attrs.mro_string(None).lines() {
+                writeln!(&mut result, "{}{}", indent, line).unwrap();
+            }
         }
+        let retain_names = self.stage_in_out.retain_field_names();
+        if !retain_names.is_empty() {
+            writeln!(&mut result, ") retain (").unwrap();
+            for line in retain_names {
+                writeln!(&mut result, "{}{},", indent, line).unwrap();
+            }
+        }
+        writeln!(&mut result, ")").unwrap();
 
         result
     }
@@ -707,9 +720,7 @@ mod tests {
             .to_string(),
             indoc!(
                 "
-                using (
-                    mem_gb = 1,
-                )
+                mem_gb = 1,
             "
             )
         );
@@ -724,11 +735,9 @@ mod tests {
             .mro_string_no_width(),
             indoc!(
                 "
-                using (
                 mem_gb   = 1,
                 vmem_gb  = 4,
                 volatile = strict,
-                )
             "
             )
         );
@@ -738,12 +747,10 @@ mod tests {
                 threads: Some(2),
                 ..Default::default()
             }
-            .mro_string_with_width(8),
+            .mro_string_with_width(10),
             indoc!(
                 "
-                using (
-                        threads = 2,
-                )
+                threads    = 2,
             "
             )
         );
@@ -905,6 +912,42 @@ mod tests {
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float))],
                 outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: None,
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+
+        assert_eq!(stage_mro.to_string(), expected_mro);
+    }
+
+    #[test]
+    fn test_stage_mro_display_5() {
+        let expected_mro = indoc!(
+            r#"
+            stage SUM_SQUARES(
+                in  float[] values,
+                out float   sum,
+                src comp    "my_adapter martian sum_squares",
+            ) using (
+                mem_gb  = 1,
+                threads = 2,
+            ) retain (
+                sum,
+            )
+            "#
+        );
+
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::retained("sum", Primary(Float))],
             },
             chunk_in_out: None,
             using_attrs: MroUsing {
