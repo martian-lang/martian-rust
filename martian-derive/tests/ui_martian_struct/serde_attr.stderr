@@ -1,0 +1,6 @@
+error: Cannot use serde attributes here. This might be okay, but it's hard to guarantee that deriving MartianStruct would work correctly when using serde attributes.
+ --> $DIR/serde_attr.rs:7:5
+  |
+7 | /     #[serde(rename = "configuration")]
+8 | |     config: String, // Now this field will be serialized as "configuration"
+  | |__________________^
