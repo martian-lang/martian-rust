@@ -76,3 +76,15 @@ fn test_generic_two() {
         ]
     );
 }
+
+#[test]
+fn test_retain() {
+    #[derive(MartianStruct)]
+    struct SimpleVec {
+        #[allow(dead_code)]
+        #[mro_retain]
+        values: Vec<f64>,
+    }
+    let expected = vec![MroField::retained("values", Array(Float))];
+    assert_eq!(expected, SimpleVec::mro_fields())
+}

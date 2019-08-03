@@ -8,6 +8,12 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::marker::PhantomData;
 
+martian_filetype! {FastqFile, "fastq"}
+martian_filetype! {TxtFile, "txt"}
+martian_filetype! {JsonFile, "json"}
+martian_filetype! {BamFile, "bam"}
+martian_filetype! {BamIndexFile, "bam.bai"}
+
 #[test]
 fn test_main_only() {
     #[derive(Serialize, Deserialize, MartianStruct)]
@@ -219,9 +225,6 @@ fn test_non_empty_split() {
     assert_eq!(ChunkerStage::mro("my_adapter", "chunker"), expected)
 }
 
-martian_filetype! {TxtFile, "txt"}
-martian_filetype! {JsonFile, "json"}
-
 #[test]
 fn test_with_filetype() {
     #[derive(Serialize, Deserialize, MartianStruct)]
@@ -252,7 +255,6 @@ fn test_with_filetype() {
     assert_eq!(SumSquares::mro("adapter", "sum_squares"), expected);
 }
 
-martian_filetype! {FastqFile, "fastq"}
 #[test]
 fn test_with_custom_type() {
     #[derive(Serialize, Deserialize, MartianType)]
@@ -298,4 +300,58 @@ fn test_with_custom_type() {
         DetectChemistry::mro("adapter", "detect_chemistry"),
         expected
     );
+}
+
+#[test]
+fn test_retain() {
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SI {
+        inputs: Vec<BamFile>,
+        num_threads: i16,
+        mem_gb: i16,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SO {
+        output: BamFile,
+        #[mro_retain]
+        index: BamIndexFile,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct CI {
+        chunk_input: BamFile,
+    }
+
+    pub struct SortByPos;
+
+    #[make_mro(volatile = strict)]
+    impl MartianStage for SortByPos {
+        type StageInputs = SI;
+        type StageOutputs = SO;
+        type ChunkInputs = CI;
+        type ChunkOutputs = MartianVoid;
+
+        fn split(&self, _: SI, _: MartianRover) -> Result<StageDef<CI>, Error> {
+            unimplemented!()
+        }
+
+        fn main(&self, _: SI, _: CI, _: MartianRover) -> Result<MartianVoid, Error> {
+            unimplemented!()
+        }
+
+        fn join(
+            &self,
+            _: SI,
+            _: Vec<CI>,
+            _: Vec<MartianVoid>,
+            _: MartianRover,
+        ) -> Result<SO, Error> {
+            unimplemented!()
+        }
+    }
+
+    let expected = include_str!("mro/test_retain.mro");
+
+    assert_eq!(SortByPos::mro("adapter", "sort_reads_by_pos"), expected);
 }
