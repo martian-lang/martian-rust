@@ -194,6 +194,7 @@ pub fn make_mro(
     let item_clone2 = proc_macro2::TokenStream::from(item_clone);
     let final_token = quote![
         #item_clone2
+        #[automatically_derived]
         impl #impl_generics ::martian::MroMaker for #stage_struct #where_clause {
             #stage_var_fn
             #stage_name_fn
@@ -434,6 +435,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     let (impl_generics, ty_generics, where_clause) = item_struct.generics.split_for_impl();
     let item_ident = item_struct.ident.clone();
     let final_token = quote![
+        #[automatically_derived]
         impl #impl_generics ::martian::MartianStruct for #item_ident #ty_generics #where_clause {
             fn mro_fields() -> Vec<::martian::MroField> {
                 vec![
@@ -472,6 +474,7 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
             }
             Fields::Named(_) => {
                 quote![
+                    #[automatically_derived]
                     impl #impl_generics ::martian::AsMartianPrimaryType for #ident #ty_generics #where_clause {
                         fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
                             ::martian::MartianPrimaryType::Map
@@ -510,6 +513,7 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                 1 => { // All variants mape to either Str or Map, we can generate the derive
                     if variant_type_map.contains_key(&MartianPrimaryType::Str) {
                         quote![
+                            #[automatically_derived]
                             impl #impl_generics ::martian::AsMartianPrimaryType for #ident #ty_generics #where_clause {
                                 fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
                                     ::martian::MartianPrimaryType::Str
@@ -518,6 +522,7 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                         ].into()
                     } else {
                         quote![
+                            #[automatically_derived]
                             impl #impl_generics ::martian::AsMartianPrimaryType for #ident #ty_generics #where_clause {
                                 fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
                                     ::martian::MartianPrimaryType::Map
@@ -659,6 +664,7 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
     quote![
         #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
         pub struct #struct_ident(::std::path::PathBuf);
+        #[automatically_derived]
         impl ::martian::MartianFileType for #struct_ident {
             fn extension() -> &'static str {
                 #extension
@@ -677,11 +683,13 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
                 #struct_ident(path)
             }
         }
+        #[automatically_derived]
         impl ::std::convert::AsRef<::std::path::Path> for #struct_ident {
             fn as_ref(&self) -> &::std::path::Path {
                 &self.0
             }
         }
+        #[automatically_derived]
         impl<T> ::std::convert::From<T> for #struct_ident
         where
             ::std::path::PathBuf: ::std::convert::From<T>,
@@ -690,6 +698,7 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
                 #struct_ident(::std::path::PathBuf::from(source))
             }
         }
+        #[automatically_derived]
         impl ::martian::AsMartianPrimaryType for #struct_ident {
             fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
                 ::martian::MartianPrimaryType::FileType(String::from(<#struct_ident as ::martian::MartianFileType>::extension()))
