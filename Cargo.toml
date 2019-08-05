@@ -1,5 +1,6 @@
 [workspace]
 members = [
+	"cargo-martian",
     "martian",
     "martian-derive",
     "martian-lab",
