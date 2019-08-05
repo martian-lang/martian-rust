@@ -48,3 +48,12 @@ pub fn to_camel_case(stage_name: &str) -> String {
     use heck::CamelCase;
     stage_name.to_camel_case()
 }
+
+pub fn current_executable() -> String {
+    let args: Vec<_> = std::env::args().collect();
+    std::path::Path::new(&args[0])
+        .file_name()
+        .unwrap()
+        .to_string_lossy()
+        .into_owned()
+}

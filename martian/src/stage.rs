@@ -1,3 +1,4 @@
+use crate::mro::{MartianStruct, MroMaker};
 use crate::types::{MartianMakePath, MartianVoid};
 use crate::utils::{obj_decode, obj_encode};
 use crate::Metadata;
@@ -176,9 +177,9 @@ pub enum StageKind {
     WithSplit,
 }
 
-pub trait MartianMain {
-    type StageInputs: Serialize + DeserializeOwned;
-    type StageOutputs: Serialize + DeserializeOwned;
+pub trait MartianMain: MroMaker {
+    type StageInputs: Serialize + DeserializeOwned + MartianStruct;
+    type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
 
     fn main(
         &self,
@@ -187,11 +188,11 @@ pub trait MartianMain {
     ) -> Result<Self::StageOutputs, Error>;
 }
 
-pub trait MartianStage {
-    type StageInputs: Serialize + DeserializeOwned;
-    type StageOutputs: Serialize + DeserializeOwned;
-    type ChunkInputs: Serialize + DeserializeOwned;
-    type ChunkOutputs: Serialize + DeserializeOwned;
+pub trait MartianStage: MroMaker {
+    type StageInputs: Serialize + DeserializeOwned + MartianStruct;
+    type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
+    type ChunkInputs: Serialize + DeserializeOwned + MartianStruct;
+    type ChunkOutputs: Serialize + DeserializeOwned + MartianStruct;
 
     fn split(
         &self,

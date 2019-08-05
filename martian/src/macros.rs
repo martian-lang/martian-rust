@@ -6,7 +6,14 @@ macro_rules! martian_stages {
             $(
                 stage_registry.insert(::martian::utils::to_exec_name(stringify!($x)), Box::new($x));
             )*
-            stage_registry
+            let mut mro_registry = vec![
+            	$(<$x as ::martian::MroMaker>::stage_mro(
+            		::martian::utils::current_executable(),
+            		::martian::utils::to_exec_name(stringify!($x)),
+            	)),*
+            ];
+            (stage_registry, mro_registry)
         }
     };
+    ( $( $x: path, )*) => ( martian_stages![$($x),*]);
 }
