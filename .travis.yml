@@ -7,7 +7,7 @@ env:
 script:
   - cargo build --verbose --all
   - cargo test --verbose --all
-  - cargo b --release --examples
+  - cargo b --examples
   - export PATH=$TRAVIS_BUILD_DIR/deps/bin:$PATH
   - cd martian/tests/main_test
   - ../martian_test.py main_test.json
