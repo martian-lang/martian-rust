@@ -5,9 +5,9 @@ which computes the sum of square the input list.
 
 # How to test
 
-1. Compile the example 
+1. Compile the example in debug mode
 ```
-cargo b --release --example sum_sq_main
+cargo b --example sum_sq_main
 ```
 
 2. Navigate to the `main_test` directory

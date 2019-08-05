@@ -1,5 +1,5 @@
 use docopt::Docopt;
-use martian::{martian_stages, Error};
+use martian::prelude::*;
 use serde::Deserialize;
 
 mod sum_squares;
