@@ -449,7 +449,7 @@ mro_display_to_display! {InAndOut}
 
 /// The list of filetypes we list at the top of the mro
 /// A simple wrapper around a HashSet of all file extensions.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 pub struct FiletypeHeader(HashSet<String>);
 
 impl From<&MroField> for FiletypeHeader {

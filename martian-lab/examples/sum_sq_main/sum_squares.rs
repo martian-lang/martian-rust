@@ -1,18 +1,20 @@
 use martian::prelude::*;
+use martian_derive::*;
 use serde::{Deserialize, Serialize};
 
 pub struct SumSquares;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, MartianStruct)]
 pub struct SumSquaresStageInputs {
     input: Vec<f64>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, MartianStruct)]
 pub struct SumSquaresStageOutputs {
     sum: f64,
 }
 
+#[make_mro(mem_gb = 1)]
 impl MartianMain for SumSquares {
     type StageInputs = SumSquaresStageInputs;
     type StageOutputs = SumSquaresStageOutputs; // Use `MartianVoid` if empty

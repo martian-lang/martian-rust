@@ -1,6 +1,6 @@
 //! Martian adapter for Rust code
 
-pub use failure::Error;
+pub use failure::{format_err, Error};
 use failure_derive::Fail;
 
 use backtrace::Backtrace;
@@ -13,10 +13,12 @@ use log::{error, info};
 
 use chrono::Local;
 use std::collections::HashMap;
+use std::fmt::Write as FmtWrite;
 use std::fs::File;
-use std::io::Write;
+use std::io::Write as IoWrite;
 use std::os::unix::io::FromRawFd;
 use std::panic;
+use std::path::Path;
 
 mod metadata;
 pub use metadata::*;
@@ -193,5 +195,55 @@ pub fn martian_main_with_log_level(
     };
 
     stage_done.store(true, Ordering::Relaxed);
+    Ok(())
+}
+
+const MRO_HEADER: &str = r#"
+#
+# Copyright (c) 10X Genomics, Inc. All rights reserved.
+#
+# WARNING: This file is auto-generated.
+# DO NOT MODIFY THIS FILE DIRECTLY
+#
+
+"#;
+pub fn martian_make_mro(
+    file_name: Option<impl AsRef<Path>>,
+    rewrite: bool,
+    mro_registry: Vec<StageMro>,
+) -> Result<(), Error> {
+    if let Some(ref f) = file_name {
+        let file_path = f.as_ref();
+        if file_path.is_dir() {
+            return Err(format_err!(
+                "Error! Path {} is a directory!",
+                file_path.display()
+            ));
+        }
+        if file_path.exists() && !rewrite {
+            return Err(format_err!(
+                "File {} exists. You need to explicitly mention if it is okay to rewrite.",
+                file_path.display()
+            ));
+        }
+    }
+
+    let mut filetype_header = FiletypeHeader::default();
+    let mut mro_string = String::new();
+    for stage_mro in mro_registry {
+        filetype_header.add_stage(&stage_mro);
+        writeln!(&mut mro_string, "{}", stage_mro)?;
+    }
+
+    let final_mro_string = format!("{}{}{}", MRO_HEADER, filetype_header, mro_string);
+    match file_name {
+        Some(f) => {
+            let mut output = File::create(f)?;
+            output.write(final_mro_string.as_bytes())?;
+        }
+        None => {
+            println!("{}", final_mro_string);
+        }
+    }
     Ok(())
 }
