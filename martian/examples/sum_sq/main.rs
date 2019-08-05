@@ -1,12 +1,7 @@
-#[macro_use]
-extern crate serde_derive;
-extern crate serde;
+use serde::Deserialize;
 
-#[macro_use]
-extern crate martian;
-use martian::Error;
+use martian::{martian_stages, Error};
 
-extern crate docopt;
 use docopt::Docopt;
 
 mod sum_squares;

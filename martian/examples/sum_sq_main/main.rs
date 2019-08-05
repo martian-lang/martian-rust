@@ -1,17 +1,6 @@
-// Enable this if you are using mro_using attribute to specify
-// #![cfg_attr(feature = "mro", feature(custom_attribute))]
-// #![cfg_attr(feature = "mro", allow(unused_attributes))]
-
-#[macro_use]
-extern crate serde_derive;
-extern crate serde;
-
-#[macro_use]
-extern crate martian;
-use martian::Error;
-
-extern crate docopt;
 use docopt::Docopt;
+use martian::{martian_stages, Error};
+use serde::Deserialize;
 
 mod sum_squares;
 
