@@ -1,0 +1,127 @@
+{
+  "settings": {
+    "threads_per_job": 1,
+    "memGB_per_job": 1,
+    "extra_vmem_per_job": 3,
+    "thread_envs": [
+        "GOMAXPROCS",
+        "MKL_NUM_THREADS",
+        "NUMEXPR_NUM_THREADS",
+        "OMP_NUM_THREADS"
+    ]
+  },
+  "jobmodes": {
+      "sge": {
+          "cmd": "qsub",
+          "args": [ "-terse" ],
+          "mem_is_vmem": true,
+          "queue_query": "sge_queue.py",
+          "queue_query_grace_secs": 3000,
+          "resopt": "#$ -l __RESOURCES__",
+          "envs": [
+              {
+                  "name":"SGE_ROOT",
+                  "description":"path/to/sge/root"
+              },
+              {
+                  "name":"SGE_CLUSTER_NAME",
+                  "description":"SGE cluster name"
+              },
+              {
+                  "name":"SGE_CELL",
+                  "description":"usually 'default'"
+              }
+          ]
+      },
+      "hydra": {
+          "cmd": "qsub",
+          "args": [ "-terse" ],
+          "queue_query": "hydra_queue.py",
+          "queue_query_grace_secs": 40,
+          "resopt": "#$ -l __RESOURCES__",
+          "envs": [
+              {
+                  "name":"HYDRA_ROOT",
+                  "description":"path/to/hydra/spool"
+              }
+          ]
+      },
+      "lsf": {
+          "cmd": "bsub",
+          "envs": [
+              {
+                  "name":"LSF_SERVERDIR",
+                  "description":"path/to/lsf/server"
+              },
+              {
+                  "name":"LSF_LIBDIR",
+                  "description":"path/to/lsf/lib"
+              },
+              {
+                  "name":"LSF_BINDIR",
+                  "description":"path/to/lsf/commands"
+              },
+              {
+                  "name":"LSF_ENVDIR",
+                  "description":"path/to/lsf/env"
+              }
+          ]
+      },
+      "slurm": {
+          "cmd": "sbatch",
+          "args": [ "--parsable" ],
+          "envs": [ ]
+      },
+      "pbspro": {
+          "cmd": "qsub",
+          "mem_is_vmem": true,
+          "envs": [ ]
+      },
+      "torque": {
+          "cmd": "qsub",
+          "mem_is_vmem": true,
+          "envs": [ ]
+      }
+  },
+  "profiles": {
+    "cpu": {
+      "adapter": "cpu"
+    },
+    "line": {
+      "adapter": "line"
+    },
+    "mem": {
+      "env": {
+        "MALLOC_CONF": "prof:true,prof_prefix:${RAW_PERF_DEST}.jeprof,lg_prof_sample:21",
+        "HEAPPROFILE": "${RAW_PERF_DEST}.tcmalloc.pprof"
+      },
+      "adapter": "mem"
+    },
+    "perf": {
+      "cmd": "perf",
+      "args": [
+        "record",
+        "-g",
+        "-F", "${MRO_PERF_FREQ}",
+        "-o", "${RAW_PERF_DEST}",
+        "-e", "${MRO_PERF_EVENTS}",
+        "-p", "${STAGE_PID}",
+        "sleep", "${MRO_PERF_DURATION}"
+      ],
+      "defaults": {
+        "MRO_PERF_FREQ": "200",
+        "MRO_PERF_EVENTS": "task-clock",
+        "MRO_PERF_DURATION": "2400"
+      }
+    },
+    "pyflame": {
+      "cmd": "pyflame",
+      "args": [
+        "-s", "-1",
+        "-o", "${PROFILE_DEST}",
+        "-H", "${PROFILE_DEST}.html",
+        "${STAGE_PID}"
+      ]
+    }
+  }
+}
