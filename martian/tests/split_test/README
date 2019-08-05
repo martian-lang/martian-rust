@@ -8,9 +8,9 @@ split_test.json tests normal operation
 
 # How to test
 
-1. Compile the example 
+1. Compile the example in debug mode
 ```
-cargo b --release --example sum_sq
+cargo b --example sum_sq
 ```
 
 2. Navigate to the `split_test` directory

@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use martian::{martian_stages, Error};
+use martian::prelude::*;
 
 use docopt::Docopt;
 

@@ -35,6 +35,8 @@ pub use mro::*;
 
 pub use log::LevelFilter;
 
+pub mod prelude;
+
 // Ways a stage can fail.
 #[derive(Debug, Fail)]
 pub enum StageError {

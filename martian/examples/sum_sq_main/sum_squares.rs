@@ -1,4 +1,4 @@
-use martian::{Error, MartianMain, MartianRover};
+use martian::prelude::*;
 use serde::{Deserialize, Serialize};
 
 pub struct SumSquares;
