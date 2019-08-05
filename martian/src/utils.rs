@@ -1,7 +1,8 @@
+use crate::{Json, JsonDict};
 use failure::Error;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use {Json, JsonDict};
+use serde_json::json;
 
 /// Shortcut function to decode a JSON `&str` into an object
 pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {

@@ -46,7 +46,7 @@ pub trait MroDisplay {
     }
     fn min_width(&self) -> usize;
     fn mro_string_no_width(&self) -> String;
-    fn mro_string_with_width(&self, usize) -> String;
+    fn mro_string_with_width(&self, field_width: usize) -> String;
 }
 
 /// A generic display impl for MroDisplay does not work due
@@ -670,6 +670,7 @@ impl StageMro {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
     use MartianBlanketType::*;
     use MartianPrimaryType::*;
 

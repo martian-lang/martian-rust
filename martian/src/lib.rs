@@ -1,20 +1,7 @@
 //! Martian adapter for Rust code
 
-extern crate backtrace;
-extern crate chrono;
-extern crate failure;
-extern crate libc;
-extern crate serde;
-extern crate tempdir;
-
-#[macro_use]
-extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate failure_derive;
-
 pub use failure::Error;
+use failure_derive::Fail;
 
 use backtrace::Backtrace;
 use std::io;
@@ -22,16 +9,9 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread;
 
-#[macro_use]
-extern crate log;
-extern crate fern;
-extern crate heck;
+use log::{error, info};
 
-#[cfg(test)]
-#[macro_use]
-extern crate indoc;
-
-use chrono::*;
+use chrono::Local;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
