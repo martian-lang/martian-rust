@@ -1,0 +1,15 @@
+{
+  "default_retries": 2,
+  "retry_on": [
+    "^signal: ",
+    "^(?:[0-9-]+ [0-9:]+ )?Caught signal ",
+    "resource temporarily unavailable",
+    "No heartbeat detected for",
+    "^error: .Errno 12. Cannot allocate memory",
+    "^error: JSV stderr: error: commlib error: got select error (Connection refused)",
+    "^Unable to run job: failed receiving gdi request response",
+    "^According to the job manager, the job for .+ was not queued or running,",
+    "^IOError: \\[Errno 116\\] Stale file handle",
+    "^OSError: \\[Errno 11\\] Resource temporarily unavailable"
+  ]
+}
