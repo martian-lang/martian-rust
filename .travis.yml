@@ -9,7 +9,7 @@ script:
   - cargo test --verbose --all
   - cargo b --examples
   - export PATH=$TRAVIS_BUILD_DIR/deps/bin:$PATH
-  - cd martian/tests/main_test
+  - cd martian-lab/tests/main_test
   - ../martian_test.py main_test.json
   - cd ../split_test
   - ../martian_test.py split_test.json
