@@ -1,10 +1,47 @@
+<!-- index.html -->
+
+
 <!DOCTYPE html>
-<!-- <meta http-equiv="refresh" content="0; url=master/martian-derive/index.html">
-<a href="master/martian-derive/index.html">Redirect</a>  -->
-
 <html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="//unpkg.com/docsify/themes/vue.css">
+</head>
 <body>
-<h1>WIP</h1>
-
+  <div id="app">Loading the documentation..</div>
+  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+  <script src="//unpkg.com/prismjs/components/prism-rust.min.js"></script>
+  <script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
+  <script>
+      window.$docsify = {
+        loadSidebar: true,
+        subMaxLevel: 2,
+        coverpage: true,
+        onlyCover: true,
+        repo: "https://github.com/sreenathkrishnan/martian-rust",
+        logo: '/media/martian_rust.svg',
+        name: 'martian-rust',
+        themeColor: '#007dcf',
+        search: 'auto',
+        plugins: [
+          function (hook) {
+            hook.doneEach(function () {
+              console.log("Rendering mathjax")
+              if (typeof MathJax !== 'undefined') {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub])
+              }
+            })
+          },
+          EditOnGithubPlugin.create(
+            'https://github.com/sreenathkrishnan/martian-rust/tree/master/book/'
+          )
+        ]
+      }
+    </script>
+    <script src="https://unpkg.com/docsify-copy-code@2"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `mro` mod in crate `martian`."><meta name="keywords" content="rust, rustlang, rust-lang, mro"><title>martian::mro - Rust</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../martian/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a><p class='location'>Module mro</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'><a href='../index.html'>martian</a></p><script>window.sidebarCurrent = {name: 'mro', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../../src/martian/mro.rs.html#1-1072' title='goto source code'>[src]</a></span><span class='in-band'>Module <a href='../index.html'>martian</a>::<wbr><a class="mod" href=''>mro</a></span></h1><div class='docblock'><p>This module is an attempt at defining traits that would help auto generate
+mro definitions for a stage from a Rust stage. Previous attempt, named
+<code>cargo-martian</code>, which is a compiler plugin works pretty good, but that
+will work only in nightly builds and uses a fairly unstable part of the
+compiler. Here we try to rework the same problem from a different angle
+using procedural macros.</p>
+<h1 id="mro-syntax" class="section-header"><a href="#mro-syntax">Mro syntax</a></h1>
+<p>Think about <code>mro</code> as an entity with the following properties</p>
+<ul>
+<li>Stage name</li>
+<li>List of stage/chunk inputs/outputs, each with a martian type</li>
+<li>Source for execution</li>
+<li>Attributes (mem_gb, vmem_gb, threads, volatile etc.)</li>
+</ul>
+<p>TODO</p>
+<ul>
+<li>Simplify MroDisplay trait?</li>
+</ul>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.FiletypeHeader.html" title='martian::mro::FiletypeHeader struct'>FiletypeHeader</a></td><td class='docblock-short'><p>The list of filetypes we list at the top of the mro
+A simple wrapper around a HashSet of all file extensions.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.InAndOut.html" title='martian::mro::InAndOut struct'>InAndOut</a></td><td class='docblock-short'><p>Input and outputs together</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.MroField.html" title='martian::mro::MroField struct'>MroField</a></td><td class='docblock-short'><p>Each variable that is listed in the mro along with it's type form
+a <code>MroField</code>. For example, the following stage:</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.MroUsing.html" title='martian::mro::MroUsing struct'>MroUsing</a></td><td class='docblock-short'><p>Stuff that comes in the <code>using</code> section of a stage definition
+For example:</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.StageMro.html" title='martian::mro::StageMro struct'>StageMro</a></td><td class='docblock-short'><p>All the data needed to create a stage definition mro.
+TODO: Retain</p>
+</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.MartianBlanketType.html" title='martian::mro::MartianBlanketType enum'>MartianBlanketType</a></td><td class='docblock-short'><p>Primary Data type + Arrays (which are derived from primary types)</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.MartianPrimaryType.html" title='martian::mro::MartianPrimaryType enum'>MartianPrimaryType</a></td><td class='docblock-short'><p>Primary data types in Martian world</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Volatile.html" title='martian::mro::Volatile enum'>Volatile</a></td><td class='docblock-short'></td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table><tr class='module-item'><td><a class="constant" href="constant.MARTIAN_TOKENS.html" title='martian::mro::MARTIAN_TOKENS constant'>MARTIAN_TOKENS</a></td><td class='docblock-short'></td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.AsMartianBlanketType.html" title='martian::mro::AsMartianBlanketType trait'>AsMartianBlanketType</a></td><td class='docblock-short'><p>A trait that defines how to convert this Rust type into an <code>MartianBlanketType</code>.
+Not all rust types can be converted to an <code>MartianBlanketType</code>.
+Not defined for</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.AsMartianPrimaryType.html" title='martian::mro::AsMartianPrimaryType trait'>AsMartianPrimaryType</a></td><td class='docblock-short'><p>A trait that tells you how to convert a Rust data type to a
+basic Martian type.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.MartianStruct.html" title='martian::mro::MartianStruct trait'>MartianStruct</a></td><td class='docblock-short'><p>A trait that defines how to expand a struct into a list of <code>MroField</code>s
+The <code>MartianStage</code> and <code>MartianMain</code> traits already has independent associated
+types for stage/chunk inputs and outputs. If those associated types implement
+this trait, then we can readily generate all the mro variables with the appropriate
+type and put them at the right place (withing stage def or chunk def).</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.MroDisplay.html" title='martian::mro::MroDisplay trait'>MroDisplay</a></td><td class='docblock-short'><p>Defines how an entity that denotes some part of the mro is displayed</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.MroMaker.html" title='martian::mro::MroMaker trait'>MroMaker</a></td><td class='docblock-short'><p>Can be auto generated using proc macro attribute
+#[make_mro] on MartianMain or MartianStage
+implementations if the associated types implement <code>MartianStruct</code></p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "martian";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>
