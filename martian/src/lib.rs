@@ -1,4 +1,6 @@
-//! Martian adapter for Rust code
+//! Martian adapter for Rust code.
+//!
+//! This crate provides a strongly typed high level API for implementing stages
 
 pub use failure::{format_err, Error};
 use failure_derive::Fail;

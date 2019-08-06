@@ -1,10 +1,6 @@
 //!
-//! This module is an attempt at defining traits that would help auto generate
-//! mro definitions for a stage from a Rust stage. Previous attempt, named
-//! `cargo-martian`, which is a compiler plugin works pretty good, but that
-//! will work only in nightly builds and uses a fairly unstable part of the
-//! compiler. Here we try to rework the same problem from a different angle
-//! using procedural macros.
+//! This module defines traits that would help auto generate mro definitions
+//! for a stage
 //!
 //! # Mro syntax
 //! Think about `mro` as an entity with the following properties

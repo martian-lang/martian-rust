@@ -1,3 +1,4 @@
+//! Re-export commonly used symbols in this crate
 pub use crate::stage::{
     MartianMain, MartianRover, MartianStage, RawMartianStage, Resource, StageDef,
 };

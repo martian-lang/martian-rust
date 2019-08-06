@@ -10,7 +10,6 @@
 * Auto-generate mro from Rust stage code.
 * Quickly setup stage boilerplate code.
 
-
-[Martian](https://martian-lang.org/)
-[API Docs](https://sreenathkrishnan.github.io/martian-rust/doc/martian/) <!-- TODO -->
 [Get started](/content/README.md)
+[Martian](https://martian-lang.org/)
+[API Docs](https://martian-lang.github.io/martian-rust/doc/martian/)
