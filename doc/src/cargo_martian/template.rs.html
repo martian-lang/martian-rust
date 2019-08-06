@@ -328,7 +328,7 @@ use serde::{open}Serialize, Deserialize{close};
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
 // - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
-// 			      Error (from failure crate), LevelFilter (from log crate)
+//                Error (from failure crate), LevelFilter (from log crate)
 // - Macros: martian_stages!
 // - Functions: martian_main, martian_main_with_log_level, martian_make_mro
 use martian::prelude::*;
@@ -419,7 +419,7 @@ use serde::{open}Serialize, Deserialize{close};
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
 // - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
-// 			      Error (from failure crate), LevelFilter (from log crate)
+//                Error (from failure crate), LevelFilter (from log crate)
 // - Macros: martian_stages!
 // - Functions: martian_main, martian_main_with_log_level, martian_make_mro
 use martian::prelude::*;
@@ -465,7 +465,7 @@ impl MartianMain for {stage} {open}
         _args: Self::StageInputs,
         _rover: MartianRover,
     ) -&gt; Result&lt;Self::StageOutputs, Error&gt; {open}
-    	// TODO: Stage code goes here
+        // TODO: Stage code goes here
         unimplemented!()
     {close}
 {close}
@@ -544,19 +544,19 @@ fn main() -&gt; Result&lt;(), Error&gt; {open}
         .unwrap_or_else(|e| e.exit());
 
     let (stage_registry, mro_registry) = martian_stages![
-    	// TODO: Add the stage structs here
+        // TODO: Add the stage structs here
     ];
 
     if args.cmd_martian {open}
-    	// Call the martian adapter
+        // Call the martian adapter
         martian_main(args.arg_adapter, stage_registry)?;
         // If you want explicit control over the log level, use:
         // martian_main_with_log_level(...)
     {close} else if args.cmd_mro {open}
-    	// Create the mro for all the stages in this adapter
+        // Create the mro for all the stages in this adapter
         martian_make_mro(args.flag_file, args.flag_rewrite, mro_registry)?;
     {close} else {open}
-    	// If you need custom commands, implement them here
+        // If you need custom commands, implement them here
         unimplemented!()
     {close}
     
@@ -567,8 +567,8 @@ fn main() -&gt; Result&lt;(), Error&gt; {open}
 <span class="kw">const</span> <span class="ident">CARGO_TOML_ADDITION</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
 docopt = &quot;1.0&quot;
 serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
-martian = {git = &quot;https://github.com/sreenathkrishnan/martian-rust.git&quot;}
-martian-derive = {git = &quot;https://github.com/sreenathkrishnan/martian-rust.git&quot;}
+martian = {git = &quot;https://github.com/martian-lang/martian-rust.git&quot;}
+martian-derive = {git = &quot;https://github.com/martian-lang/martian-rust.git&quot;}
 &quot;#</span>;
 
 <span class="kw">const</span> <span class="ident">DEFAULT_MAIN</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;fn main() {
