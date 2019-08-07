@@ -3,22 +3,48 @@
 
 As described in the [section about stage traits](/content/stage.md), we have 4 associated types within the `MartianStage` trait (or 2 for the `MartianMain` trait). In this section, I will describe limitations/rules you need to be aware of while defining these associated types.
 
-* The associated type needs to be a struct with **named fields** which implements `serde::Serialize`, `serde::DeserializeOwned` and `martian::MartianStruct`. For almost all cases you should be abe to derive these traits using `#[derive(Serialize, Deserialize, MartianStruct)]`. The `serde` traits allows us to write the struct as json which is required to generate various `args` and `outs` json files that martian expects. The `MartianStruct` trait is required to generate the mro representation corresponding to the struct. Note: *Associated types cannot be tuple structs and all the fields need to be owned.*
-* If any of the associated types need to be empty (for e.g. no chunk outputs), use `MartianVoid` as the associated type
-* The named fields within the associated type struct can have any of the following types
+The associated type needs to be a struct with **named fields** which implements `serde::Serialize`, `serde::DeserializeOwned` and `martian::MartianStruct`. For almost all cases you should be abe to derive these traits using `#[derive(Serialize, Deserialize, MartianStruct)]`. The `serde` traits allow us to write the struct as json which is required to generate various `args` and `outs` json files that martian expects. The `MartianStruct` trait is required to generate the mro representation corresponding to the struct. 
 
-| Sl No | Rust Type                                                      | Martian Type |
-|-------|----------------------------------------------------------------|--------------|
+> [!DANGER] Associated types cannot be tuple structs and all the fields need to be owned.
+
+> [!TIP] If any of the associated types need to be empty (for e.g. no chunk outputs), use `MartianVoid` as the associated type.
+
+
+
+The named fields within the associated type struct can have any of the types mentioned in the table below, which also defines the map between a rust type and the martian type (this is what appears in the mro).
+
+| Sl No | Rust Type                                                    | Martian Type |
+| ----- | ------------------------------------------------------------ | ------------ |
 | 1     | i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize | int          |
-| 2     | f32, f64                                                       | float        |
-| 3     | bool                                                           | bool         |
-| 4     | String, char, enum (without associated data)                   | string       |
-| 5     | PathBuf                                                        | path         |
-| 6     | Structs implementing MartianFileType                           | filetype     |
-| 7     | Hashmap                                                        | map          |
-| 8     | Custom structs deserializable from a json map                  | map          |
-| 9     | Option of any of the above types                               | type         |
-| 10    | Vec of any of the above types                                  | type[]       |
+| 2     | f32, f64                                                     | float        |
+| 3     | bool                                                         | bool         |
+| 4     | String, char, Enum* (without associated data)                | string       |
+| 5     | PathBuf                                                      | path         |
+| 6     | Structs implementing MartianFileType                         | filetype     |
+| 7     | Hashmap                                                      | map          |
+| 8     | Struct\*, Enum\* (with only named or unnamed variants)       | map          |
+| 9     | Option of any of the above types                             | type         |
+| 10    | Vec or HashSet of any of the above types                     | type[]       |
 
-* Unless you explicitly mark a field as optional, the assumption is that the field is not allowed to be `null` in the invocation mro.
-* The fields cannot be a tuple.
+> [!WARNING] Unless you explicitly mark a field as an `Option`, the assumption is that the field is not allowed to be `null` in the invocation mro. If a field is not an `Option` and we find a `null` in the pro, the deserializer will panic.
+
+### \*Using a Struct or an Enum
+
+>  [!NOTE] For a struct or an enum object to be a field in the associated type for `MartianStage` or `MartianMain`, it needs to `#[derive(MartianType)]`
+
+There could be cases when you want to use an `enum` or a `struct` object within the associated type struct. To give a concrete example, let's say one of the inputs to your stage is a `library_type`, which can either be `VDJ` or `GEX`. In this case you would want to do:
+
+```rust
+#[derive(Debug, Clone, Serialize, Deserialize, MartianType)]
+enum LibraryType {
+  VDJ,
+  GEX,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
+pub struct MyStageInputs {
+    library_type: LibraryType,
+}
+```
+
+Note that the `#[derive(MartianType)]` is needed on the enum so that we know how to map this enum to a martian data type.
