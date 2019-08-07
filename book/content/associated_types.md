@@ -1,7 +1,7 @@
 
 # Associated Types
 
-As described in the [section about stage traits](/content/stage.md), we have 4 associated types within the `MartianStage` trait (or 2 for the `MartianMain` trait). In this section, I will describe limitations/rules you need to be aware of while defining these associated types.
+As described in the [section about stage traits](/content/stage.md), we have 4 associated types within the `MartianStage` trait (or 2 for the `MartianMain` trait) namely `StageInputs`, `StageOutputs`, `ChunkInputs` and `ChunkOutputs`. In this section, I will describe limitations/rules you need to be aware of while defining these associated types.
 
 The associated type needs to be a struct with **named fields** which implements `serde::Serialize`, `serde::DeserializeOwned` and `martian::MartianStruct`. For almost all cases you should be abe to derive these traits using `#[derive(Serialize, Deserialize, MartianStruct)]`. The `serde` traits allow us to write the struct as json which is required to generate various `args` and `outs` json files that martian expects. The `MartianStruct` trait is required to generate the mro representation corresponding to the struct. 
 
@@ -30,15 +30,15 @@ The named fields within the associated type struct can have any of the types men
 
 ### \*Using a Struct or an Enum
 
->  [!NOTE] For a struct or an enum object to be a field in the associated type for `MartianStage` or `MartianMain`, it needs to `#[derive(MartianType)]`
+> [!NOTE] For a struct or an enum object to be a field in the associated type for `MartianStage` or `MartianMain`, it needs to `#[derive(MartianType)]`
 
 There could be cases when you want to use an `enum` or a `struct` object within the associated type struct. To give a concrete example, let's say one of the inputs to your stage is a `library_type`, which can either be `VDJ` or `GEX`. In this case you would want to do:
 
 ```rust
 #[derive(Debug, Clone, Serialize, Deserialize, MartianType)]
 enum LibraryType {
-  VDJ,
-  GEX,
+    VDJ,
+    GEX,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
@@ -47,4 +47,4 @@ pub struct MyStageInputs {
 }
 ```
 
-Note that the `#[derive(MartianType)]` is needed on the enum so that we know how to map this enum to a martian data type.
+Note that the `#[derive(MartianType)]` is needed on the enum so that we know how to map this enum to a martian data type. The same applies for structs too.

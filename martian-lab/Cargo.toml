@@ -20,4 +20,5 @@ test = true
 
 [[example]]
 name = "sum_sq_main"
+path = "examples/sum_sq_main/src/main.rs"
 test = true
