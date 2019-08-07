@@ -1,0 +1,17 @@
+
+#
+# Copyright (c) 10X Genomics, Inc. All rights reserved.
+#
+# WARNING: This file is auto-generated.
+# DO NOT MODIFY THIS FILE DIRECTLY
+#
+
+stage SUM_SQUARES(
+    in  float[] values,
+    out float   sum,
+    src comp    "sum_sq martian sum_squares",
+) split (
+    in  float   value,
+    out float   square,
+)
+

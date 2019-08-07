@@ -1,5 +1,5 @@
 @include "stage.mro"
 
 call SUM_SQUARES(
-    input = [1.0, 2.0, 3.0],
+    values = [1.0, 2.0, 3.0],
 )

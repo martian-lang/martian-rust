@@ -1,32 +1,34 @@
-use serde::Deserialize;
-
-use martian::prelude::*;
+//! Martian-rust adapter sum_sq
 
 use docopt::Docopt;
+use martian::prelude::*;
+use serde::Deserialize;
 
 mod sum_squares;
 
 const USAGE: &'static str = "
 Martian adapter for sum_sq executable
+
 Usage:
   sum_sq martian <adapter>...
   sum_sq mro [--file=<filename>] [--rewrite]
-  sum_sq (-h | --help)
+  sum_sq --help
+
 Options:
-  -h --help            Show this screen.
-  --file=<filename>    Output filename for the mro.
-  --rewrite            Whether to rewrite the file if it exists.
+  --help              Show this screen.
+  --file=<filename>   Output filename for the mro.
+  --rewrite           Whether to rewrite the file if it exists.
 ";
 
 #[derive(Debug, Deserialize)]
 struct Args {
     // Martian interface
     cmd_martian: bool,
+    arg_adapter: Vec<String>,
     // Mro generation
     cmd_mro: bool,
     flag_file: Option<String>,
     flag_rewrite: bool,
-    arg_adapter: Vec<String>,
 }
 
 fn main() -> Result<(), Error> {
@@ -36,12 +38,16 @@ fn main() -> Result<(), Error> {
 
     let (stage_registry, mro_registry) = martian_stages![sum_squares::SumSquares];
 
-    // Call the martian adapter
     if args.cmd_martian {
-        martian_main_with_log_level(args.arg_adapter, stage_registry, martian::LevelFilter::Off)?;
+        // Call the martian adapter
+        martian_main(args.arg_adapter, stage_registry)?;
+    // If you want explicit control over the log level, use:
+    // martian_main_with_log_level(...)
     } else if args.cmd_mro {
+        // Create the mro for all the stages in this adapter
         martian_make_mro(args.flag_file, args.flag_rewrite, mro_registry)?;
     } else {
+        // If you need custom commands, implement them here
         unimplemented!()
     }
 

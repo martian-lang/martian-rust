@@ -16,6 +16,7 @@ docopt = "1.0"
 
 [[example]]
 name = "sum_sq"
+path = "examples/sum_sq/src/main.rs"
 test = true
 
 [[example]]
