@@ -52,7 +52,7 @@ pub struct SumSquaresStageInputs {
 
 #[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
 pub struct SumSquaresStageOutputs {
-    sum_sq: f64,
+    sum: f64,
 }
 ```
 
@@ -68,7 +68,7 @@ impl MartianMain for SumSquares {
         _rover: MartianRover,
     ) -> Result<Self::StageOutputs, Error> {
         Ok(SumSquaresStageOutputs {
-            sum_sq: args.input.iter().map(|x| x * x).sum(),
+            sum: args.input.iter().map(|x| x * x).sum(),
         })
     }
 }
@@ -114,7 +114,7 @@ user$> cargo r -- mro
 
 stage SUM_SQUARES(
     in  float[] input,
-    out float   sum_sq,
+    out float   sum,
     src comp    "sum_sq_main martian sum_squares",
 )
 ```
@@ -137,7 +137,7 @@ mod tests {
         };
         let stage = SumSquares;
         let res = stage.test_run_tmpdir(args).unwrap();
-        assert_eq!(res.sum_sq, 1.0 * 1.0 + 2.0 * 2.0 + 3.0 * 3.0 + 4.0 * 4.0);
+        assert_eq!(res.sum, 1.0 * 1.0 + 2.0 * 2.0 + 3.0 * 3.0 + 4.0 * 4.0);
     }
 }
 ```
@@ -154,7 +154,7 @@ mod tests {
 @include "sum_squares.mro"
 
 call SUM_SQUARES(
-    values = [1.0, 2.0, 3.0],
+    input = [1.0, 2.0, 3.0],
 )
 ```
 

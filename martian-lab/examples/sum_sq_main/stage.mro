@@ -8,7 +8,7 @@
 
 stage SUM_SQUARES(
     in  float[] input,
-    out float   sum_sq,
+    out float   sum,
     src comp    "sum_sq_main martian sum_squares",
 )
 
