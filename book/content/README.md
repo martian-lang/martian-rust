@@ -7,4 +7,6 @@ Martian also defines an *mro language* for writing stage (and pipeline) specific
 
 A martian pipeline is composed of one or more stages. The pipelines used in 10X often contain more than 20 stages. Such pipelines containing a fairly large number of stages can become hard to mainitain and develop on, particularly if the individual stages cannot quickly verify it's own correctness. We acknowledge the importance of unit tests at a stage level to improve the reliability and correctness of the stage code. The rust adapter provides a straighforwad way to write unit tests for a stage or even combining multiple stages in a unit test that is well integrated with the `cargo test` framework.
 
-The concept of a pipeline is not yet a first class citizen in this crate. Improvements could be made in that front.
+> [!NOTE]
+>
+> The concept of a pipeline is not yet a first class citizen in this crate. Improvements could be made in that front.
