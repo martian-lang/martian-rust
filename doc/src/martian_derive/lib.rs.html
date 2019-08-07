@@ -1389,11 +1389,11 @@
 <span class="doccomment">/// A macro to define a new struct that implements `MartianFileType` trait</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Because this is a procedural macro, as of now, you can only define it</span>
-<span class="doccomment">/// outside functions because they cannopt be expanded to statements.</span>
+<span class="doccomment">/// outside functions because they cannot be expanded to statements.</span>
 <span class="doccomment">/// ```rust</span>
 <span class="doccomment">/// use serde::{Serialize, Deserialize};</span>
 <span class="doccomment">/// use martian_derive::martian_filetype;</span>
-<span class="doccomment">/// use martian::types::MartianFileType;</span>
+<span class="doccomment">/// use martian::MartianFileType;</span>
 <span class="doccomment">/// martian_filetype! { TxtFile, &quot;txt&quot; }</span>
 <span class="doccomment">/// martian_filetype! { BamIndexFile, &quot;bam.bai&quot; }</span>
 <span class="doccomment">/// fn main() {</span>

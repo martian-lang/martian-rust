@@ -17,20 +17,28 @@
 <span id="17">17</span>
 <span id="18">18</span>
 <span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">/// Create a stage and mro registry from a list of stage struct inputs.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// See the `main.rs` file in any of the [examples here](https://github.com/martian-lang/martian-rust/tree/master/martian-lab/examples)</span>
+<span class="doccomment">/// to see where this macro is used.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">martian_stages</span> {
     ( $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">path</span> ),<span class="op">*</span> ) <span class="op">=&gt;</span> {
         {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stage_registry</span>: ::<span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span>::<span class="ident">martian</span>::<span class="ident">RawMartianStage</span><span class="op">&gt;&gt;</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>::<span class="ident">default</span>();
             $(
-                <span class="ident">stage_registry</span>.<span class="ident">insert</span>(::<span class="ident">martian</span>::<span class="ident">utils</span>::<span class="ident">to_exec_name</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>)), <span class="ident">Box</span>::<span class="ident">new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>));
+                <span class="ident">stage_registry</span>.<span class="ident">insert</span>(::<span class="ident">martian</span>::<span class="ident">utils</span>::<span class="ident">to_stage_key</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>)), <span class="ident">Box</span>::<span class="ident">new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>));
             )<span class="op">*</span>
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mro_registry</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-            	$(<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="kw">as</span> ::<span class="ident">martian</span>::<span class="ident">MroMaker</span><span class="op">&gt;</span>::<span class="ident">stage_mro</span>(
-            		::<span class="ident">martian</span>::<span class="ident">utils</span>::<span class="ident">current_executable</span>(),
-            		::<span class="ident">martian</span>::<span class="ident">utils</span>::<span class="ident">to_exec_name</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>)),
-            	)),<span class="op">*</span>
+                $(<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="kw">as</span> ::<span class="ident">martian</span>::<span class="ident">MroMaker</span><span class="op">&gt;</span>::<span class="ident">stage_mro</span>(
+                    ::<span class="ident">martian</span>::<span class="ident">utils</span>::<span class="ident">current_executable</span>(),
+                    ::<span class="ident">martian</span>::<span class="ident">utils</span>::<span class="ident">to_stage_key</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>)),
+                )),<span class="op">*</span>
             ];
             (<span class="ident">stage_registry</span>, <span class="ident">mro_registry</span>)
         }
