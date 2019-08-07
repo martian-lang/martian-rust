@@ -1,6 +1,6 @@
 //!
-//! This module defines traits that would help auto generate mro definitions
-//! for a stage
+//! This module defines objects that would help auto generate mro definitions
+//! for a stage and also defines the types that exist in the martian world
 //!
 //! # Mro syntax
 //! Think about `mro` as an entity with the following properties
@@ -9,10 +9,8 @@
 //! - Source for execution
 //! - Attributes (mem_gb, vmem_gb, threads, volatile etc.)
 //!
-//! TODO
-//! - Simplify MroDisplay trait?
 
-use crate::types::MartianVoid;
+use crate::MartianVoid;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Display, Write};
@@ -20,6 +18,8 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::string::ToString;
 
+/// Keywords used in the martian language. Using these keywords as mro field names
+/// is disallowed.
 pub const MARTIAN_TOKENS: &[&str] = &[
     "in", "out", "stage", "volatile", "strict", "true", "split", "filetype", "src", "py", "comp",
     "retain", "mro", "using", "int", "float", "string", "map", "bool", "path", "__null__",
@@ -107,7 +107,7 @@ impl MroDisplay for MartianPrimaryType {
 
 mro_display_to_display! {MartianPrimaryType}
 
-/// Primary Data type + Arrays (which are derived from primary types)
+/// Primary Data type in martian + Arrays (which are derived from primary types)
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum MartianBlanketType {
     Primary(MartianPrimaryType),
@@ -159,13 +159,13 @@ impl_primary_mro_type!(i8, MartianPrimaryType::Int);
 impl_primary_mro_type!(i16, MartianPrimaryType::Int);
 impl_primary_mro_type!(i32, MartianPrimaryType::Int);
 impl_primary_mro_type!(i64, MartianPrimaryType::Int);
-impl_primary_mro_type!(i128, MartianPrimaryType::Int);
+// impl_primary_mro_type!(i128, MartianPrimaryType::Int);
 impl_primary_mro_type!(isize, MartianPrimaryType::Int);
 impl_primary_mro_type!(u8, MartianPrimaryType::Int);
 impl_primary_mro_type!(u16, MartianPrimaryType::Int);
 impl_primary_mro_type!(u32, MartianPrimaryType::Int);
 impl_primary_mro_type!(u64, MartianPrimaryType::Int);
-impl_primary_mro_type!(u128, MartianPrimaryType::Int);
+// impl_primary_mro_type!(u128, MartianPrimaryType::Int);
 impl_primary_mro_type!(usize, MartianPrimaryType::Int);
 impl_primary_mro_type!(bool, MartianPrimaryType::Bool);
 impl_primary_mro_type!(f32, MartianPrimaryType::Float);
@@ -208,7 +208,9 @@ impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
 }
 
 /// Each variable that is listed in the mro along with it's type form
-/// a `MroField`. For example, the following stage:
+/// a `MroField`.
+///
+/// For example, the following stage:
 /// ```mro
 /// stage SORT_ITEMS(
 ///     in  int[] unsorted,
@@ -218,9 +220,9 @@ impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
 /// )
 /// ```
 /// contains 3 `MroFields`
-/// - MroField { name: unsorted, ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
-/// - MroField { name: reverse, ty: MartianBlanketType::Primary(MartianPrimaryType::Bool)}
-/// - MroField { name: sorted, ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
+/// - MroField { name: "unsorted", ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
+/// - MroField { name: "reverse", ty: MartianBlanketType::Primary(MartianPrimaryType::Bool)}
+/// - MroField { name: "sorted", ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
 #[derive(Debug, Serialize, Clone, Deserialize, PartialEq, Eq)]
 pub struct MroField {
     name: String,
@@ -249,6 +251,8 @@ impl MroDisplay for MroField {
 mro_display_to_display! {MroField}
 
 impl MroField {
+    /// Create a new `MroField` with the given name and type.
+    /// The field has a default `retain = false`.
     pub fn new(name: impl ToString, ty: MartianBlanketType) -> Self {
         let field = MroField {
             name: name.to_string(),
@@ -258,7 +262,8 @@ impl MroField {
         field.verify(); // No use case to resultify this so far
         field
     }
-
+    /// Create a new `MroField` with the given name and type, with the
+    /// `retain` field set to true
     pub fn retained(name: impl ToString, ty: MartianBlanketType) -> Self {
         let mut field = Self::new(name, ty);
         field.retain = true;
@@ -326,6 +331,7 @@ const TAB_WIDTH_FOR_MRO: usize = 4;
 macro_rules! mro_using {
     ($($property:ident: $type:ty),*) => {
         /// Stuff that comes in the `using` section of a stage definition
+        ///
         /// For example:
         /// ```mro
         /// using (
@@ -388,7 +394,7 @@ macro_rules! mro_using {
 
 mro_using! {mem_gb: i16, vmem_gb: i16, threads: i16, volatile: Volatile}
 
-/// Input and outputs together
+/// Input and outputs fields together
 #[derive(Debug, Default)]
 pub struct InAndOut {
     pub inputs: Vec<MroField>,
@@ -443,8 +449,8 @@ impl MroDisplay for InAndOut {
 }
 mro_display_to_display! {InAndOut}
 
-/// The list of filetypes we list at the top of the mro
-/// A simple wrapper around a HashSet of all file extensions.
+/// The list of filetypes we list at the top of the mro.
+/// This struct is a simple wrapper around a HashSet of all file extensions.
 #[derive(Debug, PartialEq, Default)]
 pub struct FiletypeHeader(HashSet<String>);
 
@@ -485,6 +491,8 @@ impl From<&StageMro> for FiletypeHeader {
 }
 
 impl FiletypeHeader {
+    /// Find out all the filetypes in the stage and add the extensions
+    /// to the internal hashset which stores all the extensions
     pub fn add_stage(&mut self, stage_mro: &StageMro) {
         self.0.extend(FiletypeHeader::from(stage_mro).0);
     }
@@ -517,6 +525,8 @@ impl MroDisplay for FiletypeHeader {
 
 mro_display_to_display! { FiletypeHeader }
 
+/// An object that can generate a `StageMro`
+///
 /// Can be auto generated using proc macro attribute
 /// #[make_mro] on MartianMain or MartianStage
 /// implementations if the associated types implement `MartianStruct`
@@ -545,7 +555,6 @@ pub trait MroMaker {
 }
 
 /// All the data needed to create a stage definition mro.
-/// TODO: Retain
 #[derive(Debug)]
 pub struct StageMro {
     stage_name: String,     // e.g CORRECT_BARCODES in `stage CORRECT_BARCODES(..)`

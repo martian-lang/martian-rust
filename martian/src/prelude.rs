@@ -1,8 +1,15 @@
 //! Re-export commonly used symbols in this crate
+//!
+//! It is a common practice in Rust crates to include a `prelude` module
+//! to help you export commonly used symbols in a crate. If you are
+//! using `martian` crate, it might be convenient to use:
+//! ```rust
+//! use martian::prelude::*;
+//! ```
 pub use crate::stage::{
-    MartianMain, MartianRover, MartianStage, RawMartianStage, Resource, StageDef,
+    MartianFileType, MartianMain, MartianMakePath, MartianRover, MartianStage, MartianVoid,
+    RawMartianStage, Resource, StageDef,
 };
-pub use crate::types::{MartianFileType, MartianMakePath, MartianVoid};
 pub use crate::{martian_main, martian_main_with_log_level, martian_make_mro};
 pub use failure::Error;
 pub use log::LevelFilter;

@@ -1,6 +1,8 @@
 # Organization
 
-Depending on your preferred learning style you might want to navigate through this guide differently. This page gives you an overview of the different items presented here:
+> [!NOTE] This guide assumes that you have some familiarity with Rust and a basic understanding of [Traits](https://doc.rust-lang.org/rust-by-example/trait.html) and [associated types](https://doc.rust-lang.org/rust-by-example/generics/assoc_items/types.html)
+
+Depending on your preferred learning style you might want to navigate through this guide differently. This page gives you an overview of the different items presented here.
 
 #### If you want to start with an example
 

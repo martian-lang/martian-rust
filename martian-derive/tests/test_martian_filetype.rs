@@ -1,4 +1,4 @@
-use martian::types::MartianFileType;
+use martian::MartianFileType;
 use martian_derive::martian_filetype;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;

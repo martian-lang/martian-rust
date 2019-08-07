@@ -582,11 +582,11 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
 /// A macro to define a new struct that implements `MartianFileType` trait
 ///
 /// Because this is a procedural macro, as of now, you can only define it
-/// outside functions because they cannopt be expanded to statements.
+/// outside functions because they cannot be expanded to statements.
 /// ```rust
 /// use serde::{Serialize, Deserialize};
 /// use martian_derive::martian_filetype;
-/// use martian::types::MartianFileType;
+/// use martian::MartianFileType;
 /// martian_filetype! { TxtFile, "txt" }
 /// martian_filetype! { BamIndexFile, "bam.bai" }
 /// fn main() {

@@ -1,6 +1,9 @@
-//! Martian adapter for Rust code.
+//! # Martian-Rust
+//! This crate provides a strongly typed high level API for implementing martian stages in Rust.
 //!
-//! This crate provides a strongly typed high level API for implementing stages
+//! ## Documentation
+//! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
+//!
 
 pub use failure::{format_err, Error};
 use failure_derive::Fail;
@@ -27,28 +30,30 @@ pub use metadata::*;
 
 #[macro_use]
 mod macros;
-pub mod types;
-pub use types::MartianFileType;
 
 mod stage;
 pub mod utils;
 pub use stage::*;
 
 pub mod mro;
+/// For convenience
 pub use mro::*;
 
 pub use log::LevelFilter;
 
 pub mod prelude;
 
-// Ways a stage can fail.
+/// Ways a stage can fail.
+///
+/// The failure can either be a controlled failure or an unexpected
+/// failure.
 #[derive(Debug, Fail)]
 pub enum StageError {
-    // Controlled shutdown for known condition in data or config
+    /// Controlled shutdown for known condition in data or config
     #[fail(display = "{}", message)]
     MartianExit { message: String },
 
-    // Unexpected error
+    /// Unexpected error
     #[fail(display = "{}", message)]
     PipelineError { message: String },
 }

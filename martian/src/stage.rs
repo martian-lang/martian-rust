@@ -1,5 +1,4 @@
 use crate::mro::{MartianStruct, MroMaker};
-use crate::types::{MartianMakePath, MartianVoid};
 use crate::utils::{obj_decode, obj_encode};
 use crate::Metadata;
 use failure::Error;
@@ -7,8 +6,57 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-/// Memory/ thread request can be negative in matrian
-/// http://martian-lang.org/advanced-features/#resource-consumption
+/// A struct which needs to be used as one of the associated types in `MartianMain` or
+/// `MartianStage` if it is empty. For example, a stage with no chunk inputs, would
+/// set `type ChunkInputs = MartianVoid;`
+#[derive(Clone, Serialize, Deserialize)]
+pub struct MartianVoid {
+    // Adding a field as a hack so that this can be deserialized
+    // from the json args object martian creates
+    __null__: Option<bool>,
+}
+
+/// A `MatianFiletype` is associated with a file of know non-empty
+/// extension. This encodes the concept of a `filepath` in martian.
+pub trait MartianFileType {
+    fn extension() -> &'static str;
+    fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
+}
+
+/// A trait satisfied by objects which can create a `file_name` in a `directory`
+/// with the correct extension if needed. `MartianFiletype`s implement
+/// this trait.
+pub trait MartianMakePath {
+    fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
+}
+
+impl MartianMakePath for PathBuf {
+    fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
+        let mut path = PathBuf::from(directory.as_ref());
+        path.push(file_name.as_ref());
+        path
+    }
+}
+
+impl MartianMakePath for String {
+    fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
+        <PathBuf as MartianMakePath>::make_path(directory, file_name)
+            .to_str()
+            .unwrap()
+            .to_string()
+    }
+}
+
+impl<T: MartianFileType> MartianMakePath for T {
+    fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
+        <T as MartianFileType>::new(directory, file_name)
+    }
+}
+
+/// Memory and threads reservations for a stage.
+///
+/// Memory/ thread request can be negative in matrian. See
+/// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)
 #[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
 pub struct Resource {
     #[serde(rename = "__mem_gb")]
@@ -20,21 +68,95 @@ pub struct Resource {
 }
 
 impl Resource {
+    /// Create a new resource with default reservation
+    ///
+    /// This sets all the fields to `None`. The default reservation is
+    /// controlled by the [jobmanager config](https://github.com/martian-lang/martian/blob/master/jobmanagers/config.json).
+    /// As of Martian 3.2 the default reservation is:
+    /// - `mem_gb`: 1
+    /// - `threads`: 1
+    /// - `vmem_gb`: `mem_gb` + 3
+    ///
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new();
+    /// assert_eq!(resource.get_mem_gb(), None);
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
     pub fn new() -> Self {
         Resource::default()
     }
+
+    /// Get the mem_gb
+    pub fn get_mem_gb(&self) -> Option<isize> {
+        self.mem_gb
+    }
+
+    /// Get the vmem_gb
+    pub fn get_vmem_gb(&self) -> Option<isize> {
+        self.vmem_gb
+    }
+
+    /// Get the threads
+    pub fn get_threads(&self) -> Option<isize> {
+        self.threads
+    }
+
+    /// Set the mem_gb
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2);
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
     pub fn mem_gb(mut self, mem_gb: isize) -> Self {
         self.mem_gb = Some(mem_gb);
         self
     }
+
+    /// Set the threads
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2).threads(4);
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), Some(4));
+    /// ```
     pub fn threads(mut self, threads: isize) -> Self {
         self.threads = Some(threads);
         self
     }
+
+    /// Set the vmem_gb
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2).vmem_gb(4);
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), Some(4));
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
     pub fn vmem_gb(mut self, vmem_gb: isize) -> Self {
         self.vmem_gb = Some(vmem_gb);
         self
     }
+
+    /// Create a resource with the specified `mem_gb`. `vmem_gb` and
+    /// `threads` are set to None.
+    ///
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::with_mem_gb(-2); // Same as Resource::new().mem_gb(-2);
+    /// assert_eq!(resource.get_mem_gb(), Some(-2));
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
     pub fn with_mem_gb(mem_gb: isize) -> Self {
         Resource {
             mem_gb: Some(mem_gb),
@@ -42,6 +164,18 @@ impl Resource {
             vmem_gb: None,
         }
     }
+
+    /// Create a resource with the specified `threads`. `mem_gb` and
+    /// `vmem_gb` are set to None.
+    ///
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::with_threads(4); // Same as Resource::new().threads(4);
+    /// assert_eq!(resource.get_mem_gb(), None);
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), Some(4));
+    /// ```
     pub fn with_threads(threads: isize) -> Self {
         Resource {
             mem_gb: None,
@@ -51,6 +185,8 @@ impl Resource {
     }
 }
 
+// Definition of a chunk which contains the inputs to the
+// chunk as well as the resource allocation.
 #[derive(Debug, Serialize, Deserialize)]
 struct ChunkDef<T> {
     #[serde(flatten)]
@@ -59,6 +195,16 @@ struct ChunkDef<T> {
     resource: Resource,
 }
 
+/// All the chunks in the stage (with their inputs & resource)
+/// along with the join resource. This needs to be constructed
+/// in the `split()` function, so that martian can create chunks
+/// appropriately and set resource reservations for `main()` and
+/// `join()`
+///
+/// Take a look at the `split()` function [here for a concrete example.](https://github.com/martian-lang/martian-rust/blob/master/martian-lab/examples/sum_sq/src/sum_squares.rs#L61)
+///
+/// `StageDef` is generic over type `T` which is the type of
+/// `ChunkInputs`
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageDef<T> {
     chunks: Vec<ChunkDef<T>>,
@@ -67,6 +213,7 @@ pub struct StageDef<T> {
 }
 
 impl<T> StageDef<T> {
+    /// Create a new `StageDef` with no chunks and default join resource.
     pub fn new() -> Self {
         StageDef {
             chunks: Vec::new(),
@@ -74,6 +221,7 @@ impl<T> StageDef<T> {
         }
     }
 
+    /// Create a new `StageDef` with no chunks and the specified join resource.
     pub fn with_join_resource(join_resource: Resource) -> Self {
         StageDef {
             chunks: Vec::new(),
@@ -81,6 +229,8 @@ impl<T> StageDef<T> {
         }
     }
 
+    /// Add a chunk to the `StageDef` with the given inputs and
+    /// default resource reservations.
     pub fn add_chunk(&mut self, inputs: T) {
         let chunk_def = ChunkDef {
             inputs,
@@ -89,16 +239,21 @@ impl<T> StageDef<T> {
         self.chunks.push(chunk_def);
     }
 
+    /// Add a chunk to the `StageDef` with the given inputs and
+    /// resource reservations.
     pub fn add_chunk_with_resource(&mut self, inputs: T, resource: Resource) {
         let chunk_def = ChunkDef { inputs, resource };
         self.chunks.push(chunk_def);
     }
 
+    /// Set the join resource
     pub fn set_join_resource(&mut self, join_resource: Resource) {
         self.join_resource = join_resource;
     }
 }
 
+/// A struct that knows about the files directory associated with the
+/// martian run as well as the actual resources available for you.
 pub struct MartianRover {
     files_path: PathBuf,
     mem_gb: usize,
@@ -118,6 +273,9 @@ impl<'a> From<&'a Metadata<'a>> for MartianRover {
 }
 
 impl MartianRover {
+    /// Create a new martian rover with the files path and the resources
+    /// Rover needs to know the resources explicitly, so none of the
+    /// resource fields shoulbd be empty when invoking this function.
     pub fn new(files_path: impl AsRef<Path>, resource: Resource) -> Self {
         // Resource should both be full populated before creating a rover
         assert!(resource.mem_gb.is_some());
@@ -134,6 +292,8 @@ impl MartianRover {
         }
     }
     ///
+    /// Create a file in the `files` directory associated with the run. The correct
+    /// extension is added depending on the return type.
     /// ```rust
     /// use martian::{MartianRover, Resource};
     /// use std::path::{Path, PathBuf};
@@ -171,12 +331,24 @@ impl MartianRover {
     }
 }
 
+/// Two different kinds of marian stages. `MainOnly` stages only have a
+/// `main()` function whereas `WithSplit` stages have `split()` and `join()` too.
+///
+/// `MartianStage` trait has a default implementation for the function `stage_kind()`
+/// which returns `StageKind::WithSplit`. `MartianMain` trait overrides this to return
+/// `StageKind::MainOnly`. This enum exists so that one can determine whether a stage object
+/// implements `MartianMain` or `MartianStage`
 #[derive(Debug)]
 pub enum StageKind {
+    /// Stage with only a `main()` function
     MainOnly,
+    /// Stage with `split()`, `main()` and `join()` functions
     WithSplit,
 }
 
+/// A stage in martian with just the main function.
+///
+/// For a toy example, see: [https://martian-lang.github.io/martian-rust/#/content/quick_start](https://martian-lang.github.io/martian-rust/#/content/quick_start)
 pub trait MartianMain: MroMaker {
     type StageInputs: Serialize + DeserializeOwned + MartianStruct;
     type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
@@ -188,6 +360,9 @@ pub trait MartianMain: MroMaker {
     ) -> Result<Self::StageOutputs, Error>;
 }
 
+/// A stage in martian which has `split`, `main` and `join`
+///
+/// For a toy example, see [https://martian-lang.github.io/martian-rust/#/content/quick_start_split](https://martian-lang.github.io/martian-rust/#/content/quick_start_split)
 pub trait MartianStage: MroMaker {
     type StageInputs: Serialize + DeserializeOwned + MartianStruct;
     type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
@@ -271,6 +446,8 @@ pub trait MartianStage: MroMaker {
     }
 }
 
+/// A raw martian stage that works with untype metadata. It is recommended
+/// not to implement this directly. Use `MartianMain` or `MartianStage` traits instead
 pub trait RawMartianStage {
     fn split(&self, metadata: Metadata) -> Result<(), Error>;
     fn main(&self, metadata: Metadata) -> Result<(), Error>;

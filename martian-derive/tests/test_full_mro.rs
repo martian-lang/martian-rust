@@ -1,7 +1,5 @@
-use martian::types::MartianVoid;
-use martian::{
-    AsMartianBlanketType, Error, MartianMain, MartianRover, MartianStage, MroMaker, StageDef,
-};
+use martian::mro::*;
+use martian::prelude::*;
 use martian_derive::{make_mro, martian_filetype, MartianStruct, MartianType};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
