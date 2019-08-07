@@ -1,7 +1,7 @@
 <!-- _sidebar.md -->
 
 * [Intro](content/README.md)
-* [WIP Organization of this guide]()
+* [Organization of this guide](content/organization.md)
 * [Quick Start [main]](content/quick_start.md)
 * [Quick start [split + join]](content/quick_start_split.md)
 * [Stage Traits](content/stage.md)
