@@ -14,25 +14,25 @@ In this section, we will:
 
 4. Invoke the stage with martian(`mrp`)
 
-
+> [!NOTE|style:flat] The complete code for this tutorial can be found [here](https://github.com/martian-lang/martian-rust/tree/master/martian-lab/examples/sum_sq_main)
 
 ## Step 1: Stage code
 
-- Create a new `adapter `. Let's call it `squaring_off`
+- Create a new `adapter `. Let's call it`sum_sq_main`
 
 ```bash
-user$> cargo martian adapter squaring_off
-     Created binary (application) `squaring_off` package
-Writing main template to "squaring_off/src/main.rs"
+user$> cargo martian adapter sum_sq_main
+     Created binary (application) `sum_sq_main package
+Writing main template to "sum_sq_mainrc/main.rs"
 user$>
 ```
 
-The command essentially calls `cargo new squaring_off` and updates the `Cargo.toml` and `src/main.rs`. This will create a new folder called `squaring_off` with basic boilerplate for handling martian calls using docopt.
+The command essentially calls `cargo new sum_sq_main` and updates the `Cargo.toml` and `src/main.rs`. This will create a new folder called `sum_sq_main` with basic boilerplate for handling martian calls using docopt.
 
 * Create a new `stage` called `sum_squares`
 
 ```bash
-user$> cd squaring_off/
+user$> cd sum_sq_main/
 user$> cargo martian stage sum_squares --main
 Writing to file "src/sum_squares.rs"
 user$>
@@ -42,7 +42,7 @@ This will create a new file `src/sum_squares.rs`, which contains `SumSquares` st
 
 * Define the stage inputs and outputs in `src/sum_squares.rs`
 
-The input is a `Vec<f64` and the output is an `f64`
+The input is a `Vec<f64>` and the output is an `f64`
 
 ```rust
 #[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
@@ -52,7 +52,7 @@ pub struct SumSquaresStageInputs {
 
 #[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
 pub struct SumSquaresStageOutputs {
-    sum_sq: f64,
+    sum: f64,
 }
 ```
 
@@ -68,7 +68,7 @@ impl MartianMain for SumSquares {
         _rover: MartianRover,
     ) -> Result<Self::StageOutputs, Error> {
         Ok(SumSquaresStageOutputs {
-            sum_sq: args.input.iter().map(|x| x * x).sum(),
+            sum: args.input.iter().map(|x| x * x).sum(),
         })
     }
 }
@@ -101,9 +101,9 @@ The stage code is ready. Make sure that the code compiles.
 
 ```bash
 user$> cargo r -- mro
-   Compiling squaring_off v0.1.0
+   Compiling sum_sq_main v0.1.0
     Finished dev [unoptimized + debuginfo] target(s) in 2.86s
-     Running `target/debug/squaring_off mro`
+     Running `target/debug/sum_sq_main mro`
 
 #
 # Copyright (c) 10X Genomics, Inc. All rights reserved.
@@ -114,8 +114,8 @@ user$> cargo r -- mro
 
 stage SUM_SQUARES(
     in  float[] input,
-    out float   sum_sq,
-    src comp    "squaring_off martian sum_squares",
+    out float   sum,
+    src comp    "sum_sq_main martian sum_squares",
 )
 ```
 
@@ -137,7 +137,7 @@ mod tests {
         };
         let stage = SumSquares;
         let res = stage.test_run_tmpdir(args).unwrap();
-        assert_eq!(res.sum_sq, 1.0 * 1.0 + 2.0 * 2.0 + 3.0 * 3.0 + 4.0 * 4.0);
+        assert_eq!(res.sum, 1.0 * 1.0 + 2.0 * 2.0 + 3.0 * 3.0 + 4.0 * 4.0);
     }
 }
 ```
@@ -147,16 +147,15 @@ mod tests {
 ## Step 4: mrp invocation
 
 * Compile the stage code in release mode: `cargo b —release`
-* The adapter executable needs to be in your `$PATH` for martian to execute it. So either add `target/release` to your `PATH` or copy `target/release/squaring_off` to a folder that's in your `PATH`. Make sure `which squaring_off` returns the expected path and you are able to run `squaring_off mro`.
+* The adapter executable needs to be in your `$PATH` for martian to execute it. So either add `target/release` to your `PATH` or copy `target/release/sum_sq_main` to a folder that's in your `PATH`. Make sure `which sum_sq_main` returns the expected path and you are able to run `sum_sq_main mro`.
 * Create the `invoker.mro`
 
 ```mro
 @include "sum_squares.mro"
 
 call SUM_SQUARES(
-    values = [1.0, 2.0, 3.0],
+    input = [1.0, 2.0, 3.0],
 )
 ```
 
-* Run the stage code: `mrp invoker.mro squaring_off_tutorial —-jobmode=local --localmem=1`
-
+* Run the stage code: `mrp invoker.mro sum_sq_main_tutorial —-jobmode=local --localmem=1`

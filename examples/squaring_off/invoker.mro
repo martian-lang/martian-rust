@@ -1,5 +1,0 @@
-@include "sum_squares.mro"
-
-call SUM_SQUARES(
-    values = [1.0, 2.0, 3.0],
-)
