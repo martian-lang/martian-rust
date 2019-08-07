@@ -23,7 +23,7 @@ In this section, we will:
 ```bash
 user$> cargo martian adapter sum_sq_main
      Created binary (application) `sum_sq_main package
-Writing main template to "sum_sq_mainrc/main.rs"
+Writing main template to "sum_sq_main/src/main.rs"
 user$>
 ```
 
@@ -120,7 +120,7 @@ stage SUM_SQUARES(
 ```
 
 * You can optionally write it to a file using the `-—file=<filename>`. Take a look at the docopt usage string for all the flags available.
-* Create the mro file: `cargo r -- mro --file=sum_squares.mro`
+* Create the mro file: `cargo r -- mro --file=stage.mro`
 
 ## Step 3: Unit test
 
@@ -151,7 +151,7 @@ mod tests {
 * Create the `invoker.mro`
 
 ```mro
-@include "sum_squares.mro"
+@include "stage.mro"
 
 call SUM_SQUARES(
     input = [1.0, 2.0, 3.0],
