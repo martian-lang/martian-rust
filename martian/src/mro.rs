@@ -600,7 +600,7 @@ impl MroDisplay for StageMro {
         )
         .unwrap();
 
-        if let Some(ref chunk_in_out) = self.chunk_in_out {
+        if let Some(ref chunk_in_out) = self.minified_chunk_in_outs() {
             writeln!(&mut result, ") split (").unwrap();
             for line in chunk_in_out.mro_string(Some(ty_width)).lines() {
                 writeln!(&mut result, "{}{}", indent, line).unwrap();
@@ -629,6 +629,30 @@ impl MroDisplay for StageMro {
 mro_display_to_display! {StageMro, TAB_WIDTH_FOR_MRO}
 
 impl StageMro {
+    fn minified_chunk_in_outs(&self) -> Option<InAndOut> {
+        match self.chunk_in_out {
+            Some(ref chunk_in_out) => {
+                let chunk_in = chunk_in_out.inputs.clone();
+                let skip_names: HashSet<_> = self
+                    .stage_in_out
+                    .outputs
+                    .iter()
+                    .map(|field| &field.name)
+                    .collect();
+                let chunk_out: Vec<_> = chunk_in_out
+                    .outputs
+                    .iter()
+                    .filter(|field| !skip_names.contains(&field.name))
+                    .cloned()
+                    .collect();
+                Some(InAndOut {
+                    inputs: chunk_in,
+                    outputs: chunk_out,
+                })
+            }
+            None => None,
+        }
+    }
     fn verify(&self) {
         // By design, all the field names are guaranteed to be not
         // any of the martian tokens. It raises a compile error when
@@ -646,31 +670,28 @@ impl StageMro {
             for f_stage in self.stage_in_out.inputs.iter() {
                 assert!(
                     !(f_chunk.name == f_stage.name),
-                    "ERROR: Found identical field {} in stage and chunk inputs",
+                    "ERROR: Found identical field {} in stage and chunk inputs, which is not allowed",
                     f_chunk.name
                 )
             }
         }
 
-        // Do not allow the same field name in stage and chunk outputs
+        // Fields having same name in stage and chunk outputs
+        // should have identical types.
         // O(mn) is good enough
         for f_chunk in chunk_in_out.outputs.iter() {
             for f_stage in self.stage_in_out.outputs.iter() {
-                assert!(
-                    !(f_chunk.name == f_stage.name),
-                    "ERROR: Found identical field {} in stage and chunk outputs",
-                    f_chunk.name
-                )
+                if f_chunk.name == f_stage.name {
+                    assert!(
+                        f_chunk.ty == f_stage.ty,
+                        "ERROR: Found identical field {} in stage and chunk outputs, but it has type {} in stage outputs and type {} in chunk outputs.",
+                        f_chunk.name, f_stage.ty, f_chunk.ty,
+                    )
+                }
             }
         }
     }
 }
-
-// impl std::fmt::Display for Stage {
-//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-//         write!(f, "{}", self.to_mro_string())
-//     }
-// }
 
 #[cfg(test)]
 mod tests {
@@ -1012,6 +1033,43 @@ mod tests {
             },
         };
         stage_mro.verify();
+    }
+
+    #[test]
+    fn test_stage_mro_display_duplicate_outputs_same_type() {
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: Some(InAndOut {
+                inputs: Vec::new(),
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            }),
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+        stage_mro.verify();
+        let expected = indoc!(
+            r#"
+            stage SUM_SQUARES(
+                in  float[] values,
+                out float   sum,
+                src comp    "my_adapter martian sum_squares",
+            ) split (
+            ) using (
+                mem_gb  = 1,
+                threads = 2,
+            )
+        "#
+        );
+        assert_eq!(stage_mro.to_string(), expected);
     }
 
     #[test]
