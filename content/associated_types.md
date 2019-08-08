@@ -13,18 +13,18 @@ The associated type needs to be a struct with **named fields** which implements 
 
 The named fields within the associated type struct can have any of the types mentioned in the table below, which also defines the map between a rust type and the martian type (this is what appears in the mro).
 
-| Sl No | Rust Type                                                    | Martian Type |
-| ----- | ------------------------------------------------------------ | ------------ |
-| 1     | i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize | int          |
-| 2     | f32, f64                                                     | float        |
-| 3     | bool                                                         | bool         |
-| 4     | String, char, Enum* (without associated data)                | string       |
-| 5     | PathBuf                                                      | path         |
-| 6     | Structs implementing MartianFileType                         | filetype     |
-| 7     | Hashmap                                                      | map          |
-| 8     | Struct\*, Enum\* (with only named or unnamed variants)       | map          |
-| 9     | Option of any of the above types                             | type         |
-| 10    | Vec or HashSet of any of the above types                     | type[]       |
+| Sl No | Rust Type                                              | Martian Type |
+| ----- | ------------------------------------------------------ | ------------ |
+| 1     | i8, i16, i32, i64, isize, u8, u16, u32, u64, usize     | int          |
+| 2     | f32, f64                                               | float        |
+| 3     | bool                                                   | bool         |
+| 4     | String, char, Enum* (without associated data)          | string       |
+| 5     | PathBuf                                                | path         |
+| 6     | Structs implementing MartianFileType                   | filetype     |
+| 7     | Hashmap                                                | map          |
+| 8     | Struct\*, Enum\* (with only named or unnamed variants) | map          |
+| 9     | Option of any of the above types                       | type         |
+| 10    | Vec or HashSet of any of the above types               | type[]       |
 
 > [!WARNING] Unless you explicitly mark a field as an `Option`, the assumption is that the field is not allowed to be `null` in the invocation mro. If a field is not an `Option` and we find a `null` in the pro, the deserializer will panic.
 

@@ -804,6 +804,13 @@
 <span id="804">804</span>
 <span id="805">805</span>
 <span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;128&quot;</span>]</span>
 
@@ -831,6 +838,13 @@
 <span class="doccomment">/// When this attribute is applied to the `MartianMain` or `MartianStage` trait implementation of</span>
 <span class="doccomment">/// a stage struct, it derives the trait `MroMaker` to the stage struct, which lets you generate</span>
 <span class="doccomment">/// the mro corresponding to the stage.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can optionally specify `mem_gb`, `threads`, `vmem_gb` and `volatile` within this proc-macro.</span>
+<span class="doccomment">/// For example, use `#[make_mro(mem_gb = 4, threads = 2]` for setting `mem_gb` and `threads` that would</span>
+<span class="doccomment">/// appear in the `using()` section of the mro definition.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can also set the stage name here. By default, the stage name in the mro is the SHOUTY_SNAKE_CASE version</span>
+<span class="doccomment">/// of the stage struct name. You can override that using: `#[make_mro(mem_gb = 2, stage_name = MY_CUSTOM_NAME)]`</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// For examples on how to use it and customize, take a look at `tests/test_full_mro.rs`</span>
 <span class="attribute">#[<span class="ident">proc_macro_attribute</span>]</span>

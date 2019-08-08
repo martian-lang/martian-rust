@@ -590,6 +590,25 @@
 <span id="590">590</span>
 <span id="591">591</span>
 <span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">mro</span>::{<span class="ident">MartianStruct</span>, <span class="ident">MroMaker</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">utils</span>::{<span class="ident">obj_decode</span>, <span class="ident">obj_encode</span>};
@@ -796,8 +815,27 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// Take a look at the `split()` function [here for a concrete example.](https://github.com/martian-lang/martian-rust/blob/master/martian-lab/examples/sum_sq/src/sum_squares.rs#L61)</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// `StageDef` is generic over type `T` which is the type of</span>
-<span class="doccomment">/// `ChunkInputs`</span>
+<span class="doccomment">/// `StageDef` is generic over type `T` which is the type of `ChunkInputs`</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// the toy example below constructs 100 chunks.</span>
+<span class="doccomment">/// ```rust</span>
+<span class="doccomment">/// use martian::prelude::*;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// struct ChunkInputs {</span>
+<span class="doccomment">///     chunk_id: usize,</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let join_resource = Resource::new().mem_gb(16).threads(4); //</span>
+<span class="doccomment">/// let mut stage_def = StageDef::with_join_resource(join_resource);</span>
+<span class="doccomment">/// // You can use StageDef::new() for default join resource allocation</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// for chunk_id in 0..100 {</span>
+<span class="doccomment">///    let chunk_inputs = ChunkInputs { chunk_id };</span>
+<span class="doccomment">///    let chunk_resource = Resource::with_mem_gb(3); // Could be a function of chunk inputs</span>
+<span class="doccomment">///    stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource);</span>
+<span class="doccomment">///    // You can use stage_def.add_chunk(chunk_inputs) for default chunk resource allocation</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="ident">chunks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>,
