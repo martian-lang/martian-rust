@@ -203,8 +203,27 @@ struct ChunkDef<T> {
 ///
 /// Take a look at the `split()` function [here for a concrete example.](https://github.com/martian-lang/martian-rust/blob/master/martian-lab/examples/sum_sq/src/sum_squares.rs#L61)
 ///
-/// `StageDef` is generic over type `T` which is the type of
-/// `ChunkInputs`
+/// `StageDef` is generic over type `T` which is the type of `ChunkInputs`
+///
+/// the toy example below constructs 100 chunks.
+/// ```rust
+/// use martian::prelude::*;
+///
+/// struct ChunkInputs {
+///     chunk_id: usize,
+/// }
+///
+/// let join_resource = Resource::new().mem_gb(16).threads(4); //
+/// let mut stage_def = StageDef::with_join_resource(join_resource);
+/// // You can use StageDef::new() for default join resource allocation
+///
+/// for chunk_id in 0..100 {
+///    let chunk_inputs = ChunkInputs { chunk_id };
+///    let chunk_resource = Resource::with_mem_gb(3); // Could be a function of chunk inputs
+///    stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource);
+///    // You can use stage_def.add_chunk(chunk_inputs) for default chunk resource allocation
+/// }
+/// ```
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageDef<T> {
     chunks: Vec<ChunkDef<T>>,

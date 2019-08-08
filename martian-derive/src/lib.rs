@@ -25,6 +25,13 @@ const MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR: &'static str =
 /// a stage struct, it derives the trait `MroMaker` to the stage struct, which lets you generate
 /// the mro corresponding to the stage.
 ///
+/// You can optionally specify `mem_gb`, `threads`, `vmem_gb` and `volatile` within this proc-macro.
+/// For example, use `#[make_mro(mem_gb = 4, threads = 2]` for setting `mem_gb` and `threads` that would
+/// appear in the `using()` section of the mro definition.
+///
+/// You can also set the stage name here. By default, the stage name in the mro is the SHOUTY_SNAKE_CASE version
+/// of the stage struct name. You can override that using: `#[make_mro(mem_gb = 2, stage_name = MY_CUSTOM_NAME)]`
+///
 /// For examples on how to use it and customize, take a look at `tests/test_full_mro.rs`
 #[proc_macro_attribute]
 pub fn make_mro(
