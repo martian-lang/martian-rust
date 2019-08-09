@@ -1,6 +1,6 @@
 [package]
 name = "martian"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["Patrick Marks <patrick@10xgenomics.com>", "Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>"]
 edition = "2018"
 

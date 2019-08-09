@@ -205,14 +205,12 @@ pub fn martian_main_with_log_level(
     Ok(())
 }
 
-const MRO_HEADER: &str = r#"
-#
-# Copyright (c) 10X Genomics, Inc. All rights reserved.
+const MRO_HEADER: &str = r#"#
+# Copyright (c) 2019 10X Genomics, Inc. All rights reserved.
 #
 # WARNING: This file is auto-generated.
 # DO NOT MODIFY THIS FILE DIRECTLY
 #
-
 "#;
 pub fn martian_make_mro(
     file_name: Option<impl AsRef<Path>>,
@@ -241,6 +239,7 @@ pub fn martian_make_mro(
         filetype_header.add_stage(&stage_mro);
         writeln!(&mut mro_string, "{}", stage_mro)?;
     }
+    mro_string.pop();
 
     let final_mro_string = format!("{}{}{}", MRO_HEADER, filetype_header, mro_string);
     match file_name {
