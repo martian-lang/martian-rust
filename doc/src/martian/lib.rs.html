@@ -253,7 +253,6 @@
 <span id="253">253</span>
 <span id="254">254</span>
 <span id="255">255</span>
-<span id="256">256</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! # Martian-Rust</span>
 <span class="doccomment">//! This crate provides a strongly typed high level API for implementing martian stages in Rust.</span>
@@ -462,14 +461,12 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">const</span> <span class="ident">MRO_HEADER</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
-#
-# Copyright (c) 10X Genomics, Inc. All rights reserved.
+<span class="kw">const</span> <span class="ident">MRO_HEADER</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;#
+# Copyright (c) 2019 10X Genomics, Inc. All rights reserved.
 #
 # WARNING: This file is auto-generated.
 # DO NOT MODIFY THIS FILE DIRECTLY
 #
-
 &quot;#</span>;
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">martian_make_mro</span>(
     <span class="ident">file_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>,
@@ -498,6 +495,7 @@
         <span class="ident">filetype_header</span>.<span class="ident">add_stage</span>(<span class="kw-2">&amp;</span><span class="ident">stage_mro</span>);
         <span class="macro">writeln</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">mro_string</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">stage_mro</span>)<span class="question-mark">?</span>;
     }
+    <span class="ident">mro_string</span>.<span class="ident">pop</span>();
 
     <span class="kw">let</span> <span class="ident">final_mro_string</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}{}{}&quot;</span>, <span class="ident">MRO_HEADER</span>, <span class="ident">filetype_header</span>, <span class="ident">mro_string</span>);
     <span class="kw">match</span> <span class="ident">file_name</span> {
