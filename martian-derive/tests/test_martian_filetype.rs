@@ -42,6 +42,10 @@ fn test_new() {
         &PathBuf::from("/some/folder/foo.fastq.lz4")
     );
     assert_eq!(
+        FqLz4File::new("/some/folder/", "foo.fastq.lz4").as_ref(),
+        &PathBuf::from("/some/folder/foo.fastq.lz4")
+    );
+    assert_eq!(
         FqLz4File::new("/some/folder", "foo.tmp").as_ref(),
         &PathBuf::from("/some/folder/foo.tmp.fastq.lz4")
     );
