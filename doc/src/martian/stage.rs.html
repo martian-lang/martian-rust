@@ -609,6 +609,14 @@
 <span id="609">609</span>
 <span id="610">610</span>
 <span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">mro</span>::{<span class="ident">MartianStruct</span>, <span class="ident">MroMaker</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">utils</span>::{<span class="ident">obj_decode</span>, <span class="ident">obj_encode</span>};
@@ -616,6 +624,8 @@
 <span class="kw">use</span> <span class="ident">failure</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">File</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">BufReader</span>, <span class="ident">BufWriter</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
 <span class="doccomment">/// A struct which needs to be used as one of the associated types in `MartianMain` or</span>
@@ -630,9 +640,15 @@
 
 <span class="doccomment">/// A `MatianFiletype` is associated with a file of know non-empty</span>
 <span class="doccomment">/// extension. This encodes the concept of a `filepath` in martian.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianFileType</span> {
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianFileType</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">extension</span>() <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>;
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">buf_writer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">BufWriter</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">create</span>(<span class="self">self</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>))
+    }
+    <span class="kw">fn</span> <span class="ident">buf_reader</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">BufReader</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">open</span>(<span class="self">self</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>))
+    }
 }
 
 <span class="doccomment">/// A trait satisfied by objects which can create a `file_name` in a `directory`</span>
