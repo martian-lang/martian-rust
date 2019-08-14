@@ -21,6 +21,10 @@ fn test_new() {
         TxtFile(PathBuf::from("/some/folder/file.txt"))
     );
     assert_eq!(
+        TxtFile::new("/some/folder", "file.txt"),
+        TxtFile(PathBuf::from("/some/folder/file.txt"))
+    );
+    assert_eq!(
         TxtFile::new("/some/folder", "file").as_ref(),
         &PathBuf::from("/some/folder/file.txt")
     );
