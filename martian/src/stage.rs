@@ -4,6 +4,8 @@ use crate::Metadata;
 use failure::Error;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::io::{BufReader, BufWriter};
 use std::path::{Path, PathBuf};
 
 /// A struct which needs to be used as one of the associated types in `MartianMain` or
@@ -18,9 +20,15 @@ pub struct MartianVoid {
 
 /// A `MatianFiletype` is associated with a file of know non-empty
 /// extension. This encodes the concept of a `filepath` in martian.
-pub trait MartianFileType {
+pub trait MartianFileType: AsRef<Path> {
     fn extension() -> &'static str;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
+    fn buf_writer(&self) -> Result<BufWriter<File>, Error> {
+        Ok(BufWriter::new(File::create(self.as_ref())?))
+    }
+    fn buf_reader(&self) -> Result<BufReader<File>, Error> {
+        Ok(BufReader::new(File::open(self.as_ref())?))
+    }
 }
 
 /// A trait satisfied by objects which can create a `file_name` in a `directory`
