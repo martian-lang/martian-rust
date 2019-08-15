@@ -25,6 +25,10 @@ fn test_new() {
         TxtFile::from("/some/folder/file.txt"),
     );
     assert_eq!(
+        TxtFile::new("/some/folder", "file_txt"),
+        TxtFile::from("/some/folder/file_txt.txt"),
+    );
+    assert_eq!(
         TxtFile::new("/some/folder", "file"),
         TxtFile::from("/some/folder/file"),
     );

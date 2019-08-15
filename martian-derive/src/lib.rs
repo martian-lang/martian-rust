@@ -727,7 +727,8 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
             ) -> Self {
                 let mut path = ::std::path::PathBuf::from(file_path.as_ref());
                 path.push(file_name);
-                if !path.to_string_lossy().ends_with(Self::extension()) {
+                let expected_extension = format!(".{}", Self::extension());
+                if !path.to_string_lossy().ends_with(&expected_extension) {
                     let full_extension = match path.extension() {
                         Some(ext) => format!("{}.{}", ext.to_string_lossy(), Self::extension()),
                         _ => Self::extension().to_string(),
