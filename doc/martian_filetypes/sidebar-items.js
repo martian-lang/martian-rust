@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["JsonFile",""]],"trait":[["LoadFileType","Load a `MartianFileType` as a type T"],["SaveAsFileType","Save `Self` as a `MartianFileType`"]]});

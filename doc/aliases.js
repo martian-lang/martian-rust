@@ -16,6 +16,7 @@ ALIASES["libc"] = {};
 ALIASES["log"] = {};
 ALIASES["martian"] = {};
 ALIASES["martian_derive"] = {};
+ALIASES["martian_filetypes"] = {};
 ALIASES["martian_lab"] = {};
 ALIASES["memchr"] = {};
 ALIASES["num_integer"] = {};

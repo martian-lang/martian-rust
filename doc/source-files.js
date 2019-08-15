@@ -16,6 +16,7 @@ sourcesIndex["libc"] = {"name":"","dirs":[{"name":"unix","dirs":[{"name":"linux_
 sourcesIndex["log"] = {"name":"","files":["lib.rs","macros.rs"]};
 sourcesIndex["martian"] = {"name":"","files":["lib.rs","macros.rs","metadata.rs","mro.rs","prelude.rs","stage.rs","utils.rs"]};
 sourcesIndex["martian_derive"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["martian_filetypes"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["martian_lab"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["memchr"] = {"name":"","dirs":[{"name":"x86","files":["avx.rs","mod.rs","sse2.rs"]}],"files":["fallback.rs","iter.rs","lib.rs","naive.rs"]};
 sourcesIndex["num_integer"] = {"name":"","files":["lib.rs","roots.rs"]};

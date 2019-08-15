@@ -617,11 +617,28 @@
 <span id="617">617</span>
 <span id="618">618</span>
 <span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">mro</span>::{<span class="ident">MartianStruct</span>, <span class="ident">MroMaker</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">utils</span>::{<span class="ident">obj_decode</span>, <span class="ident">obj_encode</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">Metadata</span>;
-<span class="kw">use</span> <span class="ident">failure</span>::<span class="ident">Error</span>;
+<span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">Error</span>, <span class="ident">ResultExt</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">File</span>;
@@ -643,11 +660,28 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianFileType</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">extension</span>() <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>;
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="doccomment">/// This function will create a file if it does not exist, and will truncate it if it does.</span>
     <span class="kw">fn</span> <span class="ident">buf_writer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">BufWriter</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">create</span>(<span class="self">self</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>))
+        <span class="prelude-val">Ok</span>(<span class="ident">BufWriter</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">create</span>(<span class="self">self</span>.<span class="ident">as_ref</span>()).<span class="ident">with_context</span>(
+            <span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                <span class="macro">format</span><span class="macro">!</span>(
+                    <span class="string">&quot;Failed to create file &#39;{}&#39; from within MartianType::buf_writer() due to {:?}&quot;</span>,
+                    <span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">display</span>(),
+                    <span class="ident">e</span>
+                )
+            },
+        )<span class="question-mark">?</span>))
     }
     <span class="kw">fn</span> <span class="ident">buf_reader</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">BufReader</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">open</span>(<span class="self">self</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>))
+        <span class="prelude-val">Ok</span>(<span class="ident">BufReader</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">open</span>(<span class="self">self</span>.<span class="ident">as_ref</span>()).<span class="ident">with_context</span>(
+            <span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                <span class="macro">format</span><span class="macro">!</span>(
+                    <span class="string">&quot;Failed to open file &#39;{}&#39; from within MartianType::buf_reader() due to {:?}&quot;</span>,
+                    <span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">display</span>(),
+                    <span class="ident">e</span>
+                )
+            },
+        )<span class="question-mark">?</span>))
     }
 }
 
