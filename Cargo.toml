@@ -4,4 +4,5 @@ members = [
     "martian",
     "martian-derive",
     "martian-lab",
+    "martian-filetypes",
 ]

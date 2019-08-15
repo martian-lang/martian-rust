@@ -1,7 +1,7 @@
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::{obj_decode, obj_encode};
 use crate::Metadata;
-use failure::Error;
+use failure::{Error, ResultExt};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
@@ -23,11 +23,28 @@ pub struct MartianVoid {
 pub trait MartianFileType: AsRef<Path> {
     fn extension() -> &'static str;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
+    /// This function will create a file if it does not exist, and will truncate it if it does.
     fn buf_writer(&self) -> Result<BufWriter<File>, Error> {
-        Ok(BufWriter::new(File::create(self.as_ref())?))
+        Ok(BufWriter::new(File::create(self.as_ref()).with_context(
+            |e| {
+                format!(
+                    "Failed to create file '{}' from within MartianType::buf_writer() due to {:?}",
+                    self.as_ref().display(),
+                    e
+                )
+            },
+        )?))
     }
     fn buf_reader(&self) -> Result<BufReader<File>, Error> {
-        Ok(BufReader::new(File::open(self.as_ref())?))
+        Ok(BufReader::new(File::open(self.as_ref()).with_context(
+            |e| {
+                format!(
+                    "Failed to open file '{}' from within MartianType::buf_reader() due to {:?}",
+                    self.as_ref().display(),
+                    e
+                )
+            },
+        )?))
     }
 }
 

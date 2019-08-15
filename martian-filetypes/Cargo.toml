@@ -1,0 +1,17 @@
+[package]
+name = "martian-filetypes"
+version = "0.1.0"
+authors = ["Sreenath Krishnan <sreenathk.89@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+martian = { path = "../martian" }
+martian-derive = { path = "../martian-derive" }
+serde = { version = '1.0', features = ['derive'] }
+serde_json = "*"
+failure = "*"
+
+[dev-dependencies]
+tempfile = "3"
