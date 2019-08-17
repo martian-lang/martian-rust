@@ -11,7 +11,14 @@ martian = { path = "../martian" }
 martian-derive = { path = "../martian-derive" }
 serde = { version = '1.0', features = ['derive'] }
 serde_json = "*"
+bincode = "1.1"
 failure = "*"
 
 [dev-dependencies]
 tempfile = "3"
+
+[dev-dependencies.proptest]
+version = "0.9"
+default-features = false
+# Enable all default features not known to break code coverage builds
+features = ["default-code-coverage"]
