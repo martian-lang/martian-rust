@@ -17,6 +17,7 @@ failure = "*"
 [dev-dependencies]
 tempfile = "3"
 criterion = "0.2"
+file_diff = "1.0"
 
 [[bench]]
 name = "benchmarks"
