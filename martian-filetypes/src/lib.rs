@@ -5,14 +5,15 @@
 use martian::{Error, MartianFileType};
 use std::fmt;
 
-mod bin_file;
+// mod bin_file;
 mod json_file;
-pub use bin_file::BincodeFile;
+// pub use bin_file::BincodeFile;
 pub use json_file::JsonFile;
 
 pub enum ErrorContext<F: MartianFileType + fmt::Debug> {
-    LoadContext(F, String),
-    SaveAsContext(F, String),
+    ReadContext(F, String),
+    LazyReadContext(F, String),
+    WriteContext(F, String),
 }
 
 impl<F> fmt::Display for ErrorContext<F>
@@ -21,14 +22,19 @@ where
 {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            ErrorContext::LoadContext(f, e) => write!(
+            ErrorContext::ReadContext(f, e) => write!(
                 formatter,
-                "Failed to load MartianFiletype {:?} due to error: {:?}",
+                "Failed to read MartianFiletype {:?} due to error: {:?}",
                 f, e
             ),
-            ErrorContext::SaveAsContext(f, e) => write!(
+            ErrorContext::LazyReadContext(f, e) => write!(
                 formatter,
-                "Failed to save MartianFiletype {:?} due to error: {:?}",
+                "Failed to lazy read MartianFiletype {:?} due to error: {:?}",
+                f, e
+            ),
+            ErrorContext::WriteContext(f, e) => write!(
+                formatter,
+                "Failed to write to MartianFiletype {:?} due to error: {:?}",
                 f, e
             ),
         }
@@ -36,20 +42,53 @@ where
 }
 
 /// Load a `MartianFileType` as a type T
-pub trait LoadFileType<T>: MartianFileType {
-    fn load(&self) -> Result<T, Error>;
-}
-
-/// Save `Self` as a `MartianFileType`
-pub trait SaveAsFileType<F: MartianFileType> {
-    fn save_as(&self, filetype: &F) -> Result<(), Error>;
+pub trait FileTypeIO<T>: MartianFileType {
+    fn read(&self) -> Result<T, Error>;
+    fn write(&self, item: &T) -> Result<(), Error>;
 }
 
 /// A trait that represents a FileType which can be incrementally
 /// read. For example, you might have a fasta file and you might
 /// want to iterate over individual sequences in the file without
 /// reading everything into memory at once.
-pub trait LazyFileTypeIO<T>: MartianFileType {
+/// The constrain `FileTypeIO<Vec<T>>` is so that we can lazy read
+/// even when we don't necessarily lazy write and vice versa.
+pub trait LazyFileTypeIO<T>: MartianFileType + FileTypeIO<Vec<T>> {
     type LazyReader: Iterator<Item = Result<T, Error>>;
-    fn lazy_reader(&self) -> Result<Self::IncrementalReader, Error>;
+    // type LazyWriter: LazyWrite<T>;
+    fn lazy_reader(&self) -> Result<Self::LazyReader, Error>;
+    // fn lazy_writer(&self) -> Result<Self::LazyWriter, Error>;
+}
+
+pub trait LazyWrite<T> {
+    fn write_item(&mut self, item: &T) -> Result<(), Error>;
+}
+
+#[cfg(test)]
+pub fn round_trip_check<F, T>(input: &T) -> Result<bool, Error>
+where
+    F: FileTypeIO<T>,
+    T: PartialEq,
+{
+    let dir = tempfile::tempdir()?;
+    let file = F::new(dir.path(), "my_file_roundtrip");
+    file.write(input)?;
+    let decoded: T = file.read()?;
+    Ok(input == &decoded)
+}
+
+#[cfg(test)]
+pub fn lazy_round_trip_check<F, T>(input: &Vec<T>) -> Result<bool, Error>
+where
+    F: LazyFileTypeIO<T>,
+    T: PartialEq,
+{
+    // Write + Lazy read
+    let dir = tempfile::tempdir()?;
+    let file = F::new(dir.path(), "my_file_lazy");
+    file.write(input)?;
+    let decoded: Vec<T> = file.lazy_reader()?.map(|x| x.unwrap()).collect();
+    Ok(input == &decoded)
+    // TODO: Lazy write + read
+    // TODO: Lazy write + Lazy read
 }
