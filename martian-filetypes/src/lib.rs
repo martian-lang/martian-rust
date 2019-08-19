@@ -5,7 +5,7 @@
 use martian::{Error, MartianFileType};
 use std::fmt;
 
-// mod bin_file;
+pub mod bin_file;
 pub mod json_file;
 // pub use bin_file::BincodeFile;
 

@@ -2,7 +2,7 @@
 //! This module defines a `JsonFile` and implements `FileTypeIO<T>` and
 //! `LazyFileTypeIO<T>` trait for a json file.
 //! ## Simple read/write example
-//! `FileTypeIO<T>` is implemented for any type `T` which can be [de]serialized.
+//! `JsonFile` implements `FileTypeIO<T>` for any type `T` which can be [de]serialized.
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, json_file::JsonFile};
 //! use martian::Error;
@@ -29,8 +29,8 @@
 //! If the json file stores a list of items of type `T`, then the items can be read
 //! one at a time without reading the whole file into memory. A list of items
 //! of type `T` can also be incrementally written to a json file.
-//! `LazyFileTypeIO<T>` is implemented for any type `T` which can be [de]serialized.
-//! The trade off is that lazy reading[writing] is about ~20% slower compared to a
+//! `JsonFile` implements `LazyFileTypeIO<T>` for any type `T` which can be [de]serialized.
+//! The trade off is that lazy reading[writing] seems to be about ~10% slower compared to a
 //! single read[write] after collecting the values into a vector (which consumes
 //! more memory). The slight performance hit is likely because we need to allocate
 //! per read[write].
@@ -62,6 +62,7 @@
 //!     }
 //!     Ok(())
 //! }
+//! ```
 
 use crate::{ErrorContext, FileTypeIO, LazyFileTypeIO, LazyWrite};
 use failure::{format_err, ResultExt};
@@ -309,6 +310,14 @@ mod tests {
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         #[test]
+        fn prop_test_json_file_vec_string(
+            ref seq in vec(any::<String>(), 0usize..20usize),
+        ) {
+            prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq).unwrap());
+            serde_lazy_roundtrip_check(seq).unwrap();
+        }
+        #[test]
         fn prop_test_json_file_string(
             ref seq in any::<String>(),
         ) {
@@ -389,7 +398,8 @@ mod tests {
 
     #[test]
     fn test_json_lazy_write() -> Result<(), Error> {
-        let json_file = JsonFile::from("lazy_write");
+        let dir = tempfile::tempdir()?;
+        let json_file = JsonFile::new(dir.path(), "lazy_write");
         let input: Vec<i32> = (0..10).into_iter().collect();
 
         let mut writer = json_file.lazy_writer()?;
