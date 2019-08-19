@@ -404,12 +404,22 @@
 <span id="404">404</span>
 <span id="405">405</span>
 <span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This module defines a `JsonFile` and implements `FileTypeIO&lt;T&gt;` and</span>
 <span class="doccomment">//! `LazyFileTypeIO&lt;T&gt;` trait for a json file.</span>
 <span class="doccomment">//! ## Simple read/write example</span>
-<span class="doccomment">//! `FileTypeIO&lt;T&gt;` is implemented for any type `T` which can be [de]serialized.</span>
+<span class="doccomment">//! `JsonFile` implements `FileTypeIO&lt;T&gt;` for any type `T` which can be [de]serialized.</span>
 <span class="doccomment">//! ```rust</span>
 <span class="doccomment">//! use martian_filetypes::{FileTypeIO, json_file::JsonFile};</span>
 <span class="doccomment">//! use martian::Error;</span>
@@ -436,8 +446,8 @@
 <span class="doccomment">//! If the json file stores a list of items of type `T`, then the items can be read</span>
 <span class="doccomment">//! one at a time without reading the whole file into memory. A list of items</span>
 <span class="doccomment">//! of type `T` can also be incrementally written to a json file.</span>
-<span class="doccomment">//! `LazyFileTypeIO&lt;T&gt;` is implemented for any type `T` which can be [de]serialized.</span>
-<span class="doccomment">//! The trade off is that lazy reading[writing] is about ~20% slower compared to a</span>
+<span class="doccomment">//! `JsonFile` implements `LazyFileTypeIO&lt;T&gt;` for any type `T` which can be [de]serialized.</span>
+<span class="doccomment">//! The trade off is that lazy reading[writing] seems to be about ~10% slower compared to a</span>
 <span class="doccomment">//! single read[write] after collecting the values into a vector (which consumes</span>
 <span class="doccomment">//! more memory). The slight performance hit is likely because we need to allocate</span>
 <span class="doccomment">//! per read[write].</span>
@@ -469,6 +479,7 @@
 <span class="doccomment">//!     }</span>
 <span class="doccomment">//!     Ok(())</span>
 <span class="doccomment">//! }</span>
+<span class="doccomment">//! ```</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ErrorContext</span>, <span class="ident">FileTypeIO</span>, <span class="ident">LazyFileTypeIO</span>, <span class="ident">LazyWrite</span>};
 <span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">format_err</span>, <span class="ident">ResultExt</span>};
@@ -716,6 +727,14 @@
             <span class="ident">serde_lazy_roundtrip_check</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>();
         }
         <span class="attribute">#[<span class="ident">test</span>]</span>
+        <span class="kw">fn</span> <span class="ident">prop_test_json_file_vec_string</span>(
+            <span class="kw-2">ref</span> <span class="ident">seq</span> <span class="kw">in</span> <span class="ident">vec</span>(<span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>(), <span class="number">0usize</span>..<span class="number">20usize</span>),
+        ) {
+            <span class="macro">prop_assert</span><span class="macro">!</span>(<span class="kw">crate</span>::<span class="ident">round_trip_check</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>());
+            <span class="macro">prop_assert</span><span class="macro">!</span>(<span class="kw">crate</span>::<span class="ident">lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>());
+            <span class="ident">serde_lazy_roundtrip_check</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>();
+        }
+        <span class="attribute">#[<span class="ident">test</span>]</span>
         <span class="kw">fn</span> <span class="ident">prop_test_json_file_string</span>(
             <span class="kw-2">ref</span> <span class="ident">seq</span> <span class="kw">in</span> <span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>(),
         ) {
@@ -796,7 +815,8 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_json_lazy_write</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">from</span>(<span class="string">&quot;lazy_write&quot;</span>);
+        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>()<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;lazy_write&quot;</span>);
         <span class="kw">let</span> <span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">10</span>).<span class="ident">into_iter</span>().<span class="ident">collect</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">json_file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
