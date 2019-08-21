@@ -64,8 +64,8 @@
 //! }
 //! ```
 
-use crate::{ErrorContext, FileTypeIO, LazyFileTypeIO, LazyWrite};
-use failure::{format_err, ResultExt};
+use crate::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+use failure::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
@@ -87,17 +87,14 @@ impl<T> FileTypeIO<T> for JsonFile
 where
     T: Serialize + DeserializeOwned,
 {
-    fn read(&self) -> Result<T, Error> {
-        Ok(serde_json::from_reader(self.buf_reader()?)
-            .with_context(|e| ErrorContext::ReadContext(self.clone(), e.to_string()))?)
+    fn read_from<R: Read>(reader: R) -> Result<T, Error> {
+        Ok(serde_json::from_reader(reader)?)
     }
 
-    fn write(&self, item: &T) -> Result<(), Error> {
-        let writer = self.buf_writer()?;
+    fn write_into<W: Write>(writer: W, item: &T) -> Result<(), Error> {
         let formatter = PrettyFormatter::with_indent(b"    ");
         let mut serializer = Serializer::with_formatter(writer, formatter);
-        item.serialize(&mut serializer)
-            .with_context(|e| ErrorContext::WriteContext(self.clone(), e.to_string()))?;
+        item.serialize(&mut serializer)?;
         Ok(())
     }
 }
@@ -173,7 +170,7 @@ where
 
 #[derive(Copy, Clone)]
 enum WriterState {
-    Start,  // Just wrote [
+    Start,  // No elements written so far
     Scribe, // Wrote at least 1 element
 }
 
@@ -195,12 +192,10 @@ where
     T: Serialize + DeserializeOwned,
 {
     fn new(json_file: &JsonFile) -> Result<Self, Error> {
-        let mut writer = json_file.buf_writer()?;
-        writer.write_all(b"[")?;
         Ok(LazyJsonWriter {
             file: json_file.clone(),
             state: WriterState::Start,
-            writer,
+            writer: json_file.buf_writer()?,
             buffer: Vec::with_capacity(1024),
             phantom: PhantomData,
         })
@@ -213,11 +208,13 @@ where
 {
     fn write_item(&mut self, item: &T) -> Result<(), Error> {
         match self.state {
+            WriterState::Start => {
+                self.writer.write_all("[".as_bytes())?;
+                self.state = WriterState::Scribe;
+            }
             WriterState::Scribe => self.writer.write_all(",".as_bytes())?,
-            _ => {}
         }
         self.buffer.clear();
-        self.state = WriterState::Scribe;
         let formatter = PrettyFormatter::with_indent(b"    ");
         let mut serializer = Serializer::with_formatter(&mut self.buffer, formatter);
         item.serialize(&mut serializer)?;
@@ -237,7 +234,7 @@ where
 {
     fn drop(&mut self) {
         match self.state {
-            WriterState::Start => self.writer.write_all("]".as_bytes()).unwrap(),
+            WriterState::Start => self.writer.write_all("[]".as_bytes()).unwrap(),
             WriterState::Scribe => self.writer.write_all("\n]".as_bytes()).unwrap(),
         }
     }

@@ -718,8 +718,8 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
         pub struct #struct_ident(::std::path::PathBuf);
         #[automatically_derived]
         impl ::martian::MartianFileType for #struct_ident {
-            fn extension() -> &'static str {
-                #extension
+            fn extension() -> String {
+                #extension.into()
             }
             fn new(
                 file_path: impl ::std::convert::AsRef<::std::path::Path>,
@@ -731,7 +731,7 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
                 if !path.to_string_lossy().ends_with(&expected_extension) {
                     let full_extension = match path.extension() {
                         Some(ext) => format!("{}.{}", ext.to_string_lossy(), Self::extension()),
-                        _ => Self::extension().to_string(),
+                        _ => Self::extension(),
                     };
                     path.set_extension(full_extension);
                 }

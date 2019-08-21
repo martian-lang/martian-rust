@@ -13,6 +13,7 @@ serde = { version = '1.0', features = ['derive'] }
 serde_json = "*"
 bincode = "1.1"
 failure = "*"
+lz4 = "1.23"
 
 [dev-dependencies]
 tempfile = "3"

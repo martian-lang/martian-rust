@@ -2,53 +2,97 @@
 //! This crate defines martian filetypes commonly used in bio informatics pipelines.
 //!
 
+use failure::ResultExt;
 use martian::{Error, MartianFileType};
 use std::fmt;
+use std::io;
+use std::path::{Path, PathBuf};
+use std::string::ToString;
 
 pub mod bin_file;
 pub mod json_file;
-// pub use bin_file::BincodeFile;
+pub mod lz4_file;
 
 /// Provide context for errors that may arise during read/write
 /// of a `MartianFileType`
-pub enum ErrorContext<F: MartianFileType + fmt::Debug> {
-    ReadContext(F, String),
-    LazyReadContext(F, String),
-    WriteContext(F, String),
+pub enum ErrorContext<E: ToString> {
+    ReadContext(PathBuf, E),
+    LazyReadContext(PathBuf, E),
+    WriteContext(PathBuf, E),
 }
 
-impl<F> fmt::Display for ErrorContext<F>
+impl<E> fmt::Display for ErrorContext<E>
 where
-    F: MartianFileType + fmt::Debug,
+    E: ToString,
 {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            ErrorContext::ReadContext(f, e) => write!(
+            ErrorContext::ReadContext(p, e) => write!(
                 formatter,
-                "Failed to read MartianFiletype {:?} due to error: {:?}",
-                f, e
+                "Failed to read MartianFiletype {} due to error: {}",
+                p.display(),
+                e.to_string()
             ),
-            ErrorContext::LazyReadContext(f, e) => write!(
+            ErrorContext::LazyReadContext(p, e) => write!(
                 formatter,
                 "Failed to lazy read MartianFiletype {:?} due to error: {:?}",
-                f, e
+                p.display(),
+                e.to_string()
             ),
-            ErrorContext::WriteContext(f, e) => write!(
+            ErrorContext::WriteContext(p, e) => write!(
                 formatter,
                 "Failed to write to MartianFiletype {:?} due to error: {:?}",
-                f, e
+                p.display(),
+                e.to_string()
             ),
         }
     }
 }
 
 /// A trait that represents a `MartianFileType` that can be read into
-/// memory as type `T` or written into from type `T`
-pub trait FileTypeIO<T>: MartianFileType {
+/// memory as type `T` or written from type `T`. Use the `read()` and
+/// `write()` methods to achieve these.
+///
+/// If you want to implement this trait for a custom filetype, read
+/// the inline comments on which functions are provided and which
+/// are required.
+pub trait FileTypeIO<T>: MartianFileType + fmt::Debug {
     /// Read the `MartianFileType` as type `T`
-    fn read(&self) -> Result<T, Error>;
+    /// The default implementation should work in most cases. It is recommended
+    /// **not** to implement this for a custom filetype in general, instead implement
+    /// `read_from()`
+    fn read(&self) -> Result<T, Error> {
+        Ok(<Self as FileTypeIO<T>>::read_from(self.buf_reader()?)
+            .with_context(|e| ErrorContext::ReadContext(self.as_ref().into(), e.to_string()))?)
+    }
+
+    #[doc(hidden)]
+    // In general, do not call this function directly. Use `read()` instead
+    // This is the function you need to provide for custom implementations of
+    // `FileTypeIO<T>`. Note that the `read()` function is a wrapper around
+    // this function. This function essentially describes how you can read the
+    // object `T` from a reader. The reason for having this separate from the
+    // `read()` function is so that we can extend the functionality by passing
+    // in arbitrary readers (for e.g lz4 compressed). See the `lz4_file` for
+    // a concrete example
+    fn read_from<R: io::Read>(reader: R) -> Result<T, Error>;
+
     /// Write type `T` into the `MartianFileType`
-    fn write(&self, item: &T) -> Result<(), Error>;
+    /// The default implementation should work in most cases. It is recommended
+    /// **not** to implement this for a custom filetype in general, instead implement
+    /// `write_into()`
+    fn write(&self, item: &T) -> Result<(), Error> {
+        Ok(
+            <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item).with_context(|e| {
+                ErrorContext::WriteContext(self.as_ref().into(), e.to_string())
+            })?,
+        )
+    }
+
+    #[doc(hidden)]
+    // In general, do not call this function directly. Use `write()` instead.
+    // The comments provided in `read_from()` apply here as well.
+    fn write_into<W: io::Write>(writer: W, item: &T) -> Result<(), Error>;
 }
 
 /// A trait that represents a `MartianFileType` which can be incrementally
@@ -92,11 +136,25 @@ where
     F: FileTypeIO<T>,
     T: PartialEq,
 {
-    let dir = tempfile::tempdir()?;
-    let file = F::new(dir.path(), "my_file_roundtrip");
-    file.write(input)?;
-    let decoded: T = file.read()?;
-    Ok(input == &decoded)
+    // TEST 1: Write as F and read from F
+    let pass_direct = {
+        let dir = tempfile::tempdir()?;
+        let file = F::new(dir.path(), "my_file_roundtrip");
+        file.write(input)?;
+        let decoded: T = file.read()?;
+        input == &decoded
+    };
+
+    // TEST 2: Write as Lz4<F> and read from Lz4<F>
+    let pass_compressed = {
+        let dir = tempfile::tempdir()?;
+        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file_roundtrip_compressed");
+        file.write(input)?;
+        let decoded: T = file.read()?;
+        input == &decoded
+    };
+
+    Ok(pass_direct && pass_compressed)
 }
 
 #[cfg(test)]

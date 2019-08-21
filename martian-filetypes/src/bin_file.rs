@@ -62,8 +62,8 @@
 //! }
 //! ```
 
-use crate::{ErrorContext, FileTypeIO, LazyFileTypeIO, LazyWrite};
-use failure::{format_err, ResultExt};
+use crate::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+use failure::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
@@ -72,7 +72,7 @@ use std::any::{Any, TypeId};
 use std::collections::hash_map::DefaultHasher;
 use std::fs::File;
 use std::hash::{Hash, Hasher};
-use std::io::{BufReader, BufWriter, Seek, SeekFrom};
+use std::io::{BufReader, BufWriter, Read, Seek, SeekFrom, Write};
 use std::iter::Iterator;
 use std::marker::PhantomData;
 
@@ -91,26 +91,19 @@ impl<T> FileTypeIO<T> for BincodeFile
 where
     T: Any + Serialize + DeserializeOwned,
 {
-    fn read(&self) -> Result<T, Error> {
-        let mut reader = self.buf_reader()?;
+    fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
         let expected_type_hash = type_id_hash::<T>();
         let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
         if expected_type_hash != actual_type_hash {
-            return Err(format_err!(
-                "Data type in file '{:?}' does not match expected type",
-                self
-            ));
+            return Err(format_err!("Data type does not match expected type"));
         }
-        Ok(bincode::deserialize_from(&mut reader)
-            .with_context(|e| ErrorContext::ReadContext(self.clone(), e.to_string()))?)
+        Ok(bincode::deserialize_from(&mut reader)?)
     }
 
-    fn write(&self, input: &T) -> Result<(), Error> {
-        let mut writer = self.buf_writer()?;
+    fn write_into<W: Write>(mut writer: W, input: &T) -> Result<(), Error> {
         let type_hash = type_id_hash::<T>();
         bincode::serialize_into(&mut writer, &type_hash)?;
-        bincode::serialize_into(&mut writer, &input)
-            .with_context(|e| ErrorContext::WriteContext(self.clone(), e.to_string()))?;
+        bincode::serialize_into(&mut writer, &input)?;
         Ok(())
     }
 }
@@ -236,20 +229,6 @@ mod tests {
     use proptest::collection::vec;
     use proptest::{prop_assert, proptest};
 
-    // #[test]
-    // fn tmp() -> Result<(), Error> {
-    //     // let dir = tempfile::tempdir()?;
-    //     // let bin_file = BincodeFile::new(dir.path(), "tmp");
-    //     let bin_file = BincodeFile::from("tmp");
-    //     let v: Vec<i32> = vec![255];
-    //     bin_file.write(&v)?;
-
-    //     let bin_file = BincodeFile::from("tmp_lazy");
-    //     let mut writer: LazyBincodeWriter<i32> = bin_file.lazy_writer()?;
-    //     writer.write_item(&255);
-    //     Ok(())
-    // }
-
     #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
     enum Bar {
         Variant,
@@ -277,7 +256,7 @@ mod tests {
             prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq).unwrap());
         }
         #[test]
-        fn prop_test_json_file_vec_string(
+        fn prop_test_bincode_file_vec_string(
             ref seq in vec(any::<String>(), 0usize..20usize),
         ) {
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());

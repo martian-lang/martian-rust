@@ -21,7 +21,7 @@ pub struct MartianVoid {
 /// A `MatianFiletype` is associated with a file of know non-empty
 /// extension. This encodes the concept of a `filepath` in martian.
 pub trait MartianFileType: AsRef<Path> {
-    fn extension() -> &'static str;
+    fn extension() -> String;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
     /// This function will create a file if it does not exist, and will truncate it if it does.
     fn buf_writer(&self) -> Result<BufWriter<File>, Error> {
