@@ -6,7 +6,7 @@ use failure::ResultExt;
 use martian::{Error, MartianFileType};
 use std::fmt;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::string::ToString;
 
 pub mod bin_file;
@@ -99,10 +99,7 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug {
 /// read or written. For example, you might have a fasta file and you might
 /// want to iterate over individual sequences in the file without
 /// reading everything into memory at once.
-///
-/// The constrain `FileTypeIO<Vec<T>>` is so that we can lazy read
-/// even when we don't necessarily lazy write and vice versa.
-pub trait LazyFileTypeIO<T>: MartianFileType + FileTypeIO<Vec<T>> {
+pub trait LazyFileTypeIO<T>: MartianFileType {
     /// A type that lets you iterate over items of type `T` from a
     /// `MartianFileType` which stores a `Vec<T>`
     type LazyReader: Iterator<Item = Result<T, Error>>;
@@ -111,6 +108,15 @@ pub trait LazyFileTypeIO<T>: MartianFileType + FileTypeIO<Vec<T>> {
     type LazyWriter: LazyWrite<T>;
     /// Get a lazy reader for this `MartianFileType`
     fn lazy_reader(&self) -> Result<Self::LazyReader, Error>;
+    /// Consume the reader and read all the items
+    fn read_all(&self) -> Result<Vec<T>, Error> {
+        let reader = self.lazy_reader()?;
+        let mut items = Vec::new();
+        for item in reader {
+            items.push(item?);
+        }
+        Ok(items)
+    }
     /// Get a lazy writer for this `MartianFileType`
     fn lazy_writer(&self) -> Result<Self::LazyWriter, Error>;
 }
@@ -121,7 +127,9 @@ pub trait LazyWrite<T> {
     /// Lazily write a single item into a writer which stores
     /// a list of items.
     fn write_item(&mut self, item: &T) -> Result<(), Error>;
-    /// Finish up any remaining write and drop the writer
+    /// Drop the writer. Any final writes that the writer needs
+    /// to perform should be done in the `Drop::drop()` implementation
+    /// of the `LazyWriter`.
     fn finish(self)
     where
         Self: std::marker::Sized,
@@ -158,31 +166,47 @@ where
 }
 
 #[cfg(test)]
-pub fn lazy_round_trip_check<F, T>(input: &Vec<T>) -> Result<bool, Error>
+pub fn lazy_round_trip_check<F, T>(input: &Vec<T>, require_read: bool) -> Result<bool, Error>
 where
-    F: LazyFileTypeIO<T>,
+    F: LazyFileTypeIO<T> + FileTypeIO<Vec<T>>,
     T: PartialEq,
 {
     // Write + Lazy read
-    let dir = tempfile::tempdir()?;
-    let file = F::new(dir.path(), "my_file");
-    file.write(input)?;
-    let decoded: Vec<T> = file.lazy_reader()?.map(|x| x.unwrap()).collect();
-    let mut pass = input == &decoded;
+    let pass_w_lr = {
+        let dir = tempfile::tempdir()?;
+        let file = F::new(dir.path(), "my_file");
+        file.write(input)?;
+        let decoded: Vec<T> = file.read_all()?;
+        input == &decoded
+    };
 
-    // Assert Lazy write == write
-    let file2 = F::new(dir.path(), "my_file2");
-    {
-        let mut lazy_writer = file2.lazy_writer()?;
+    // Lazy write + read
+    let pass_lw_r = if require_read {
+        let dir = tempfile::tempdir()?;
+        let file = F::new(dir.path(), "my_file");
+        let mut lazy_writer = file.lazy_writer()?;
         for item in input {
             lazy_writer.write_item(item)?;
         }
-    }
+        lazy_writer.finish();
+        let decoded: Vec<T> = file.read()?;
+        input == &decoded
+    } else {
+        true
+    };
 
-    pass = pass
-        && file_diff::diff(
-            file.as_ref().to_str().unwrap(),
-            file2.as_ref().to_str().unwrap(),
-        );
-    Ok(pass)
+    // Lazy write + Lazy read
+    let pass_lw_lr = {
+        let dir = tempfile::tempdir()?;
+        let file = F::new(dir.path(), "my_file");
+        let mut lazy_writer = file.lazy_writer()?;
+        for item in input {
+            lazy_writer.write_item(item)?;
+        }
+        lazy_writer.finish();
+        let decoded: Vec<T> = file.read_all()?;
+        input == &decoded
+    };
+
+    Ok(pass_w_lr && pass_lw_r && pass_lw_lr)
 }

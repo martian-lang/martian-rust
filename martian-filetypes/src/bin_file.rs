@@ -1,7 +1,15 @@
 //!
 //! This module defines a `BincodeFile` and implements `FileTypeIO<T>` and
 //! `LazyFileTypeIO<T>` trait for a bincode file. It is essentially a wrapper
-//! around the bincode crate
+//! around the bincode crate. Note that we store additional type info in the file
+//! header. Hence the files cannot be directly parsed using the bincode crate
+//! functions.
+//!
+//! ## Compatibility
+//! Lazily writing items of type T produces a bincode file which **cannot** be read
+//! as `Vec<T>` using `FileTypeIO::read()`, instead you need to use the lazy reader
+//! to read items one at a time. The helper fn `LazyFileTypeIO::read_all()`
+//! can be used to collect all the items in a `Vec<T>`
 //!
 //! ## Simple read/write example
 //! `BincodeFile` implements `FileTypeIO<T>` for any type `T` which can be [de]serialized.
@@ -49,7 +57,8 @@
 //!     writer.finish(); // The file writing is not completed until the writer is dropped
 //!
 //!     // We could have collected the vector and invoked write().
-//!     // Both approaches will give you an identical bincode file.
+//!     // Both approaches will give you a bincode file which you can lazily read.
+//!     // Note that the bincode files will not be identical in the two cases.
 //!     // let vals: Vec<_> = (0..10_000).into_iter().collect()
 //!     // bin_file.write(&vals)?;
 //!     
@@ -72,7 +81,7 @@ use std::any::{Any, TypeId};
 use std::collections::hash_map::DefaultHasher;
 use std::fs::File;
 use std::hash::{Hash, Hasher};
-use std::io::{BufReader, BufWriter, Read, Seek, SeekFrom, Write};
+use std::io::{self, BufReader, BufWriter, Read, Write};
 use std::iter::Iterator;
 use std::marker::PhantomData;
 
@@ -92,12 +101,17 @@ where
     T: Any + Serialize + DeserializeOwned,
 {
     fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
-        let expected_type_hash = type_id_hash::<T>();
         let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
-        if expected_type_hash != actual_type_hash {
-            return Err(format_err!("Data type does not match expected type"));
+
+        if actual_type_hash == type_id_hash::<T>() {
+            Ok(bincode::deserialize_from(&mut reader)?)
+        } else if actual_type_hash == type_id_hash::<LazyMarker<T>>() {
+            Err(format_err!(
+                "Lazily written bincode files cannot be read using FileTypeIO::read(). Use LazyFileTypeIO::read_all() instead."
+            ))
+        } else {
+            Err(format_err!("Data type does not match expected type"))
         }
-        Ok(bincode::deserialize_from(&mut reader)?)
     }
 
     fn write_into<W: Write>(mut writer: W, input: &T) -> Result<(), Error> {
@@ -108,12 +122,17 @@ where
     }
 }
 
+enum FileMode {
+    Vec(usize),
+    Lazy,
+}
+
 pub struct LazyBincodeReader<T>
 where
     T: Any + DeserializeOwned,
 {
     reader: BufReader<File>,
-    total_items: usize,
+    mode: FileMode,
     processed_items: usize,
     phantom: PhantomData<T>,
 }
@@ -124,18 +143,22 @@ where
 {
     fn new(bincode_file: &BincodeFile) -> Result<Self, Error> {
         let mut reader = bincode_file.buf_reader()?;
-        let expected_type_hash = type_id_hash::<Vec<T>>();
         let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
-        if expected_type_hash != actual_type_hash {
+        let mode = if actual_type_hash == type_id_hash::<Vec<T>>() {
+            let total_items: usize = bincode::deserialize_from(&mut reader)?;
+            FileMode::Vec(total_items)
+        } else if actual_type_hash == type_id_hash::<LazyMarker<Vec<T>>>() {
+            FileMode::Lazy
+        } else {
             return Err(format_err!(
                 "Data type in file '{:?}' does not match expected type",
                 bincode_file
             ));
-        }
-        let total_items: usize = bincode::deserialize_from(&mut reader)?;
+        };
+
         Ok(LazyBincodeReader {
             reader,
-            total_items,
+            mode,
             processed_items: 0,
             phantom: PhantomData,
         })
@@ -148,17 +171,39 @@ where
 {
     type Item = Result<T, Error>;
     fn next(&mut self) -> Option<Self::Item> {
-        if self.processed_items < self.total_items {
-            self.processed_items += 1;
-            match bincode::deserialize_from(&mut self.reader) {
-                Ok(t) => Some(Ok(t)),
-                Err(e) => Some(Err(Error::from(e))),
+        match self.mode {
+            FileMode::Vec(total_items) => {
+                if self.processed_items < total_items {
+                    self.processed_items += 1;
+                    match bincode::deserialize_from(&mut self.reader) {
+                        Ok(t) => Some(Ok(t)),
+                        Err(e) => Some(Err(Error::from(e))),
+                    }
+                } else {
+                    None
+                }
             }
-        } else {
-            None
+            FileMode::Lazy => match bincode::deserialize_from(&mut self.reader) {
+                Ok(t) => Some(Ok(t)),
+                Err(e) => {
+                    match e.as_ref() {
+                        &bincode::ErrorKind::Io(ref io_e) => {
+                            match io_e.kind() {
+                                io::ErrorKind::UnexpectedEof => None, // We are at the end of the stream
+                                _ => Some(Err(Error::from(e))),
+                            }
+                        }
+                        _ => Some(Err(Error::from(e))),
+                    }
+                }
+            },
         }
     }
 }
+
+// When a list of items of type T is lazily written,
+// the typeid we store is that of LazyMarker<Vec<T>>
+struct LazyMarker<T>(PhantomData<T>);
 
 pub struct LazyBincodeWriter<T>
 where
@@ -175,14 +220,12 @@ where
 {
     fn new(bincode_file: &BincodeFile) -> Result<Self, Error> {
         let mut writer = bincode_file.buf_writer()?;
-        let type_hash = type_id_hash::<Vec<T>>(); // The file stores Vec<T>, not T
+        let type_hash = type_id_hash::<LazyMarker<Vec<T>>>(); // The file stores Vec<T>, not T
         bincode::serialize_into(&mut writer, &type_hash)?;
-        let processed_items = 0;
-        bincode::serialize_into(&mut writer, &processed_items)?;
         Ok(LazyBincodeWriter {
             writer,
             phantom: PhantomData,
-            processed_items,
+            processed_items: 0,
         })
     }
 }
@@ -195,16 +238,6 @@ where
         self.processed_items += 1;
         bincode::serialize_into(&mut self.writer, &item)?;
         Ok(())
-    }
-}
-
-impl<T> Drop for LazyBincodeWriter<T>
-where
-    T: Any + Serialize,
-{
-    fn drop(&mut self) {
-        self.writer.seek(SeekFrom::Start(8)).unwrap(); // Get past the typeid hash which is a u64 = 8 bytes
-        bincode::serialize_into(&mut self.writer, &self.processed_items).unwrap();
     }
 }
 
@@ -246,21 +279,21 @@ mod tests {
             ref seq in vec(any::<u8>(), 0usize..1000usize),
         ) {
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq, false).unwrap());
         }
         #[test]
         fn prop_test_bincode_file_bool(
             ref seq in vec(any::<bool>(), 0usize..1000usize),
         ) {
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq, false).unwrap());
         }
         #[test]
         fn prop_test_bincode_file_vec_string(
             ref seq in vec(any::<String>(), 0usize..20usize),
         ) {
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq, false).unwrap());
         }
         #[test]
         fn prop_test_bincode_file_string(
@@ -278,11 +311,11 @@ mod tests {
 
             let input = vec![foo.clone(); 20];
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input, false).unwrap());
 
             let input = vec![vec![foo.clone(); 2]; 4];
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input, false).unwrap());
 
         }
     }

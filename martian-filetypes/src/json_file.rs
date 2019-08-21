@@ -1,6 +1,7 @@
 //!
 //! This module defines a `JsonFile` and implements `FileTypeIO<T>` and
 //! `LazyFileTypeIO<T>` trait for a json file.
+//!
 //! ## Simple read/write example
 //! `JsonFile` implements `FileTypeIO<T>` for any type `T` which can be [de]serialized.
 //! ```rust
@@ -293,9 +294,9 @@ mod tests {
             ref seq in vec(any::<u8>(), 0usize..100usize),
         ) {
             prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq, true).unwrap());
             prop_assert!(crate::round_trip_check::<JsonFile, _>(&vec![seq.clone(); 10]).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&vec![seq.clone(); 10]).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&vec![seq.clone(); 10], true).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         #[test]
@@ -303,7 +304,7 @@ mod tests {
             ref seq in vec(any::<bool>(), 0usize..1000usize),
         ) {
             prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq, true).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         #[test]
@@ -311,7 +312,7 @@ mod tests {
             ref seq in vec(any::<String>(), 0usize..20usize),
         ) {
             prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq, true).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         #[test]
@@ -331,12 +332,12 @@ mod tests {
 
             let input = vec![foo.clone(); 20];
             prop_assert!(crate::round_trip_check::<JsonFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input, true).unwrap());
             serde_lazy_roundtrip_check(&input).unwrap();
 
             let input = vec![vec![foo.clone(); 2]; 4];
             prop_assert!(crate::round_trip_check::<JsonFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input, true).unwrap());
             serde_lazy_roundtrip_check(&input).unwrap();
 
         }
