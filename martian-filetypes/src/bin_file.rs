@@ -27,10 +27,11 @@
 //! fn main() -> Result<(), Error> {
 //!	    let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
 //!     let bin_file = BincodeFile::from("example");
-//!     // The two function below are simple wrappers over bincode crate functions
+//!     // The two functions below are simple wrappers over bincode crate functions
 //!     bin_file.write(&chem)?;
 //!     let decoded: Chemistry = bin_file.read()?;
 //!     assert_eq!(chem, decoded);
+//!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
 //! }
 //! ```
@@ -41,6 +42,10 @@
 //! of type `T` can also be incrementally written to a bincode file.
 //! `BincodeFile` implements `LazyFileTypeIO<T>` for any type `T` which can be [de]serialized.
 //!
+//! #### IMPORTANT
+//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing. If you
+//! don't do this, the program will panic when the writer is dropped.
+//!
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::bin_file::{BincodeFile, LazyBincodeReader, LazyBincodeWriter};
@@ -48,32 +53,40 @@
 //! use serde::{Serialize, Deserialize};
 //!
 //! fn main() -> Result<(), Error> {
-//!     let bin_file = BincodeFile::from("example");
+//!     let bin_file = BincodeFile::from("example_lazy");
 //!     let mut writer: LazyBincodeWriter<i32> = bin_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite<i32>`
 //!     for val in 0..10_000i32 {
 //!	        writer.write_item(&val)?;
 //!     }
-//!     writer.finish(); // The file writing is not completed until the writer is dropped
+//!     writer.finish()?; // The file writing is not completed until finish() is called.
+//!     // IF YOU DON'T CALL finish(), THE PROGRAM WILL PANIC WHEN THE WRITER IS DROPPED
 //!
 //!     // We could have collected the vector and invoked write().
 //!     // Both approaches will give you a bincode file which you can lazily read.
-//!     // Note that the bincode files will not be identical in the two cases.
+//!     // Note that the bincode files **will not be identical** in the two cases.
 //!     // let vals: Vec<_> = (0..10_000).into_iter().collect()
 //!     // bin_file.write(&vals)?;
 //!     
+//!     // Type inference engine should figure out the type automatically,
+//!     // but it is shown here for illustration.
 //!     let mut reader: LazyBincodeReader<i32> = bin_file.lazy_reader()?;
+//!     let mut max_val = 0;
 //!     // reader is an `Iterator` over values of type Result<`i32`, Error>
 //!     for (i, val) in reader.enumerate() {
-//!	        assert_eq!(i as i32, val?);
+//!         let val: i32 = val?;
+//!	        assert_eq!(i as i32, val);
+//!         max_val = std::cmp::max(max_val, val);
 //!     }
+//!     assert_eq!(max_val, 9999i32);
+//!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
 //! }
 //! ```
 
-use crate::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::format_err;
-use martian::{Error, MartianFileType};
+use martian::Error;
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -127,22 +140,26 @@ enum FileMode {
     Lazy,
 }
 
-pub struct LazyBincodeReader<T>
+/// Iterator over individual items  within a bincode file that
+/// stores a list of items.
+pub struct LazyBincodeReader<T, R = BufReader<File>>
 where
+    R: Read,
     T: Any + DeserializeOwned,
 {
-    reader: BufReader<File>,
+    reader: R,
     mode: FileMode,
     processed_items: usize,
     phantom: PhantomData<T>,
 }
 
-impl<T> LazyBincodeReader<T>
+impl<T, R> LazyRead<T, R> for LazyBincodeReader<T, R>
 where
-    T: Any + DeserializeOwned,
+    R: Read,
+    T: Any + Serialize + DeserializeOwned,
 {
-    fn new(bincode_file: &BincodeFile) -> Result<Self, Error> {
-        let mut reader = bincode_file.buf_reader()?;
+    type FileType = BincodeFile;
+    fn with_reader(mut reader: R) -> Result<Self, Error> {
         let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
         let mode = if actual_type_hash == type_id_hash::<Vec<T>>() {
             let total_items: usize = bincode::deserialize_from(&mut reader)?;
@@ -151,8 +168,7 @@ where
             FileMode::Lazy
         } else {
             return Err(format_err!(
-                "Data type in file '{:?}' does not match expected type",
-                bincode_file
+                "Data type in bincode file does not match expected type"
             ));
         };
 
@@ -165,8 +181,9 @@ where
     }
 }
 
-impl<T> Iterator for LazyBincodeReader<T>
+impl<T, R> Iterator for LazyBincodeReader<T, R>
 where
+    R: Read,
     T: Any + DeserializeOwned,
 {
     type Item = Result<T, Error>;
@@ -205,21 +222,25 @@ where
 // the typeid we store is that of LazyMarker<Vec<T>>
 struct LazyMarker<T>(PhantomData<T>);
 
-pub struct LazyBincodeWriter<T>
+/// Helper struct to write items one by one to a bincode file that
+/// stores a list of items
+pub struct LazyBincodeWriter<T, W = BufWriter<File>>
 where
+    W: Write,
     T: Any + Serialize,
 {
-    writer: BufWriter<File>,
+    writer: W,
     phantom: PhantomData<T>,
     processed_items: usize,
 }
 
-impl<T> LazyBincodeWriter<T>
+impl<T, W> LazyWrite<T, W> for LazyBincodeWriter<T, W>
 where
+    W: Write,
     T: Any + Serialize,
 {
-    fn new(bincode_file: &BincodeFile) -> Result<Self, Error> {
-        let mut writer = bincode_file.buf_writer()?;
+    type FileType = BincodeFile;
+    fn with_writer(mut writer: W) -> Result<Self, Error> {
         let type_hash = type_id_hash::<LazyMarker<Vec<T>>>(); // The file stores Vec<T>, not T
         bincode::serialize_into(&mut writer, &type_hash)?;
         Ok(LazyBincodeWriter {
@@ -228,36 +249,31 @@ where
             processed_items: 0,
         })
     }
-}
-
-impl<T> LazyWrite<T> for LazyBincodeWriter<T>
-where
-    T: Any + Serialize,
-{
     fn write_item(&mut self, item: &T) -> Result<(), Error> {
         self.processed_items += 1;
         bincode::serialize_into(&mut self.writer, &item)?;
         Ok(())
     }
+    fn finish(self) -> Result<W, Error> {
+        Ok(self.writer)
+    }
 }
 
-impl<T> LazyFileTypeIO<T> for BincodeFile
+impl<T, W, R> LazyAgents<T, W, R> for BincodeFile
 where
+    R: Read,
+    W: Write,
     T: Any + Serialize + DeserializeOwned,
 {
-    type LazyReader = LazyBincodeReader<T>;
-    type LazyWriter = LazyBincodeWriter<T>;
-    fn lazy_reader(&self) -> Result<Self::LazyReader, Error> {
-        LazyBincodeReader::new(&self)
-    }
-    fn lazy_writer(&self) -> Result<Self::LazyWriter, Error> {
-        LazyBincodeWriter::new(&self)
-    }
+    type LazyWriter = LazyBincodeWriter<T, W>;
+    type LazyReader = LazyBincodeReader<T, R>;
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::LazyFileTypeIO;
+    use martian::MartianFileType;
     use proptest::arbitrary::any;
     use proptest::collection::vec;
     use proptest::{prop_assert, proptest};
@@ -368,17 +384,33 @@ mod tests {
         let bin_file = BincodeFile::new(dir.path(), "my_file");
         bin_file.write(&values)?;
 
-        let inc_reader = LazyBincodeReader::<u16>::new(&bin_file)?;
+        let inc_reader = bin_file.lazy_reader()?;
         for (i, v) in inc_reader.enumerate() {
-            assert_eq!(i as u16, v?);
+            let v: u16 = v?;
+            assert_eq!(i as u16, v);
         }
 
         let max_val = bin_file.lazy_reader()?.map(|x| x.unwrap()).max();
         assert_eq!(max_val, Some(99u16));
 
         // Invalid Type
-        assert!(LazyBincodeReader::<u8>::new(&bin_file).is_err());
+        assert!(LazyBincodeReader::<u8>::with_reader(bin_file.buf_reader()?).is_err());
 
+        Ok(())
+    }
+
+    #[test]
+    fn test_bincode_lazy_write_and_read() -> Result<(), Error> {
+        let dir = tempfile::tempdir()?;
+        let bin_file = BincodeFile::new(dir.path(), "my_file");
+        let mut writer = bin_file.lazy_writer()?;
+        for i in 0..10i32 {
+            writer.write_item(&i)?;
+        }
+        writer.finish()?;
+
+        let r: Result<Vec<i32>, Error> = bin_file.read();
+        assert!(r.is_err());
         Ok(())
     }
 }

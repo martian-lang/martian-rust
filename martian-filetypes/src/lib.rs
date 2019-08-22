@@ -1,10 +1,21 @@
 //!
-//! This crate defines martian filetypes commonly used in bio informatics pipelines.
+//! This crate defines filetypes commonly used in bio informatics pipelines.
 //!
+//! ## Performance comparison
+//! [TODO]
+//!
+//! ## TODO
+//! - FastaFile
+//! - FastaIndexFile
+//! - FastqFile
+//! - BamFile
+//! - BamIndexFile
 
 use failure::ResultExt;
 use martian::{Error, MartianFileType};
+
 use std::fmt;
+use std::fs::File;
 use std::io;
 use std::path::PathBuf;
 use std::string::ToString;
@@ -99,15 +110,21 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug {
 /// read or written. For example, you might have a fasta file and you might
 /// want to iterate over individual sequences in the file without
 /// reading everything into memory at once.
-pub trait LazyFileTypeIO<T>: MartianFileType {
+pub trait LazyFileTypeIO<T>: MartianFileType + Sized {
+    type Reader: io::Read;
+    type Writer: io::Write;
+
     /// A type that lets you iterate over items of type `T` from a
     /// `MartianFileType` which stores a `Vec<T>`
-    type LazyReader: Iterator<Item = Result<T, Error>>;
+    type LazyReader: LazyRead<T, Self::Reader, FileType = Self>;
+
     /// A type that lets you write items of type `T` into a `MartianFileType`
     /// which stores a `Vec<T>`. Implements `LazyWrite` trait
-    type LazyWriter: LazyWrite<T>;
+    type LazyWriter: LazyWrite<T, Self::Writer, FileType = Self>;
+
     /// Get a lazy reader for this `MartianFileType`
     fn lazy_reader(&self) -> Result<Self::LazyReader, Error>;
+
     /// Consume the reader and read all the items
     fn read_all(&self) -> Result<Vec<T>, Error> {
         let reader = self.lazy_reader()?;
@@ -121,20 +138,44 @@ pub trait LazyFileTypeIO<T>: MartianFileType {
     fn lazy_writer(&self) -> Result<Self::LazyWriter, Error>;
 }
 
+/// The trait lazy readers need to implement, which lets you read items one by one from a file
+/// that stores a list of items
+pub trait LazyRead<T, R: io::Read>: Sized + Iterator<Item = Result<T, Error>> {
+    type FileType: MartianFileType;
+    fn with_reader(reader: R) -> Result<Self, Error>;
+}
+
 /// The trait lazy writers need to implement, which lets you
 /// write items one at a time and finish the writing
-pub trait LazyWrite<T> {
+pub trait LazyWrite<T, W: io::Write>: Sized {
+    type FileType: MartianFileType;
+    fn with_writer(writer: W) -> Result<Self, Error>;
     /// Lazily write a single item into a writer which stores
     /// a list of items.
     fn write_item(&mut self, item: &T) -> Result<(), Error>;
-    /// Drop the writer. Any final writes that the writer needs
-    /// to perform should be done in the `Drop::drop()` implementation
-    /// of the `LazyWriter`.
-    fn finish(self)
-    where
-        Self: std::marker::Sized,
-    {
-        drop(self)
+    /// Finish the lazy writer and return the underlying writer.
+    fn finish(self) -> Result<W, Error>;
+}
+
+/// Define the lazy writer and lazy reader associated type for a MartianFileType
+pub trait LazyAgents<T, W: io::Write, R: io::Read>: Sized + MartianFileType {
+    type LazyWriter: LazyWrite<T, W, FileType = Self>;
+    type LazyReader: LazyRead<T, R, FileType = Self>;
+}
+
+impl<F, T> LazyFileTypeIO<T> for F
+where
+    F: LazyAgents<T, io::BufWriter<File>, io::BufReader<File>>,
+{
+    type Writer = io::BufWriter<File>;
+    type Reader = io::BufReader<File>;
+    type LazyWriter = F::LazyWriter;
+    type LazyReader = F::LazyReader;
+    fn lazy_reader(&self) -> Result<Self::LazyReader, Error> {
+        LazyRead::with_reader(self.buf_reader()?)
+    }
+    fn lazy_writer(&self) -> Result<Self::LazyWriter, Error> {
+        LazyWrite::with_writer(self.buf_writer()?)
     }
 }
 
@@ -169,12 +210,22 @@ where
 pub fn lazy_round_trip_check<F, T>(input: &Vec<T>, require_read: bool) -> Result<bool, Error>
 where
     F: LazyFileTypeIO<T> + FileTypeIO<Vec<T>>,
+    lz4_file::Lz4<F>: LazyFileTypeIO<T> + FileTypeIO<Vec<T>>,
     T: PartialEq,
 {
     // Write + Lazy read
     let pass_w_lr = {
         let dir = tempfile::tempdir()?;
         let file = F::new(dir.path(), "my_file");
+        file.write(input)?;
+        let decoded: Vec<T> = file.read_all()?;
+        input == &decoded
+    };
+
+    // Write + Lazy read [Compressed]
+    let pass_w_lr_c = {
+        let dir = tempfile::tempdir()?;
+        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file");
         file.write(input)?;
         let decoded: Vec<T> = file.read_all()?;
         input == &decoded
@@ -188,7 +239,22 @@ where
         for item in input {
             lazy_writer.write_item(item)?;
         }
-        lazy_writer.finish();
+        lazy_writer.finish()?;
+        let decoded: Vec<T> = file.read()?;
+        input == &decoded
+    } else {
+        true
+    };
+
+    // Lazy write + read [Compressed]
+    let pass_lw_r_c = if require_read {
+        let dir = tempfile::tempdir()?;
+        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file");
+        let mut lazy_writer = file.lazy_writer()?;
+        for item in input {
+            lazy_writer.write_item(item)?;
+        }
+        lazy_writer.finish()?;
         let decoded: Vec<T> = file.read()?;
         input == &decoded
     } else {
@@ -203,10 +269,23 @@ where
         for item in input {
             lazy_writer.write_item(item)?;
         }
-        lazy_writer.finish();
+        lazy_writer.finish()?;
         let decoded: Vec<T> = file.read_all()?;
         input == &decoded
     };
 
-    Ok(pass_w_lr && pass_lw_r && pass_lw_lr)
+    // Lazy write + Lazy read [Compressed]
+    let pass_lw_lr_c = {
+        let dir = tempfile::tempdir()?;
+        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file");
+        let mut lazy_writer = file.lazy_writer()?;
+        for item in input {
+            lazy_writer.write_item(item)?;
+        }
+        lazy_writer.finish()?;
+        let decoded: Vec<T> = file.read_all()?;
+        input == &decoded
+    };
+
+    Ok(pass_w_lr && pass_w_lr_c && pass_lw_r && pass_lw_r_c && pass_lw_lr && pass_lw_lr_c)
 }
