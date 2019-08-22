@@ -1,8 +1,31 @@
 //!
 //! This crate defines filetypes commonly used in bio informatics pipelines.
 //!
+//! ## Terminology
+//! - **Lazy Reading**: Read items one by one from a file that stores a list of items,
+//! without reading the entire file into memory
+//! - **Lazy Writing**: Write items one by one into a file that stores a list of items.
+//!
 //! ## Performance comparison
-//! [TODO]
+//! There are multiple criterion benchmarks in this crate to help you compare the performance
+//! of various read/write operations and their lazy variants. The easiest way to save an in-memory
+//! rust type to file is using serde. The following table is meant to be guide to help you choose
+//! the format. **The actual performance would depend on the details of the running enviroment and
+//! the underlying filesystem. For more insights, run the benchmarks in your environment**
+//!
+//! The table shows the number of items that you can read/write per second from/into different filetypes
+//! using the functionalities provided in this crate. This will obviously be a function of what each
+//! item is. For the performance test, each item is a tiny struct with 4 fields.
+//!
+//! | File Format   | Reading      | Lazy Reading | Writing      | Lazy Writing |
+//! | ------------- | ------------ | ------------ | ------------ | ------------ |
+//! | `json`        | 815 Kelem/s  | 760 Kelem/s  | 1356 Kelem/s | 1190 Kelem/s |
+//! | `json.lz4`    | 327 Kelem/s  | 321 Kelem/s  | 496 Kelem/s  | 806 Kelem/s  |
+//! | `bincode`     | 7990 Kelem/s | 7633 Kelem/s | 4896 Kelem/s | 4887 Kelem/s |
+//! | `bincode.lz4` | 4554 Kelem/s | 4275 Kelem/s | 4444 Kelem/s | 4363 Kelem/s |
+//!
+//! ## Examples
+//! Look at the individual filetype modules for examples.
 //!
 //! ## TODO
 //! - FastaFile
