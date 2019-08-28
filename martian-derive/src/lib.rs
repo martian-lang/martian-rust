@@ -377,6 +377,14 @@ attr_parse!(
 
 /// Structs which are used as associated types in `MartianMain` or `MartianStage`
 /// traits need to implement `MartianStruct`. You can derive it using `#[derive(MartianStruct)]`
+/// Each field in the struct needs to implement `AsMartianBlanketType`. This is implemented
+/// for most basic Rust types. You can derive it on custom structs or enum using `#[derive(MartianType)]`.
+///
+/// You can optionally annotate the mro type manually for each field (`#[mro_type = "map[]"]` for example).
+/// This is useful if the datatype for the field is from a third party crate.
+///
+/// You can optionally add a field to the "retain" section of the mro using `#[mro_retain]`
+///
 #[proc_macro_derive(MartianStruct, attributes(mro_retain, mro_type))]
 pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
