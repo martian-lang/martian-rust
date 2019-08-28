@@ -1,0 +1,7 @@
+error: Looks like you are setting #[mro_type] twice for field 'foo'
+  --> $DIR/test_multiple_mro_type.rs:8:5
+   |
+8  | /     #[mro_type = "int"]
+9  | |     #[mro_type = "float"] // Cannot specify twice
+10 | |     foo: Foo,
+   | |____________^

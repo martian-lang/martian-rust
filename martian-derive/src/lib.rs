@@ -4,7 +4,7 @@
 /// - Handle default values for FileType
 /// - Repo wide reorganization
 extern crate proc_macro;
-use martian::{utils, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
+use martian::{utils, MartianBlanketType, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
 use quote::quote;
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
@@ -20,6 +20,7 @@ const CHUNK_OUTPUT_IDENT: &'static str = "ChunkOutputs";
 
 const MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR: &'static str =
     r#"#[derive(MartianStruct)] can only be used on structs with named fields."#;
+const INVALID_MRO_TYPE_ERROR: &str = r#""The usage of mro_type should be of form #[mro_type="type"] or #[mro_type="type[]"], where type can be one of: int, float, string, bool, map, path""#;
 
 /// When this attribute is applied to the `MartianMain` or `MartianStage` trait implementation of
 /// a stage struct, it derives the trait `MroMaker` to the stage struct, which lets you generate
@@ -376,7 +377,7 @@ attr_parse!(
 
 /// Structs which are used as associated types in `MartianMain` or `MartianStage`
 /// traits need to implement `MartianStruct`. You can derive it using `#[derive(MartianStruct)]`
-#[proc_macro_derive(MartianStruct, attributes(mro_retain))]
+#[proc_macro_derive(MartianStruct, attributes(mro_retain, mro_type))]
 pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 1
@@ -421,6 +422,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     for field in fields {
         let name = field.ident.clone().unwrap().to_string();
         let mut retain = false;
+        let mut mro_type = None;
         for attr in &field.attrs {
             if let Ok(meta) = attr.parse_meta() {
                 match meta {
@@ -431,6 +433,42 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                         return syn::Error::new_spanned(field, "Cannot use serde attributes here. This might be okay, but it's hard to guarantee that deriving MartianStruct would work correctly when using serde attributes.")
                             .to_compile_error()
                             .into();
+                    }
+                    syn::Meta::NameValue(ref name_val) if name_val.ident == "mro_type" => {
+                        match name_val.lit {
+                            syn::Lit::Str(ref val) => {
+                                let val_string = val.value();
+                                match val_string.parse::<MartianBlanketType>() {
+                                    Ok(_) => {
+                                        if mro_type.is_some() {
+                                            return syn::Error::new_spanned(
+                                                field,
+                                                format!("Looks like you are setting #[mro_type] twice for field '{}'", name)
+                                            )
+                                            .to_compile_error()
+                                            .into();
+                                        }
+                                        mro_type = Some(val_string)
+                                    }
+                                    Err(_) => {
+                                        return syn::Error::new_spanned(
+                                            field,
+                                            format!(
+                                                "{}. Found {}",
+                                                INVALID_MRO_TYPE_ERROR, val_string
+                                            ),
+                                        )
+                                        .to_compile_error()
+                                        .into();
+                                    }
+                                }
+                            }
+                            _ => {
+                                return syn::Error::new_spanned(field, INVALID_MRO_TYPE_ERROR)
+                                    .to_compile_error()
+                                    .into();
+                            }
+                        }
                     }
                     _ => {}
                 }
@@ -448,13 +486,18 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
             .into();
         }
         let ty = field.ty;
+
+        let actual_type = match mro_type {
+            Some(t) => quote![#t.parse().unwrap()],
+            None => quote![<#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type()],
+        };
         vec_inner.push(if retain {
             quote![
-                <::martian::MroField>::retained(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type())
+                <::martian::MroField>::retained(#name, #actual_type)
             ]
         } else {
             quote![
-                <::martian::MroField>::new(#name, <#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type())
+                <::martian::MroField>::new(#name, #actual_type)
             ]
         });
     }

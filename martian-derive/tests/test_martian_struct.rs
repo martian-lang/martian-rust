@@ -88,3 +88,53 @@ fn test_retain() {
     let expected = vec![MroField::retained("values", Array(Float))];
     assert_eq!(expected, SimpleVec::mro_fields())
 }
+
+#[allow(dead_code)]
+#[test]
+fn test_mro_type_attr() {
+    struct Foo(i32);
+    #[derive(MartianStruct)]
+    struct Simple {
+        #[mro_type = "int"]
+        value: Foo,
+    }
+    let expected = vec![MroField::new("value", Primary(Int))];
+    assert_eq!(expected, Simple::mro_fields());
+
+    struct Bar {
+        f: i32,
+    }
+    #[derive(MartianStruct)]
+    struct SimpleVec {
+        #[mro_type = "map[]"]
+        values: Vec<Bar>,
+    }
+    let expected = vec![MroField::new("values", Array(Map))];
+    assert_eq!(expected, SimpleVec::mro_fields());
+}
+
+#[allow(dead_code)]
+#[test]
+fn test_mro_type_retain_attr() {
+    struct Foo(i32);
+    #[derive(MartianStruct)]
+    struct Simple {
+        #[mro_retain]
+        #[mro_type = "int"]
+        value: Foo,
+    }
+    let expected = vec![MroField::retained("value", Primary(Int))];
+    assert_eq!(expected, Simple::mro_fields());
+
+    struct Bar {
+        f: i32,
+    }
+    #[derive(MartianStruct)]
+    struct SimpleVec {
+        #[mro_retain]
+        #[mro_type = "map[]"]
+        values: Vec<Bar>,
+    }
+    let expected = vec![MroField::retained("values", Array(Map))];
+    assert_eq!(expected, SimpleVec::mro_fields());
+}

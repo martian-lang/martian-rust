@@ -1,0 +1,6 @@
+error: "The usage of mro_type should be of form #[mro_type="type"] or #[mro_type="type[]"], where type can be one of: int, float, string, bool, map, path". Found foo
+ --> $DIR/test_invalid_mro_type.rs:8:5
+  |
+8 | /     #[mro_type="foo"] // Invalid type foo
+9 | |     foo: Foo,
+  | |____________^

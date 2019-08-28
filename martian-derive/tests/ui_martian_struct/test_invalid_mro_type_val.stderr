@@ -1,0 +1,5 @@
+error: unexpected token: `int`
+ --> $DIR/test_invalid_mro_type_val.rs:8:16
+  |
+8 |     #[mro_type=int] // Should be "int"
+  |                ^^^
