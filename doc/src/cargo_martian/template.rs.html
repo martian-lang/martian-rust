@@ -320,7 +320,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 <span class="kw">use</span> <span class="ident">strfmt</span>::<span class="ident">strfmt</span>;
 
-<span class="kw">const</span> <span class="ident">STAGE_TEMPLATE</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
+<span class="kw">const</span> <span class="ident">STAGE_TEMPLATE</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
 //! {stage} stage code
 
 use serde::{open}Serialize, Deserialize{close};
@@ -411,7 +411,7 @@ impl MartianStage for {stage} {open}
 {close}
 &quot;#</span>;
 
-<span class="kw">const</span> <span class="ident">STAGE_TEMPLATE_MAIN</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
+<span class="kw">const</span> <span class="ident">STAGE_TEMPLATE_MAIN</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
 //! {stage} stage code
 
 use serde::{open}Serialize, Deserialize{close};
@@ -505,7 +505,7 @@ impl MartianMain for {stage} {open}
     <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">stage_template</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed writing to file&quot;</span>);
 }
 
-<span class="kw">const</span> <span class="ident">ADAPTER_MAIN_TEMPLATE</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
+<span class="kw">const</span> <span class="ident">ADAPTER_MAIN_TEMPLATE</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
 //! Martian-rust adapter {adapter}
 
 use serde::Deserialize;
@@ -564,14 +564,14 @@ fn main() -&gt; Result&lt;(), Error&gt; {open}
 {close}
 &quot;#</span>;
 
-<span class="kw">const</span> <span class="ident">CARGO_TOML_ADDITION</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
+<span class="kw">const</span> <span class="ident">CARGO_TOML_ADDITION</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
 docopt = &quot;1.0&quot;
 serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
 martian = {git = &quot;https://github.com/martian-lang/martian-rust.git&quot;}
 martian-derive = {git = &quot;https://github.com/martian-lang/martian-rust.git&quot;}
 &quot;#</span>;
 
-<span class="kw">const</span> <span class="ident">DEFAULT_MAIN</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;fn main() {
+<span class="kw">const</span> <span class="ident">DEFAULT_MAIN</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;fn main() {
     println!(&quot;Hello, world!&quot;);
 }
 &quot;#</span>;
