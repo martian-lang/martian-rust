@@ -819,6 +819,49 @@
 <span id="819">819</span>
 <span id="820">820</span>
 <span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;256&quot;</span>]</span>
 
@@ -826,7 +869,7 @@
 <span class="doccomment">/// - Handle default values for FileType</span>
 <span class="doccomment">/// - Repo wide reorganization</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro</span>;
-<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">utils</span>, <span class="ident">MartianPrimaryType</span>, <span class="ident">StageKind</span>, <span class="ident">Volatile</span>, <span class="ident">MARTIAN_TOKENS</span>};
+<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">utils</span>, <span class="ident">MartianBlanketType</span>, <span class="ident">MartianPrimaryType</span>, <span class="ident">StageKind</span>, <span class="ident">Volatile</span>, <span class="ident">MARTIAN_TOKENS</span>};
 <span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">quote</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::{<span class="ident">HashMap</span>, <span class="ident">HashSet</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
@@ -842,6 +885,7 @@
 
 <span class="kw">const</span> <span class="ident">MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span>
     <span class="string">r#&quot;#[derive(MartianStruct)] can only be used on structs with named fields.&quot;#</span>;
+<span class="kw">const</span> <span class="ident">INVALID_MRO_TYPE_ERROR</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;&quot;The usage of mro_type should be of form #[mro_type=&quot;type&quot;] or #[mro_type=&quot;type[]&quot;], where type can be one of: int, float, string, bool, map, path&quot;&quot;#</span>;
 
 <span class="doccomment">/// When this attribute is applied to the `MartianMain` or `MartianStage` trait implementation of</span>
 <span class="doccomment">/// a stage struct, it derives the trait `MroMaker` to the stage struct, which lets you generate</span>
@@ -1198,7 +1242,7 @@
 
 <span class="doccomment">/// Structs which are used as associated types in `MartianMain` or `MartianStage`</span>
 <span class="doccomment">/// traits need to implement `MartianStruct`. You can derive it using `#[derive(MartianStruct)]`</span>
-<span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">MartianStruct</span>, <span class="ident">attributes</span>(<span class="ident">mro_retain</span>))]</span>
+<span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">MartianStruct</span>, <span class="ident">attributes</span>(<span class="ident">mro_retain</span>, <span class="ident">mro_type</span>))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">martian_struct</span>(<span class="ident">item</span>: <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span> {
     <span class="comment">// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span>
     <span class="comment">// STEP 1</span>
@@ -1243,6 +1287,7 @@
     <span class="kw">for</span> <span class="ident">field</span> <span class="kw">in</span> <span class="ident">fields</span> {
         <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">field</span>.<span class="ident">ident</span>.<span class="ident">clone</span>().<span class="ident">unwrap</span>().<span class="ident">to_string</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">retain</span> <span class="op">=</span> <span class="bool-val">false</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mro_type</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         <span class="kw">for</span> <span class="ident">attr</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">field</span>.<span class="ident">attrs</span> {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">meta</span>) <span class="op">=</span> <span class="ident">attr</span>.<span class="ident">parse_meta</span>() {
                 <span class="kw">match</span> <span class="ident">meta</span> {
@@ -1253,6 +1298,42 @@
                         <span class="kw">return</span> <span class="ident">syn</span>::<span class="ident">Error</span>::<span class="ident">new_spanned</span>(<span class="ident">field</span>, <span class="string">&quot;Cannot use serde attributes here. This might be okay, but it&#39;s hard to guarantee that deriving MartianStruct would work correctly when using serde attributes.&quot;</span>)
                             .<span class="ident">to_compile_error</span>()
                             .<span class="ident">into</span>();
+                    }
+                    <span class="ident">syn</span>::<span class="ident">Meta</span>::<span class="ident">NameValue</span>(<span class="kw-2">ref</span> <span class="ident">name_val</span>) <span class="kw">if</span> <span class="ident">name_val</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;mro_type&quot;</span> <span class="op">=&gt;</span> {
+                        <span class="kw">match</span> <span class="ident">name_val</span>.<span class="ident">lit</span> {
+                            <span class="ident">syn</span>::<span class="ident">Lit</span>::<span class="ident">Str</span>(<span class="kw-2">ref</span> <span class="ident">val</span>) <span class="op">=&gt;</span> {
+                                <span class="kw">let</span> <span class="ident">val_string</span> <span class="op">=</span> <span class="ident">val</span>.<span class="ident">value</span>();
+                                <span class="kw">match</span> <span class="ident">val_string</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianBlanketType</span><span class="op">&gt;</span>() {
+                                    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                                        <span class="kw">if</span> <span class="ident">mro_type</span>.<span class="ident">is_some</span>() {
+                                            <span class="kw">return</span> <span class="ident">syn</span>::<span class="ident">Error</span>::<span class="ident">new_spanned</span>(
+                                                <span class="ident">field</span>,
+                                                <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Looks like you are setting #[mro_type] twice for field &#39;{}&#39;&quot;</span>, <span class="ident">name</span>)
+                                            )
+                                            .<span class="ident">to_compile_error</span>()
+                                            .<span class="ident">into</span>();
+                                        }
+                                        <span class="ident">mro_type</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">val_string</span>)
+                                    }
+                                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                                        <span class="kw">return</span> <span class="ident">syn</span>::<span class="ident">Error</span>::<span class="ident">new_spanned</span>(
+                                            <span class="ident">field</span>,
+                                            <span class="macro">format</span><span class="macro">!</span>(
+                                                <span class="string">&quot;{}. Found {}&quot;</span>,
+                                                <span class="ident">INVALID_MRO_TYPE_ERROR</span>, <span class="ident">val_string</span>
+                                            ),
+                                        )
+                                        .<span class="ident">to_compile_error</span>()
+                                        .<span class="ident">into</span>();
+                                    }
+                                }
+                            }
+                            <span class="kw">_</span> <span class="op">=&gt;</span> {
+                                <span class="kw">return</span> <span class="ident">syn</span>::<span class="ident">Error</span>::<span class="ident">new_spanned</span>(<span class="ident">field</span>, <span class="ident">INVALID_MRO_TYPE_ERROR</span>)
+                                    .<span class="ident">to_compile_error</span>()
+                                    .<span class="ident">into</span>();
+                            }
+                        }
                     }
                     <span class="kw">_</span> <span class="op">=&gt;</span> {}
                 }
@@ -1270,13 +1351,18 @@
             .<span class="ident">into</span>();
         }
         <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="ident">field</span>.<span class="ident">ty</span>;
+
+        <span class="kw">let</span> <span class="ident">actual_type</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">mro_type</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="macro">quote</span><span class="macro">!</span>[#<span class="ident">t</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>()],
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">quote</span><span class="macro">!</span>[<span class="op">&lt;</span>#<span class="ident">ty</span> <span class="kw">as</span> ::<span class="ident">martian</span>::<span class="ident">AsMartianBlanketType</span><span class="op">&gt;</span>::<span class="ident">as_martian_blanket_type</span>()],
+        };
         <span class="ident">vec_inner</span>.<span class="ident">push</span>(<span class="kw">if</span> <span class="ident">retain</span> {
             <span class="macro">quote</span><span class="macro">!</span>[
-                <span class="op">&lt;</span>::<span class="ident">martian</span>::<span class="ident">MroField</span><span class="op">&gt;</span>::<span class="ident">retained</span>(#<span class="ident">name</span>, <span class="op">&lt;</span>#<span class="ident">ty</span> <span class="kw">as</span> ::<span class="ident">martian</span>::<span class="ident">AsMartianBlanketType</span><span class="op">&gt;</span>::<span class="ident">as_martian_blanket_type</span>())
+                <span class="op">&lt;</span>::<span class="ident">martian</span>::<span class="ident">MroField</span><span class="op">&gt;</span>::<span class="ident">retained</span>(#<span class="ident">name</span>, #<span class="ident">actual_type</span>)
             ]
         } <span class="kw">else</span> {
             <span class="macro">quote</span><span class="macro">!</span>[
-                <span class="op">&lt;</span>::<span class="ident">martian</span>::<span class="ident">MroField</span><span class="op">&gt;</span>::<span class="ident">new</span>(#<span class="ident">name</span>, <span class="op">&lt;</span>#<span class="ident">ty</span> <span class="kw">as</span> ::<span class="ident">martian</span>::<span class="ident">AsMartianBlanketType</span><span class="op">&gt;</span>::<span class="ident">as_martian_blanket_type</span>())
+                <span class="op">&lt;</span>::<span class="ident">martian</span>::<span class="ident">MroField</span><span class="op">&gt;</span>::<span class="ident">new</span>(#<span class="ident">name</span>, #<span class="ident">actual_type</span>)
             ]
         });
     }

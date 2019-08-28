@@ -1133,6 +1133,78 @@
 <span id="1133">1133</span>
 <span id="1134">1134</span>
 <span id="1135">1135</span>
+<span id="1136">1136</span>
+<span id="1137">1137</span>
+<span id="1138">1138</span>
+<span id="1139">1139</span>
+<span id="1140">1140</span>
+<span id="1141">1141</span>
+<span id="1142">1142</span>
+<span id="1143">1143</span>
+<span id="1144">1144</span>
+<span id="1145">1145</span>
+<span id="1146">1146</span>
+<span id="1147">1147</span>
+<span id="1148">1148</span>
+<span id="1149">1149</span>
+<span id="1150">1150</span>
+<span id="1151">1151</span>
+<span id="1152">1152</span>
+<span id="1153">1153</span>
+<span id="1154">1154</span>
+<span id="1155">1155</span>
+<span id="1156">1156</span>
+<span id="1157">1157</span>
+<span id="1158">1158</span>
+<span id="1159">1159</span>
+<span id="1160">1160</span>
+<span id="1161">1161</span>
+<span id="1162">1162</span>
+<span id="1163">1163</span>
+<span id="1164">1164</span>
+<span id="1165">1165</span>
+<span id="1166">1166</span>
+<span id="1167">1167</span>
+<span id="1168">1168</span>
+<span id="1169">1169</span>
+<span id="1170">1170</span>
+<span id="1171">1171</span>
+<span id="1172">1172</span>
+<span id="1173">1173</span>
+<span id="1174">1174</span>
+<span id="1175">1175</span>
+<span id="1176">1176</span>
+<span id="1177">1177</span>
+<span id="1178">1178</span>
+<span id="1179">1179</span>
+<span id="1180">1180</span>
+<span id="1181">1181</span>
+<span id="1182">1182</span>
+<span id="1183">1183</span>
+<span id="1184">1184</span>
+<span id="1185">1185</span>
+<span id="1186">1186</span>
+<span id="1187">1187</span>
+<span id="1188">1188</span>
+<span id="1189">1189</span>
+<span id="1190">1190</span>
+<span id="1191">1191</span>
+<span id="1192">1192</span>
+<span id="1193">1193</span>
+<span id="1194">1194</span>
+<span id="1195">1195</span>
+<span id="1196">1196</span>
+<span id="1197">1197</span>
+<span id="1198">1198</span>
+<span id="1199">1199</span>
+<span id="1200">1200</span>
+<span id="1201">1201</span>
+<span id="1202">1202</span>
+<span id="1203">1203</span>
+<span id="1204">1204</span>
+<span id="1205">1205</span>
+<span id="1206">1206</span>
+<span id="1207">1207</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This module defines objects that would help auto generate mro definitions</span>
@@ -1147,6 +1219,7 @@
 <span class="doccomment">//!</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">MartianVoid</span>;
+<span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">format_err</span>, <span class="ident">Error</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::{<span class="ident">HashMap</span>, <span class="ident">HashSet</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="ident">Display</span>, <span class="ident">Write</span>};
@@ -1241,6 +1314,22 @@
     }
 }
 
+<span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">MartianPrimaryType</span> {
+    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">prim_ty</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">s</span> {
+            <span class="string">&quot;int&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Int</span>,
+            <span class="string">&quot;float&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Float</span>,
+            <span class="string">&quot;string&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Str</span>,
+            <span class="string">&quot;bool&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Bool</span>,
+            <span class="string">&quot;map&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span>,
+            <span class="string">&quot;path&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(<span class="string">&quot;Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path]&quot;</span>, <span class="ident">s</span>)),
+        };
+        <span class="prelude-val">Ok</span>(<span class="ident">prim_ty</span>)
+    }
+}
+
 <span class="macro">mro_display_to_display</span><span class="macro">!</span> {<span class="ident">MartianPrimaryType</span>}
 
 <span class="doccomment">/// Primary Data type in martian + Arrays (which are derived from primary types)</span>
@@ -1260,6 +1349,20 @@
     }
 }
 <span class="macro">mro_display_to_display</span><span class="macro">!</span> {<span class="ident">MartianBlanketType</span>}
+
+<span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">MartianBlanketType</span> {
+    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&quot;[]&quot;</span>) {
+            <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">get</span>(<span class="number">0</span>..<span class="ident">s</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">2</span>).<span class="ident">unwrap</span>();
+            <span class="prelude-val">Ok</span>(<span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="ident">MartianPrimaryType</span>::<span class="ident">from_str</span>(<span class="ident">t</span>)<span class="question-mark">?</span>))
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Ok</span>(<span class="ident">MartianBlanketType</span>::<span class="ident">Primary</span>(<span class="ident">MartianPrimaryType</span>::<span class="ident">from_str</span>(
+                <span class="ident">s</span>,
+            )<span class="question-mark">?</span>))
+        }
+    }
+}
 
 <span class="doccomment">/// A trait that tells you how to convert a Rust data type to a</span>
 <span class="doccomment">/// basic Martian type.</span>
@@ -2268,6 +2371,47 @@
         );
     }
 
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_martian_primary_type_parse</span>() {
+        <span class="kw">use</span> <span class="ident">MartianPrimaryType</span>::<span class="kw-2">*</span>;
+        <span class="kw">let</span> <span class="ident">roundtrip_assert</span> <span class="op">=</span> <span class="op">|</span><span class="ident">t</span>: <span class="ident">MartianPrimaryType</span><span class="op">|</span> {
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>, <span class="ident">t</span>.<span class="ident">to_string</span>().<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianPrimaryType</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>());
+        };
+        <span class="ident">roundtrip_assert</span>(<span class="ident">Int</span>);
+        <span class="ident">roundtrip_assert</span>(<span class="ident">Float</span>);
+        <span class="ident">roundtrip_assert</span>(<span class="ident">Bool</span>);
+        <span class="ident">roundtrip_assert</span>(<span class="ident">Str</span>);
+        <span class="ident">roundtrip_assert</span>(<span class="ident">Bool</span>);
+        <span class="ident">roundtrip_assert</span>(<span class="ident">Map</span>);
+        <span class="ident">roundtrip_assert</span>(<span class="ident">Path</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">FileType</span>(<span class="string">&quot;foo&quot;</span>.<span class="ident">into</span>())
+            .<span class="ident">to_string</span>()
+            .<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianPrimaryType</span><span class="op">&gt;</span>()
+            .<span class="ident">is_err</span>())
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_martian_blanket_type_parse</span>() {
+        <span class="kw">use</span> <span class="ident">MartianBlanketType</span>::<span class="kw-2">*</span>;
+        <span class="kw">use</span> <span class="ident">MartianPrimaryType</span>::<span class="kw-2">*</span>;
+        <span class="kw">let</span> <span class="ident">roundtrip_blanket_assert</span> <span class="op">=</span> <span class="op">|</span><span class="ident">t</span>: <span class="ident">MartianPrimaryType</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">Primary</span>(<span class="ident">t</span>.<span class="ident">clone</span>());
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">p</span>, <span class="ident">p</span>.<span class="ident">to_string</span>().<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianBlanketType</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>());
+            <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">Array</span>(<span class="ident">t</span>);
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">a</span>.<span class="ident">to_string</span>().<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianBlanketType</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>());
+        };
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Int</span>);
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Float</span>);
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Bool</span>);
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Str</span>);
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Bool</span>);
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Map</span>);
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Path</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">Primary</span>(<span class="ident">FileType</span>(<span class="string">&quot;foo&quot;</span>.<span class="ident">into</span>()))
+            .<span class="ident">to_string</span>()
+            .<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianBlanketType</span><span class="op">&gt;</span>()
+            .<span class="ident">is_err</span>())
+    }
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "martian";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
