@@ -221,10 +221,10 @@ where
         };
         match self.state {
             WriterState::Start => {
-                writer.write_all("[".as_bytes())?;
+                writer.write_all(b"[")?;
                 self.state = WriterState::Scribe;
             }
-            WriterState::Scribe => writer.write_all(",".as_bytes())?,
+            WriterState::Scribe => writer.write_all(b",")?,
         }
         self.buffer.clear();
         let formatter = PrettyFormatter::with_indent(b"    ");
@@ -246,7 +246,7 @@ where
         };
         self.writer = None;
         match self.state {
-            WriterState::Start => writer.write_all("[]".as_bytes())?,
+            WriterState::Start => writer.write_all(b"[]")?,
             WriterState::Scribe => writer.write_all("\n]".as_bytes())?,
         }
         Ok(writer)

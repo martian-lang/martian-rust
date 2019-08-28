@@ -6,7 +6,7 @@ mod template;
 use metadata::Metadata;
 
 const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-const USAGE: &'static str = "
+const USAGE: &str = "
 Generate boiler plate for a martian stage code
 Usage:
     cargo martian stage <stagename> [--pkg=<name>] [--main]

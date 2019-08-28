@@ -541,12 +541,12 @@ impl MroDisplay for FiletypeHeader {
             return result;
         }
         let mut extensions: Vec<_> = self.0.iter().collect();
-        writeln!(&mut result, "").unwrap();
+        writeln!(&mut result).unwrap();
         extensions.sort();
         for ext in extensions {
             writeln!(&mut result, "filetype {};", ext).unwrap();
         }
-        writeln!(&mut result, "").unwrap();
+        writeln!(&mut result).unwrap();
         result
     }
     fn mro_string_with_width(&self, _: usize) -> String {

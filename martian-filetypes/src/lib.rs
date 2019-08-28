@@ -114,7 +114,7 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug {
     /// Write type `T` into the `MartianFileType`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement
-    /// `write_into()`
+    /// `write_into()`.
     fn write(&self, item: &T) -> Result<(), Error> {
         Ok(
             <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item).with_context(|e| {

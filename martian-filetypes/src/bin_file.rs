@@ -203,8 +203,8 @@ where
             FileMode::Lazy => match bincode::deserialize_from(&mut self.reader) {
                 Ok(t) => Some(Ok(t)),
                 Err(e) => {
-                    match e.as_ref() {
-                        &bincode::ErrorKind::Io(ref io_e) => {
+                    match *e.as_ref() {
+                        bincode::ErrorKind::Io(ref io_e) => {
                             match io_e.kind() {
                                 io::ErrorKind::UnexpectedEof => None, // We are at the end of the stream
                                 _ => Some(Err(Error::from(e))),

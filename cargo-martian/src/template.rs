@@ -5,7 +5,7 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use strfmt::strfmt;
 
-const STAGE_TEMPLATE: &'static str = r#"
+const STAGE_TEMPLATE: &str = r#"
 //! {stage} stage code
 
 use serde::{open}Serialize, Deserialize{close};
@@ -96,7 +96,7 @@ impl MartianStage for {stage} {open}
 {close}
 "#;
 
-const STAGE_TEMPLATE_MAIN: &'static str = r#"
+const STAGE_TEMPLATE_MAIN: &str = r#"
 //! {stage} stage code
 
 use serde::{open}Serialize, Deserialize{close};
@@ -190,7 +190,7 @@ pub fn new_stage(
     write!(f, "{}", stage_template).expect("Failed writing to file");
 }
 
-const ADAPTER_MAIN_TEMPLATE: &'static str = r#"
+const ADAPTER_MAIN_TEMPLATE: &str = r#"
 //! Martian-rust adapter {adapter}
 
 use serde::Deserialize;
@@ -249,14 +249,14 @@ fn main() -> Result<(), Error> {open}
 {close}
 "#;
 
-const CARGO_TOML_ADDITION: &'static str = r#"
+const CARGO_TOML_ADDITION: &str = r#"
 docopt = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 martian = {git = "https://github.com/martian-lang/martian-rust.git"}
 martian-derive = {git = "https://github.com/martian-lang/martian-rust.git"}
 "#;
 
-const DEFAULT_MAIN: &'static str = r#"fn main() {
+const DEFAULT_MAIN: &str = r#"fn main() {
     println!("Hello, world!");
 }
 "#;

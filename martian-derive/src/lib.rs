@@ -10,15 +10,15 @@ use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 use syn::{Data, DeriveInput, Error, Fields, Ident, ImplItem, ItemImpl, ItemStruct, Type};
 
-const ATTR_NOT_ON_TRAIT_IMPL_ERROR: &'static str = r#"The attribute #[make_mro] should only be applied to `martian::MartianMain` or `martian::MartianStage` trait implementation of a stage struct"#;
-const MARTIAN_MAIN_TRAIT: &'static str = "MartianMain";
-const MARTIAN_STAGE_TRAIT: &'static str = "MartianStage";
-const STAGE_INPUT_IDENT: &'static str = "StageInputs";
-const STAGE_OUTPUT_IDENT: &'static str = "StageOutputs";
-const CHUNK_INPUT_IDENT: &'static str = "ChunkInputs";
-const CHUNK_OUTPUT_IDENT: &'static str = "ChunkOutputs";
+const ATTR_NOT_ON_TRAIT_IMPL_ERROR: &str = r#"The attribute #[make_mro] should only be applied to `martian::MartianMain` or `martian::MartianStage` trait implementation of a stage struct"#;
+const MARTIAN_MAIN_TRAIT: &str = "MartianMain";
+const MARTIAN_STAGE_TRAIT: &str = "MartianStage";
+const STAGE_INPUT_IDENT: &str = "StageInputs";
+const STAGE_OUTPUT_IDENT: &str = "StageOutputs";
+const CHUNK_INPUT_IDENT: &str = "ChunkInputs";
+const CHUNK_OUTPUT_IDENT: &str = "ChunkOutputs";
 
-const MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR: &'static str =
+const MARTIAN_STRUCT_NOT_ON_NAMED_STRUCT_ERROR: &str =
     r#"#[derive(MartianStruct)] can only be used on structs with named fields."#;
 const INVALID_MRO_TYPE_ERROR: &str = r#""The usage of mro_type should be of form #[mro_type="type"] or #[mro_type="type[]"], where type can be one of: int, float, string, bool, map, path""#;
 
@@ -62,14 +62,13 @@ pub fn make_mro(
         if expected != *name {
             let span = attr
                 .into_iter()
-                .filter(|tt| {
+                .find(|tt| {
                     if let proc_macro::TokenTree::Ident(ref ident) = tt {
                         ident.to_string() == "stage_name"
                     } else {
                         false
                     }
                 })
-                .next()
                 .unwrap()
                 .span()
                 .into();
@@ -199,7 +198,7 @@ pub fn make_mro(
     // Stitch the quotes together
     let (impl_generics, _, where_clause) = item_impl.generics.split_for_impl();
     let item_clone2 = proc_macro2::TokenStream::from(item_clone);
-    let final_token = quote![
+    quote![
         #item_clone2
         #[automatically_derived]
         impl #impl_generics ::martian::MroMaker for #stage_struct #where_clause {
@@ -208,8 +207,7 @@ pub fn make_mro(
             #using_attributes_fn
         }
     ]
-    .into();
-    final_token
+    .into()
 }
 
 #[derive(Default)]
@@ -383,7 +381,7 @@ attr_parse!(
 /// You can optionally annotate the mro type manually for each field (`#[mro_type = "map[]"]` for example).
 /// This is useful if the datatype for the field is from a third party crate.
 ///
-/// You can optionally add a field to the "retain" section of the mro using `#[mro_retain]`
+/// You can optionally add a field to the "retain" section of the mro using `#[mro_retain]`.
 ///
 #[proc_macro_derive(MartianStruct, attributes(mro_retain, mro_type))]
 pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -584,7 +582,7 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                     Fields::Unnamed(_) => MartianPrimaryType::Map,
                     Fields::Unit => MartianPrimaryType::Str,
                 };
-                variant_type_map.entry(this_type).or_insert(Vec::new()).push(variant.ident.to_string());
+                variant_type_map.entry(this_type).or_insert_with(Vec::new).push(variant.ident.to_string());
             }
             match variant_type_map.len() {
                 0 => { // Empty Enum
@@ -673,7 +671,7 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
     // Check that the input is two items separated by a comma. Generate a compile
     // error if it is not in the expected format. First part is the struct name
     // and the second part is the extension
-    let parts = input.split(",").collect::<Vec<_>>();
+    let parts = input.split(',').collect::<Vec<_>>();
     if parts.len() != 2 {
         return syn::Error::new_spanned(item2, "The input to the martian_filetype! macro needs to be two items separated by a comma.\n\tThe first item is the struct name that will be generated and the second item is the filetype extension within double quotes.\n\tFor example martian_filetype! {TxtFile, \"txt\"}")
             .to_compile_error()

@@ -16,7 +16,7 @@ pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
 type Result<T> = std::result::Result<T, Error>;
 
-const METADATA_PREFIX: &'static str = "_";
+const METADATA_PREFIX: &str = "_";
 
 /// Tracking the metadata for one Martian chunk invocation
 #[derive(Debug, Clone)]
@@ -36,14 +36,14 @@ pub fn make_timestamp(datetime: DateTime<Local>) -> String {
 }
 
 pub fn make_timestamp_now() -> String {
-    return make_timestamp(Local::now());
+    make_timestamp(Local::now())
 }
 
 impl<'a> Metadata<'a> {
     pub fn new(args: Vec<String>, log_file: &'a File) -> Metadata {
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
-        let md = Metadata {
+        Metadata {
             stage_name: args[0].clone(),
             stage_type: args[1].clone(),
             metadata_path: args[2].clone(),
@@ -51,10 +51,8 @@ impl<'a> Metadata<'a> {
             run_file: args[4].clone(),
             cache: HashSet::new(),
             jobinfo: Map::new(),
-            log_file: log_file,
-        };
-
-        md
+            log_file,
+        }
     }
 
     /// Path within chunk
@@ -67,7 +65,7 @@ impl<'a> Metadata<'a> {
     /// Write to a file inside the chunk
     pub fn write_raw(&mut self, name: &str, text: String) -> Result<()> {
         let mut f = File::create(self.make_path(name))?;
-        f.write(text.as_bytes())?;
+        f.write_all(text.as_bytes())?;
         self.update_journal(name)?;
         Ok(())
     }
@@ -86,7 +84,7 @@ impl<'a> Metadata<'a> {
 
             {
                 let mut f = File::create(&tmp_run_file)?;
-                f.write(make_timestamp_now().as_bytes())?;
+                f.write_all(make_timestamp_now().as_bytes())?;
             };
             rename(&tmp_run_file, &run_file)?;
             self.cache.insert(journal_name);
@@ -133,10 +131,7 @@ impl<'a> Metadata<'a> {
     pub(crate) fn read_json_obj_array(&self, name: &str) -> Result<Vec<JsonDict>> {
         let json = self.read_json(name)?;
         let arr = json.as_array().unwrap();
-        let r: Vec<JsonDict> = arr
-            .into_iter()
-            .map(|o| o.as_object().unwrap().clone())
-            .collect();
+        let r: Vec<JsonDict> = arr.iter().map(|o| o.as_object().unwrap().clone()).collect();
         Ok(r)
     }
 
@@ -146,16 +141,15 @@ impl<'a> Metadata<'a> {
             .create(true)
             .append(true)
             .open(filename)?;
-        file.write(message.as_bytes())?;
-        file.write("\n".as_bytes())?;
+        file.write_all(message.as_bytes())?;
+        file.write_all("\n".as_bytes())?;
         self.update_journal(name)?;
         Ok(())
     }
 
     /// Write to _log
     pub fn log(&mut self, level: &str, message: &str) -> Result<()> {
-        let _ = self
-            .log_file
+        self.log_file
             .write(&format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
             .and(self.log_file.flush())?;
 

@@ -249,7 +249,7 @@ struct ChunkDef<T> {
 ///    // You can use stage_def.add_chunk(chunk_inputs) for default chunk resource allocation
 /// }
 /// ```
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct StageDef<T> {
     chunks: Vec<ChunkDef<T>>,
     #[serde(rename = "join")]

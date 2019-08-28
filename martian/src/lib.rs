@@ -68,19 +68,19 @@ pub fn initialize(args: Vec<String>, log_file: &File) -> Result<Metadata, Error>
 
 pub fn handle_stage_error(err: Error) {
     // Try to handle know StageError cases
-    match &err.downcast::<StageError>() {
-        &Ok(ref e) => {
-            match e {
-                &StageError::MartianExit { message: ref m } => {
+    match err.downcast::<StageError>() {
+        Ok(ref e) => {
+            match *e {
+                StageError::MartianExit { message: ref m } => {
                     let _ = write_errors(&format!("ASSERT: {}", m));
                 }
                 // No difference here at this point
-                &StageError::PipelineError { message: ref m } => {
+                StageError::PipelineError { message: ref m } => {
                     let _ = write_errors(&format!("ASSERT: {}", m));
                 }
             }
         }
-        &Err(ref e) => {
+        Err(ref e) => {
             let msg = format!("stage error:{}\n{}", e.as_fail(), e.backtrace());
             let _ = write_errors(&msg);
         }
@@ -98,7 +98,7 @@ fn write_errors(msg: &str) -> Result<(), Error> {
 /// Log a panic to the martian output machinery
 pub fn log_panic(panic: &panic::PanicInfo) {
     let payload = match panic.payload().downcast_ref::<String>() {
-        Some(as_string) => format!("{}", as_string),
+        Some(as_string) => as_string.to_string(),
         None => format!("{:?}", panic.payload()),
     };
 
@@ -126,16 +126,16 @@ fn setup_logging(log_file: &File, level: LevelFilter) {
     }
 }
 
-pub fn martian_main(
+pub fn martian_main<S: ::std::hash::BuildHasher>(
     args: Vec<String>,
-    stage_map: HashMap<String, Box<RawMartianStage>>,
+    stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
 ) -> Result<(), Error> {
     martian_main_with_log_level(args, stage_map, LevelFilter::Debug)
 }
 
-pub fn martian_main_with_log_level(
+pub fn martian_main_with_log_level<S: ::std::hash::BuildHasher>(
     args: Vec<String>,
-    stage_map: HashMap<String, Box<RawMartianStage>>,
+    stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
     level: LevelFilter,
 ) -> Result<(), Error> {
     info!("got args: {:?}", args);
@@ -153,7 +153,7 @@ pub fn martian_main_with_log_level(
     // Get the stage implementation
     let stage = stage_map
         .get(&md.stage_name)
-        .ok_or(failure::err_msg("couldn't find requested stage"))?;
+        .ok_or_else(|| failure::err_msg("couldn't find requested stage"))?;
 
     // Setup monitor thread -- this handles heartbeat & memory checking
     let stage_done = Arc::new(AtomicBool::new(false));
