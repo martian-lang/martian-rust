@@ -48,3 +48,22 @@ pub struct MyStageInputs {
 ```
 
 Note that the `#[derive(MartianType)]` is needed on the enum so that we know how to map this enum to a martian data type. The same applies for structs too.
+
+But , what if you want to use a custom type from a third party crate? You cannot implement the appropriate trait for an external datatype and it might not be reasonable to edit the external crate and derive `MartianType` for the types. For such cases, we provide a fallback option where you can manually annotate the type of a variable that will appear in the mro.
+
+```rust
+
+use fastq_10x::RnaRead; // Let's say this is a named struct from the external crate "fastq_10x" which will be a "map" in the mro
+use chemistry::LibraryType; // Let's say this is an enum from the external crate "chemistry" which will be a "string" in the mro
+
+#[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
+pub struct MyStageInputs {
+  	#[mro_type = "map[]"] // NOTE: You need to explicity say that it's a vector
+    reads: Vec<RnaRead>,
+  	#[mro_type = "string"]
+  	library_type: LibraryType,
+}
+
+```
+
+> [!DANGER] `#[mro_type]` should be used as the last resort. There is no check done about it's correctness and it's upto you to ensure that the custom type will serialize to the annotated mro type. `MartianType` on the other hand guarantees this correctness.

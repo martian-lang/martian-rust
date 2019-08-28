@@ -862,6 +862,14 @@
 <span id="862">862</span>
 <span id="863">863</span>
 <span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
+<span id="871">871</span>
+<span id="872">872</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;256&quot;</span>]</span>
 
@@ -1242,6 +1250,14 @@
 
 <span class="doccomment">/// Structs which are used as associated types in `MartianMain` or `MartianStage`</span>
 <span class="doccomment">/// traits need to implement `MartianStruct`. You can derive it using `#[derive(MartianStruct)]`</span>
+<span class="doccomment">/// Each field in the struct needs to implement `AsMartianBlanketType`. This is implemented</span>
+<span class="doccomment">/// for most basic Rust types. You can derive it on custom structs or enum using `#[derive(MartianType)]`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can optionally annotate the mro type manually for each field (`#[mro_type = &quot;map[]&quot;]` for example).</span>
+<span class="doccomment">/// This is useful if the datatype for the field is from a third party crate.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can optionally add a field to the &quot;retain&quot; section of the mro using `#[mro_retain]`</span>
+<span class="doccomment">///</span>
 <span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">MartianStruct</span>, <span class="ident">attributes</span>(<span class="ident">mro_retain</span>, <span class="ident">mro_type</span>))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">martian_struct</span>(<span class="ident">item</span>: <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span> {
     <span class="comment">// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span>
