@@ -245,7 +245,7 @@ pub fn martian_make_mro(
     match file_name {
         Some(f) => {
             let mut output = File::create(f)?;
-            output.write(final_mro_string.as_bytes())?;
+            output.write_all(final_mro_string.as_bytes())?;
         }
         None => {
             println!("{}", final_mro_string);

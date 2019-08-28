@@ -11,6 +11,7 @@
 //!
 
 use crate::MartianVoid;
+use failure::{format_err, Error};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Display, Write};
@@ -105,6 +106,22 @@ impl MroDisplay for MartianPrimaryType {
     }
 }
 
+impl FromStr for MartianPrimaryType {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let prim_ty = match s {
+            "int" => MartianPrimaryType::Int,
+            "float" => MartianPrimaryType::Float,
+            "string" => MartianPrimaryType::Str,
+            "bool" => MartianPrimaryType::Bool,
+            "map" => MartianPrimaryType::Map,
+            "path" => MartianPrimaryType::Path,
+            _ => return Err(format_err!("Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path]", s)),
+        };
+        Ok(prim_ty)
+    }
+}
+
 mro_display_to_display! {MartianPrimaryType}
 
 /// Primary Data type in martian + Arrays (which are derived from primary types)
@@ -124,6 +141,20 @@ impl MroDisplay for MartianBlanketType {
     }
 }
 mro_display_to_display! {MartianBlanketType}
+
+impl FromStr for MartianBlanketType {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.ends_with("[]") {
+            let t = s.get(0..s.len() - 2).unwrap();
+            Ok(MartianBlanketType::Array(MartianPrimaryType::from_str(t)?))
+        } else {
+            Ok(MartianBlanketType::Primary(MartianPrimaryType::from_str(
+                s,
+            )?))
+        }
+    }
+}
 
 /// A trait that tells you how to convert a Rust data type to a
 /// basic Martian type.
@@ -1132,4 +1163,45 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_martian_primary_type_parse() {
+        use MartianPrimaryType::*;
+        let roundtrip_assert = |t: MartianPrimaryType| {
+            assert_eq!(t, t.to_string().parse::<MartianPrimaryType>().unwrap());
+        };
+        roundtrip_assert(Int);
+        roundtrip_assert(Float);
+        roundtrip_assert(Bool);
+        roundtrip_assert(Str);
+        roundtrip_assert(Bool);
+        roundtrip_assert(Map);
+        roundtrip_assert(Path);
+        assert!(FileType("foo".into())
+            .to_string()
+            .parse::<MartianPrimaryType>()
+            .is_err())
+    }
+
+    #[test]
+    fn test_martian_blanket_type_parse() {
+        use MartianBlanketType::*;
+        use MartianPrimaryType::*;
+        let roundtrip_blanket_assert = |t: MartianPrimaryType| {
+            let p = Primary(t.clone());
+            assert_eq!(p, p.to_string().parse::<MartianBlanketType>().unwrap());
+            let a = Array(t);
+            assert_eq!(a, a.to_string().parse::<MartianBlanketType>().unwrap());
+        };
+        roundtrip_blanket_assert(Int);
+        roundtrip_blanket_assert(Float);
+        roundtrip_blanket_assert(Bool);
+        roundtrip_blanket_assert(Str);
+        roundtrip_blanket_assert(Bool);
+        roundtrip_blanket_assert(Map);
+        roundtrip_blanket_assert(Path);
+        assert!(Primary(FileType("foo".into()))
+            .to_string()
+            .parse::<MartianBlanketType>()
+            .is_err())
+    }
 }
