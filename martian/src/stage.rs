@@ -482,8 +482,8 @@ pub trait MartianStage: MroMaker {
         Self::ChunkInputs: Clone,
         Self::StageInputs: Clone,
     {
-        let tmp_dir = tempdir::TempDir::new("__test_stage_run__")?;
-        self.test_run(tmp_dir.path(), args)
+        let tmp_dir = tempfile::tempdir()?;
+        self.test_run(&tmp_dir, args)
     }
     fn stage_kind() -> StageKind {
         StageKind::WithSplit

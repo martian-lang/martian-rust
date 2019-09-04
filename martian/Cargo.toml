@@ -15,7 +15,7 @@ backtrace = "*"
 failure = "*"
 failure_derive = "*"
 heck = "*"
-tempdir = "*"
+tempfile = "3"
 
 [dev-dependencies]
 indoc = "0.3.3"
