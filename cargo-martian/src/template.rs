@@ -77,7 +77,7 @@ impl MartianStage for {stage} {open}
     fn main(
         &self,
         _args: Self::StageInputs,
-        _split_args: Self::ChunkInputs,
+        _chunk_args: Self::ChunkInputs,
         _rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error> {open}
         unimplemented!()

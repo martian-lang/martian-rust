@@ -82,11 +82,11 @@ impl MartianStage for SumSquares {
     fn main(
         &self,
         _args: Self::StageInputs,
-        split_args: Self::ChunkInputs,
+        chunk_args: Self::ChunkInputs,
         _rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error> {
         Ok(SumSquaresChunkOutputs {
-            square: split_args.value * split_args.value,
+            square: chunk_args.value * chunk_args.value,
         })
     }
 

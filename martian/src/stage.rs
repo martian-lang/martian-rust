@@ -422,7 +422,7 @@ pub trait MartianStage: MroMaker {
     fn main(
         &self,
         args: Self::StageInputs,
-        split_args: Self::ChunkInputs,
+        chunk_args: Self::ChunkInputs,
         rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error>;
 
@@ -569,10 +569,10 @@ where
     fn main(&self, mut md: Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
-        let split_args: <T as MartianStage>::ChunkInputs = obj_decode(&args_obj)?;
+        let chunk_args: <T as MartianStage>::ChunkInputs = obj_decode(&args_obj)?;
         let rover = MartianRover::from(&md);
         // let outs = md.read_json_obj("outs")?;
-        let outs = MartianStage::main(self, args, split_args, rover)?;
+        let outs = MartianStage::main(self, args, chunk_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
         md.write_json_obj("outs", &outs_obj)?;
         md.complete();
