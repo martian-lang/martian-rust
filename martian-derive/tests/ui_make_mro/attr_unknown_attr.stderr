@@ -1,4 +1,4 @@
-error: Expecting a comma separated `key=value` like tokens here. The allowed keys are: [mem_gb , threads , vmem_gb , volatile , stage_name]
+error: Expecting a comma separated `key=value` like tokens here. The allowed keys are: [mem_gb, threads, vmem_gb, volatile, stage_name]
  --> $DIR/attr_unknown_attr.rs:7:12
   |
 7 | #[make_mro(foo)]
