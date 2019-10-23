@@ -64,7 +64,7 @@
 //!
 //!     // writer implements the trait `LazyWrite<_>`
 //!     for _ in 0..10_000 {
-//!	        lz4_writer.write_item(&0i32)?;
+//!         lz4_writer.write_item(&0i32)?;
 //!     }
 //!     lz4_writer.finish()?; // The file writing is not completed until finish() is called.
 //!     // IF YOU DON'T CALL finish(), THE PROGRAM WILL PANIC WHEN THE WRITER IS DROPPED
@@ -80,7 +80,7 @@
 //!     // lz4_reader is an `Iterator` over values of type Result<`i32`, Error>
 //!     for (i, val) in lz4_reader.enumerate() {
 //!         let val: i32 = val?; // Helps with the type inference
-//!	        assert_eq!(0i32, val);
+//!         assert_eq!(0i32, val);
 //!         n_val += 1;
 //!     }
 //!     assert_eq!(n_val, 10_000i32);
@@ -103,10 +103,15 @@ use std::path::{Path, PathBuf};
 /// A struct that wraps a basic `MartianFileType` and adds lz4 compression
 /// capability.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+// The following attribute ensures that the struct will serialize into a
+// String like a PathBuf would.
+#[serde(transparent)]
 pub struct Lz4<F>
 where
     F: MartianFileType,
 {
+    // Skip [de]serializing the inner
+    #[serde(skip)]
     inner: PhantomData<F>,
     path: PathBuf,
 }
@@ -451,5 +456,22 @@ mod tests {
         for i in 0..10 {
             writer.write_item(&i).unwrap();
         }
+    }
+
+    #[test]
+    fn test_serialize() {
+        let lz4_file = Lz4::<JsonFile>::new("/some/path/", "file");
+        let path = PathBuf::from("/some/path/file.json.lz4");
+        assert_eq!(
+            serde_json::to_string(&lz4_file).unwrap(),
+            serde_json::to_string(&path).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_deserialize() {
+        let lz4_file: Lz4<JsonFile> =
+            serde_json::from_str(r#""/some/path/file.json.lz4""#).unwrap();
+        assert_eq!(lz4_file, Lz4::<JsonFile>::new("/some/path/", "file"));
     }
 }
