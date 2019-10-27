@@ -14,7 +14,7 @@ custom errors.</p>
 </div><h4 id='method.raw_os_error' class="method"><code id='raw_os_error.v'>pub fn <a href='#method.raw_os_error' class='fnname'>raw_os_error</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a>&gt;</code><a class='srclink' href='../src/getrandom/error.rs.html#45-51' title='goto source code'>[src]</a></h4><div class='docblock'><p>Extract the raw OS error code (if this error came from the OS)</p>
 <p>This method is identical to <code>std::io::Error::raw_os_error()</code>, except
 that it works in <code>no_std</code> contexts. If this method returns <code>None</code>, the
-error value can still be formatted via the <code>Diplay</code> implementation.</p>
+error value can still be formatted via the <code>Display</code> implementation.</p>
 </div><h4 id='method.code' class="method"><code id='code.v'>pub fn <a href='#method.code' class='fnname'>code</a>(self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/core/num/struct.NonZeroU32.html" title="struct core::num::NonZeroU32">NonZeroU32</a></code><a class='srclink' href='../src/getrandom/error.rs.html#58-60' title='goto source code'>[src]</a></h4><div class='docblock'><p>Extract the bare error code.</p>
 <p>This code can either come from the underlying OS, or be a custom error.
 Use [<code>Error::raw_os_error()</code>] to disambiguate.</p>
