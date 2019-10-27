@@ -172,10 +172,16 @@ where
         let mut stream = StreamDeserializer::<_, T>::new(io_read);
         match stream.next() {
             Some(Ok(t)) => Some(Ok(t)),
-            Some(Err(e)) => match self.reader.by_ref().bytes().next() {
-                Some(_) => Some(Err(e.into())), // The reader is not done, this is an error
-                None => None, // The reader is done. The error is due to the final ]
-            },
+            Some(Err(e)) => {
+                match self.reader.by_ref().bytes().find(|byte| {
+                    byte.as_ref()
+                        .map(|b| !b.is_ascii_whitespace())
+                        .unwrap_or(true)
+                }) {
+                    Some(_) => Some(Err(e.into())), // The reader is not done, this is an error
+                    None => None, // The reader is done. The error is due to the final ]
+                }
+            }
             None => None,
         }
     }
@@ -451,6 +457,16 @@ mod tests {
         let mut writer = json_file.lazy_writer().unwrap();
         for i in &input {
             writer.write_item(i).unwrap();
+        }
+    }
+
+    #[test]
+    fn test_json_lazy_read_fail() {
+        let paired_bc_reader: LazyJsonReader<String> = JsonFile::from("tests/newline_end.json")
+            .lazy_reader()
+            .unwrap();
+        for bc in paired_bc_reader {
+            assert!(bc.is_ok());
         }
     }
 }
