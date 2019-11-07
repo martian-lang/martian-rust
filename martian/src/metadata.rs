@@ -9,6 +9,7 @@ use std::path::PathBuf;
 use crate::write_errors;
 use chrono::*;
 use failure::Error;
+use serde::{Deserialize, Serialize};
 use serde_json::map::Map;
 use serde_json::{self, json, Value};
 
@@ -26,9 +27,35 @@ pub struct Metadata<'a> {
     metadata_path: String,
     pub files_path: String,
     run_file: String,
-    jobinfo: JsonDict,
+    raw_jobinfo: JsonDict,
+    pub jobinfo: JobInfo, // Partially parsed Job info
     cache: HashSet<String>,
     log_file: &'a File,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct JobInfo {
+    pub threads: usize,
+    #[serde(rename = "memGB")]
+    pub mem_gb: usize,
+    #[serde(rename = "vmemGB")]
+    pub vmem_gb: usize,
+    pub version: Version,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Version {
+    pub martian: String,
+    pub pipelines: String,
+}
+
+impl Default for Version {
+    fn default() -> Self {
+        Version {
+            martian: "unknown".into(),
+            pipelines: "unknown".into(),
+        }
+    }
 }
 
 pub fn make_timestamp(datetime: DateTime<Local>) -> String {
@@ -50,7 +77,8 @@ impl<'a> Metadata<'a> {
             files_path: args[3].clone(),
             run_file: args[4].clone(),
             cache: HashSet::new(),
-            jobinfo: Map::new(),
+            raw_jobinfo: Map::new(),
+            jobinfo: JobInfo::default(),
             log_file,
         }
     }
@@ -170,13 +198,15 @@ impl<'a> Metadata<'a> {
 
     /// Write finalized _jobinfo data
     pub fn update_jobinfo(&mut self) -> Result<()> {
-        let mut jobinfo = self.read_json_obj("jobinfo")?;
+        let mut raw_jobinfo = self.read_json_obj("jobinfo")?;
+        let jobinfo: JobInfo = serde_json::from_value(Value::Object(raw_jobinfo.clone()))?;
 
         let exe = env::current_exe()?.to_str().unwrap().to_string();
-        jobinfo.insert("rust_exe".to_string(), Value::String(exe));
-        // jobinfo.insert("rust_version", sys.version);
+        raw_jobinfo.insert("rust_exe".to_string(), Value::String(exe));
+        // raw_jobinfo.insert("rust_version", sys.version);
 
-        self.write_json_obj("jobinfo", &jobinfo)?;
+        self.write_json_obj("jobinfo", &raw_jobinfo)?;
+        self.raw_jobinfo = raw_jobinfo;
         self.jobinfo = jobinfo;
         Ok(())
     }
@@ -190,19 +220,40 @@ impl<'a> Metadata<'a> {
 
     /// Get the amount of memory in GB allocated to this job by the runtime.
     pub fn get_memory_allocation(&self) -> usize {
-        self.jobinfo.get("memGB").and_then(|x| x.as_u64()).unwrap() as usize
+        self.jobinfo.mem_gb
     }
 
     /// Get the number of threads allocated to this job by the runtime.
     pub fn get_threads_allocation(&self) -> usize {
-        self.jobinfo
-            .get("threads")
-            .and_then(|x| x.as_u64())
-            .unwrap() as usize
+        self.jobinfo.threads
     }
 
     /// Get the amount of virtual memory in GB allocated to this job by the runtime.
     pub fn get_virtual_memory_allocation(&self) -> usize {
-        self.jobinfo.get("vmemGB").and_then(|x| x.as_u64()).unwrap() as usize
+        self.jobinfo.vmem_gb
+    }
+
+    pub fn get_pipelines_version(&self) -> String {
+        self.jobinfo.version.pipelines.clone()
+    }
+
+    pub fn get_martian_version(&self) -> String {
+        self.jobinfo.version.martian.clone()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_jobinfo() -> Result<()> {
+        let raw_jobinfo: JsonDict = serde_json::from_reader(File::open("tests/jobinfo.json")?)?;
+        let jobinfo: JobInfo = serde_json::from_value(Value::Object(raw_jobinfo.clone()))?;
+        assert_eq!(jobinfo.threads, 1);
+        assert_eq!(jobinfo.mem_gb, 1);
+        assert_eq!(jobinfo.vmem_gb, 4);
+        assert_eq!(jobinfo.version.martian, "v3.2.2");
+        assert_eq!(jobinfo.version.pipelines, "7000.1.52-187");
+        Ok(())
     }
 }

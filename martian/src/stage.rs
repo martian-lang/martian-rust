@@ -1,3 +1,4 @@
+use crate::metadata::Version;
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::{obj_decode, obj_encode};
 use crate::Metadata;
@@ -303,15 +304,17 @@ pub struct MartianRover {
     mem_gb: usize,
     threads: usize,
     vmem_gb: usize,
+    version: Version,
 }
 
 impl<'a> From<&'a Metadata<'a>> for MartianRover {
     fn from(md: &Metadata) -> MartianRover {
         MartianRover {
             files_path: PathBuf::from(&md.files_path),
-            mem_gb: md.get_memory_allocation(),
-            threads: md.get_threads_allocation(),
-            vmem_gb: md.get_virtual_memory_allocation(),
+            mem_gb: md.jobinfo.mem_gb,
+            threads: md.jobinfo.threads,
+            vmem_gb: md.jobinfo.vmem_gb,
+            version: md.jobinfo.version.clone(),
         }
     }
 }
@@ -333,6 +336,7 @@ impl MartianRover {
             mem_gb: resource.mem_gb.unwrap() as usize,
             threads: resource.threads.unwrap() as usize,
             vmem_gb: resource.vmem_gb.unwrap() as usize,
+            version: Version::default(),
         }
     }
     ///
@@ -372,6 +376,12 @@ impl MartianRover {
     }
     pub fn files_path(&self) -> &Path {
         self.files_path.as_path()
+    }
+    pub fn martian_version(&self) -> String {
+        self.version.martian.clone()
+    }
+    pub fn pipelines_version(&self) -> String {
+        self.version.pipelines.clone()
     }
 }
 
