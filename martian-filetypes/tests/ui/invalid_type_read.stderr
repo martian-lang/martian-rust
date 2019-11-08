@@ -1,0 +1,19 @@
+error[E0308]: try expression alternatives have incompatible types
+  --> $DIR/invalid_type_read.rs:28:37
+   |
+28 |         let new_feature: Creature = feat_file.read()?; // Compiler error
+   |                                     ^^^^^^^^^^^^^^^^^ expected struct `Creature`, found struct `Feature`
+   |
+   = note: expected type `Creature`
+              found type `Feature`
+
+error[E0308]: try expression alternatives have incompatible types
+  --> $DIR/invalid_type_read.rs:35:37
+   |
+35 |         let new_feature: Creature = feat_file.read()?; // Compiler error
+   |                                     ^^^^^^^^^^^^^^^^^ expected struct `Creature`, found struct `Feature`
+   |
+   = note: expected type `Creature`
+              found type `Feature`
+
+For more information about this error, try `rustc --explain E0308`.

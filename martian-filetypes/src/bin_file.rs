@@ -86,19 +86,22 @@
 
 use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::format_err;
-use martian::Error;
+use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::any::{Any, TypeId};
 use std::collections::hash_map::DefaultHasher;
+use std::fmt::Debug;
 use std::fs::File;
 use std::hash::{Hash, Hasher};
 use std::io::{self, BufReader, BufWriter, Read, Write};
 use std::iter::Iterator;
 use std::marker::PhantomData;
 
-martian_filetype! {BincodeFile, "bincode"}
+martian_filetype! {Bincode, "bincode"}
+impl<T> FileStorage<T> for Bincode where T: Serialize + DeserializeOwned {}
+pub type BincodeFile = BinaryFormat<Bincode>;
 
 fn type_id_hash<T: Any>() -> u64 {
     let typeid = TypeId::of::<T>();
@@ -107,13 +110,19 @@ fn type_id_hash<T: Any>() -> u64 {
     hasher.finish()
 }
 
-impl<T> FileStorage<T> for BincodeFile where T: Serialize + DeserializeOwned {}
+crate::martian_filetype_inner! {
+    /// Json format
+    pub struct BinaryFormat, "bincode"
+}
+
+impl<F, T> FileStorage<T> for BinaryFormat<F> where F: MartianFileType + FileStorage<T> {}
 
 /// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
 /// TODO: Include the TypeId here?
-impl<T> FileTypeIO<T> for BincodeFile
+impl<T, F> FileTypeIO<T> for BinaryFormat<F>
 where
     T: Any + Serialize + DeserializeOwned,
+    F: FileStorage<T> + Debug,
 {
     fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
         let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
@@ -144,23 +153,26 @@ enum FileMode {
 
 /// Iterator over individual items  within a bincode file that
 /// stores a list of items.
-pub struct LazyBincodeReader<T, R = BufReader<File>>
+pub struct LazyBincodeReader<T, F = Bincode, R = BufReader<File>>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     T: Any + DeserializeOwned,
 {
     reader: R,
     mode: FileMode,
     processed_items: usize,
-    phantom: PhantomData<T>,
+    phantom_f: PhantomData<F>,
+    phantom_t: PhantomData<T>,
 }
 
-impl<T, R> LazyRead<T, R> for LazyBincodeReader<T, R>
+impl<T, F, R> LazyRead<T, R> for LazyBincodeReader<T, F, R>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     T: Any + Serialize + DeserializeOwned,
 {
-    type FileType = BincodeFile;
+    type FileType = BinaryFormat<F>;
     fn with_reader(mut reader: R) -> Result<Self, Error> {
         let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
         let mode = if actual_type_hash == type_id_hash::<Vec<T>>() {
@@ -178,13 +190,15 @@ where
             reader,
             mode,
             processed_items: 0,
-            phantom: PhantomData,
+            phantom_f: PhantomData,
+            phantom_t: PhantomData,
         })
     }
 }
 
-impl<T, R> Iterator for LazyBincodeReader<T, R>
+impl<T, F, R> Iterator for LazyBincodeReader<T, F, R>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     T: Any + DeserializeOwned,
 {
@@ -226,28 +240,32 @@ struct LazyMarker<T>(PhantomData<T>);
 
 /// Helper struct to write items one by one to a bincode file that
 /// stores a list of items
-pub struct LazyBincodeWriter<T, W = BufWriter<File>>
+pub struct LazyBincodeWriter<T, F = Bincode, W = BufWriter<File>>
 where
+    F: MartianFileType + FileStorage<T>,
     W: Write,
     T: Any + Serialize,
 {
     writer: W,
-    phantom: PhantomData<T>,
+    phantom_f: PhantomData<F>,
+    phantom_t: PhantomData<T>,
     processed_items: usize,
 }
 
-impl<T, W> LazyWrite<T, W> for LazyBincodeWriter<T, W>
+impl<T, F, W> LazyWrite<T, W> for LazyBincodeWriter<T, F, W>
 where
+    F: MartianFileType + FileStorage<T>,
     W: Write,
     T: Any + Serialize,
 {
-    type FileType = BincodeFile;
+    type FileType = BinaryFormat<F>;
     fn with_writer(mut writer: W) -> Result<Self, Error> {
         let type_hash = type_id_hash::<LazyMarker<Vec<T>>>(); // The file stores Vec<T>, not T
         bincode::serialize_into(&mut writer, &type_hash)?;
         Ok(LazyBincodeWriter {
             writer,
-            phantom: PhantomData,
+            phantom_f: PhantomData,
+            phantom_t: PhantomData,
             processed_items: 0,
         })
     }
@@ -261,14 +279,15 @@ where
     }
 }
 
-impl<T, W, R> LazyAgents<T, W, R> for BincodeFile
+impl<T, F, W, R> LazyAgents<T, W, R> for BinaryFormat<F>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     W: Write,
     T: Any + Serialize + DeserializeOwned,
 {
-    type LazyWriter = LazyBincodeWriter<T, W>;
-    type LazyReader = LazyBincodeReader<T, R>;
+    type LazyWriter = LazyBincodeWriter<T, F, W>;
+    type LazyReader = LazyBincodeReader<T, F, R>;
 }
 
 #[cfg(test)]

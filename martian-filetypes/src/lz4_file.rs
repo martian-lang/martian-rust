@@ -89,85 +89,22 @@
 //! }
 //! ```
 
+use crate::martian_filetype_inner;
 use crate::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::ResultExt;
-use martian::{AsMartianPrimaryType, Error, MartianFileType, MartianPrimaryType};
-use martian_derive::martian_filetype;
+use martian::{Error, MartianFileType};
 
 use serde::{Deserialize, Serialize};
 use std::convert::From;
 
 use std::io::{Read, Write};
 use std::marker::PhantomData;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
-/// A struct that wraps a basic `MartianFileType` and adds lz4 compression
-/// capability.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-// The following attribute ensures that the struct will serialize into a
-// String like a PathBuf would.
-#[serde(transparent)]
-pub struct Lz4<F>
-where
-    F: MartianFileType,
-{
-    // Skip [de]serializing the inner
-    #[serde(skip)]
-    inner: PhantomData<F>,
-    path: PathBuf,
-}
-
-// Cannot use the `martian_filetype` macro here because we are wrapping
-// a generic type.
-impl<F> MartianFileType for Lz4<F>
-where
-    F: MartianFileType,
-{
-    fn extension() -> String {
-        format!("{}.lz4", F::extension())
-    }
-    fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
-        let mut path = PathBuf::from(file_path.as_ref());
-        path.push(file_name.as_ref());
-        let path = martian::utils::set_extension(path, Self::extension());
-        Lz4 {
-            inner: PhantomData,
-            path,
-        }
-    }
-}
-
-impl<F> AsRef<Path> for Lz4<F>
-where
-    F: MartianFileType,
-{
-    fn as_ref(&self) -> &::std::path::Path {
-        self.path.as_ref()
-    }
-}
-
-impl<F, P> From<P> for Lz4<F>
-where
-    PathBuf: From<P>,
-    F: MartianFileType,
-{
-    fn from(source: P) -> Self {
-        let path_buf = PathBuf::from(source);
-        let file_name = path_buf.file_name().unwrap();
-        match path_buf.parent() {
-            Some(path) => MartianFileType::new(path, file_name),
-            None => MartianFileType::new("", file_name),
-        }
-    }
-}
-
-impl<F> AsMartianPrimaryType for Lz4<F>
-where
-    F: MartianFileType,
-{
-    fn as_martian_primary_type() -> MartianPrimaryType {
-        MartianPrimaryType::FileType(Self::extension())
-    }
+martian_filetype_inner! {
+    /// A struct that wraps a basic `MartianFileType` and adds lz4 compression
+    /// capability.
+    pub struct Lz4, "lz4"
 }
 
 impl<F> Lz4<F>
@@ -325,14 +262,14 @@ where
 }
 
 #[cfg(test)]
-martian_filetype! {CompoundFile, "foo.bar"}
-
-#[cfg(test)]
 mod tests {
     use super::*;
     use crate::json_file::JsonFile;
     use crate::LazyFileTypeIO;
-    use martian::MartianFileType;
+    use std::path::Path;
+
+    martian_derive::martian_filetype! {CompoundFile, "foo.bar"}
+
     #[test]
     fn test_lz4_new() {
         assert_eq!(
@@ -383,6 +320,7 @@ mod tests {
 
     #[test]
     fn test_lz4_compound_extension() {
+        assert_eq!(Lz4::<CompoundFile>::extension(), "foo.bar.lz4");
         assert_eq!(
             Lz4::<CompoundFile>::new("/some/path/", "file").as_ref(),
             Path::new("/some/path/file.foo.bar.lz4")

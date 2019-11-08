@@ -81,6 +81,7 @@
 use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::format_err;
 use martian::Error;
+use martian::MartianFileType;
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -88,20 +89,30 @@ use serde_json::de::Read as SerdeRead;
 use serde_json::de::{IoRead, StreamDeserializer};
 use serde_json::ser::PrettyFormatter;
 use serde_json::Serializer;
+use std::fmt::Debug;
 use std::fs::File;
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::marker::PhantomData;
 
-martian_filetype! {JsonFile, "json"}
+martian_filetype! {Json, "json"}
+impl<T> FileStorage<T> for Json where T: Serialize + DeserializeOwned {}
 
-impl<T> FileStorage<T> for JsonFile where T: Serialize + DeserializeOwned {}
+pub type JsonFile = JsonFormat<Json>;
+
+crate::martian_filetype_inner! {
+    /// Json format
+    pub struct JsonFormat, "json"
+}
+
+impl<F, T> FileStorage<T> for JsonFormat<F> where F: MartianFileType + FileStorage<T> {}
 
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
 /// The saved JsonFile will be pretty formatted using 4 space indentation.
-impl<T> FileTypeIO<T> for JsonFile
+impl<F, T> FileTypeIO<T> for JsonFormat<F>
 where
     T: Serialize + DeserializeOwned,
+    F: MartianFileType + FileStorage<T> + Debug,
 {
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
         Ok(serde_json::from_reader(reader)?)
@@ -117,28 +128,32 @@ where
 
 /// Iterator over individual items  within a json file that
 /// stores a list of items.
-pub struct LazyJsonReader<T, R = BufReader<File>>
+pub struct LazyJsonReader<T, F = Json, R = BufReader<File>>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
     reader: R,
-    phantom: PhantomData<T>,
+    phantom_f: PhantomData<F>,
+    phantom_t: PhantomData<T>,
 }
 
-impl<T, R> LazyRead<T, R> for LazyJsonReader<T, R>
+impl<T, F, R> LazyRead<T, R> for LazyJsonReader<T, F, R>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
-    type FileType = JsonFile;
+    type FileType = JsonFormat<F>;
     fn with_reader(mut reader: R) -> Result<Self, Error> {
         let mut char_buf = [0u8];
         reader.read_exact(&mut char_buf)?;
         match char_buf[0] {
             b'[' => Ok(LazyJsonReader {
                 reader,
-                phantom: PhantomData,
+                phantom_f: PhantomData,
+                phantom_t: PhantomData,
             }),
             _ => Err(format_err!(
                 "Lazy json reading is only supported if the json contains a list of items.",
@@ -147,8 +162,9 @@ where
     }
 }
 
-impl<T, R> Iterator for LazyJsonReader<T, R>
+impl<T, F, R> Iterator for LazyJsonReader<T, F, R>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -197,29 +213,33 @@ enum WriterState {
 
 /// Write items one by one to a json file that
 /// stores a list of items.
-pub struct LazyJsonWriter<T, W = BufWriter<File>>
+pub struct LazyJsonWriter<T, F = Json, W = BufWriter<File>>
 where
+    F: MartianFileType + FileStorage<T>,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
     state: WriterState,
     writer: Option<W>,
     buffer: Vec<u8>,
-    phantom: PhantomData<T>,
+    phantom_f: PhantomData<F>,
+    phantom_t: PhantomData<T>,
 }
 
-impl<T, W> LazyWrite<T, W> for LazyJsonWriter<T, W>
+impl<T, F, W> LazyWrite<T, W> for LazyJsonWriter<T, F, W>
 where
+    F: MartianFileType + FileStorage<T>,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
-    type FileType = JsonFile;
+    type FileType = JsonFormat<F>;
     fn with_writer(writer: W) -> Result<Self, Error> {
         Ok(LazyJsonWriter {
             state: WriterState::Start,
             writer: Some(writer),
             buffer: Vec::with_capacity(1024),
-            phantom: PhantomData,
+            phantom_f: PhantomData,
+            phantom_t: PhantomData,
         })
     }
     fn write_item(&mut self, item: &T) -> Result<(), Error> {
@@ -261,18 +281,20 @@ where
     }
 }
 
-impl<T, W, R> LazyAgents<T, W, R> for JsonFile
+impl<F, T, W, R> LazyAgents<T, W, R> for JsonFormat<F>
 where
+    F: MartianFileType + FileStorage<T>,
     R: Read,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
-    type LazyWriter = LazyJsonWriter<T, W>;
-    type LazyReader = LazyJsonReader<T, R>;
+    type LazyWriter = LazyJsonWriter<T, F, W>;
+    type LazyReader = LazyJsonReader<T, F, R>;
 }
 
-impl<T, W> Drop for LazyJsonWriter<T, W>
+impl<T, F, W> Drop for LazyJsonWriter<T, F, W>
 where
+    F: MartianFileType + FileStorage<T>,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -435,7 +457,7 @@ mod tests {
     fn test_json_lazy_write() -> Result<(), Error> {
         let dir = tempfile::tempdir()?;
         let json_file = JsonFile::new(dir.path(), "lazy_write");
-        let input: Vec<i32> = (0..10).into_iter().collect();
+        let input: Vec<i32> = (0..10).collect();
 
         let mut writer = json_file.lazy_writer()?;
         for i in &input {
@@ -454,8 +476,7 @@ mod tests {
     fn test_json_lazy_write_no_finish() {
         let dir = tempfile::tempdir().unwrap();
         let json_file = JsonFile::new(dir.path(), "lazy_write");
-        let input: Vec<i32> = (0..10).into_iter().collect();
-
+        let input: Vec<i32> = (0..10).collect();
         let mut writer = json_file.lazy_writer().unwrap();
         for i in &input {
             writer.write_item(i).unwrap();

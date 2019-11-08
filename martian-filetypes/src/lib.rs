@@ -46,6 +46,7 @@ use std::string::ToString;
 pub mod bin_file;
 pub mod json_file;
 pub mod lz4_file;
+pub(crate) mod macros;
 
 /// Provide context for errors that may arise during read/write
 /// of a `MartianFileType`
@@ -317,4 +318,17 @@ where
     };
 
     Ok(pass_w_lr && pass_w_lr_c && pass_lw_r && pass_lw_r_c && pass_lw_lr && pass_lw_lr_c)
+}
+
+#[cfg(test)]
+mod tests {
+    // See https://docs.rs/trybuild/1.0.9/trybuild/ on how this test setup works
+    // run `cargo test` with the environment variable `TRYBUILD=overwrite` to regenerate the
+    // expected output in case you change the error message.
+    // You should only use one test function.
+    #[test]
+    fn ui() {
+        let t = trybuild::TestCases::new();
+        t.compile_fail("tests/ui/*.rs");
+    }
 }

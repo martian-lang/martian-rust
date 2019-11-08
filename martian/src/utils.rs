@@ -166,6 +166,7 @@ mod tests {
             set_extension("/path/to/foo.txt.lz4.tmp", "txt.lz4.tmp"),
             PathBuf::from("/path/to/foo.txt.lz4.tmp")
         );
+        assert_eq!(set_extension(".json", "json"), PathBuf::from(".json"));
     }
 
     #[test]
