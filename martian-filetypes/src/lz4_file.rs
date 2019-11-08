@@ -89,7 +89,7 @@
 //! }
 //! ```
 
-use crate::{ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::ResultExt;
 use martian::{AsMartianPrimaryType, Error, MartianFileType, MartianPrimaryType};
 use martian_derive::martian_filetype;
@@ -184,6 +184,8 @@ where
         Self::from(source.as_ref())
     }
 }
+
+impl<F, T> FileStorage<T> for Lz4<F> where F: FileStorage<T> {}
 
 impl<F, T> FileTypeIO<T> for Lz4<F>
 where

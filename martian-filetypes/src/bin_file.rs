@@ -20,12 +20,12 @@
 //!
 //! #[derive(Debug, PartialEq, Serialize, Deserialize)]
 //! struct Chemistry {
-//!	    name: String,
+//!     name: String,
 //!     paired_end: bool,
 //! }
 //!
 //! fn main() -> Result<(), Error> {
-//!	    let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
+//!     let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
 //!     let bin_file = BincodeFile::from("example");
 //!     // The two functions below are simple wrappers over bincode crate functions
 //!     bin_file.write(&chem)?;
@@ -57,7 +57,7 @@
 //!     let mut writer: LazyBincodeWriter<i32> = bin_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite<i32>`
 //!     for val in 0..10_000i32 {
-//!	        writer.write_item(&val)?;
+//!         writer.write_item(&val)?;
 //!     }
 //!     writer.finish()?; // The file writing is not completed until finish() is called.
 //!     // IF YOU DON'T CALL finish(), THE PROGRAM WILL PANIC WHEN THE WRITER IS DROPPED
@@ -75,7 +75,7 @@
 //!     // reader is an `Iterator` over values of type Result<`i32`, Error>
 //!     for (i, val) in reader.enumerate() {
 //!         let val: i32 = val?;
-//!	        assert_eq!(i as i32, val);
+//!         assert_eq!(i as i32, val);
 //!         max_val = std::cmp::max(max_val, val);
 //!     }
 //!     assert_eq!(max_val, 9999i32);
@@ -84,7 +84,7 @@
 //! }
 //! ```
 
-use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::format_err;
 use martian::Error;
 use martian_derive::martian_filetype;
@@ -106,6 +106,8 @@ fn type_id_hash<T: Any>() -> u64 {
     typeid.hash(&mut hasher);
     hasher.finish()
 }
+
+impl<T> FileStorage<T> for BincodeFile where T: Serialize + DeserializeOwned {}
 
 /// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
 /// TODO: Include the TypeId here?

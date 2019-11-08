@@ -83,6 +83,12 @@ where
     }
 }
 
+/// A `MartianFileType` `F` is a `FileStorage<T>` if it is valid to
+/// save an object of type `T` in a file with the extension `F::extension()`
+/// This trait will give us compile time guarantees on whether we are
+/// writing into or reading from a file type into an invalid type
+pub trait FileStorage<T>: MartianFileType {}
+
 /// A trait that represents a `MartianFileType` that can be read into
 /// memory as type `T` or written from type `T`. Use the `read()` and
 /// `write()` methods to achieve these.
@@ -90,7 +96,7 @@ where
 /// If you want to implement this trait for a custom filetype, read
 /// the inline comments on which functions are provided and which
 /// are required.
-pub trait FileTypeIO<T>: MartianFileType + fmt::Debug {
+pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
     /// Read the `MartianFileType` as type `T`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement

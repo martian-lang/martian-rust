@@ -78,7 +78,7 @@
 //! }
 //! ```
 
-use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::format_err;
 use martian::Error;
 use martian_derive::martian_filetype;
@@ -93,6 +93,8 @@ use std::io::{BufReader, BufWriter, Read, Write};
 use std::marker::PhantomData;
 
 martian_filetype! {JsonFile, "json"}
+
+impl<T> FileStorage<T> for JsonFile where T: Serialize + DeserializeOwned {}
 
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
