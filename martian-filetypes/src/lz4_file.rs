@@ -92,6 +92,7 @@
 use crate::{ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use failure::ResultExt;
 use martian::{AsMartianPrimaryType, Error, MartianFileType, MartianPrimaryType};
+use martian_derive::martian_filetype;
 
 use serde::{Deserialize, Serialize};
 use std::convert::From;
@@ -126,26 +127,9 @@ where
         format!("{}.lz4", F::extension())
     }
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
-        let file_name_str = file_name.as_ref().to_string_lossy();
-
         let mut path = PathBuf::from(file_path.as_ref());
         path.push(file_name.as_ref());
-
-        let lz4_ext = format!(".{}", Self::extension());
-        let inner_ext = format!(".{}", F::extension());
-
-        if file_name_str.ends_with(&lz4_ext) {
-            // The file already has the correct extension
-        } else if file_name_str.ends_with(&inner_ext) {
-            path.set_extension(Self::extension());
-        } else {
-            let full_extension = match path.extension() {
-                Some(ext) => format!("{}.{}", ext.to_string_lossy(), Self::extension()),
-                _ => Self::extension(),
-            };
-            path.set_extension(full_extension);
-        }
-
+        let path = martian::utils::set_extension(path, Self::extension());
         Lz4 {
             inner: PhantomData,
             path,
@@ -339,6 +323,9 @@ where
 }
 
 #[cfg(test)]
+martian_filetype! {CompoundFile, "foo.bar"}
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::json_file::JsonFile;
@@ -393,6 +380,26 @@ mod tests {
     }
 
     #[test]
+    fn test_lz4_compound_extension() {
+        assert_eq!(
+            Lz4::<CompoundFile>::new("/some/path/", "file").as_ref(),
+            Path::new("/some/path/file.foo.bar.lz4")
+        );
+        assert_eq!(
+            Lz4::<CompoundFile>::new("/some/path/", "file.foo").as_ref(),
+            Path::new("/some/path/file.foo.bar.lz4")
+        );
+        assert_eq!(
+            Lz4::<CompoundFile>::new("/some/path/", "file.foo.bar").as_ref(),
+            Path::new("/some/path/file.foo.bar.lz4")
+        );
+        assert_eq!(
+            Lz4::<CompoundFile>::new("/some/path/", "file.foo.bar.lz4").as_ref(),
+            Path::new("/some/path/file.foo.bar.lz4")
+        );
+    }
+
+    #[test]
     fn test_lz4_from() {
         assert_eq!(
             Lz4::<JsonFile>::new("/some/path/", "file"),
@@ -412,6 +419,10 @@ mod tests {
         );
         assert_eq!(
             Lz4::<JsonFile>::new("/some/path/", "file.tmp"),
+            Lz4::<JsonFile>::from("/some/path/file.tmp")
+        );
+        assert_eq!(
+            Lz4::<JsonFile>::new("/some/path/", "file.tmp.json"),
             Lz4::<JsonFile>::from("/some/path/file.tmp")
         );
     }

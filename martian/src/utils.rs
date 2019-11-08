@@ -7,6 +7,8 @@ use failure::Error;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_json::json;
+use std::path::Path;
+use std::path::PathBuf;
 
 /// Shortcut function to decode a json dictionary into an object
 pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {
@@ -70,4 +72,111 @@ pub fn current_executable() -> String {
         .unwrap()
         .to_string_lossy()
         .into_owned()
+}
+
+/// Given a filename and an extension, return the filename with the correct extension
+/// Let's say we have a file `foo.a1.a2.a3`. The `extension()` function associated with
+/// Path is rust return `a3` at the extension. This also means that if I ask Path to set
+/// the extension to `a2.a3`, the resulting filename would be `foo.a1.a2.a2.a3` :/
+/// This helper function accounts for paths with multiple dot extensions and sets up the
+/// filename correctly.
+///
+/// ```
+/// use martian::utils::set_extension;
+/// assert_eq!(
+///     set_extension("/path/to/foo.bar.baz", "bar.baz.tmp"),
+///     std::path::PathBuf::from("/path/to/foo.bar.baz.tmp")
+/// );
+/// ```
+pub fn set_extension(file_path: impl AsRef<Path>, extension: impl ToString) -> PathBuf {
+    let extension = extension.to_string();
+    let mut result = PathBuf::from(file_path.as_ref());
+
+    assert!(
+        !result
+            .display()
+            .to_string()
+            .ends_with(std::path::MAIN_SEPARATOR),
+        "You passed a directory instead of a file: {:?}",
+        result
+    );
+
+    let current_name: String = match result.file_name() {
+        Some(name) => name.to_string_lossy().into_owned(),
+        _ => panic!("Could not find the filename in {:?}", result),
+    };
+
+    assert!(!extension.starts_with('.'));
+    let mut accumulated_ext = String::new();
+    let mut found_match = false;
+    for part in extension.split('.') {
+        accumulated_ext = accumulated_ext + "." + part;
+        if current_name.ends_with(&accumulated_ext) {
+            found_match = true;
+            break;
+        }
+    }
+    let extension_addition = if found_match {
+        let (_, right) = extension.split_at(accumulated_ext.len() - 1); // -1 because extension does not contain the leading `.`
+        debug_assert!(right.is_empty() || right.starts_with('.'));
+        right.to_string()
+    } else {
+        format!(".{}", extension)
+    };
+
+    let required_name = format!("{}{}", current_name, extension_addition);
+    result.set_file_name(required_name);
+    result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_set_extension() {
+        assert_eq!(
+            set_extension("/path/to/foo", "txt"),
+            PathBuf::from("/path/to/foo.txt")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo.txt", "txt"),
+            PathBuf::from("/path/to/foo.txt")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo.tx", "txt"),
+            PathBuf::from("/path/to/foo.tx.txt")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo", "txt.lz4"),
+            PathBuf::from("/path/to/foo.txt.lz4")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo", "txt.lz4.tmp"),
+            PathBuf::from("/path/to/foo.txt.lz4.tmp")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo.txt", "txt.lz4.tmp"),
+            PathBuf::from("/path/to/foo.txt.lz4.tmp")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo.txt.lz4", "txt.lz4.tmp"),
+            PathBuf::from("/path/to/foo.txt.lz4.tmp")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo.txt.lz4.tmp", "txt.lz4.tmp"),
+            PathBuf::from("/path/to/foo.txt.lz4.tmp")
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_set_extension_not_file() {
+        let _ = set_extension("/path/to/", "foo");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_set_extension_extension_dot() {
+        let _ = set_extension("/path/to/file", ".foo");
+    }
 }

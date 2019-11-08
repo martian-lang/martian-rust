@@ -67,4 +67,8 @@ fn test_new() {
         FqTarGzFile::new("/some/folder/", "foo").as_ref(),
         &PathBuf::from("/some/folder/foo.fastq.tar.gz")
     );
+    assert_eq!(
+        FqLz4File::new("/some/folder/", "foo.fastq").as_ref(),
+        &PathBuf::from("/some/folder/foo.fastq.lz4")
+    );
 }
