@@ -1,6 +1,5 @@
 use std;
 use std::collections::HashSet;
-use std::env;
 use std::fs::{rename, File, OpenOptions};
 use std::io::{Read, Write};
 use std::os::unix::io::FromRawFd;
@@ -9,6 +8,7 @@ use std::path::PathBuf;
 use crate::write_errors;
 use chrono::*;
 use failure::Error;
+use rustc_version;
 use serde::{Deserialize, Serialize};
 use serde_json::map::Map;
 use serde_json::{self, json, Value};
@@ -54,6 +54,30 @@ impl Default for Version {
         Version {
             martian: "unknown".into(),
             pipelines: "unknown".into(),
+        }
+    }
+}
+
+// Stuff that will be added to the _jobinfo under the "rust" key
+#[derive(Debug, Serialize)]
+struct RustAdapterInfo {
+    // Path to the binary executable
+    binpath: String,
+    // rustc version
+    version: String,
+}
+
+impl RustAdapterInfo {
+    fn new() -> Self {
+        RustAdapterInfo {
+            binpath: match std::env::current_exe() {
+                Ok(exe) => exe.display().to_string(),
+                Err(_) => "unknown".into(),
+            },
+            version: match rustc_version::version() {
+                Ok(v) => v.to_string(),
+                Err(_) => "unknown".into(),
+            },
         }
     }
 }
@@ -201,9 +225,8 @@ impl<'a> Metadata<'a> {
         let mut raw_jobinfo = self.read_json_obj("jobinfo")?;
         let jobinfo: JobInfo = serde_json::from_value(Value::Object(raw_jobinfo.clone()))?;
 
-        let exe = env::current_exe()?.to_str().unwrap().to_string();
-        raw_jobinfo.insert("rust_exe".to_string(), Value::String(exe));
-        // raw_jobinfo.insert("rust_version", sys.version);
+        let info = RustAdapterInfo::new();
+        raw_jobinfo.insert("rust".to_string(), serde_json::to_value(info)?);
 
         self.write_json_obj("jobinfo", &raw_jobinfo)?;
         self.raw_jobinfo = raw_jobinfo;
