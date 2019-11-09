@@ -216,20 +216,38 @@ where
                     None
                 }
             }
-            FileMode::Lazy => match bincode::deserialize_from(&mut self.reader) {
-                Ok(t) => Some(Ok(t)),
-                Err(e) => {
-                    match *e.as_ref() {
-                        bincode::ErrorKind::Io(ref io_e) => {
-                            match io_e.kind() {
-                                io::ErrorKind::UnexpectedEof => None, // We are at the end of the stream
-                                _ => Some(Err(Error::from(e))),
-                            }
-                        }
-                        _ => Some(Err(Error::from(e))),
+            FileMode::Lazy => match try_bincode_deserialize(&mut self.reader) {
+                DeserializeResult::Item(t) => Some(Ok(t)),
+                DeserializeResult::Eof => None,
+                DeserializeResult::ReadError(e) => Some(Err(e)),
+            },
+        }
+    }
+}
+
+enum DeserializeResult<T, E> {
+    Item(T),
+    ReadError(E),
+    Eof,
+}
+
+fn try_bincode_deserialize<T, R>(reader: &mut R) -> DeserializeResult<T, Error>
+where
+    R: Read,
+    T: DeserializeOwned,
+{
+    match bincode::deserialize_from(reader) {
+        Ok(t) => DeserializeResult::Item(t),
+        Err(e) => {
+            match *e.as_ref() {
+                bincode::ErrorKind::Io(ref io_e) => {
+                    match io_e.kind() {
+                        io::ErrorKind::UnexpectedEof => DeserializeResult::Eof, // We are at the end of the stream
+                        _ => DeserializeResult::ReadError(Error::from(e)),
                     }
                 }
-            },
+                _ => DeserializeResult::ReadError(Error::from(e)),
+            }
         }
     }
 }

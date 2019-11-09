@@ -99,7 +99,6 @@ use std::convert::From;
 
 use std::io::{Read, Write};
 use std::marker::PhantomData;
-use std::path::PathBuf;
 
 martian_filetype_inner! {
     /// A struct that wraps a basic `MartianFileType` and adds lz4 compression
@@ -266,7 +265,7 @@ mod tests {
     use super::*;
     use crate::json_file::JsonFile;
     use crate::LazyFileTypeIO;
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
 
     martian_derive::martian_filetype! {CompoundFile, "foo.bar"}
 
