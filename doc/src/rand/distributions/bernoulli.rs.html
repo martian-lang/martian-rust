@@ -237,7 +237,7 @@
 
 <span class="comment">// This is just `2.0.powi(64)`, but written this way because it is not available</span>
 <span class="comment">// in `no_std` mode.</span>
-<span class="kw">const</span> <span class="ident">SCALE</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="number">2.0</span> <span class="op">*</span> (<span class="number">1u64</span> <span class="op">&lt;&lt;</span> <span class="number">63</span>) <span class="kw">as</span> <span class="ident">f64</span>;
+<span class="kw">const</span> <span class="ident">SCALE</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="number">2.0</span> <span class="op">*</span> (<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">63</span>) <span class="kw">as</span> <span class="ident">f64</span>;
 
 <span class="doccomment">/// Error type returned from `Bernoulli::new`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
@@ -258,9 +258,9 @@
     <span class="doccomment">/// a multiple of 2&lt;sup&gt;-64&lt;/sup&gt;. (Note that not all multiples of</span>
     <span class="doccomment">/// 2&lt;sup&gt;-64&lt;/sup&gt; in `[0, 1]` can be represented as a `f64`.)</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">p</span>: <span class="ident">f64</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Bernoulli</span>, <span class="ident">BernoulliError</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="ident">p</span> <span class="op">&lt;</span> <span class="number">0.0</span> <span class="op">||</span> <span class="ident">p</span> <span class="op">&gt;=</span> <span class="number">1.0</span> {
-            <span class="kw">if</span> <span class="ident">p</span> <span class="op">==</span> <span class="number">1.0</span> { <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Bernoulli</span> { <span class="ident">p_int</span>: <span class="ident">ALWAYS_TRUE</span> }) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">p</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Bernoulli</span>, <span class="ident">BernoulliError</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="ident">p</span> <span class="op">&lt;</span> <span class="number">0.0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">p</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1.0</span> {
+            <span class="kw">if</span> <span class="ident">p</span> <span class="op">=</span><span class="op">=</span> <span class="number">1.0</span> { <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Bernoulli</span> { <span class="ident">p_int</span>: <span class="ident">ALWAYS_TRUE</span> }) }
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">BernoulliError</span>::<span class="ident">InvalidProbability</span>);
         }
         <span class="prelude-val">Ok</span>(<span class="ident">Bernoulli</span> { <span class="ident">p_int</span>: (<span class="ident">p</span> <span class="op">*</span> <span class="ident">SCALE</span>) <span class="kw">as</span> <span class="ident">u64</span> })
@@ -273,11 +273,11 @@
     <span class="doccomment">/// If `numerator == denominator` then the returned `Bernoulli` will always</span>
     <span class="doccomment">/// return `true`. If `numerator == 0` it will always return `false`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_ratio</span>(<span class="ident">numerator</span>: <span class="ident">u32</span>, <span class="ident">denominator</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Bernoulli</span>, <span class="ident">BernoulliError</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_ratio</span>(<span class="ident">numerator</span>: <span class="ident">u32</span>, <span class="ident">denominator</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Bernoulli</span>, <span class="ident">BernoulliError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">numerator</span> <span class="op">&gt;</span> <span class="ident">denominator</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">BernoulliError</span>::<span class="ident">InvalidProbability</span>);
         }
-        <span class="kw">if</span> <span class="ident">numerator</span> <span class="op">==</span> <span class="ident">denominator</span> {
+        <span class="kw">if</span> <span class="ident">numerator</span> <span class="op">=</span><span class="op">=</span> <span class="ident">denominator</span> {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Bernoulli</span> { <span class="ident">p_int</span>: <span class="ident">ALWAYS_TRUE</span> })
         }
         <span class="kw">let</span> <span class="ident">p_int</span> <span class="op">=</span> ((<span class="ident">f64</span>::<span class="ident">from</span>(<span class="ident">numerator</span>) <span class="op">/</span> <span class="ident">f64</span>::<span class="ident">from</span>(<span class="ident">denominator</span>)) <span class="op">*</span> <span class="ident">SCALE</span>) <span class="kw">as</span> <span class="ident">u64</span>;
@@ -287,9 +287,9 @@
 
 <span class="kw">impl</span> <span class="ident">Distribution</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Bernoulli</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="comment">// Make sure to always return true for p = 1.0.</span>
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">p_int</span> <span class="op">==</span> <span class="ident">ALWAYS_TRUE</span> { <span class="kw">return</span> <span class="bool-val">true</span>; }
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">p_int</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ALWAYS_TRUE</span> { <span class="kw">return</span> <span class="bool-val">true</span>; }
         <span class="kw">let</span> <span class="ident">v</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>();
         <span class="ident">v</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">p_int</span>
     }
@@ -329,10 +329,10 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rng</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">rng</span>(<span class="number">2</span>);
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">N</span> {
             <span class="kw">if</span> <span class="ident">d1</span>.<span class="ident">sample</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>) {
-                <span class="ident">sum1</span> <span class="op">+=</span> <span class="number">1</span>;
+                <span class="ident">sum1</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             }
             <span class="kw">if</span> <span class="ident">d2</span>.<span class="ident">sample</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>) {
-                <span class="ident">sum2</span> <span class="op">+=</span> <span class="number">1</span>;
+                <span class="ident">sum2</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             }
         }
         <span class="kw">let</span> <span class="ident">avg1</span> <span class="op">=</span> (<span class="ident">sum1</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="op">/</span> (<span class="ident">N</span> <span class="kw">as</span> <span class="ident">f64</span>);

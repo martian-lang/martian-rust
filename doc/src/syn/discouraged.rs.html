@@ -338,7 +338,7 @@
 
         <span class="comment">// See comment on `cell` in the struct definition.</span>
         <span class="self">self</span>.<span class="ident">cell</span>
-            .<span class="ident">set</span>(<span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>::<span class="op">&lt;</span><span class="ident">Cursor</span>, <span class="ident">Cursor</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span><span class="op">&gt;&gt;</span>(<span class="ident">fork</span>.<span class="ident">cursor</span>()) })
+            .<span class="ident">set</span>(<span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>::<span class="op">&lt;</span><span class="ident">Cursor</span>, <span class="ident">Cursor</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">fork</span>.<span class="ident">cursor</span>()) })
     }
 }
 </pre></div>

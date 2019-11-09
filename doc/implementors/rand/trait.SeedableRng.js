@@ -6,5 +6,4 @@ implementors["rand"] = [{text:"impl <a class=\"trait\" href=\"rand/trait.Seedabl
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

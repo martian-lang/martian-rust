@@ -6,5 +6,4 @@ implementors["rand"] = [{text:"impl&lt;R, Rsdr&gt; <a class=\"trait\" href=\"ran
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

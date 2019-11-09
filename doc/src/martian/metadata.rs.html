@@ -206,10 +206,83 @@
 <span id="206">206</span>
 <span id="207">207</span>
 <span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">env</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::{<span class="ident">rename</span>, <span class="ident">File</span>, <span class="ident">OpenOptions</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::<span class="ident">FromRawFd</span>;
@@ -218,6 +291,8 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">write_errors</span>;
 <span class="kw">use</span> <span class="ident">chrono</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">failure</span>::<span class="ident">Error</span>;
+<span class="kw">use</span> <span class="ident">rustc_version</span>;
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="ident">map</span>::<span class="ident">Map</span>;
 <span class="kw">use</span> <span class="ident">serde_json</span>::{<span class="self">self</span>, <span class="ident">json</span>, <span class="ident">Value</span>};
 
@@ -235,21 +310,71 @@
     <span class="ident">metadata_path</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">files_path</span>: <span class="ident">String</span>,
     <span class="ident">run_file</span>: <span class="ident">String</span>,
-    <span class="ident">jobinfo</span>: <span class="ident">JsonDict</span>,
+    <span class="ident">raw_jobinfo</span>: <span class="ident">JsonDict</span>,
+    <span class="kw">pub</span> <span class="ident">jobinfo</span>: <span class="ident">JobInfo</span>, <span class="comment">// Partially parsed Job info</span>
     <span class="ident">cache</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="ident">log_file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">File</span>,
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp</span>(<span class="ident">datetime</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Local</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">JobInfo</span> {
+    <span class="kw">pub</span> <span class="ident">threads</span>: <span class="ident">usize</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;memGB&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">mem_gb</span>: <span class="ident">usize</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;vmemGB&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">vmem_gb</span>: <span class="ident">usize</span>,
+    <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">Version</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Version</span> {
+    <span class="kw">pub</span> <span class="ident">martian</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">pipelines</span>: <span class="ident">String</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Version</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Version</span> {
+            <span class="ident">martian</span>: <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
+            <span class="ident">pipelines</span>: <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
+        }
+    }
+}
+
+<span class="comment">// Stuff that will be added to the _jobinfo under the &quot;rust&quot; key</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">RustAdapterInfo</span> {
+    <span class="comment">// Path to the binary executable</span>
+    <span class="ident">binpath</span>: <span class="ident">String</span>,
+    <span class="comment">// rustc version</span>
+    <span class="ident">version</span>: <span class="ident">String</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">RustAdapterInfo</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">RustAdapterInfo</span> {
+            <span class="ident">binpath</span>: <span class="kw">match</span> <span class="ident">std</span>::<span class="ident">env</span>::<span class="ident">current_exe</span>() {
+                <span class="prelude-val">Ok</span>(<span class="ident">exe</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">exe</span>.<span class="ident">display</span>().<span class="ident">to_string</span>(),
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
+            },
+            <span class="ident">version</span>: <span class="kw">match</span> <span class="ident">rustc_version</span>::<span class="ident">version</span>() {
+                <span class="prelude-val">Ok</span>(<span class="ident">v</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">v</span>.<span class="ident">to_string</span>(),
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
+            },
+        }
+    }
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp</span>(<span class="ident">datetime</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Local</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
     <span class="ident">datetime</span>.<span class="ident">format</span>(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>).<span class="ident">to_string</span>()
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp_now</span>() <span class="op">-&gt;</span> <span class="ident">String</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp_now</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
     <span class="ident">make_timestamp</span>(<span class="ident">Local</span>::<span class="ident">now</span>())
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Metadata</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">log_file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">File</span>) <span class="op">-&gt;</span> <span class="ident">Metadata</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">log_file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">File</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Metadata</span> {
         <span class="comment">// # Take options from command line.</span>
         <span class="comment">// shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv</span>
         <span class="ident">Metadata</span> {
@@ -259,20 +384,21 @@
             <span class="ident">files_path</span>: <span class="ident">args</span>[<span class="number">3</span>].<span class="ident">clone</span>(),
             <span class="ident">run_file</span>: <span class="ident">args</span>[<span class="number">4</span>].<span class="ident">clone</span>(),
             <span class="ident">cache</span>: <span class="ident">HashSet</span>::<span class="ident">new</span>(),
-            <span class="ident">jobinfo</span>: <span class="ident">Map</span>::<span class="ident">new</span>(),
+            <span class="ident">raw_jobinfo</span>: <span class="ident">Map</span>::<span class="ident">new</span>(),
+            <span class="ident">jobinfo</span>: <span class="ident">JobInfo</span>::<span class="ident">default</span>(),
             <span class="ident">log_file</span>,
         }
     }
 
     <span class="doccomment">/// Path within chunk</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">PathBuf</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PathBuf</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pb</span> <span class="op">=</span> <span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="self">self</span>.<span class="ident">metadata_path</span>.<span class="ident">clone</span>());
         <span class="ident">pb</span>.<span class="ident">push</span>(<span class="ident">METADATA_PREFIX</span>.<span class="ident">to_string</span>() <span class="op">+</span> <span class="ident">name</span>);
         <span class="ident">pb</span>
     }
 
     <span class="doccomment">/// Write to a file inside the chunk</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_raw</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">text</span>: <span class="ident">String</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_raw</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">text</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">File</span>::<span class="ident">create</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))<span class="question-mark">?</span>;
         <span class="ident">f</span>.<span class="ident">write_all</span>(<span class="ident">text</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">update_journal</span>(<span class="ident">name</span>)<span class="question-mark">?</span>;
@@ -280,14 +406,14 @@
     }
 
     <span class="doccomment">/// Update the Martian journal -- so that Martian knows what we&#39;ve updated</span>
-    <span class="kw">fn</span> <span class="ident">update_journal_main</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">force</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">journal_name</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">stage_type</span> <span class="op">!=</span> <span class="string">&quot;main&quot;</span> {
+    <span class="kw">fn</span> <span class="ident">update_journal_main</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">force</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">journal_name</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">stage_type</span> <span class="op">!</span><span class="op">=</span> <span class="string">&quot;main&quot;</span> {
             <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}_{}&quot;</span>, <span class="self">self</span>.<span class="ident">stage_type</span>, <span class="ident">name</span>)
         } <span class="kw">else</span> {
             <span class="ident">name</span>.<span class="ident">to_string</span>()
         };
 
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">cache</span>.<span class="ident">contains</span>(<span class="ident">name</span>) <span class="op">||</span> <span class="ident">force</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">cache</span>.<span class="ident">contains</span>(<span class="ident">name</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">force</span> {
             <span class="kw">let</span> <span class="ident">run_file</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}.{}&quot;</span>, <span class="self">self</span>.<span class="ident">run_file</span>, <span class="ident">journal_name</span>);
             <span class="kw">let</span> <span class="ident">tmp_run_file</span> <span class="op">=</span> <span class="ident">run_file</span>.<span class="ident">clone</span>() <span class="op">+</span> <span class="string">&quot;.tmp&quot;</span>;
 
@@ -302,7 +428,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">update_journal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">update_journal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">update_journal_main</span>(<span class="ident">name</span>, <span class="bool-val">false</span>)
     }
 
@@ -315,7 +441,7 @@
     */</span>
 
     <span class="doccomment">/// Write JSON to a chunk file</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">write_json_obj</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">object</span>: <span class="kw-2">&amp;</span><span class="ident">JsonDict</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">write_json_obj</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">object</span>: <span class="kw-2">&amp;</span><span class="ident">JsonDict</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="comment">// Serialize using `json::encode`</span>
         <span class="kw">let</span> <span class="ident">obj</span> <span class="op">=</span> <span class="macro">json</span><span class="macro">!</span>(<span class="ident">object</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">encoded</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">to_string_pretty</span>(<span class="kw-2">&amp;</span><span class="ident">obj</span>)<span class="question-mark">?</span>;
@@ -323,7 +449,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Json</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Json</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">File</span>::<span class="ident">open</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
         <span class="ident">f</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>)<span class="question-mark">?</span>;
@@ -332,19 +458,19 @@
         <span class="prelude-val">Ok</span>(<span class="ident">json</span>)
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json_obj</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">json</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json_obj</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">json</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_json</span>(<span class="ident">json</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">r</span>.<span class="ident">as_object</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>())
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json_obj_array</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json_obj_array</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">json</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_json</span>(<span class="ident">name</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="ident">json</span>.<span class="ident">as_array</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">r</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">arr</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">o</span><span class="op">|</span> <span class="ident">o</span>.<span class="ident">as_object</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>()).<span class="ident">collect</span>();
         <span class="prelude-val">Ok</span>(<span class="ident">r</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">_append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">_append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">filename</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">OpenOptions</span>::<span class="ident">new</span>()
             .<span class="ident">create</span>(<span class="bool-val">true</span>)
@@ -357,7 +483,7 @@
     }
 
     <span class="doccomment">/// Write to _log</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">log_file</span>
             .<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{} [{}] {}&quot;</span>, <span class="ident">make_timestamp_now</span>(), <span class="ident">level</span>, <span class="ident">message</span>).<span class="ident">as_bytes</span>())
             .<span class="ident">and</span>(<span class="self">self</span>.<span class="ident">log_file</span>.<span class="ident">flush</span>())<span class="question-mark">?</span>;
@@ -365,27 +491,28 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log_time</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log_time</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">log</span>(<span class="string">&quot;time&quot;</span>, <span class="ident">message</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">alarm</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">alarm</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">_append</span>(<span class="string">&quot;alarm&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{} {}&quot;</span>, <span class="ident">make_timestamp_now</span>(), <span class="ident">message</span>))
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assert</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assert</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="ident">write_errors</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;ASSERT:{} {}&quot;</span>, <span class="ident">make_timestamp_now</span>(), <span class="ident">message</span>))
     }
 
     <span class="doccomment">/// Write finalized _jobinfo data</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_jobinfo</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">jobinfo</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_json_obj</span>(<span class="string">&quot;jobinfo&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_jobinfo</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw_jobinfo</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_json_obj</span>(<span class="string">&quot;jobinfo&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">jobinfo</span>: <span class="ident">JobInfo</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">Value</span>::<span class="ident">Object</span>(<span class="ident">raw_jobinfo</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">exe</span> <span class="op">=</span> <span class="ident">env</span>::<span class="ident">current_exe</span>()<span class="question-mark">?</span>.<span class="ident">to_str</span>().<span class="ident">unwrap</span>().<span class="ident">to_string</span>();
-        <span class="ident">jobinfo</span>.<span class="ident">insert</span>(<span class="string">&quot;rust_exe&quot;</span>.<span class="ident">to_string</span>(), <span class="ident">Value</span>::<span class="ident">String</span>(<span class="ident">exe</span>));
-        <span class="comment">// jobinfo.insert(&quot;rust_version&quot;, sys.version);</span>
+        <span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">RustAdapterInfo</span>::<span class="ident">new</span>();
+        <span class="ident">raw_jobinfo</span>.<span class="ident">insert</span>(<span class="string">&quot;rust&quot;</span>.<span class="ident">to_string</span>(), <span class="ident">serde_json</span>::<span class="ident">to_value</span>(<span class="ident">info</span>)<span class="question-mark">?</span>);
 
-        <span class="self">self</span>.<span class="ident">write_json_obj</span>(<span class="string">&quot;jobinfo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">jobinfo</span>)<span class="question-mark">?</span>;
+        <span class="self">self</span>.<span class="ident">write_json_obj</span>(<span class="string">&quot;jobinfo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">raw_jobinfo</span>)<span class="question-mark">?</span>;
+        <span class="self">self</span>.<span class="ident">raw_jobinfo</span> <span class="op">=</span> <span class="ident">raw_jobinfo</span>;
         <span class="self">self</span>.<span class="ident">jobinfo</span> <span class="op">=</span> <span class="ident">jobinfo</span>;
         <span class="prelude-val">Ok</span>(())
     }
@@ -398,21 +525,42 @@
     }
 
     <span class="doccomment">/// Get the amount of memory in GB allocated to this job by the runtime.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">get</span>(<span class="string">&quot;memGB&quot;</span>).<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">as_u64</span>()).<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">mem_gb</span>
     }
 
     <span class="doccomment">/// Get the number of threads allocated to this job by the runtime.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="ident">jobinfo</span>
-            .<span class="ident">get</span>(<span class="string">&quot;threads&quot;</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">as_u64</span>())
-            .<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">threads</span>
     }
 
     <span class="doccomment">/// Get the amount of virtual memory in GB allocated to this job by the runtime.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_virtual_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">get</span>(<span class="string">&quot;vmemGB&quot;</span>).<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">as_u64</span>()).<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_virtual_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">vmem_gb</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pipelines_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">pipelines</span>.<span class="ident">clone</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_martian_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">martian</span>.<span class="ident">clone</span>()
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_jobinfo</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">raw_jobinfo</span>: <span class="ident">JsonDict</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_reader</span>(<span class="ident">File</span>::<span class="ident">open</span>(<span class="string">&quot;tests/jobinfo.json&quot;</span>)<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">jobinfo</span>: <span class="ident">JobInfo</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">Value</span>::<span class="ident">Object</span>(<span class="ident">raw_jobinfo</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">jobinfo</span>.<span class="ident">threads</span>, <span class="number">1</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">jobinfo</span>.<span class="ident">mem_gb</span>, <span class="number">1</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">jobinfo</span>.<span class="ident">vmem_gb</span>, <span class="number">4</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">martian</span>, <span class="string">&quot;v3.2.2&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">pipelines</span>, <span class="string">&quot;7000.1.52-187&quot;</span>);
+        <span class="prelude-val">Ok</span>(())
     }
 }
 </pre></div>

@@ -6,5 +6,4 @@ implementors["rand_chacha"] = [{text:"impl <a class=\"trait\" href=\"rand_core/b
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

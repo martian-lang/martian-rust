@@ -380,27 +380,27 @@
     <span class="kw">type</span> <span class="ident">Limit</span>: <span class="ident">SizeLimit</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>;
     <span class="kw">type</span> <span class="ident">Endian</span>: <span class="ident">ByteOrder</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>;
 
-    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Limit</span>;
+    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Limit</span>;
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait</span> <span class="ident">OptionsExt</span>: <span class="ident">Options</span> <span class="op">+</span> <span class="ident">Sized</span> {
-    <span class="kw">fn</span> <span class="ident">with_no_limit</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">WithOtherLimit</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Infinite</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">with_no_limit</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WithOtherLimit</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Infinite</span><span class="op">&gt;</span> {
         <span class="ident">WithOtherLimit</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">Infinite</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">with_limit</span>(<span class="self">self</span>, <span class="ident">limit</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">WithOtherLimit</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Bounded</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">with_limit</span>(<span class="self">self</span>, <span class="ident">limit</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WithOtherLimit</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Bounded</span><span class="op">&gt;</span> {
         <span class="ident">WithOtherLimit</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">Bounded</span>(<span class="ident">limit</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">with_little_endian</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">LittleEndian</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">with_little_endian</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">LittleEndian</span><span class="op">&gt;</span> {
         <span class="ident">WithOtherEndian</span>::<span class="ident">new</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">with_big_endian</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">BigEndian</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">with_big_endian</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">BigEndian</span><span class="op">&gt;</span> {
         <span class="ident">WithOtherEndian</span>::<span class="ident">new</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">with_native_endian</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">NativeEndian</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">with_native_endian</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">NativeEndian</span><span class="op">&gt;</span> {
         <span class="ident">WithOtherEndian</span>::<span class="ident">new</span>(<span class="self">self</span>)
     }
 }
@@ -410,7 +410,7 @@
     <span class="kw">type</span> <span class="ident">Endian</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Endian</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Limit</span> {
+    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Limit</span> {
         (<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">limit</span>()
     }
 }
@@ -418,7 +418,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Options</span><span class="op">&gt;</span> <span class="ident">OptionsExt</span> <span class="kw">for</span> <span class="ident">T</span> {}
 
 <span class="kw">impl</span> <span class="ident">DefaultOptions</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">DefaultOptions</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DefaultOptions</span> {
         <span class="ident">DefaultOptions</span>(<span class="ident">Infinite</span>)
     }
 }
@@ -428,7 +428,7 @@
     <span class="kw">type</span> <span class="ident">Endian</span> <span class="op">=</span> <span class="ident">LittleEndian</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Infinite</span> {
+    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Infinite</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="number">0</span>
     }
 }
@@ -476,7 +476,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Options</span>, <span class="ident">L</span>: <span class="ident">SizeLimit</span><span class="op">&gt;</span> <span class="ident">WithOtherLimit</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">L</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">options</span>: <span class="ident">O</span>, <span class="ident">limit</span>: <span class="ident">L</span>) <span class="op">-&gt;</span> <span class="ident">WithOtherLimit</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">L</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">options</span>: <span class="ident">O</span>, <span class="ident">limit</span>: <span class="ident">L</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WithOtherLimit</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">L</span><span class="op">&gt;</span> {
         <span class="ident">WithOtherLimit</span> {
             <span class="ident">_options</span>: <span class="ident">options</span>,
             <span class="ident">new_limit</span>: <span class="ident">limit</span>,
@@ -486,7 +486,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Options</span>, <span class="ident">E</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">E</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">options</span>: <span class="ident">O</span>) <span class="op">-&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">E</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">options</span>: <span class="ident">O</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WithOtherEndian</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">E</span><span class="op">&gt;</span> {
         <span class="ident">WithOtherEndian</span> {
             <span class="ident">options</span>: <span class="ident">options</span>,
             <span class="ident">_endian</span>: <span class="ident">PhantomData</span>,
@@ -499,7 +499,7 @@
     <span class="kw">type</span> <span class="ident">Endian</span> <span class="op">=</span> <span class="ident">E</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">O</span>::<span class="ident">Limit</span> {
+    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">O</span>::<span class="ident">Limit</span> {
         <span class="self">self</span>.<span class="ident">options</span>.<span class="ident">limit</span>()
     }
 }
@@ -508,36 +508,36 @@
     <span class="kw">type</span> <span class="ident">Limit</span> <span class="op">=</span> <span class="ident">L</span>;
     <span class="kw">type</span> <span class="ident">Endian</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Endian</span>;
 
-    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">L</span> {
+    <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">L</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">new_limit</span>
     }
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">config_map</span> {
-    (<span class="macro-nonterminal">$</span><span class="self">self</span>:<span class="macro-nonterminal">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span>:<span class="ident">ident</span> <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="self">self</span>:<span class="macro-nonterminal">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span>:<span class="ident">ident</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">match</span> (<span class="macro-nonterminal">$</span><span class="self">self</span>.<span class="macro-nonterminal">limit</span>, <span class="macro-nonterminal">$</span><span class="self">self</span>.<span class="macro-nonterminal">endian</span>) {
-            (<span class="ident">Unlimited</span>, <span class="ident">Little</span>) <span class="op">=&gt;</span> {
+            (<span class="ident">Unlimited</span>, <span class="ident">Little</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span> <span class="op">=</span> <span class="ident">DefaultOptions</span>::<span class="ident">new</span>().<span class="ident">with_no_limit</span>().<span class="ident">with_little_endian</span>();
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>
             }
-            (<span class="ident">Unlimited</span>, <span class="ident">Big</span>) <span class="op">=&gt;</span> {
+            (<span class="ident">Unlimited</span>, <span class="ident">Big</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span> <span class="op">=</span> <span class="ident">DefaultOptions</span>::<span class="ident">new</span>().<span class="ident">with_no_limit</span>().<span class="ident">with_big_endian</span>();
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>
             }
-            (<span class="ident">Unlimited</span>, <span class="ident">Native</span>) <span class="op">=&gt;</span> {
+            (<span class="ident">Unlimited</span>, <span class="ident">Native</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span> <span class="op">=</span> <span class="ident">DefaultOptions</span>::<span class="ident">new</span>().<span class="ident">with_no_limit</span>().<span class="ident">with_native_endian</span>();
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>
             }
 
-            (<span class="ident">Limited</span>(<span class="ident">l</span>), <span class="ident">Little</span>) <span class="op">=&gt;</span> {
+            (<span class="ident">Limited</span>(<span class="ident">l</span>), <span class="ident">Little</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span> <span class="op">=</span> <span class="ident">DefaultOptions</span>::<span class="ident">new</span>().<span class="ident">with_limit</span>(<span class="ident">l</span>).<span class="ident">with_little_endian</span>();
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>
             }
-            (<span class="ident">Limited</span>(<span class="ident">l</span>), <span class="ident">Big</span>) <span class="op">=&gt;</span> {
+            (<span class="ident">Limited</span>(<span class="ident">l</span>), <span class="ident">Big</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span> <span class="op">=</span> <span class="ident">DefaultOptions</span>::<span class="ident">new</span>().<span class="ident">with_limit</span>(<span class="ident">l</span>).<span class="ident">with_big_endian</span>();
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>
             }
-            (<span class="ident">Limited</span>(<span class="ident">l</span>), <span class="ident">Native</span>) <span class="op">=&gt;</span> {
+            (<span class="ident">Limited</span>(<span class="ident">l</span>), <span class="ident">Native</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opts</span> <span class="op">=</span> <span class="ident">DefaultOptions</span>::<span class="ident">new</span>().<span class="ident">with_limit</span>(<span class="ident">l</span>).<span class="ident">with_native_endian</span>();
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">call</span>
             }
@@ -547,7 +547,7 @@
 
 <span class="kw">impl</span> <span class="ident">Config</span> {
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">Config</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Config</span> {
         <span class="ident">Config</span> {
             <span class="ident">limit</span>: <span class="ident">LimitOption</span>::<span class="ident">Unlimited</span>,
             <span class="ident">endian</span>: <span class="ident">EndianOption</span>::<span class="ident">Little</span>,
@@ -557,14 +557,14 @@
     <span class="doccomment">/// Sets the byte limit to be unlimited.</span>
     <span class="doccomment">/// This is the default.</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">no_limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">no_limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">limit</span> <span class="op">=</span> <span class="ident">LimitOption</span>::<span class="ident">Unlimited</span>;
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Sets the byte limit to `limit`.</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">limit</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">limit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">limit</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">limit</span> <span class="op">=</span> <span class="ident">LimitOption</span>::<span class="ident">Limited</span>(<span class="ident">limit</span>);
         <span class="self">self</span>
     }
@@ -572,35 +572,35 @@
     <span class="doccomment">/// Sets the endianness to little-endian</span>
     <span class="doccomment">/// This is the default.</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">little_endian</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">little_endian</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">endian</span> <span class="op">=</span> <span class="ident">EndianOption</span>::<span class="ident">Little</span>;
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Sets the endianness to big-endian</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">big_endian</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">big_endian</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">endian</span> <span class="op">=</span> <span class="ident">EndianOption</span>::<span class="ident">Big</span>;
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Sets the endianness to the the machine-native endianness</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">native_endian</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">native_endian</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">endian</span> <span class="op">=</span> <span class="ident">EndianOption</span>::<span class="ident">Native</span>;
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Serializes a serializable object into a `Vec` of bytes using this configuration</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">serde</span>::<span class="ident">Serialize</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">t</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">serialize</span>(<span class="ident">t</span>, <span class="ident">opts</span>))
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">serde</span>::<span class="ident">Serialize</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">t</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">serialize</span>(<span class="ident">t</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Returns the size that an object would be if serialized using Bincode with this configuration</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialized_size</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">serde</span>::<span class="ident">Serialize</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">t</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">serialized_size</span>(<span class="ident">t</span>, <span class="ident">opts</span>))
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialized_size</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">serde</span>::<span class="ident">Serialize</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">t</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">serialized_size</span>(<span class="ident">t</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Serializes an object directly into a `Writer` using this configuration</span>
@@ -612,35 +612,35 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">w</span>: <span class="ident">W</span>,
         <span class="ident">t</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">serialize_into</span>(<span class="ident">w</span>, <span class="ident">t</span>, <span class="ident">opts</span>))
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">serialize_into</span>(<span class="ident">w</span>, <span class="ident">t</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Deserializes a slice of bytes into an instance of `T` using this configuration</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize</span>(<span class="ident">bytes</span>, <span class="ident">opts</span>))
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize</span>(<span class="ident">bytes</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// TODO: document</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_in_place</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">place</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_in_place</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">place</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">R</span>: <span class="ident">BincodeRead</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
         <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
     {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_in_place</span>(<span class="ident">reader</span>, <span class="ident">opts</span>, <span class="ident">place</span>))
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_in_place</span>(<span class="ident">reader</span>, <span class="ident">opts</span>, <span class="ident">place</span>))
     }
 
     <span class="doccomment">/// Deserializes a slice of bytes with state `seed` using this configuration.</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_seed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeSeed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_seed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeSeed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">seed</span>: <span class="ident">T</span>,
         <span class="ident">bytes</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>],
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>::<span class="ident">Value</span><span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_seed</span>(<span class="ident">seed</span>, <span class="ident">bytes</span>, <span class="ident">opts</span>))
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>::<span class="ident">Value</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_seed</span>(<span class="ident">seed</span>, <span class="ident">bytes</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Deserializes an object directly from a `Read`er using this configuration</span>
@@ -650,20 +650,20 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">reader</span>: <span class="ident">R</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from</span>(<span class="ident">reader</span>, <span class="ident">opts</span>))
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from</span>(<span class="ident">reader</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Deserializes an object directly from a `Read`er with state `seed` using this configuration</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// If this returns an `Error`, `reader` may be in an invalid state.</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from_seed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>: <span class="ident">Read</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeSeed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from_seed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>: <span class="ident">Read</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeSeed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">seed</span>: <span class="ident">T</span>,
         <span class="ident">reader</span>: <span class="ident">R</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>::<span class="ident">Value</span><span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from_seed</span>(<span class="ident">seed</span>, <span class="ident">reader</span>, <span class="ident">opts</span>))
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>::<span class="ident">Value</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from_seed</span>(<span class="ident">seed</span>, <span class="ident">reader</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Deserializes an object from a custom `BincodeRead`er using the default configuration.</span>
@@ -675,8 +675,8 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from_custom</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>: <span class="ident">BincodeRead</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>, <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">reader</span>: <span class="ident">R</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from_custom</span>(<span class="ident">reader</span>, <span class="ident">opts</span>))
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from_custom</span>(<span class="ident">reader</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Deserializes an object from a custom `BincodeRead`er with state `seed` using the default</span>
@@ -693,19 +693,19 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">seed</span>: <span class="ident">T</span>,
         <span class="ident">reader</span>: <span class="ident">R</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>::<span class="ident">Value</span><span class="op">&gt;</span> {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from_custom_seed</span>(<span class="ident">seed</span>, <span class="ident">reader</span>, <span class="ident">opts</span>))
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>::<span class="ident">Value</span><span class="op">&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> ::<span class="ident">internal</span>::<span class="ident">deserialize_from_custom_seed</span>(<span class="ident">seed</span>, <span class="ident">reader</span>, <span class="ident">opts</span>))
     }
 
     <span class="doccomment">/// Executes the acceptor with a serde::Deserializer instance.</span>
     <span class="doccomment">/// NOT A PART OF THE STABLE PUBLIC API</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
     <span class="kw">where</span>
         <span class="ident">A</span>: <span class="ident">DeserializerAcceptor</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
         <span class="ident">R</span>: <span class="ident">BincodeRead</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
     {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">deserializer</span> <span class="op">=</span> ::<span class="ident">de</span>::<span class="ident">Deserializer</span>::<span class="ident">new</span>(<span class="ident">reader</span>, <span class="ident">opts</span>);
             <span class="ident">acceptor</span>.<span class="ident">accept</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>)
         })
@@ -714,12 +714,12 @@
     <span class="doccomment">/// Executes the acceptor with a serde::Serializer instance.</span>
     <span class="doccomment">/// NOT A PART OF THE STABLE PUBLIC API</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_serializer</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_serializer</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
     <span class="kw">where</span>
         <span class="ident">A</span>: <span class="ident">SerializerAcceptor</span>,
         <span class="ident">W</span>: <span class="ident">Write</span>,
     {
-        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=&gt;</span> {
+        <span class="macro">config_map</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">opts</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serializer</span> <span class="op">=</span> ::<span class="ident">ser</span>::<span class="ident">Serializer</span>::<span class="ident">new</span>(<span class="ident">writer</span>, <span class="ident">opts</span>);
             <span class="ident">acceptor</span>.<span class="ident">accept</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serializer</span>)
         })

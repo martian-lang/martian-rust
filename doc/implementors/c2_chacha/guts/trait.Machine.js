@@ -6,5 +6,4 @@ implementors["c2_chacha"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

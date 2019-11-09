@@ -6,5 +6,4 @@ implementors["strfmt"] = [{text:"impl&lt;'a, 'b&gt; <a class=\"trait\" href=\"ht
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -6,5 +6,4 @@ implementors["strfmt"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

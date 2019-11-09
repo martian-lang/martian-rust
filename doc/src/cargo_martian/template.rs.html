@@ -474,7 +474,7 @@ impl MartianMain for {stage} {open}
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_stage</span>(
     <span class="ident">stage_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
     <span class="ident">workspace_root</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>,
-    <span class="ident">pkg</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">pkg</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">main_only</span>: <span class="ident">bool</span>,
 ) {
     <span class="kw">let</span> <span class="ident">stage_name</span> <span class="op">=</span> <span class="ident">stage_name</span>.<span class="ident">as_ref</span>();
@@ -605,7 +605,7 @@ martian-derive = {git = &quot;https://github.com/martian-lang/martian-rust.git&q
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">contents</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
                 <span class="ident">f</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">contents</span>)
                     .<span class="ident">expect</span>(<span class="string">&quot;Could not read the main.rs file&quot;</span>);
-                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">contents</span> <span class="op">==</span> <span class="ident">DEFAULT_MAIN</span>);
+                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">contents</span> <span class="op">=</span><span class="op">=</span> <span class="ident">DEFAULT_MAIN</span>);
             }
 
             <span class="kw">let</span> <span class="ident">main_template</span> <span class="op">=</span> <span class="ident">strfmt</span>(<span class="ident">ADAPTER_MAIN_TEMPLATE</span>, <span class="kw-2">&amp;</span><span class="ident">vars</span>).<span class="ident">unwrap</span>();

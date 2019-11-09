@@ -9,5 +9,4 @@ implementors["thread_local"] = [{text:"impl&lt;'a, T:&nbsp;?<a class=\"trait\" h
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -225,7 +225,7 @@
     <span class="doccomment">/// The return type for the accept method</span>
     <span class="kw">type</span> <span class="ident">Output</span>;
     <span class="doccomment">/// Accept a serde::Deserializer and do whatever you want with it.</span>
-    <span class="kw">fn</span> <span class="ident">accept</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">accept</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="doccomment">/// An object that implements this trait can be passed a</span>
@@ -237,7 +237,7 @@
     <span class="doccomment">/// The return type for the accept method</span>
     <span class="kw">type</span> <span class="ident">Output</span>;
     <span class="doccomment">/// Accept a serde::Serializer and do whatever you want with it.</span>
-    <span class="kw">fn</span> <span class="ident">accept</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Serializer</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">accept</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Serializer</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="doccomment">/// Get a default configuration object.</span>
@@ -248,7 +248,7 @@
 <span class="doccomment">/// |------------|------------|</span>
 <span class="doccomment">/// | Unlimited  | Little     |</span>
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">config</span>() <span class="op">-&gt;</span> <span class="ident">Config</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">config</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Config</span> {
     <span class="ident">Config</span>::<span class="ident">new</span>()
 }
 
@@ -256,7 +256,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// If the serialization would take more bytes than allowed by the size limit, an error</span>
 <span class="doccomment">/// is returned and *no bytes* will be written into the `Writer`.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize_into</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize_into</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">W</span>: <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Serialize</span>,
@@ -265,7 +265,7 @@
 }
 
 <span class="doccomment">/// Serializes a serializable object into a `Vec` of bytes using the default configuration.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Serialize</span>,
 {
@@ -275,7 +275,7 @@
 <span class="doccomment">/// Deserializes an object directly from a `Read`er using the default configuration.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// If this returns an `Error`, `reader` may be in an invalid state.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">R</span>: <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Read</span>,
     <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
@@ -288,7 +288,7 @@
 <span class="doccomment">/// `BincodeRead` for performance reasons.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// If this returns an `Error`, `reader` may be in an invalid state.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from_custom</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_from_custom</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">R</span>: <span class="ident">de</span>::<span class="ident">read</span>::<span class="ident">BincodeRead</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
     <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
@@ -300,7 +300,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is part of the public API.</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_in_place</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">place</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_in_place</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">place</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">BincodeRead</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
@@ -309,7 +309,7 @@
 }
 
 <span class="doccomment">/// Deserializes a slice of bytes into an instance of `T` using the default configuration.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
 {
@@ -317,7 +317,7 @@
 }
 
 <span class="doccomment">/// Returns the size that an object would be if serialized using Bincode with the default configuration.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialized_size</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialized_size</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">serde</span>::<span class="ident">Serialize</span>,
 {
@@ -327,7 +327,7 @@
 <span class="doccomment">/// Executes the acceptor with a serde::Deserializer instance.</span>
 <span class="doccomment">/// NOT A PART OF THE STABLE PUBLIC API</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">DeserializerAcceptor</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">BincodeRead</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
@@ -338,7 +338,7 @@
 <span class="doccomment">/// Executes the acceptor with a serde::Serializer instance.</span>
 <span class="doccomment">/// NOT A PART OF THE STABLE PUBLIC API</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_serializer</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">W</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_serializer</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">W</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">acceptor</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">A</span>::<span class="ident">Output</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">SerializerAcceptor</span>,
     <span class="ident">W</span>: <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>,

@@ -1236,38 +1236,38 @@
 
 <span class="doccomment">/// Defines how an entity that denotes some part of the mro is displayed</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MroDisplay</span> {
-    <span class="kw">fn</span> <span class="ident">mro_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">match</span> <span class="ident">field_width</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">width</span>) <span class="op">=&gt;</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">width</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">min_width</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">min_width</span>();
                 <span class="macro">assert</span><span class="macro">!</span>(
-                    <span class="ident">width</span> <span class="op">&gt;=</span> <span class="ident">min_width</span>,
+                    <span class="ident">width</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">min_width</span>,
                     <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Need a minimum width of {}. Found {}&quot;</span>, <span class="ident">min_width</span>, <span class="ident">width</span>)
                 );
                 <span class="self">self</span>.<span class="ident">mro_string_with_width</span>(<span class="ident">width</span>)
             }
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">mro_string_no_width</span>(),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">mro_string_no_width</span>(),
         }
     }
-    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span>;
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span>;
-    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span>;
+    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>;
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span>;
+    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span>;
 }
 
 <span class="doccomment">/// A generic display impl for MroDisplay does not work due</span>
 <span class="doccomment">/// to conflicting blanket impl. This is a simple macro to</span>
 <span class="doccomment">/// write out the Display trait for MroDisplay</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">mro_display_to_display</span> {
-    (<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="kw">type</span> {
-            <span class="kw">fn</span> <span class="macro-nonterminal">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+            <span class="kw">fn</span> <span class="macro-nonterminal">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
                 <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mro_string_no_width</span>())
             }
         }
     };
-    (<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">width</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">width</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="kw">type</span> {
-            <span class="kw">fn</span> <span class="macro-nonterminal">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+            <span class="kw">fn</span> <span class="macro-nonterminal">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
                 <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mro_string_with_width</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">width</span>))
             }
         }
@@ -1275,11 +1275,11 @@
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">usize_field_len</span> {
-    () <span class="op">=&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    () <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
             <span class="self">self</span>.<span class="ident">mro_string_no_width</span>().<span class="ident">len</span>()
         }
-        <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+        <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
             <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">mro_string_no_width</span>();
             <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{value:&lt;width$}&quot;</span>, <span class="ident">value</span> <span class="op">=</span> <span class="ident">value</span>, <span class="ident">width</span> <span class="op">=</span> <span class="ident">field_width</span>)
         }
@@ -1300,15 +1300,15 @@
 
 <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">MartianPrimaryType</span> {
     <span class="macro">usize_field_len</span><span class="macro">!</span> {}
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">MartianPrimaryType</span>::<span class="ident">Int</span> <span class="op">=&gt;</span> <span class="string">&quot;int&quot;</span>,
-            <span class="ident">MartianPrimaryType</span>::<span class="ident">Float</span> <span class="op">=&gt;</span> <span class="string">&quot;float&quot;</span>,
-            <span class="ident">MartianPrimaryType</span>::<span class="ident">Str</span> <span class="op">=&gt;</span> <span class="string">&quot;string&quot;</span>,
-            <span class="ident">MartianPrimaryType</span>::<span class="ident">Bool</span> <span class="op">=&gt;</span> <span class="string">&quot;bool&quot;</span>,
-            <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span> <span class="op">=&gt;</span> <span class="string">&quot;map&quot;</span>,
-            <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span> <span class="op">=&gt;</span> <span class="string">&quot;path&quot;</span>,
-            <span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="kw-2">ref</span> <span class="ident">ext</span>) <span class="op">=&gt;</span> <span class="ident">ext</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">Int</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;int&quot;</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">Float</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;float&quot;</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">Str</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;string&quot;</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">Bool</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;bool&quot;</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;map&quot;</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;path&quot;</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="kw-2">ref</span> <span class="ident">ext</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ext</span>,
         };
         <span class="ident">value</span>.<span class="ident">to_string</span>()
     }
@@ -1316,15 +1316,15 @@
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">MartianPrimaryType</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">prim_ty</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="string">&quot;int&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Int</span>,
-            <span class="string">&quot;float&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Float</span>,
-            <span class="string">&quot;string&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Str</span>,
-            <span class="string">&quot;bool&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Bool</span>,
-            <span class="string">&quot;map&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span>,
-            <span class="string">&quot;path&quot;</span> <span class="op">=&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span>,
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(<span class="string">&quot;Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path]&quot;</span>, <span class="ident">s</span>)),
+            <span class="string">&quot;int&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Int</span>,
+            <span class="string">&quot;float&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Float</span>,
+            <span class="string">&quot;string&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Str</span>,
+            <span class="string">&quot;bool&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Bool</span>,
+            <span class="string">&quot;map&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span>,
+            <span class="string">&quot;path&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span>,
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(<span class="string">&quot;Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path]&quot;</span>, <span class="ident">s</span>)),
         };
         <span class="prelude-val">Ok</span>(<span class="ident">prim_ty</span>)
     }
@@ -1341,10 +1341,10 @@
 
 <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">MartianBlanketType</span> {
     <span class="macro">usize_field_len</span><span class="macro">!</span> {}
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">MartianBlanketType</span>::<span class="ident">Primary</span>(<span class="kw-2">ref</span> <span class="ident">primary</span>) <span class="op">=&gt;</span> <span class="ident">primary</span>.<span class="ident">to_string</span>(),
-            <span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="kw-2">ref</span> <span class="ident">primary</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}[]&quot;</span>, <span class="ident">primary</span>.<span class="ident">to_string</span>()),
+            <span class="ident">MartianBlanketType</span>::<span class="ident">Primary</span>(<span class="kw-2">ref</span> <span class="ident">primary</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">primary</span>.<span class="ident">to_string</span>(),
+            <span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="kw-2">ref</span> <span class="ident">primary</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}[]&quot;</span>, <span class="ident">primary</span>.<span class="ident">to_string</span>()),
         }
     }
 }
@@ -1352,7 +1352,7 @@
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">MartianBlanketType</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&quot;[]&quot;</span>) {
             <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">get</span>(<span class="number">0</span>..<span class="ident">s</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">2</span>).<span class="ident">unwrap</span>();
             <span class="prelude-val">Ok</span>(<span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="ident">MartianPrimaryType</span>::<span class="ident">from_str</span>(<span class="ident">t</span>)<span class="question-mark">?</span>))
@@ -1367,7 +1367,7 @@
 <span class="doccomment">/// A trait that tells you how to convert a Rust data type to a</span>
 <span class="doccomment">/// basic Martian type.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AsMartianPrimaryType</span> {
-    <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianPrimaryType</span>;
+    <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>;
 }
 
 <span class="doccomment">/// A trait that defines how to convert this Rust type into an `MartianBlanketType`.</span>
@@ -1380,14 +1380,14 @@
 <span class="doccomment">/// It is stringly recommended not to extend any types with this trait, instead</span>
 <span class="doccomment">/// use the `AsMartianPrimaryType` trait.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AsMartianBlanketType</span> {
-    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianBlanketType</span>;
+    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianBlanketType</span>;
 }
 
 <span class="doccomment">/// Macro for implementing `AsMartianPrimaryType` trait</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_primary_mro_type</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rust_type</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">mro_type</span>:<span class="ident">stmt</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rust_type</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">mro_type</span>:<span class="ident">stmt</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">impl</span> <span class="ident">AsMartianPrimaryType</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rust_type</span> {
-            <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianPrimaryType</span> {
+            <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">mro_type</span>
             }
         }
@@ -1416,32 +1416,32 @@
 <span class="macro">impl_primary_mro_type</span><span class="macro">!</span>(<span class="ident">PathBuf</span>, <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span>);
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsMartianPrimaryType</span><span class="op">&gt;</span> <span class="ident">AsMartianBlanketType</span> <span class="kw">for</span> <span class="ident">T</span> {
-    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianBlanketType</span> {
+    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianBlanketType</span> {
         <span class="ident">MartianBlanketType</span>::<span class="ident">Primary</span>(<span class="ident">T</span>::<span class="ident">as_martian_primary_type</span>())
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsMartianBlanketType</span><span class="op">&gt;</span> <span class="ident">AsMartianBlanketType</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianBlanketType</span> {
+    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianBlanketType</span> {
         <span class="comment">// Any variable can be `null` in Martian</span>
         <span class="ident">T</span>::<span class="ident">as_martian_blanket_type</span>()
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsMartianPrimaryType</span><span class="op">&gt;</span> <span class="ident">AsMartianBlanketType</span> <span class="kw">for</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianBlanketType</span> {
+    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianBlanketType</span> {
         <span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="ident">T</span>::<span class="ident">as_martian_primary_type</span>())
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">K</span>: <span class="ident">AsMartianPrimaryType</span>, <span class="ident">H</span><span class="op">&gt;</span> <span class="ident">AsMartianBlanketType</span> <span class="kw">for</span> <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">H</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianBlanketType</span> {
+    <span class="kw">fn</span> <span class="ident">as_martian_blanket_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianBlanketType</span> {
         <span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="ident">K</span>::<span class="ident">as_martian_primary_type</span>())
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">V</span>, <span class="ident">H</span><span class="op">&gt;</span> <span class="ident">AsMartianPrimaryType</span> <span class="kw">for</span> <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">V</span>, <span class="ident">H</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianPrimaryType</span> {
+    <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span> {
         <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span>
     }
 }
@@ -1471,14 +1471,14 @@
 
 <span class="doccomment">/// `field_width` will decide the length of the type column</span>
 <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">MroField</span> {
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{ty} {name}&quot;</span>, <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ty</span>.<span class="ident">to_string</span>(), <span class="ident">name</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>)
     }
-    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">ty</span>.<span class="ident">min_width</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="macro">format</span><span class="macro">!</span>(
             <span class="string">&quot;{ty} {name}&quot;</span>,
             <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ty</span>.<span class="ident">mro_string_with_width</span>(<span class="ident">field_width</span>),
@@ -1492,7 +1492,7 @@
 <span class="kw">impl</span> <span class="ident">MroField</span> {
     <span class="doccomment">/// Create a new `MroField` with the given name and type.</span>
     <span class="doccomment">/// The field has a default `retain = false`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">ty</span>: <span class="ident">MartianBlanketType</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">ty</span>: <span class="ident">MartianBlanketType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">field</span> <span class="op">=</span> <span class="ident">MroField</span> {
             <span class="ident">name</span>: <span class="ident">name</span>.<span class="ident">to_string</span>(),
             <span class="ident">ty</span>,
@@ -1503,7 +1503,7 @@
     }
     <span class="doccomment">/// Create a new `MroField` with the given name and type, with the</span>
     <span class="doccomment">/// `retain` field set to true</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">retained</span>(<span class="ident">name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">ty</span>: <span class="ident">MartianBlanketType</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">retained</span>(<span class="ident">name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">ty</span>: <span class="ident">MartianBlanketType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">field</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">name</span>, <span class="ident">ty</span>);
         <span class="ident">field</span>.<span class="ident">retain</span> <span class="op">=</span> <span class="bool-val">true</span>;
         <span class="ident">field</span>
@@ -1512,7 +1512,7 @@
     <span class="kw">fn</span> <span class="ident">verify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">token</span> <span class="kw">in</span> <span class="ident">MARTIAN_TOKENS</span>.<span class="ident">iter</span>() {
             <span class="macro">assert</span><span class="macro">!</span>(
-                <span class="self">self</span>.<span class="ident">name</span> <span class="op">!=</span> <span class="ident">token</span>,
+                <span class="self">self</span>.<span class="ident">name</span> <span class="op">!</span><span class="op">=</span> <span class="ident">token</span>,
                 <span class="string">&quot;Martian token {} cannot be used as field name&quot;</span>,
                 <span class="ident">token</span>
             );
@@ -1530,11 +1530,11 @@
 <span class="doccomment">/// TODO : Auto derive for structs with named fields if all the fields implement `AsMartianBlanketType`</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianStruct</span> {
     <span class="doccomment">/// How to convert this struct into a list of `MroField`s</span>
-    <span class="kw">fn</span> <span class="ident">mro_fields</span>() <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MroField</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">mro_fields</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MroField</span><span class="op">&gt;</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">MartianStruct</span> <span class="kw">for</span> <span class="ident">MartianVoid</span> {
-    <span class="kw">fn</span> <span class="ident">mro_fields</span>() <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MroField</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">mro_fields</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MroField</span><span class="op">&gt;</span> {
         <span class="ident">Vec</span>::<span class="ident">new</span>()
     }
 }
@@ -1546,10 +1546,10 @@
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Volatile</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">String</span>;
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="string">&quot;strict&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Volatile</span>::<span class="ident">Strict</span>),
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Expected strict for volatile, Found {}&quot;</span>, <span class="ident">s</span>)),
+            <span class="string">&quot;strict&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Volatile</span>::<span class="ident">Strict</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Expected strict for volatile, Found {}&quot;</span>, <span class="ident">s</span>)),
         }
     }
 }
@@ -1557,9 +1557,9 @@
 <span class="comment">// Maybe just need display?</span>
 <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">Volatile</span> {
     <span class="macro">usize_field_len</span><span class="macro">!</span> {}
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Volatile</span>::<span class="ident">Strict</span> <span class="op">=&gt;</span> <span class="string">&quot;strict&quot;</span>.<span class="ident">into</span>(),
+            <span class="ident">Volatile</span>::<span class="ident">Strict</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;strict&quot;</span>.<span class="ident">into</span>(),
         }
     }
 }
@@ -1568,7 +1568,7 @@
 
 <span class="kw">const</span> <span class="ident">TAB_WIDTH_FOR_MRO</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">mro_using</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">property</span>:<span class="ident">ident</span>: <span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>),<span class="kw-2">*</span>) <span class="op">=&gt;</span> {
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">property</span>:<span class="ident">ident</span>: <span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>),<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="doccomment">/// Stuff that comes in the `using` section of a stage definition</span>
         <span class="doccomment">///</span>
         <span class="doccomment">/// For example:</span>
@@ -1585,8 +1585,8 @@
 
         <span class="kw">impl</span> <span class="macro-nonterminal">MroUsing</span> {
             <span class="doccomment">/// If all fields as None, return False</span>
-            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">need_using</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-                <span class="op">!</span>($(<span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">property</span>.<span class="ident">is_none</span>())<span class="op">&amp;&amp;</span><span class="kw-2">*</span>)
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">need_using</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+                <span class="op">!</span>($(<span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">property</span>.<span class="ident">is_none</span>())<span class="kw-2">&amp;</span><span class="kw-2">&amp;</span><span class="kw-2">*</span>)
             }
         }
 
@@ -1595,7 +1595,7 @@
         <span class="doccomment">/// mem_gb = 1,</span>
         <span class="doccomment">/// ```</span>
         <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">MroUsing</span> {
-            <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+            <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">w</span> <span class="op">=</span> <span class="number">0</span>;
                 $(<span class="kw">if</span> <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">property</span>.<span class="ident">is_some</span>() {
                     <span class="ident">w</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(<span class="ident">w</span>, <span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">property</span>).<span class="ident">len</span>());
@@ -1603,11 +1603,11 @@
                 <span class="ident">w</span>
             }
 
-            <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+            <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
                 <span class="self">self</span>.<span class="ident">mro_string_with_width</span>(<span class="self">self</span>.<span class="ident">min_width</span>())
             }
 
-            <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+            <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
                 <span class="comment">// If every field is None, return empty String</span>
                 <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">need_using</span>() {
@@ -1641,7 +1641,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">InAndOut</span> {
-    <span class="kw">fn</span> <span class="ident">retain_field_names</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">retain_field_names</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">outputs</span>
             .<span class="ident">iter</span>()
             .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">field</span><span class="op">|</span> <span class="ident">field</span>.<span class="ident">retain</span>)
@@ -1651,7 +1651,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">InAndOut</span> {
-    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(
             <span class="self">self</span>.<span class="ident">inputs</span>
                 .<span class="ident">iter</span>()
@@ -1666,11 +1666,11 @@
         )
     }
 
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="self">self</span>.<span class="ident">mro_string_with_width</span>(<span class="self">self</span>.<span class="ident">min_width</span>())
     }
 
-    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
         <span class="kw">for</span> (<span class="ident">key</span>, <span class="ident">fields</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span>[(<span class="string">&quot;in&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inputs</span>), (<span class="string">&quot;out&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">outputs</span>)] {
             <span class="kw">for</span> <span class="ident">field</span> <span class="kw">in</span> <span class="kw-2">*</span><span class="ident">fields</span> {
@@ -1694,23 +1694,23 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FiletypeHeader</span>(<span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>);
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">MroField</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FiletypeHeader</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">MroField</span>) <span class="op">-&gt;</span> <span class="ident">FiletypeHeader</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">MroField</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FiletypeHeader</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">HashSet</span>::<span class="ident">new</span>();
         <span class="kw">match</span> <span class="ident">field</span>.<span class="ident">ty</span> {
-            <span class="ident">MartianBlanketType</span>::<span class="ident">Primary</span>(<span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="kw-2">ref</span> <span class="ident">ext</span>)) <span class="op">=&gt;</span> {
+            <span class="ident">MartianBlanketType</span>::<span class="ident">Primary</span>(<span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="kw-2">ref</span> <span class="ident">ext</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">result</span>.<span class="ident">insert</span>(<span class="ident">ext</span>.<span class="ident">to_string</span>());
             }
-            <span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="kw-2">ref</span> <span class="ident">ext</span>)) <span class="op">=&gt;</span> {
+            <span class="ident">MartianBlanketType</span>::<span class="ident">Array</span>(<span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="kw-2">ref</span> <span class="ident">ext</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">result</span>.<span class="ident">insert</span>(<span class="ident">ext</span>.<span class="ident">to_string</span>());
             }
-            <span class="kw">_</span> <span class="op">=&gt;</span> {}
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {}
         }
         <span class="ident">FiletypeHeader</span>(<span class="ident">result</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">InAndOut</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FiletypeHeader</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">in_out</span>: <span class="kw-2">&amp;</span><span class="ident">InAndOut</span>) <span class="op">-&gt;</span> <span class="ident">FiletypeHeader</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">in_out</span>: <span class="kw-2">&amp;</span><span class="ident">InAndOut</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FiletypeHeader</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">HashSet</span>::<span class="ident">new</span>();
         <span class="kw">for</span> <span class="ident">field</span> <span class="kw">in</span> <span class="ident">in_out</span>.<span class="ident">inputs</span>.<span class="ident">iter</span>().<span class="ident">chain</span>(<span class="ident">in_out</span>.<span class="ident">outputs</span>.<span class="ident">iter</span>()) {
             <span class="ident">result</span>.<span class="ident">extend</span>(<span class="ident">FiletypeHeader</span>::<span class="ident">from</span>(<span class="ident">field</span>).<span class="number">0</span>);
@@ -1720,7 +1720,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">StageMro</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FiletypeHeader</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">stage_mro</span>: <span class="kw-2">&amp;</span><span class="ident">StageMro</span>) <span class="op">-&gt;</span> <span class="ident">FiletypeHeader</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">stage_mro</span>: <span class="kw-2">&amp;</span><span class="ident">StageMro</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FiletypeHeader</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">FiletypeHeader</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">stage_mro</span>.<span class="ident">stage_in_out</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">chunk_in_out</span>) <span class="op">=</span> <span class="ident">stage_mro</span>.<span class="ident">chunk_in_out</span> {
             <span class="ident">result</span>.<span class="number">0</span>.<span class="ident">extend</span>(<span class="ident">FiletypeHeader</span>::<span class="ident">from</span>(<span class="ident">chunk_in_out</span>).<span class="number">0</span>)
@@ -1739,11 +1739,11 @@
 
 <span class="comment">// Just need display here</span>
 <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">FiletypeHeader</span> {
-    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="comment">// No configuration here</span>
         <span class="number">0</span>
     }
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
         <span class="kw">if</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="ident">result</span>;
@@ -1757,7 +1757,7 @@
         <span class="macro">writeln</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">result</span>).<span class="ident">unwrap</span>();
         <span class="ident">result</span>
     }
-    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="self">self</span>.<span class="ident">mro_string_no_width</span>()
     }
 }
@@ -1770,7 +1770,7 @@
 <span class="doccomment">/// #[make_mro] on MartianMain or MartianStage</span>
 <span class="doccomment">/// implementations if the associated types implement `MartianStruct`</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MroMaker</span> {
-    <span class="kw">fn</span> <span class="ident">stage_mro</span>(<span class="ident">adapter_name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">stage_key</span>: <span class="kw">impl</span> <span class="ident">ToString</span>) <span class="op">-&gt;</span> <span class="ident">StageMro</span> {
+    <span class="kw">fn</span> <span class="ident">stage_mro</span>(<span class="ident">adapter_name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">stage_key</span>: <span class="kw">impl</span> <span class="ident">ToString</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StageMro</span> {
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">StageMro</span> {
             <span class="ident">stage_name</span>: <span class="self">Self</span>::<span class="ident">stage_name</span>(),
             <span class="ident">adapter_name</span>: <span class="ident">adapter_name</span>.<span class="ident">to_string</span>(),
@@ -1782,15 +1782,15 @@
         <span class="ident">result</span>.<span class="ident">verify</span>();
         <span class="ident">result</span>
     }
-    <span class="kw">fn</span> <span class="ident">mro</span>(<span class="ident">adapter_name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">stage_key</span>: <span class="kw">impl</span> <span class="ident">ToString</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro</span>(<span class="ident">adapter_name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">stage_key</span>: <span class="kw">impl</span> <span class="ident">ToString</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">let</span> <span class="ident">stage_mro</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">stage_mro</span>(<span class="ident">adapter_name</span>, <span class="ident">stage_key</span>);
         <span class="kw">let</span> <span class="ident">filetype</span> <span class="op">=</span> <span class="ident">FiletypeHeader</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">stage_mro</span>);
         <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}{}&quot;</span>, <span class="ident">filetype</span>.<span class="ident">to_string</span>(), <span class="ident">stage_mro</span>.<span class="ident">to_string</span>())
     }
-    <span class="kw">fn</span> <span class="ident">stage_name</span>() <span class="op">-&gt;</span> <span class="ident">String</span>;
-    <span class="kw">fn</span> <span class="ident">stage_in_and_out</span>() <span class="op">-&gt;</span> <span class="ident">InAndOut</span>;
-    <span class="kw">fn</span> <span class="ident">chunk_in_and_out</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InAndOut</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">using_attributes</span>() <span class="op">-&gt;</span> <span class="ident">MroUsing</span>;
+    <span class="kw">fn</span> <span class="ident">stage_name</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span>;
+    <span class="kw">fn</span> <span class="ident">stage_in_and_out</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">InAndOut</span>;
+    <span class="kw">fn</span> <span class="ident">chunk_in_and_out</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InAndOut</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">using_attributes</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MroUsing</span>;
 }
 
 <span class="doccomment">/// All the data needed to create a stage definition mro.</span>
@@ -1805,14 +1805,14 @@
 }
 
 <span class="kw">impl</span> <span class="ident">MroDisplay</span> <span class="kw">for</span> <span class="ident">StageMro</span> {
-    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">min_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">0</span>
     }
-    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_no_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="self">self</span>.<span class="ident">mro_string_with_width</span>(<span class="self">self</span>.<span class="ident">min_width</span>())
     }
 
-    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">mro_string_with_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">field_width</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
         <span class="comment">// Determing the field width for the type field</span>
         <span class="kw">let</span> <span class="ident">ty_width</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(
@@ -1868,9 +1868,9 @@
 <span class="macro">mro_display_to_display</span><span class="macro">!</span> {<span class="ident">StageMro</span>, <span class="ident">TAB_WIDTH_FOR_MRO</span>}
 
 <span class="kw">impl</span> <span class="ident">StageMro</span> {
-    <span class="kw">fn</span> <span class="ident">minified_chunk_in_outs</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InAndOut</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">minified_chunk_in_outs</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InAndOut</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">chunk_in_out</span> {
-            <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">chunk_in_out</span>) <span class="op">=&gt;</span> {
+            <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">chunk_in_out</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">chunk_in</span> <span class="op">=</span> <span class="ident">chunk_in_out</span>.<span class="ident">inputs</span>.<span class="ident">clone</span>();
                 <span class="kw">let</span> <span class="ident">skip_names</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">self</span>
                     .<span class="ident">stage_in_out</span>
@@ -1889,7 +1889,7 @@
                     <span class="ident">outputs</span>: <span class="ident">chunk_out</span>,
                 })
             }
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
         }
     }
     <span class="kw">fn</span> <span class="ident">verify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
@@ -1908,7 +1908,7 @@
         <span class="kw">for</span> <span class="ident">f_chunk</span> <span class="kw">in</span> <span class="ident">chunk_in_out</span>.<span class="ident">inputs</span>.<span class="ident">iter</span>() {
             <span class="kw">for</span> <span class="ident">f_stage</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">stage_in_out</span>.<span class="ident">inputs</span>.<span class="ident">iter</span>() {
                 <span class="macro">assert</span><span class="macro">!</span>(
-                    <span class="op">!</span>(<span class="ident">f_chunk</span>.<span class="ident">name</span> <span class="op">==</span> <span class="ident">f_stage</span>.<span class="ident">name</span>),
+                    <span class="op">!</span>(<span class="ident">f_chunk</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="ident">f_stage</span>.<span class="ident">name</span>),
                     <span class="string">&quot;ERROR: Found identical field {} in stage and chunk inputs, which is not allowed&quot;</span>,
                     <span class="ident">f_chunk</span>.<span class="ident">name</span>
                 )
@@ -1920,9 +1920,9 @@
         <span class="comment">// O(mn) is good enough</span>
         <span class="kw">for</span> <span class="ident">f_chunk</span> <span class="kw">in</span> <span class="ident">chunk_in_out</span>.<span class="ident">outputs</span>.<span class="ident">iter</span>() {
             <span class="kw">for</span> <span class="ident">f_stage</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">stage_in_out</span>.<span class="ident">outputs</span>.<span class="ident">iter</span>() {
-                <span class="kw">if</span> <span class="ident">f_chunk</span>.<span class="ident">name</span> <span class="op">==</span> <span class="ident">f_stage</span>.<span class="ident">name</span> {
+                <span class="kw">if</span> <span class="ident">f_chunk</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="ident">f_stage</span>.<span class="ident">name</span> {
                     <span class="macro">assert</span><span class="macro">!</span>(
-                        <span class="ident">f_chunk</span>.<span class="ident">ty</span> <span class="op">==</span> <span class="ident">f_stage</span>.<span class="ident">ty</span>,
+                        <span class="ident">f_chunk</span>.<span class="ident">ty</span> <span class="op">=</span><span class="op">=</span> <span class="ident">f_stage</span>.<span class="ident">ty</span>,
                         <span class="string">&quot;ERROR: Found identical field {} in stage and chunk outputs, but it has type {} in stage outputs and type {} in chunk outputs.&quot;</span>,
                         <span class="ident">f_chunk</span>.<span class="ident">name</span>, <span class="ident">f_stage</span>.<span class="ident">ty</span>, <span class="ident">f_chunk</span>.<span class="ident">ty</span>,
                     )

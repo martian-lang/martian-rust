@@ -6,5 +6,4 @@ implementors["unicode_segmentation"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

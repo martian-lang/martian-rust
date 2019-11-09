@@ -7,5 +7,4 @@ implementors["martian"] = [{text:"impl <a class=\"trait\" href=\"failure/trait.F
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

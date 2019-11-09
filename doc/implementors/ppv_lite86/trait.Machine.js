@@ -6,5 +6,4 @@ implementors["ppv_lite86"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -470,6 +470,29 @@
 <span id="470">470</span>
 <span id="471">471</span>
 <span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This module defines a `JsonFile` and implements `FileTypeIO&lt;T&gt;` and</span>
@@ -551,9 +574,10 @@
 <span class="doccomment">//! }</span>
 <span class="doccomment">//! ```</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">FileTypeIO</span>, <span class="ident">LazyAgents</span>, <span class="ident">LazyRead</span>, <span class="ident">LazyWrite</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">FileStorage</span>, <span class="ident">FileTypeIO</span>, <span class="ident">LazyAgents</span>, <span class="ident">LazyRead</span>, <span class="ident">LazyWrite</span>};
 <span class="kw">use</span> <span class="ident">failure</span>::<span class="ident">format_err</span>;
 <span class="kw">use</span> <span class="ident">martian</span>::<span class="ident">Error</span>;
+<span class="kw">use</span> <span class="ident">martian</span>::<span class="ident">MartianFileType</span>;
 <span class="kw">use</span> <span class="ident">martian_derive</span>::<span class="ident">martian_filetype</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -561,24 +585,36 @@
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="ident">de</span>::{<span class="ident">IoRead</span>, <span class="ident">StreamDeserializer</span>};
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="ident">ser</span>::<span class="ident">PrettyFormatter</span>;
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="ident">Serializer</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Debug</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">File</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">BufReader</span>, <span class="ident">BufWriter</span>, <span class="ident">Read</span>, <span class="ident">Write</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
 
-<span class="macro">martian_filetype</span><span class="macro">!</span> {<span class="ident">JsonFile</span>, <span class="string">&quot;json&quot;</span>}
+<span class="macro">martian_filetype</span><span class="macro">!</span> {<span class="ident">Json</span>, <span class="string">&quot;json&quot;</span>}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Json</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> {}
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">JsonFile</span> <span class="op">=</span> <span class="ident">JsonFormat</span><span class="op">&lt;</span><span class="ident">Json</span><span class="op">&gt;</span>;
+
+<span class="kw">crate</span>::<span class="macro">martian_filetype_inner</span><span class="macro">!</span> {
+    <span class="doccomment">/// Json format</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">JsonFormat</span>, <span class="string">&quot;json&quot;</span>
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">JsonFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
 
 <span class="doccomment">/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`</span>
 <span class="doccomment">/// Any type `T` that can be serialized can be saved as a `JsonFile`.</span>
 <span class="doccomment">/// The saved JsonFile will be pretty formatted using 4 space indentation.</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">JsonFile</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">JsonFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
-    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">serde_json</span>::<span class="ident">from_reader</span>(<span class="ident">reader</span>)<span class="question-mark">?</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">formatter</span> <span class="op">=</span> <span class="ident">PrettyFormatter</span>::<span class="ident">with_indent</span>(<span class="string">b&quot;    &quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serializer</span> <span class="op">=</span> <span class="ident">Serializer</span>::<span class="ident">with_formatter</span>(<span class="ident">writer</span>, <span class="ident">formatter</span>);
         <span class="ident">item</span>.<span class="ident">serialize</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serializer</span>)<span class="question-mark">?</span>;
@@ -588,52 +624,57 @@
 
 <span class="doccomment">/// Iterator over individual items  within a json file that</span>
 <span class="doccomment">/// stores a list of items.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span> <span class="op">=</span> <span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;&gt;</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span> <span class="op">=</span> <span class="ident">Json</span>, <span class="ident">R</span> <span class="op">=</span> <span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
     <span class="ident">reader</span>: <span class="ident">R</span>,
-    <span class="ident">phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>,
+    <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">JsonFile</span>;
-    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">JsonFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">char_buf</span> <span class="op">=</span> [<span class="number">0u8</span>];
         <span class="ident">reader</span>.<span class="ident">read_exact</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">char_buf</span>)<span class="question-mark">?</span>;
         <span class="kw">match</span> <span class="ident">char_buf</span>[<span class="number">0</span>] {
-            <span class="string">b&#39;[&#39;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">LazyJsonReader</span> {
+            <span class="string">b&#39;[&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">LazyJsonReader</span> {
                 <span class="ident">reader</span>,
-                <span class="ident">phantom</span>: <span class="ident">PhantomData</span>,
+                <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span>,
+                <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span>,
             }),
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(
                 <span class="string">&quot;Lazy json reading is only supported if the json contains a list of items.&quot;</span>,
             )),
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">io_read</span> <span class="op">=</span> <span class="ident">IoRead</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">reader</span>);
         <span class="kw">match</span> <span class="ident">io_read</span>.<span class="ident">peek</span>() {
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">b</span>)) <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="ident">b</span> <span class="op">==</span> <span class="string">b&#39;,&#39;</span> {
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">b</span>)) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="kw">if</span> <span class="ident">b</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;,&#39;</span> {
                     <span class="ident">io_read</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
                 }
             }
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// TODO: Use context</span>
                 <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(
                     <span class="string">&quot;peek() failed within LazyJsonReader due to {}&quot;</span>,
@@ -644,18 +685,18 @@
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">StreamDeserializer</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">T</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="ident">io_read</span>);
         <span class="kw">match</span> <span class="ident">stream</span>.<span class="ident">next</span>() {
-            <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">t</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">t</span>)),
-            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) <span class="op">=&gt;</span> {
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">t</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">t</span>)),
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">match</span> <span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">by_ref</span>().<span class="ident">bytes</span>().<span class="ident">find</span>(<span class="op">|</span><span class="ident">byte</span><span class="op">|</span> {
                     <span class="ident">byte</span>.<span class="ident">as_ref</span>()
                         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="op">!</span><span class="ident">b</span>.<span class="ident">is_ascii_whitespace</span>())
                         .<span class="ident">unwrap_or</span>(<span class="bool-val">true</span>)
                 }) {
-                    <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>())), <span class="comment">// The reader is not done, this is an error</span>
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>, <span class="comment">// The reader is done. The error is due to the final ]</span>
+                    <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>())), <span class="comment">// The reader is not done, this is an error</span>
+                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>, <span class="comment">// The reader is done. The error is due to the final ]</span>
                 }
             }
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 }
@@ -668,42 +709,46 @@
 
 <span class="doccomment">/// Write items one by one to a json file that</span>
 <span class="doccomment">/// stores a list of items.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span> <span class="op">=</span> <span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;&gt;</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span> <span class="op">=</span> <span class="ident">Json</span>, <span class="ident">W</span> <span class="op">=</span> <span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
     <span class="ident">state</span>: <span class="ident">WriterState</span>,
     <span class="ident">writer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>,
     <span class="ident">buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    <span class="ident">phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>,
+    <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">JsonFile</span>;
-    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="ident">writer</span>: <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">JsonFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="ident">writer</span>: <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">LazyJsonWriter</span> {
             <span class="ident">state</span>: <span class="ident">WriterState</span>::<span class="ident">Start</span>,
             <span class="ident">writer</span>: <span class="prelude-val">Some</span>(<span class="ident">writer</span>),
             <span class="ident">buffer</span>: <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">1024</span>),
-            <span class="ident">phantom</span>: <span class="ident">PhantomData</span>,
+            <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span>,
+            <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span>,
         })
     }
-    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">writer</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">writer</span>.<span class="ident">as_mut</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">w</span>) <span class="op">=&gt;</span> <span class="ident">w</span>,
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="prelude-val">Some</span>(<span class="ident">w</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">w</span>,
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
         };
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">state</span> {
-            <span class="ident">WriterState</span>::<span class="ident">Start</span> <span class="op">=&gt;</span> {
+            <span class="ident">WriterState</span>::<span class="ident">Start</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="string">b&quot;[&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">WriterState</span>::<span class="ident">Scribe</span>;
             }
-            <span class="ident">WriterState</span>::<span class="ident">Scribe</span> <span class="op">=&gt;</span> <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="string">b&quot;,&quot;</span>)<span class="question-mark">?</span>,
+            <span class="ident">WriterState</span>::<span class="ident">Scribe</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="string">b&quot;,&quot;</span>)<span class="question-mark">?</span>,
         }
         <span class="self">self</span>.<span class="ident">buffer</span>.<span class="ident">clear</span>();
         <span class="kw">let</span> <span class="ident">formatter</span> <span class="op">=</span> <span class="ident">PrettyFormatter</span>::<span class="ident">with_indent</span>(<span class="string">b&quot;    &quot;</span>);
@@ -718,32 +763,34 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">writer</span>.<span class="ident">take</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">w</span>) <span class="op">=&gt;</span> <span class="ident">w</span>,
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="prelude-val">Some</span>(<span class="ident">w</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">w</span>,
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
         };
         <span class="self">self</span>.<span class="ident">writer</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">state</span> {
-            <span class="ident">WriterState</span>::<span class="ident">Start</span> <span class="op">=&gt;</span> <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="string">b&quot;[]&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">WriterState</span>::<span class="ident">Scribe</span> <span class="op">=&gt;</span> <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="string">&quot;\n]&quot;</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>,
+            <span class="ident">WriterState</span>::<span class="ident">Start</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="string">b&quot;[]&quot;</span>)<span class="question-mark">?</span>,
+            <span class="ident">WriterState</span>::<span class="ident">Scribe</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="string">&quot;\n]&quot;</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(<span class="ident">writer</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">JsonFile</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">JsonFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
-    <span class="kw">type</span> <span class="ident">LazyWriter</span> <span class="op">=</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">LazyReader</span> <span class="op">=</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">LazyWriter</span> <span class="op">=</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">LazyReader</span> <span class="op">=</span> <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>;
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">LazyJsonWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
@@ -782,7 +829,7 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_json_file</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_json_file</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">barcodes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;AAAA&quot;</span>.<span class="ident">into</span>(), <span class="string">&quot;AACC&quot;</span>.<span class="ident">into</span>(), <span class="string">&quot;AAGG&quot;</span>.<span class="ident">into</span>()];
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">bc_json</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;barcodes&quot;</span>);
@@ -852,7 +899,7 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_json_lazy_read_not_vec</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_json_lazy_read_not_vec</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;lazy_test&quot;</span>);
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;Hello&quot;</span>);
@@ -862,7 +909,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">serde_lazy_roundtrip_check</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">serde_lazy_roundtrip_check</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> <span class="op">+</span> <span class="ident">PartialEq</span>,
     {
@@ -871,19 +918,19 @@
         <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;serde&quot;</span>);
         <span class="ident">serde_json</span>::<span class="ident">to_writer</span>(<span class="ident">json_file</span>.<span class="ident">buf_writer</span>()<span class="question-mark">?</span>, <span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">json_file</span>.<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">unwrap</span>()).<span class="ident">collect</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">input</span> <span class="op">=</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>);
 
         <span class="comment">// Serde write pretty + lazy read</span>
         <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;serde_pretty&quot;</span>);
         <span class="ident">serde_json</span>::<span class="ident">to_writer_pretty</span>(<span class="ident">json_file</span>.<span class="ident">buf_writer</span>()<span class="question-mark">?</span>, <span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">json_file</span>.<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">unwrap</span>()).<span class="ident">collect</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">input</span> <span class="op">=</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>);
 
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_json_lazy_read_serde_write</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_json_lazy_read_serde_write</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;lazy_test&quot;</span>);
         {
@@ -903,10 +950,10 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_json_lazy_write</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_json_lazy_write</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;lazy_write&quot;</span>);
-        <span class="kw">let</span> <span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">10</span>).<span class="ident">into_iter</span>().<span class="ident">collect</span>();
+        <span class="kw">let</span> <span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">10</span>).<span class="ident">collect</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">json_file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">input</span> {
@@ -925,8 +972,7 @@
     <span class="kw">fn</span> <span class="ident">test_json_lazy_write_no_finish</span>() {
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;lazy_write&quot;</span>);
-        <span class="kw">let</span> <span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">10</span>).<span class="ident">into_iter</span>().<span class="ident">collect</span>();
-
+        <span class="kw">let</span> <span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">10</span>).<span class="ident">collect</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">json_file</span>.<span class="ident">lazy_writer</span>().<span class="ident">unwrap</span>();
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">input</span> {
             <span class="ident">writer</span>.<span class="ident">write_item</span>(<span class="ident">i</span>).<span class="ident">unwrap</span>();

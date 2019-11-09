@@ -13,7 +13,7 @@ for a stage and also defines the types that exist in the martian world</p>
 </td></tr><tr class='module-item'><td><a class="macro" href="macro.martian_stages.html" title='martian::martian_stages macro'>martian_stages</a></td><td class='docblock-short'><p>Create a stage and mro registry from a list of stage struct inputs.</p>
 </td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table><tr class='module-item'><td><a class="struct" href="struct.Error.html" title='martian::Error struct'>Error</a></td><td class='docblock-short'><p>The <code>Error</code> type, which can contain any failure.</p>
-</td></tr><tr class='module-item'><td><a class="struct" href="struct.MartianRover.html" title='martian::MartianRover struct'>MartianRover</a></td><td class='docblock-short'><p>A struct that knows about the files directory associated with the
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.JobInfo.html" title='martian::JobInfo struct'>JobInfo</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.MartianRover.html" title='martian::MartianRover struct'>MartianRover</a></td><td class='docblock-short'><p>A struct that knows about the files directory associated with the
 martian run as well as the actual resources available for you.</p>
 </td></tr><tr class='module-item'><td><a class="struct" href="struct.MartianVoid.html" title='martian::MartianVoid struct'>MartianVoid</a></td><td class='docblock-short'><p>A struct which needs to be used as one of the associated types in <code>MartianMain</code> or
 <code>MartianStage</code> if it is empty. For example, a stage with no chunk inputs, would
@@ -25,7 +25,7 @@ along with the join resource. This needs to be constructed
 in the <code>split()</code> function, so that martian can create chunks
 appropriately and set resource reservations for <code>main()</code> and
 <code>join()</code></p>
-</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Version.html" title='martian::Version struct'>Version</a></td><td class='docblock-short'></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table><tr class='module-item'><td><a class="enum" href="enum.LevelFilter.html" title='martian::LevelFilter enum'>LevelFilter</a></td><td class='docblock-short'><p>An enum representing the available verbosity level filters of the logger.</p>
 </td></tr><tr class='module-item'><td><a class="enum" href="enum.StageError.html" title='martian::StageError enum'>StageError</a></td><td class='docblock-short'><p>Ways a stage can fail.</p>
 </td></tr><tr class='module-item'><td><a class="enum" href="enum.StageKind.html" title='martian::StageKind enum'>StageKind</a></td><td class='docblock-short'><p>Two different kinds of marian stages. <code>MainOnly</code> stages only have a

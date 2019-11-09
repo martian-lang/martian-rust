@@ -6,5 +6,4 @@ implementors["serde_json"] = [{text:"impl&lt;'a, W, F&gt; <a class=\"trait\" hre
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

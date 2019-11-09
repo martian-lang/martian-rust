@@ -121,13 +121,13 @@
 <span id="121">121</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">fmtint</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ($(
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> ($(
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_comparisons</span>)]</span>
         <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-            <span class="kw">pub</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">x</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">x</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">ty</span>() {
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="string">&#39; &#39;</span>,
-                    <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> <span class="ident">c</span>,
+                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39; &#39;</span>,
+                    <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">c</span>,
                 };
 
                 <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">is_int_type</span>() {
@@ -136,7 +136,7 @@
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError</span>::<span class="ident">TypeError</span>(<span class="ident">msg</span>));
                 }
 
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">precision</span>() <span class="op">!=</span> <span class="prelude-val">None</span> {
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">precision</span>() <span class="op">!</span><span class="op">=</span> <span class="prelude-val">None</span> {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError</span>::<span class="ident">TypeError</span>(<span class="string">&quot;precision not allowed for integers&quot;</span>.<span class="ident">to_string</span>()));
                 }
 
@@ -144,22 +144,22 @@
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError</span>::<span class="ident">Invalid</span>(<span class="string">&quot;thousands specifier not yet supported&quot;</span>.<span class="ident">to_string</span>()));
                 }
 
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">fill</span>() <span class="op">==</span> <span class="string">&#39;0&#39;</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">align</span>() <span class="op">==</span> <span class="ident">Alignment</span>::<span class="ident">Right</span> {
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">fill</span>() <span class="op">=</span><span class="op">=</span> <span class="string">&#39;0&#39;</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">align</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Alignment</span>::<span class="ident">Right</span> {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError</span>::<span class="ident">Invalid</span>(<span class="string">&quot;sign aware 0 padding not yet supported&quot;</span>.<span class="ident">to_string</span>()));
                 }
 
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
 
-                <span class="kw">if</span> <span class="ident">x</span> <span class="op">&gt;=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">sign_plus</span>() {
+                <span class="kw">if</span> <span class="ident">x</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">sign_plus</span>() {
                     <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;+&quot;</span>).<span class="ident">unwrap</span>();
                 }
 
                 <span class="kw">if</span> <span class="self">self</span>.<span class="ident">alternate</span>() {
                     <span class="kw">match</span> <span class="ident">ty</span> {
-                        <span class="string">&#39;b&#39;</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;0b&quot;</span>).<span class="ident">unwrap</span>(),
-                        <span class="string">&#39;o&#39;</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;0o&quot;</span>).<span class="ident">unwrap</span>(),
-                        <span class="string">&#39;x&#39;</span> <span class="op">|</span> <span class="string">&#39;X&#39;</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;0x&quot;</span>).<span class="ident">unwrap</span>(),
-                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                        <span class="string">&#39;b&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;0b&quot;</span>).<span class="ident">unwrap</span>(),
+                        <span class="string">&#39;o&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;0o&quot;</span>).<span class="ident">unwrap</span>(),
+                        <span class="string">&#39;x&#39;</span> <span class="op">|</span> <span class="string">&#39;X&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;0x&quot;</span>).<span class="ident">unwrap</span>(),
+                        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">msg</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
                             <span class="macro">write</span><span class="macro">!</span>(<span class="ident">msg</span>, <span class="string">&quot;alternate (&#39;#&#39;) cannot be used with type {:?}&quot;</span>, <span class="ident">ty</span>).<span class="ident">unwrap</span>();
                             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError</span>::<span class="ident">Invalid</span>(<span class="ident">msg</span>));
@@ -168,12 +168,12 @@
                 }
 
                 <span class="kw">match</span> <span class="ident">ty</span> {
-                    <span class="string">&#39; &#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                    <span class="string">&#39;b&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:b}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                    <span class="string">&#39;o&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:o}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                    <span class="string">&#39;x&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:x}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                    <span class="string">&#39;X&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:X}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="string">&#39; &#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                    <span class="string">&#39;b&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:b}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                    <span class="string">&#39;o&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:o}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                    <span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:x}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                    <span class="string">&#39;X&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:X}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                 }
 
                 <span class="self">self</span>.<span class="ident">str_unchecked</span>(<span class="ident">s</span>.<span class="ident">as_str</span>())
@@ -182,12 +182,12 @@
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">fmtfloat</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ($(
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> ($(
         <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-            <span class="kw">pub</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">x</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">x</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">ty</span>() {
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="string">&#39;f&#39;</span>,
-                    <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> <span class="ident">c</span>,
+                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;f&#39;</span>,
+                    <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">c</span>,
                 };
 
                 <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">is_float_type</span>() {
@@ -204,31 +204,31 @@
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError</span>::<span class="ident">Invalid</span>(<span class="string">&quot;thousands specifier not yet supported&quot;</span>.<span class="ident">to_string</span>()));
                 }
 
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">fill</span>() <span class="op">==</span> <span class="string">&#39;0&#39;</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">align</span>() <span class="op">==</span> <span class="ident">Alignment</span>::<span class="ident">Right</span> {
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">fill</span>() <span class="op">=</span><span class="op">=</span> <span class="string">&#39;0&#39;</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">align</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Alignment</span>::<span class="ident">Right</span> {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError</span>::<span class="ident">Invalid</span>(<span class="string">&quot;sign aware 0 padding not yet supported&quot;</span>.<span class="ident">to_string</span>()));
                 }
 
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
 
-                <span class="kw">if</span> <span class="ident">x</span> <span class="op">&gt;=</span> (<span class="number">0</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>) <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">sign_plus</span>() {
+                <span class="kw">if</span> <span class="ident">x</span> <span class="op">&gt;</span><span class="op">=</span> (<span class="number">0</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">sign_plus</span>() {
                     <span class="self">self</span>.<span class="ident">write_str</span>(<span class="string">&quot;+&quot;</span>).<span class="ident">unwrap</span>();
                 }
 
                 <span class="kw">match</span> <span class="self">self</span>.<span class="ident">precision</span>() {
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">match</span> <span class="ident">ty</span> {
-                            <span class="string">&#39;f&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                            <span class="string">&#39;e&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:e}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                            <span class="string">&#39;E&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:E}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                            <span class="string">&#39;f&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                            <span class="string">&#39;e&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:e}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                            <span class="string">&#39;E&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:E}&quot;</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                         }
                     }
-                    <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=&gt;</span> {
+                    <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">match</span> <span class="ident">ty</span> {
-                            <span class="string">&#39;f&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:.*}&quot;</span>, <span class="ident">p</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                            <span class="string">&#39;e&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:.*e}&quot;</span>, <span class="ident">p</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                            <span class="string">&#39;E&#39;</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:.*E}&quot;</span>, <span class="ident">p</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
-                            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                            <span class="string">&#39;f&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:.*}&quot;</span>, <span class="ident">p</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                            <span class="string">&#39;e&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:.*e}&quot;</span>, <span class="ident">p</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                            <span class="string">&#39;E&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;{:.*E}&quot;</span>, <span class="ident">p</span>, <span class="ident">x</span>).<span class="ident">unwrap</span>(),
+                            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                         }
                     }
                 }

@@ -9,5 +9,4 @@ implementors["serde_json"] = [{text:"impl <a class=\"trait\" href=\"serde/de/tra
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

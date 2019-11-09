@@ -6,5 +6,4 @@ implementors["martian_filetypes"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

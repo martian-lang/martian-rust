@@ -425,56 +425,6 @@
 <span id="425">425</span>
 <span id="426">426</span>
 <span id="427">427</span>
-<span id="428">428</span>
-<span id="429">429</span>
-<span id="430">430</span>
-<span id="431">431</span>
-<span id="432">432</span>
-<span id="433">433</span>
-<span id="434">434</span>
-<span id="435">435</span>
-<span id="436">436</span>
-<span id="437">437</span>
-<span id="438">438</span>
-<span id="439">439</span>
-<span id="440">440</span>
-<span id="441">441</span>
-<span id="442">442</span>
-<span id="443">443</span>
-<span id="444">444</span>
-<span id="445">445</span>
-<span id="446">446</span>
-<span id="447">447</span>
-<span id="448">448</span>
-<span id="449">449</span>
-<span id="450">450</span>
-<span id="451">451</span>
-<span id="452">452</span>
-<span id="453">453</span>
-<span id="454">454</span>
-<span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
-<span id="458">458</span>
-<span id="459">459</span>
-<span id="460">460</span>
-<span id="461">461</span>
-<span id="462">462</span>
-<span id="463">463</span>
-<span id="464">464</span>
-<span id="465">465</span>
-<span id="466">466</span>
-<span id="467">467</span>
-<span id="468">468</span>
-<span id="469">469</span>
-<span id="470">470</span>
-<span id="471">471</span>
-<span id="472">472</span>
-<span id="473">473</span>
-<span id="474">474</span>
-<span id="475">475</span>
-<span id="476">476</span>
-<span id="477">477</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This module defines an `lz4` wrapper over other basic filetypes. Most basic</span>
@@ -567,101 +517,21 @@
 <span class="doccomment">//! }</span>
 <span class="doccomment">//! ```</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ErrorContext</span>, <span class="ident">FileTypeIO</span>, <span class="ident">LazyAgents</span>, <span class="ident">LazyRead</span>, <span class="ident">LazyWrite</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">martian_filetype_inner</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ErrorContext</span>, <span class="ident">FileStorage</span>, <span class="ident">FileTypeIO</span>, <span class="ident">LazyAgents</span>, <span class="ident">LazyRead</span>, <span class="ident">LazyWrite</span>};
 <span class="kw">use</span> <span class="ident">failure</span>::<span class="ident">ResultExt</span>;
-<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">AsMartianPrimaryType</span>, <span class="ident">Error</span>, <span class="ident">MartianFileType</span>, <span class="ident">MartianPrimaryType</span>};
+<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">Error</span>, <span class="ident">MartianFileType</span>};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">From</span>;
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
-<span class="doccomment">/// A struct that wraps a basic `MartianFileType` and adds lz4 compression</span>
-<span class="doccomment">/// capability.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="comment">// The following attribute ensures that the struct will serialize into a</span>
-<span class="comment">// String like a PathBuf would.</span>
-<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-{
-    <span class="comment">// Skip [de]serializing the inner</span>
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">skip</span>)]</span>
-    <span class="ident">inner</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>,
-    <span class="ident">path</span>: <span class="ident">PathBuf</span>,
-}
-
-<span class="comment">// Cannot use the `martian_filetype` macro here because we are wrapping</span>
-<span class="comment">// a generic type.</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">MartianFileType</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-{
-    <span class="kw">fn</span> <span class="ident">extension</span>() <span class="op">-&gt;</span> <span class="ident">String</span> {
-        <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}.lz4&quot;</span>, <span class="ident">F</span>::<span class="ident">extension</span>())
-    }
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">file_name_str</span> <span class="op">=</span> <span class="ident">file_name</span>.<span class="ident">as_ref</span>().<span class="ident">to_string_lossy</span>();
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="ident">file_path</span>.<span class="ident">as_ref</span>());
-        <span class="ident">path</span>.<span class="ident">push</span>(<span class="ident">file_name</span>.<span class="ident">as_ref</span>());
-
-        <span class="kw">let</span> <span class="ident">lz4_ext</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;.{}&quot;</span>, <span class="self">Self</span>::<span class="ident">extension</span>());
-        <span class="kw">let</span> <span class="ident">inner_ext</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;.{}&quot;</span>, <span class="ident">F</span>::<span class="ident">extension</span>());
-
-        <span class="kw">if</span> <span class="ident">file_name_str</span>.<span class="ident">ends_with</span>(<span class="kw-2">&amp;</span><span class="ident">lz4_ext</span>) {
-            <span class="comment">// The file already has the correct extension</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">file_name_str</span>.<span class="ident">ends_with</span>(<span class="kw-2">&amp;</span><span class="ident">inner_ext</span>) {
-            <span class="ident">path</span>.<span class="ident">set_extension</span>(<span class="self">Self</span>::<span class="ident">extension</span>());
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">full_extension</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">path</span>.<span class="ident">extension</span>() {
-                <span class="prelude-val">Some</span>(<span class="ident">ext</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}.{}&quot;</span>, <span class="ident">ext</span>.<span class="ident">to_string_lossy</span>(), <span class="self">Self</span>::<span class="ident">extension</span>()),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="self">Self</span>::<span class="ident">extension</span>(),
-            };
-            <span class="ident">path</span>.<span class="ident">set_extension</span>(<span class="ident">full_extension</span>);
-        }
-
-        <span class="ident">Lz4</span> {
-            <span class="ident">inner</span>: <span class="ident">PhantomData</span>,
-            <span class="ident">path</span>,
-        }
-    }
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-{
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span> {
-        <span class="self">self</span>.<span class="ident">path</span>.<span class="ident">as_ref</span>()
-    }
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">P</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">PathBuf</span>: <span class="ident">From</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span>,
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-{
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">source</span>: <span class="ident">P</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">path_buf</span> <span class="op">=</span> <span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="ident">source</span>);
-        <span class="kw">let</span> <span class="ident">file_name</span> <span class="op">=</span> <span class="ident">path_buf</span>.<span class="ident">file_name</span>().<span class="ident">unwrap</span>();
-        <span class="kw">match</span> <span class="ident">path_buf</span>.<span class="ident">parent</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">path</span>) <span class="op">=&gt;</span> <span class="ident">MartianFileType</span>::<span class="ident">new</span>(<span class="ident">path</span>, <span class="ident">file_name</span>),
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="ident">MartianFileType</span>::<span class="ident">new</span>(<span class="string">&quot;&quot;</span>, <span class="ident">file_name</span>),
-        }
-    }
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">AsMartianPrimaryType</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-{
-    <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-&gt;</span> <span class="ident">MartianPrimaryType</span> {
-        <span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="self">Self</span>::<span class="ident">extension</span>())
-    }
+<span class="macro">martian_filetype_inner</span><span class="macro">!</span> {
+    <span class="doccomment">/// A struct that wraps a basic `MartianFileType` and adds lz4 compression</span>
+    <span class="doccomment">/// capability.</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Lz4</span>, <span class="string">&quot;lz4&quot;</span>
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
@@ -674,33 +544,35 @@
     <span class="doccomment">/// let lz4_bin_file = Lz4::from_filetype(BincodeFile::from(&quot;example&quot;));</span>
     <span class="doccomment">/// assert_eq!(lz4_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.lz4&quot;));</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_filetype</span>(<span class="ident">source</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_filetype</span>(<span class="ident">source</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">from</span>(<span class="ident">source</span>.<span class="ident">as_ref</span>())
     }
 }
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 {
-    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">lz4</span>::<span class="ident">Decoder</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">buf_reader</span>()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>::<span class="ident">read_from</span>(<span class="ident">decoder</span>)
+        <span class="prelude-val">Ok</span>(<span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">read_from</span>(<span class="ident">decoder</span>)
             .<span class="ident">with_context</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">ErrorContext</span>::<span class="ident">ReadContext</span>(<span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>(), <span class="ident">e</span>.<span class="ident">to_string</span>()))<span class="question-mark">?</span>)
     }
-    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>::<span class="ident">read_from</span>(<span class="ident">reader</span>)
+    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">read_from</span>(<span class="ident">reader</span>)
     }
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="comment">// Default compression level and configuration</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">lz4</span>::<span class="ident">EncoderBuilder</span>::<span class="ident">new</span>().<span class="ident">build</span>(<span class="self">self</span>.<span class="ident">buf_writer</span>()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
-        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>::<span class="ident">write_into</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">encoder</span>, <span class="ident">item</span>)
+        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">write_into</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">encoder</span>, <span class="ident">item</span>)
             .<span class="ident">with_context</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">ErrorContext</span>::<span class="ident">WriteContext</span>(<span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>(), <span class="ident">e</span>.<span class="ident">to_string</span>()))<span class="question-mark">?</span>;
         <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">result</span>) <span class="op">=</span> <span class="ident">encoder</span>.<span class="ident">finish</span>();
         <span class="prelude-val">Ok</span>(<span class="ident">result</span><span class="question-mark">?</span>)
     }
-    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>::<span class="ident">write_into</span>(<span class="ident">writer</span>, <span class="ident">item</span>)
+    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">write_into</span>(<span class="ident">writer</span>, <span class="ident">item</span>)
     }
 }
 
@@ -708,7 +580,7 @@
 <span class="doccomment">/// Implements `LazyWrite` trait.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
 {
     <span class="ident">inner</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">L</span><span class="op">&gt;</span>,
@@ -717,11 +589,11 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
 {
     <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">L</span>::<span class="ident">FileType</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="ident">writer</span>: <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="ident">writer</span>: <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">lz4</span>::<span class="ident">EncoderBuilder</span>::<span class="ident">new</span>().<span class="ident">build</span>(<span class="ident">writer</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">L</span>::<span class="ident">with_writer</span>(<span class="ident">encoder</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">LazyLz4Writer</span> {
@@ -730,17 +602,17 @@
         })
     }
 
-    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_mut</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">write_item</span>(<span class="ident">item</span>),
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="prelude-val">Some</span>(<span class="ident">inner</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">inner</span>.<span class="ident">write_item</span>(<span class="ident">item</span>),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">take</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">inn</span>) <span class="op">=&gt;</span> <span class="ident">inn</span>,
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="prelude-val">Some</span>(<span class="ident">inn</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">inn</span>,
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
         };
         <span class="kw">let</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> (<span class="ident">writer</span>, <span class="ident">result</span>) <span class="op">=</span> <span class="ident">encoder</span>.<span class="ident">finish</span>(); <span class="comment">// weird API. Why not just return Result&lt;W&gt;?</span>
@@ -751,7 +623,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
 {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
@@ -772,7 +644,7 @@
 <span class="doccomment">/// stores a list of items.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
 {
     <span class="ident">inner</span>: <span class="ident">L</span>,
@@ -781,11 +653,11 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
 {
     <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">L</span>::<span class="ident">FileType</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">lz4</span>::<span class="ident">Decoder</span>::<span class="ident">new</span>(<span class="ident">reader</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">L</span>::<span class="ident">with_reader</span>(<span class="ident">decoder</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">LazyLz4Reader</span> {
@@ -797,11 +669,11 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
 {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">next</span>()
     }
 }
@@ -810,7 +682,7 @@
 <span class="kw">where</span>
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">F</span>: <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>, <span class="ident">lz4</span>::<span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">LazyWriter</span> <span class="op">=</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">LazyWriter</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>;
     <span class="kw">type</span> <span class="ident">LazyReader</span> <span class="op">=</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">LazyReader</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>;
@@ -821,7 +693,10 @@
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">json_file</span>::<span class="ident">JsonFile</span>;
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">LazyFileTypeIO</span>;
-    <span class="kw">use</span> <span class="ident">martian</span>::<span class="ident">MartianFileType</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+
+    <span class="ident">martian_derive</span>::<span class="macro">martian_filetype</span><span class="macro">!</span> {<span class="ident">CompoundFile</span>, <span class="string">&quot;foo.bar&quot;</span>}
+
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_lz4_new</span>() {
         <span class="macro">assert_eq</span><span class="macro">!</span>(
@@ -871,6 +746,27 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_lz4_compound_extension</span>() {
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span>::<span class="ident">extension</span>(), <span class="string">&quot;foo.bar.lz4&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>).<span class="ident">as_ref</span>(),
+            <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo&quot;</span>).<span class="ident">as_ref</span>(),
+            <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo.bar&quot;</span>).<span class="ident">as_ref</span>(),
+            <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo.bar.lz4&quot;</span>).<span class="ident">as_ref</span>(),
+            <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_lz4_from</span>() {
         <span class="macro">assert_eq</span><span class="macro">!</span>(
             <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
@@ -892,6 +788,10 @@
             <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
             <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span>::<span class="ident">from</span>(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
         );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp.json&quot;</span>),
+            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span>::<span class="ident">from</span>(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -908,7 +808,7 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_json_lz4_lazy_write</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_json_lz4_lazy_write</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile</span>::<span class="ident">new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;file&quot;</span>);
         <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">Lz4</span>::<span class="ident">from_filetype</span>(<span class="ident">json_file</span>);

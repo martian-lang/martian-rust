@@ -42,7 +42,7 @@ need to be replaced with <code>(&amp;distr).sample_iter(...)</code> to borrow or
 <span class="comment">// Dice-rolling:</span>
 <span class="kw">let</span> <span class="ident">die_range</span> <span class="op">=</span> <span class="ident">Uniform</span>::<span class="ident">new_inclusive</span>(<span class="number">1</span>, <span class="number">6</span>);
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">roll_die</span> <span class="op">=</span> <span class="ident">die_range</span>.<span class="ident">sample_iter</span>(<span class="ident">rng</span>);
-<span class="kw">while</span> <span class="ident">roll_die</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>() <span class="op">!=</span> <span class="number">6</span> {
+<span class="kw">while</span> <span class="ident">roll_die</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>() <span class="op">!</span><span class="op">=</span> <span class="number">6</span> {
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Not a 6; rolling again!&quot;</span>);
 }</pre></div>
 </div></div><span class='loading-content'>Loading content...</span>

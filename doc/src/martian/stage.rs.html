@@ -634,7 +634,18 @@
 <span id="634">634</span>
 <span id="635">635</span>
 <span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">metadata</span>::<span class="ident">Version</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">mro</span>::{<span class="ident">MartianStruct</span>, <span class="ident">MroMaker</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">utils</span>::{<span class="ident">obj_decode</span>, <span class="ident">obj_encode</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">Metadata</span>;
@@ -658,10 +669,10 @@
 <span class="doccomment">/// A `MatianFiletype` is associated with a file of know non-empty</span>
 <span class="doccomment">/// extension. This encodes the concept of a `filepath` in martian.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianFileType</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">extension</span>() <span class="op">-&gt;</span> <span class="ident">String</span>;
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">extension</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span>;
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
     <span class="doccomment">/// This function will create a file if it does not exist, and will truncate it if it does.</span>
-    <span class="kw">fn</span> <span class="ident">buf_writer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">buf_writer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">BufWriter</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">create</span>(<span class="self">self</span>.<span class="ident">as_ref</span>()).<span class="ident">with_context</span>(
             <span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
                 <span class="macro">format</span><span class="macro">!</span>(
@@ -672,7 +683,7 @@
             },
         )<span class="question-mark">?</span>))
     }
-    <span class="kw">fn</span> <span class="ident">buf_reader</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">buf_reader</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">BufReader</span>::<span class="ident">new</span>(<span class="ident">File</span>::<span class="ident">open</span>(<span class="self">self</span>.<span class="ident">as_ref</span>()).<span class="ident">with_context</span>(
             <span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
                 <span class="macro">format</span><span class="macro">!</span>(
@@ -689,11 +700,11 @@
 <span class="doccomment">/// with the correct extension if needed. `MartianFiletype`s implement</span>
 <span class="doccomment">/// this trait.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianMakePath</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">MartianMakePath</span> <span class="kw">for</span> <span class="ident">PathBuf</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="ident">directory</span>.<span class="ident">as_ref</span>());
         <span class="ident">path</span>.<span class="ident">push</span>(<span class="ident">file_name</span>.<span class="ident">as_ref</span>());
         <span class="ident">path</span>
@@ -701,7 +712,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">MartianMakePath</span> <span class="kw">for</span> <span class="ident">String</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="op">&lt;</span><span class="ident">PathBuf</span> <span class="kw">as</span> <span class="ident">MartianMakePath</span><span class="op">&gt;</span>::<span class="ident">make_path</span>(<span class="ident">directory</span>, <span class="ident">file_name</span>)
             .<span class="ident">to_str</span>()
             .<span class="ident">unwrap</span>()
@@ -710,7 +721,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">MartianFileType</span><span class="op">&gt;</span> <span class="ident">MartianMakePath</span> <span class="kw">for</span> <span class="ident">T</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianFileType</span><span class="op">&gt;</span>::<span class="ident">new</span>(<span class="ident">directory</span>, <span class="ident">file_name</span>)
     }
 }
@@ -747,22 +758,22 @@
     <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
     <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Resource</span>::<span class="ident">default</span>()
     }
 
     <span class="doccomment">/// Get the mem_gb</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">mem_gb</span>
     }
 
     <span class="doccomment">/// Get the vmem_gb</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vmem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vmem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">vmem_gb</span>
     }
 
     <span class="doccomment">/// Get the threads</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">threads</span>
     }
 
@@ -775,7 +786,7 @@
     <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
     <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mem_gb</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">mem_gb</span>: <span class="ident">isize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mem_gb</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">mem_gb</span>: <span class="ident">isize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">mem_gb</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">mem_gb</span>);
         <span class="self">self</span>
     }
@@ -789,7 +800,7 @@
     <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
     <span class="doccomment">/// assert_eq!(resource.get_threads(), Some(4));</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">threads</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">threads</span>: <span class="ident">isize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">threads</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">threads</span>: <span class="ident">isize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">threads</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">threads</span>);
         <span class="self">self</span>
     }
@@ -803,7 +814,7 @@
     <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), Some(4));</span>
     <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vmem_gb</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">vmem_gb</span>: <span class="ident">isize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vmem_gb</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">vmem_gb</span>: <span class="ident">isize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">vmem_gb</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">vmem_gb</span>);
         <span class="self">self</span>
     }
@@ -819,7 +830,7 @@
     <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
     <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_mem_gb</span>(<span class="ident">mem_gb</span>: <span class="ident">isize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_mem_gb</span>(<span class="ident">mem_gb</span>: <span class="ident">isize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Resource</span> {
             <span class="ident">mem_gb</span>: <span class="prelude-val">Some</span>(<span class="ident">mem_gb</span>),
             <span class="ident">threads</span>: <span class="prelude-val">None</span>,
@@ -838,7 +849,7 @@
     <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
     <span class="doccomment">/// assert_eq!(resource.get_threads(), Some(4));</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_threads</span>(<span class="ident">threads</span>: <span class="ident">isize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_threads</span>(<span class="ident">threads</span>: <span class="ident">isize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Resource</span> {
             <span class="ident">mem_gb</span>: <span class="prelude-val">None</span>,
             <span class="ident">threads</span>: <span class="prelude-val">Some</span>(<span class="ident">threads</span>),
@@ -888,14 +899,14 @@
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">chunks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">chunks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;join&quot;</span>)]</span>
     <span class="ident">join_resource</span>: <span class="ident">Resource</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new `StageDef` with no chunks and default join resource.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">StageDef</span> {
             <span class="ident">chunks</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
             <span class="ident">join_resource</span>: <span class="ident">Resource</span>::<span class="ident">default</span>(),
@@ -903,7 +914,7 @@
     }
 
     <span class="doccomment">/// Create a new `StageDef` with no chunks and the specified join resource.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_join_resource</span>(<span class="ident">join_resource</span>: <span class="ident">Resource</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_join_resource</span>(<span class="ident">join_resource</span>: <span class="ident">Resource</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">StageDef</span> {
             <span class="ident">chunks</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
             <span class="ident">join_resource</span>,
@@ -940,15 +951,17 @@
     <span class="ident">mem_gb</span>: <span class="ident">usize</span>,
     <span class="ident">threads</span>: <span class="ident">usize</span>,
     <span class="ident">vmem_gb</span>: <span class="ident">usize</span>,
+    <span class="ident">version</span>: <span class="ident">Version</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Metadata</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">MartianRover</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">md</span>: <span class="kw-2">&amp;</span><span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="ident">MartianRover</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Metadata</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">MartianRover</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">md</span>: <span class="kw-2">&amp;</span><span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianRover</span> {
         <span class="ident">MartianRover</span> {
             <span class="ident">files_path</span>: <span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">md</span>.<span class="ident">files_path</span>),
-            <span class="ident">mem_gb</span>: <span class="ident">md</span>.<span class="ident">get_memory_allocation</span>(),
-            <span class="ident">threads</span>: <span class="ident">md</span>.<span class="ident">get_threads_allocation</span>(),
-            <span class="ident">vmem_gb</span>: <span class="ident">md</span>.<span class="ident">get_virtual_memory_allocation</span>(),
+            <span class="ident">mem_gb</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">mem_gb</span>,
+            <span class="ident">threads</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">threads</span>,
+            <span class="ident">vmem_gb</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">vmem_gb</span>,
+            <span class="ident">version</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">clone</span>(),
         }
     }
 }
@@ -957,19 +970,20 @@
     <span class="doccomment">/// Create a new martian rover with the files path and the resources</span>
     <span class="doccomment">/// Rover needs to know the resources explicitly, so none of the</span>
     <span class="doccomment">/// resource fields shoulbd be empty when invoking this function.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">files_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">resource</span>: <span class="ident">Resource</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">files_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">resource</span>: <span class="ident">Resource</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="comment">// Resource should both be full populated before creating a rover</span>
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">is_some</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">unwrap</span>() <span class="op">&gt;=</span> <span class="number">0</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">unwrap</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">is_some</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">unwrap</span>() <span class="op">&gt;=</span> <span class="number">0</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">unwrap</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">is_some</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">unwrap</span>() <span class="op">&gt;=</span> <span class="number">0</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">unwrap</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span>);
         <span class="ident">MartianRover</span> {
             <span class="ident">files_path</span>: <span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="ident">files_path</span>.<span class="ident">as_ref</span>()),
             <span class="ident">mem_gb</span>: <span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>,
             <span class="ident">threads</span>: <span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>,
             <span class="ident">vmem_gb</span>: <span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>,
+            <span class="ident">version</span>: <span class="ident">Version</span>::<span class="ident">default</span>(),
         }
     }
     <span class="doccomment">///</span>
@@ -992,23 +1006,29 @@
     <span class="doccomment">/// let file_name: String = rover.make_path(&quot;wl.txt&quot;); // NOT Recommended. Prefer a PathBuf.</span>
     <span class="doccomment">/// assert_eq!(file_name, String::from(&quot;/some/path/wl.txt&quot;));</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">filename</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">T</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">filename</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">MartianMakePath</span>,
     {
         <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMakePath</span><span class="op">&gt;</span>::<span class="ident">make_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">files_path</span>, <span class="ident">filename</span>)
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">mem_gb</span>
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">threads</span>
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vmem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vmem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">vmem_gb</span>
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">files_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Path</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">files_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Path</span> {
         <span class="self">self</span>.<span class="ident">files_path</span>.<span class="ident">as_path</span>()
+    }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">martian_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+        <span class="self">self</span>.<span class="ident">version</span>.<span class="ident">martian</span>.<span class="ident">clone</span>()
+    }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pipelines_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+        <span class="self">self</span>.<span class="ident">version</span>.<span class="ident">pipelines</span>.<span class="ident">clone</span>()
     }
 }
 
@@ -1038,7 +1058,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>,
         <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 }
 
 <span class="doccomment">/// A stage in martian which has `split`, `main` and `join`</span>
@@ -1054,14 +1074,14 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>,
         <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StageDef</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkInputs</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StageDef</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkInputs</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">main</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>,
         <span class="ident">chunk_args</span>: <span class="self">Self</span>::<span class="ident">ChunkInputs</span>,
         <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">join</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -1069,7 +1089,7 @@
         <span class="ident">chunk_defs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkInputs</span><span class="op">&gt;</span>,
         <span class="ident">chunk_outs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkOutputs</span><span class="op">&gt;</span>,
         <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.</span>
     <span class="doccomment">/// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split</span>
@@ -1078,7 +1098,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">run_directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>,
         <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>::<span class="ident">ChunkInputs</span>: <span class="ident">Clone</span>,
         <span class="self">Self</span>::<span class="ident">StageInputs</span>: <span class="ident">Clone</span>,
@@ -1114,7 +1134,7 @@
     }
     <span class="doccomment">/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.</span>
     <span class="doccomment">/// Executes stage with arguments `args` in temporary directory that will always be cleaned up.</span>
-    <span class="kw">fn</span> <span class="ident">test_run_tmpdir</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">test_run_tmpdir</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>::<span class="ident">ChunkInputs</span>: <span class="ident">Clone</span>,
         <span class="self">Self</span>::<span class="ident">StageInputs</span>: <span class="ident">Clone</span>,
@@ -1122,7 +1142,7 @@
         <span class="kw">let</span> <span class="ident">tmp_dir</span> <span class="op">=</span> <span class="ident">tempfile</span>::<span class="ident">tempdir</span>()<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">test_run</span>(<span class="kw-2">&amp;</span><span class="ident">tmp_dir</span>, <span class="ident">args</span>)
     }
-    <span class="kw">fn</span> <span class="ident">stage_kind</span>() <span class="op">-&gt;</span> <span class="ident">StageKind</span> {
+    <span class="kw">fn</span> <span class="ident">stage_kind</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StageKind</span> {
         <span class="ident">StageKind</span>::<span class="ident">WithSplit</span>
     }
 }
@@ -1130,9 +1150,9 @@
 <span class="doccomment">/// A raw martian stage that works with untype metadata. It is recommended</span>
 <span class="doccomment">/// not to implement this directly. Use `MartianMain` or `MartianStage` traits instead</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">RawMartianStage</span> {
-    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">main</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">main</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">MartianStage</span> <span class="kw">for</span> <span class="ident">T</span>
@@ -1144,7 +1164,7 @@
     <span class="kw">type</span> <span class="ident">ChunkInputs</span> <span class="op">=</span> <span class="ident">MartianVoid</span>;
     <span class="kw">type</span> <span class="ident">ChunkOutputs</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMain</span><span class="op">&gt;</span>::<span class="ident">StageOutputs</span>;
 
-    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>, <span class="kw">_</span>: <span class="ident">MartianRover</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">MartianVoid</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>, <span class="kw">_</span>: <span class="ident">MartianRover</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">MartianVoid</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
@@ -1153,7 +1173,7 @@
         <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>,
         <span class="kw">_</span>: <span class="ident">MartianVoid</span>,
         <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMain</span><span class="op">&gt;</span>::<span class="ident">main</span>(<span class="self">self</span>, <span class="ident">args</span>, <span class="ident">rover</span>)
     }
 
@@ -1163,7 +1183,7 @@
         <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MartianVoid</span><span class="op">&gt;</span>,
         <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">ChunkOutputs</span><span class="op">&gt;</span>,
         <span class="kw">_</span>: <span class="ident">MartianRover</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
@@ -1171,7 +1191,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">run_directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>,
         <span class="ident">args</span>: <span class="self">Self</span>::<span class="ident">StageInputs</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>::<span class="ident">ChunkInputs</span>: <span class="ident">Clone</span>,
         <span class="self">Self</span>::<span class="ident">StageInputs</span>: <span class="ident">Clone</span>,
@@ -1183,7 +1203,7 @@
         <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;running main&quot;</span>);
         <span class="self">self</span>.<span class="ident">main</span>(<span class="ident">args</span>.<span class="ident">clone</span>(), <span class="ident">rover</span>)
     }
-    <span class="kw">fn</span> <span class="ident">stage_kind</span>() <span class="op">-&gt;</span> <span class="ident">StageKind</span> {
+    <span class="kw">fn</span> <span class="ident">stage_kind</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StageKind</span> {
         <span class="ident">StageKind</span>::<span class="ident">MainOnly</span>
     }
 }
@@ -1192,7 +1212,7 @@
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">MartianStage</span>,
 {
-    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">md</span>: <span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">md</span>: <span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">args_obj</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">read_json_obj</span>(<span class="string">&quot;args&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span>::<span class="ident">StageInputs</span> <span class="op">=</span> <span class="ident">obj_decode</span>(<span class="kw-2">&amp;</span><span class="ident">args_obj</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">MartianRover</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">md</span>);
@@ -1203,7 +1223,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">main</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">md</span>: <span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">main</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">md</span>: <span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">args_obj</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">read_json_obj</span>(<span class="string">&quot;args&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span>::<span class="ident">StageInputs</span> <span class="op">=</span> <span class="ident">obj_decode</span>(<span class="kw-2">&amp;</span><span class="ident">args_obj</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">chunk_args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span>::<span class="ident">ChunkInputs</span> <span class="op">=</span> <span class="ident">obj_decode</span>(<span class="kw-2">&amp;</span><span class="ident">args_obj</span>)<span class="question-mark">?</span>;
@@ -1216,7 +1236,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">md</span>: <span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">md</span>: <span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">args_obj</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">read_json_obj</span>(<span class="string">&quot;args&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span>::<span class="ident">StageInputs</span> <span class="op">=</span> <span class="ident">obj_decode</span>(<span class="kw-2">&amp;</span><span class="ident">args_obj</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">MartianRover</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">md</span>);
@@ -1248,7 +1268,7 @@
 }
 
 <span class="comment">// Prep a path for a test run of a stage.</span>
-<span class="kw">fn</span> <span class="ident">prep_path</span>(<span class="ident">path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">subdir</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PathBuf</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">prep_path</span>(<span class="ident">path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">subdir</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PathBuf</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sub_path</span> <span class="op">=</span> <span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="ident">path</span>.<span class="ident">as_ref</span>());
     <span class="ident">sub_path</span>.<span class="ident">push</span>(<span class="ident">subdir</span>);
 
@@ -1256,7 +1276,7 @@
     <span class="prelude-val">Ok</span>(<span class="ident">sub_path</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">fill_defaults</span>(<span class="kw-2">mut</span> <span class="ident">resource</span>: <span class="ident">Resource</span>) <span class="op">-&gt;</span> <span class="ident">Resource</span> {
+<span class="kw">fn</span> <span class="ident">fill_defaults</span>(<span class="kw-2">mut</span> <span class="ident">resource</span>: <span class="ident">Resource</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Resource</span> {
     <span class="kw">if</span> <span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">is_none</span>() {
         <span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">replace</span>(<span class="number">1</span>);
     }
