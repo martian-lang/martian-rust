@@ -1,6 +1,6 @@
 [package]
 name = "martian-filetypes"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["Sreenath Krishnan <sreenathk.89@gmail.com>"]
 edition = "2018"
 
