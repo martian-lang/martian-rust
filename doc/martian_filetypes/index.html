@@ -1,5 +1,87 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `martian_filetypes` crate."><meta name="keywords" content="rust, rustlang, rust-lang, martian_filetypes"><title>martian_filetypes - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../martian_filetypes/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate martian_filetypes</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all martian_filetypes's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'martian_filetypes', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/martian_filetypes/lib.rs.html#1-334' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>martian_filetypes</a></span></h1><div class='docblock'><p>This crate defines filetypes commonly used in bio informatics pipelines.</p>
-<h2 id="terminology" class="section-header"><a href="#terminology">Terminology</a></h2>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `martian_filetypes` crate."><meta name="keywords" content="rust, rustlang, rust-lang, martian_filetypes"><title>martian_filetypes - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../martian_filetypes/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate martian_filetypes</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all martian_filetypes's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'martian_filetypes', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/martian_filetypes/lib.rs.html#1-440' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>martian_filetypes</a></span></h1><div class='docblock'><p>This crate serves two purposes:</p>
+<ol>
+<li>Defines traits that let you associate filetypes to in memory objects.</li>
+<li>Defines filetypes commonly used in bio informatics pipelines.</li>
+</ol>
+<h1 id="1-compile-time-type-check-with-file-io" class="section-header"><a href="#1-compile-time-type-check-with-file-io">1. Compile-time type check with file IO</a></h1>
+<p>Serde provides a very powerful framework for associating a object of type <code>T</code> in rust with an
+on-disk representation. However, the type information is lost in the on-disk representation.
+This could lead to an attempt to deserialize a file format into an incompatible type
+which often leads to a misleading runtime error in serde with a possibility of serde attempting
+to allocate an obnoxious amount of memory. For example, the following code will produce a
+runtime error.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Feature</span> {
+    <span class="ident">id</span>: <span class="ident">usize</span>,
+}
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">FeatureX</span> {
+    <span class="ident">idx</span>: <span class="ident">usize</span>,
+}
+<span class="kw">let</span> <span class="ident">feature</span> <span class="op">=</span> <span class="ident">Feature</span> { <span class="ident">id</span>: <span class="number">5</span> };
+<span class="kw">let</span> <span class="ident">creature</span> <span class="op">=</span> <span class="ident">FeatureX</span> { <span class="ident">idx</span>: <span class="number">10</span> };
+<span class="comment">// Writing to a string instead of a file for convenience</span>
+<span class="kw">let</span> <span class="ident">feature_json</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="ident">feature</span>).<span class="ident">unwrap</span>();
+<span class="kw">let</span> <span class="ident">x_feature</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">FeatureX</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">feature_json</span>);
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">x_feature</span>.<span class="ident">is_err</span>());</pre></div>
+<p>In extreme circumstances, attempting to deserialize to a wrong type could succeed, which could
+potentially lead to bugs that are hard to track. The following example illustrates this:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Feature</span> {
+    <span class="ident">id</span>: <span class="ident">usize</span>,
+}
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Creature</span> {
+    <span class="ident">id</span>: <span class="ident">usize</span>,
+}
+<span class="kw">let</span> <span class="ident">feature</span> <span class="op">=</span> <span class="ident">Feature</span> { <span class="ident">id</span>: <span class="number">5</span> };
+<span class="kw">let</span> <span class="ident">feature_json</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="ident">feature</span>)<span class="question-mark">?</span>;
+<span class="kw">let</span> <span class="ident">impossible_creature</span>: <span class="ident">Creature</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">feature_json</span>)<span class="question-mark">?</span>;
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">impossible_creature</span>, <span class="ident">Creature</span> { <span class="ident">id</span>: <span class="number">5</span> }); <span class="comment">// THIS COULD BE PROBLEMATIC</span></pre></div>
+<p>What we would ideally want to achieve is that cases like the two examples above would
+generate a compiler error saying you are trying to deserialize from an incompatible file.
+This crate makes use of <code>MartianFiletype</code> trait in order to facilitate this.</p>
+<p>There are two concepts involved here:</p>
+<ol>
+<li><strong>Representation</strong>: How is the object represented on disk? E.g. json/bincode/csv etc.</li>
+<li><strong>Validity</strong>: Is it valid to deserialize this file as a type <code>T</code>?</li>
+</ol>
+<p>Let <code>F</code> be a <code>MartianFileType</code> and <code>T</code> be a type in rust which we want to store on-disk.</p>
+<h3 id="validity" class="section-header"><a href="#validity">Validity</a></h3>
+<p>If <code>F: FileStorage&lt;T&gt;</code>, then it is <strong>valid</strong> to store some representation of the type <code>T</code>
+in the filetype <code>F</code>.</p>
+<h3 id="representation" class="section-header"><a href="#representation">Representation</a></h3>
+<p>If <code>F: FileTypeIO&lt;T&gt;</code>, then a concrete representation of type <code>T</code> can be written to [read from]
+disk. <code>MartianFiletype</code>s which implement this trait are called <code>Formats</code>. For example, we can
+define a <code>JsonFormat&lt;F&gt;</code>, which can write out any type <code>T</code> onto disk as json as long as T is
+[de]serializable and <code>F: FileStorage&lt;T&gt;</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Feature</span> {
+    <span class="ident">id</span>: <span class="ident">usize</span>,
+}
+<span class="macro">martian_filetype</span><span class="macro">!</span> {<span class="ident">FeatureFile</span>, <span class="string">&quot;feat&quot;</span>}
+<span class="kw">impl</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Feature</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FeatureFile</span> {} <span class="comment">// VALIDITY</span>
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Creature</span> {
+    <span class="ident">id</span>: <span class="ident">usize</span>,
+}
+
+<span class="kw">let</span> <span class="ident">feature</span> <span class="op">=</span> <span class="ident">Feature</span> { <span class="ident">id</span>: <span class="number">5</span> };
+<span class="kw">let</span> <span class="ident">creature</span> <span class="op">=</span> <span class="ident">Creature</span> { <span class="ident">id</span>: <span class="number">10</span> };
+<span class="comment">// JsonFormat&lt;_&gt; is the REPRESENTATION</span>
+<span class="kw">let</span> <span class="ident">feat_file</span>: <span class="ident">JsonFormat</span><span class="op">&lt;</span><span class="ident">FeatureFile</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">JsonFormat</span>::<span class="ident">from</span>(<span class="string">&quot;feature&quot;</span>); <span class="comment">// feature.feat.json</span>
+<span class="ident">feat_file</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="ident">feature</span>)<span class="question-mark">?</span>;
+<span class="comment">// feat_file.write(&amp;creature)?; // This is a compiler error</span>
+<span class="comment">// let _: Creature = feat_file.read()?; // This is a compiler error</span>
+<span class="kw">let</span> <span class="ident">new_feature</span> <span class="op">=</span> <span class="ident">feat_file</span>.<span class="ident">read</span>()<span class="question-mark">?</span>; <span class="comment">// Type infered automatically</span></pre></div>
+<h1 id="2-common-file-formats" class="section-header"><a href="#2-common-file-formats">2. Common file formats</a></h1><h2 id="terminology" class="section-header"><a href="#terminology">Terminology</a></h2>
 <ul>
 <li><strong>Lazy Reading</strong>: Read items one by one from a file that stores a list of items,
 without reading the entire file into memory</li>
@@ -27,6 +109,7 @@ item is. For the performance test, each item is a tiny struct with 4 fields.</p>
 <li>FastaFile</li>
 <li>FastaIndexFile</li>
 <li>FastqFile</li>
+<li>CsvFile</li>
 <li>BamFile</li>
 <li>BamIndexFile</li>
 </ul>
