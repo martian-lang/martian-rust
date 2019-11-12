@@ -1,6 +1,111 @@
 //!
-//! This crate defines filetypes commonly used in bio informatics pipelines.
+//! This crate serves two purposes:
+//! 1. Defines traits that let you associate filetypes to in memory objects.
+//! 2. Defines filetypes commonly used in bio informatics pipelines.
 //!
+//! # 1. Compile-time type check with file IO
+//! Serde provides a very powerful framework for associating a object of type `T` in rust with an
+//! on-disk representation. However, the type information is lost in the on-disk representation.
+//! This could lead to an attempt to deserialize a file format into an incompatible type
+//! which often leads to a misleading runtime error in serde with a possibility of serde attempting
+//! to allocate an obnoxious amount of memory. For example, the following code will produce a
+//! runtime error.
+//! ```
+//! # use serde::{Deserialize, Serialize};
+//! # use serde_json;
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Feature {
+//!     id: usize,
+//! }
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct FeatureX {
+//!     idx: usize,
+//! }
+//! # fn main() {
+//! let feature = Feature { id: 5 };
+//! let creature = FeatureX { idx: 10 };
+//! // Writing to a string instead of a file for convenience
+//! let feature_json = serde_json::to_string(&feature).unwrap();
+//! let x_feature: Result<FeatureX, _> = serde_json::from_str(&feature_json);
+//! assert!(x_feature.is_err());
+//! # }
+//! ```
+//!
+//! In extreme circumstances, attempting to deserialize to a wrong type could succeed, which could
+//! potentially lead to bugs that are hard to track. The following example illustrates this:
+//! ```
+//! # use failure::Error;
+//! # use serde::{Deserialize, Serialize};
+//! # use serde_json;
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Feature {
+//!     id: usize,
+//! }
+//! #[derive(Debug, Serialize, Deserialize, PartialEq)]
+//! struct Creature {
+//!     id: usize,
+//! }
+//! # fn main() -> Result<(), Error> {
+//! let feature = Feature { id: 5 };
+//! let feature_json = serde_json::to_string(&feature)?;
+//! let impossible_creature: Creature = serde_json::from_str(&feature_json)?;
+//! assert_eq!(impossible_creature, Creature { id: 5 }); // THIS COULD BE PROBLEMATIC
+//! #    Ok(())
+//! # }
+//! ```
+//! What we would ideally want to achieve is that cases like the two examples above would
+//! generate a compiler error saying you are trying to deserialize from an incompatible file.
+//! This crate makes use of `MartianFiletype` trait in order to facilitate this.
+//!
+//! There are two concepts involved here:
+//! 1. **Representation**: How is the object represented on disk? E.g. json/bincode/csv etc.
+//! 2. **Validity**: Is it valid to deserialize this file as a type `T`?
+//!
+//! Let `F` be a `MartianFileType` and `T` be a type in rust which we want to store on-disk.
+//! ### Validity
+//! If `F: FileStorage<T>`, then it is **valid** to store some representation of the type `T`
+//! in the filetype `F`.
+//!
+//! ### Representation
+//! If `F: FileTypeIO<T>`, then a concrete representation of type `T` can be written to [read from]
+//! disk. `MartianFiletype`s which implement this trait are called `Formats`. For example, we can
+//! define a `JsonFormat<F>`, which can write out any type `T` onto disk as json as long as T is
+//! [de]serializable and `F: FileStorage<T>`.
+//!
+//! ```
+//! # use failure::Error;
+//! # use martian_derive::martian_filetype;
+//! # use martian_filetypes::json_file::JsonFormat;
+//! # use martian_filetypes::{FileStorage, FileTypeIO};
+//! # use serde::{Deserialize, Serialize};
+//! # use serde_json;
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Feature {
+//!     id: usize,
+//! }
+//! martian_filetype! {FeatureFile, "feat"}
+//! impl FileStorage<Feature> for FeatureFile {} // VALIDITY
+//!
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Creature {
+//!     id: usize,
+//! }
+//!
+//! # fn main() -> Result<(), Error> {
+//! let feature = Feature { id: 5 };
+//! let creature = Creature { id: 10 };
+//! // JsonFormat<_> is the REPRESENTATION
+//! let feat_file: JsonFormat<FeatureFile> = JsonFormat::from("feature"); // feature.feat.json
+//! feat_file.write(&feature)?;
+//! // feat_file.write(&creature)?; // This is a compiler error
+//! // let _: Creature = feat_file.read()?; // This is a compiler error
+//! let new_feature = feat_file.read()?; // Type infered automatically
+//! # std::fs::remove_file(feat_file)?;
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # 2. Common file formats
 //! ## Terminology
 //! - **Lazy Reading**: Read items one by one from a file that stores a list of items,
 //! without reading the entire file into memory
@@ -31,6 +136,7 @@
 //! - FastaFile
 //! - FastaIndexFile
 //! - FastqFile
+//! - CsvFile
 //! - BamFile
 //! - BamIndexFile
 
