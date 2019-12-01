@@ -432,15 +432,15 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
         for attr in &field.attrs {
             if let Ok(meta) = attr.parse_meta() {
                 match meta {
-                    syn::Meta::Word(ref attr_ident) if attr_ident == "mro_retain" => {
+                    syn::Meta::Path(ref path) if path.is_ident("mro_retain") => {
                         retain = true;
                     }
-                    syn::Meta::List(ref list) if list.ident == "serde" => {
+                    syn::Meta::List(ref list) if list.path.is_ident("serde") => {
                         return syn::Error::new_spanned(field, "Cannot use serde attributes here. This might be okay, but it's hard to guarantee that deriving MartianStruct would work correctly when using serde attributes.")
                             .to_compile_error()
                             .into();
                     }
-                    syn::Meta::NameValue(ref name_val) if name_val.ident == "mro_type" => {
+                    syn::Meta::NameValue(ref name_val) if name_val.path.is_ident("mro_type") => {
                         match name_val.lit {
                             syn::Lit::Str(ref val) => {
                                 let val_string = val.value();
