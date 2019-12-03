@@ -559,7 +559,7 @@ mro_display_to_display! { FiletypeHeader }
 /// An object that can generate a `StageMro`
 ///
 /// Can be auto generated using proc macro attribute
-/// #[make_mro] on MartianMain or MartianStage
+/// `#[make_mro]` on MartianMain or MartianStage
 /// implementations if the associated types implement `MartianStruct`
 pub trait MroMaker {
     fn stage_mro(adapter_name: impl ToString, stage_key: impl ToString) -> StageMro {

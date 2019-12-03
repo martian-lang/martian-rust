@@ -460,19 +460,26 @@ pub trait MartianStage: MroMaker {
         let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
         let split_path = prep_path(run_directory.as_ref(), "split")?;
         let rover = MartianRover::new(split_path, default_resource);
-
-        println!("running split");
+        println!("{}", vec!["-"; 80].join(""));
+        println!("{}", Self::stage_name());
+        println!("{}", vec!["-"; 80].join(""));
+        println!(" > [split] running");
         let stage_defs = self.split(args.clone(), rover)?;
-
+        println!(" > [split] complete");
         let mut chunk_outs = Vec::new();
 
         for (chunk_idx, chunk) in stage_defs.chunks.iter().enumerate() {
-            println!("running chunk {}", chunk_idx);
+            println!(
+                " > [chunk] running {} out of {}",
+                chunk_idx,
+                stage_defs.chunks.len()
+            );
             let chunk_path = prep_path(run_directory.as_ref(), &format!("chnk{}", chunk_idx))?;
             let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
             let outs = self.main(args.clone(), chunk.inputs.clone(), rover)?;
             chunk_outs.push(outs);
         }
+        println!(" > [chunk] complete");
 
         let join_path = prep_path(run_directory.as_ref(), "join")?;
         let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
@@ -482,8 +489,10 @@ pub trait MartianStage: MroMaker {
             chunk_defs.push(c.inputs);
         }
 
-        println!("running join");
-        self.join(args, chunk_defs, chunk_outs, rover)
+        println!(" > [join]  running");
+        let result = self.join(args, chunk_defs, chunk_outs, rover);
+        println!(" > [stage] complete");
+        result
     }
     /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
     /// Executes stage with arguments `args` in temporary directory that will always be cleaned up.
@@ -553,8 +562,13 @@ where
         let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
         let main_path = prep_path(run_directory.as_ref(), "main")?;
         let rover = MartianRover::new(main_path, default_resource);
-        println!("running main");
-        self.main(args.clone(), rover)
+        println!("{}", vec!["-"; 80].join(""));
+        println!("{}", Self::stage_name());
+        println!("{}", vec!["-"; 80].join(""));
+        println!(" > [chunk] running");
+        let result = self.main(args.clone(), rover);
+        println!(" > [stage] complete");
+        result
     }
     fn stage_kind() -> StageKind {
         StageKind::MainOnly
