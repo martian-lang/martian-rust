@@ -3,6 +3,8 @@ use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::{obj_decode, obj_encode};
 use crate::Metadata;
 use failure::{Error, ResultExt};
+#[cfg(feature = "rayon")]
+use rayon::prelude::*;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
@@ -447,6 +449,7 @@ pub trait MartianStage: MroMaker {
     /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
     /// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split
     /// to get the stage definition (chunks), executes each chunk one after another and finally calls the join function.
+    #[cfg(not(feature = "rayon"))]
     fn test_run(
         &self,
         run_directory: impl AsRef<Path>,
@@ -499,12 +502,81 @@ pub trait MartianStage: MroMaker {
         println!(" > [stage ] complete");
         result
     }
+
+    #[cfg(feature = "rayon")]
+    fn test_run(
+        &self,
+        run_directory: impl AsRef<Path> + Send + Sync,
+        args: Self::StageInputs,
+    ) -> Result<Self::StageOutputs, Error>
+    where
+        Self: Sync,
+        Self::ChunkInputs: Clone + Send + Sync,
+        Self::StageInputs: Clone + Send + Sync,
+        Self::ChunkOutputs: Send + Sync,
+    {
+        // Use default resource for split
+        let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
+        let split_path = prep_path(run_directory.as_ref(), "split")?;
+        let rover = MartianRover::new(split_path, default_resource);
+        println!("{}", vec!["-"; 80].join(""));
+        println!("{}", Self::stage_name());
+        println!("{}", vec!["-"; 80].join(""));
+        println!(" > [split ] running");
+        let stage_defs = self.split(args.clone(), rover)?;
+        println!(" > [split ] complete");
+
+        let run_chunk = |chunk: &ChunkDef<Self::ChunkInputs>,
+                         chunk_idx: usize|
+         -> Result<Self::ChunkOutputs, Error> {
+            println!(" > [chunk ] running with rayon {}", chunk_idx,);
+            let chunk_path = prep_path(run_directory.as_ref(), &format!("chnk{}", chunk_idx))?;
+            let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
+            self.main(args.clone(), chunk.inputs.clone(), rover)
+        };
+
+        println!(" > [chunks] {} chunks in total", stage_defs.chunks.len());
+        let chunk_outs = stage_defs
+            .chunks
+            .par_iter()
+            .enumerate()
+            .map(|(chunk_idx, chunk)| run_chunk(chunk, chunk_idx))
+            .collect::<Result<Vec<_>, Error>>()?;
+        println!(" > [chunks] complete");
+
+        let join_path = prep_path(run_directory.as_ref(), "join")?;
+        let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
+
+        let mut chunk_defs = Vec::new();
+        for c in stage_defs.chunks {
+            chunk_defs.push(c.inputs);
+        }
+
+        println!(" > [join  ] running");
+        let result = self.join(args, chunk_defs, chunk_outs, rover);
+        println!(" > [stage ] complete");
+        result
+    }
+
     /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
     /// Executes stage with arguments `args` in temporary directory that will always be cleaned up.
+    #[cfg(not(feature = "rayon"))]
     fn test_run_tmpdir(&self, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
     where
         Self::ChunkInputs: Clone,
         Self::StageInputs: Clone,
+    {
+        let tmp_dir = tempfile::tempdir()?;
+        self.test_run(&tmp_dir, args)
+    }
+
+    #[cfg(feature = "rayon")]
+    fn test_run_tmpdir(&self, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+    where
+        Self: Sync,
+        Self::ChunkInputs: Clone + Send + Sync,
+        Self::StageInputs: Clone + Send + Sync,
+        Self::ChunkOutputs: Send + Sync,
     {
         let tmp_dir = tempfile::tempdir()?;
         self.test_run(&tmp_dir, args)
