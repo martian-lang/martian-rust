@@ -477,6 +477,7 @@ pub trait MartianStage: MroMaker {
         };
 
         println!(" > [chunks] {} chunks in total", stage_defs.chunks.len());
+        // TODO: Modify this and support rayon par_iter
         let chunk_outs = stage_defs
             .chunks
             .iter()
