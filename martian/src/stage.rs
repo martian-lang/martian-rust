@@ -463,23 +463,27 @@ pub trait MartianStage: MroMaker {
         println!("{}", vec!["-"; 80].join(""));
         println!("{}", Self::stage_name());
         println!("{}", vec!["-"; 80].join(""));
-        println!(" > [split] running");
+        println!(" > [split ] running");
         let stage_defs = self.split(args.clone(), rover)?;
-        println!(" > [split] complete");
-        let mut chunk_outs = Vec::new();
+        println!(" > [split ] complete");
 
-        for (chunk_idx, chunk) in stage_defs.chunks.iter().enumerate() {
-            println!(
-                " > [chunk] running {} out of {}",
-                chunk_idx,
-                stage_defs.chunks.len()
-            );
+        let run_chunk = |chunk: &ChunkDef<Self::ChunkInputs>,
+                         chunk_idx: usize|
+         -> Result<Self::ChunkOutputs, Error> {
+            println!(" > [chunk ] running {}", chunk_idx,);
             let chunk_path = prep_path(run_directory.as_ref(), &format!("chnk{}", chunk_idx))?;
             let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
-            let outs = self.main(args.clone(), chunk.inputs.clone(), rover)?;
-            chunk_outs.push(outs);
-        }
-        println!(" > [chunk] complete");
+            self.main(args.clone(), chunk.inputs.clone(), rover)
+        };
+
+        println!(" > [chunks] {} chunks in total", stage_defs.chunks.len());
+        let chunk_outs = stage_defs
+            .chunks
+            .iter()
+            .enumerate()
+            .map(|(chunk_idx, chunk)| run_chunk(chunk, chunk_idx))
+            .collect::<Result<Vec<_>, Error>>()?;
+        println!(" > [chunks] complete");
 
         let join_path = prep_path(run_directory.as_ref(), "join")?;
         let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
@@ -489,9 +493,9 @@ pub trait MartianStage: MroMaker {
             chunk_defs.push(c.inputs);
         }
 
-        println!(" > [join]  running");
+        println!(" > [join  ] running");
         let result = self.join(args, chunk_defs, chunk_outs, rover);
-        println!(" > [stage] complete");
+        println!(" > [stage ] complete");
         result
     }
     /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
