@@ -1767,7 +1767,7 @@
 <span class="doccomment">/// An object that can generate a `StageMro`</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Can be auto generated using proc macro attribute</span>
-<span class="doccomment">/// #[make_mro] on MartianMain or MartianStage</span>
+<span class="doccomment">/// `#[make_mro]` on MartianMain or MartianStage</span>
 <span class="doccomment">/// implementations if the associated types implement `MartianStruct`</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MroMaker</span> {
     <span class="kw">fn</span> <span class="ident">stage_mro</span>(<span class="ident">adapter_name</span>: <span class="kw">impl</span> <span class="ident">ToString</span>, <span class="ident">stage_key</span>: <span class="kw">impl</span> <span class="ident">ToString</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StageMro</span> {
