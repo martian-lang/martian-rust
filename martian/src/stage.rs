@@ -647,6 +647,15 @@ where
         println!(" > [stage] complete");
         result
     }
+
+    fn test_run_tmpdir(&self, args: Self::StageInputs) -> Result<Self::StageOutputs, Error>
+    where
+        Self::ChunkInputs: Clone,
+        Self::StageInputs: Clone,
+    {
+        let tmp_dir = tempfile::tempdir()?;
+        self.test_run(&tmp_dir, args)
+    }
     fn stage_kind() -> StageKind {
         StageKind::MainOnly
     }
