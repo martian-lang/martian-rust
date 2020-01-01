@@ -14,6 +14,7 @@ serde_json = "*"
 bincode = "1.1"
 failure = "*"
 lz4 = "1.23"
+csv = { version = "1.1.1" }
 
 [dev-dependencies]
 tempfile = "3"

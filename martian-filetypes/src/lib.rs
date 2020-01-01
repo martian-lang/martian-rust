@@ -150,6 +150,7 @@ use std::path::PathBuf;
 use std::string::ToString;
 
 pub mod bin_file;
+pub mod delimited_file;
 pub mod json_file;
 pub mod lz4_file;
 pub(crate) mod macros;
