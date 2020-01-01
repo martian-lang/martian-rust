@@ -800,12 +800,6 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
                 }
             }
         }
-        #[automatically_derived]
-        impl ::martian::AsMartianPrimaryType for #struct_ident {
-            fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
-                ::martian::MartianPrimaryType::FileType(String::from(<#struct_ident as ::martian::MartianFileType>::extension()))
-            }
-        }
     ]
     .into()
 }

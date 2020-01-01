@@ -111,7 +111,7 @@ fn type_id_hash<T: Any>() -> u64 {
 }
 
 crate::martian_filetype_inner! {
-    /// Json format
+    /// Binary format
     pub struct BinaryFormat, "bincode"
 }
 

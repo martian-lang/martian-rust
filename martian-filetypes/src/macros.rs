@@ -22,7 +22,7 @@ macro_rules! martian_filetype_inner {
 		    F: ::martian::MartianFileType,
 		{
             fn extension() -> String {
-                if F::extension().ends_with($extension) {
+                if F::extension().ends_with($extension) || $extension == "" {
                 	F::extension()
                 } else {
                 	format!("{}.{}", F::extension(), $extension)
@@ -34,7 +34,7 @@ macro_rules! martian_filetype_inner {
                 path.push(file_name);
                 let path = ::martian::utils::set_extension(path, Self::extension());
                 $name {
-		            inner: PhantomData,
+		            inner: ::std::marker::PhantomData,
 		            path,
 		        }
             }
@@ -60,15 +60,6 @@ macro_rules! martian_filetype_inner {
 		            Some(path) => ::martian::MartianFileType::new(path, file_name),
 		            None => ::martian::MartianFileType::new("", file_name),
 		        }
-		    }
-		}
-
-		impl<F> ::martian::AsMartianPrimaryType for $name<F>
-		where
-		    F: ::martian::MartianFileType,
-		{
-		    fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
-		        ::martian::MartianPrimaryType::FileType(<Self as ::martian::MartianFileType>::extension())
 		    }
 		}
     )

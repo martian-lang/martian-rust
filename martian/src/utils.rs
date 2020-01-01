@@ -76,7 +76,7 @@ pub fn current_executable() -> String {
 
 /// Given a filename and an extension, return the filename with the correct extension
 /// Let's say we have a file `foo.a1.a2.a3`. The `extension()` function associated with
-/// Path is rust return `a3` at the extension. This also means that if I ask Path to set
+/// Path in rust return `a3` at the extension. This also means that if I ask Path to set
 /// the extension to `a2.a3`, the resulting filename would be `foo.a1.a2.a2.a3` :/
 /// This helper function accounts for paths with multiple dot extensions and sets up the
 /// filename correctly.
@@ -107,6 +107,10 @@ pub fn set_extension(file_path: impl AsRef<Path>, extension: impl ToString) -> P
     };
 
     assert!(!extension.starts_with('.'));
+    if extension.is_empty() {
+        return result;
+    }
+
     let mut accumulated_ext = String::new();
     let mut found_match = false;
     for part in extension.split('.') {
@@ -167,6 +171,14 @@ mod tests {
             PathBuf::from("/path/to/foo.txt.lz4.tmp")
         );
         assert_eq!(set_extension(".json", "json"), PathBuf::from(".json"));
+        assert_eq!(
+            set_extension("/path/to/foo.txt.foo", "txt"),
+            PathBuf::from("/path/to/foo.txt.foo.txt")
+        );
+        assert_eq!(
+            set_extension("/path/to/foo.txt", ""),
+            PathBuf::from("/path/to/foo.txt")
+        );
     }
 
     #[test]

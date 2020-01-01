@@ -51,6 +51,15 @@ pub trait MartianFileType: AsRef<Path> {
     }
 }
 
+impl<F> crate::mro::AsMartianPrimaryType for F
+where
+    F: MartianFileType,
+{
+    fn as_martian_primary_type() -> crate::mro::MartianPrimaryType {
+        crate::mro::MartianPrimaryType::FileType(<Self as MartianFileType>::extension())
+    }
+}
+
 /// A trait satisfied by objects which can create a `file_name` in a `directory`
 /// with the correct extension if needed. `MartianFiletype`s implement
 /// this trait.
