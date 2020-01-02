@@ -121,34 +121,39 @@ where
 {
 }
 
-#[derive(Debug)]
-pub struct CommaDelimiter;
-impl Delimiter for CommaDelimiter {
-    fn delimiter() -> u8 {
-        b','
-    }
-    fn format() -> String {
-        "csv".into()
-    }
+macro_rules! delimiter {
+    ($name:ident, $delim:expr, $format: expr, $header: expr) => {
+        #[derive(Debug)]
+        pub struct $name;
+        impl Delimiter for $name {
+            fn delimiter() -> u8 {
+                $delim
+            }
+            fn format() -> String {
+                $format.into()
+            }
+            fn header() -> bool {
+                $header
+            }
+        }
+    };
+    ($name:ident, $delim:expr, $format: expr) => {
+        delimiter!($name, $delim, $format, true);
+    };
 }
-pub type CsvFormat<F> = DelimitedFormat<F, CommaDelimiter>;
+
 martian_filetype! {Csv, "csv"}
 impl<T> FileStorage<Vec<T>> for Csv where T: Serialize + DeserializeOwned {}
-pub type CsvFile = CsvFormat<Csv>;
 
-#[derive(Debug)]
-pub struct TabDelimiter;
-impl Delimiter for TabDelimiter {
-    fn delimiter() -> u8 {
-        b'\t'
-    }
-    fn format() -> String {
-        "tsv".into()
-    }
-}
-pub type TsvFormat<F> = DelimitedFormat<F, TabDelimiter>;
 martian_filetype! {Tsv, "tsv"}
 impl<T> FileStorage<Vec<T>> for Tsv where T: Serialize + DeserializeOwned {}
+
+delimiter! { CommaDelimiter, b',', "csv" }
+pub type CsvFormat<F> = DelimitedFormat<F, CommaDelimiter>;
+pub type CsvFile = CsvFormat<Csv>;
+
+delimiter! { TabDelimiter, b'\t', "tsv" }
+pub type TsvFormat<F> = DelimitedFormat<F, TabDelimiter>;
 pub type TsvFile = TsvFormat<Tsv>;
 
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
