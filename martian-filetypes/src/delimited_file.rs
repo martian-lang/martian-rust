@@ -73,8 +73,8 @@ where
 }
 
 #[derive(Debug)]
-pub struct CsvDelimiter;
-impl Delimiter for CsvDelimiter {
+pub struct CommaDelimiter;
+impl Delimiter for CommaDelimiter {
     fn delimiter() -> u8 {
         b','
     }
@@ -82,10 +82,25 @@ impl Delimiter for CsvDelimiter {
         "csv".into()
     }
 }
-pub type CsvFormat<F> = DelimitedFormat<F, CsvDelimiter>;
+pub type CsvFormat<F> = DelimitedFormat<F, CommaDelimiter>;
 martian_filetype! {Csv, "csv"}
 impl<T> FileStorage<Vec<T>> for Csv where T: Serialize + DeserializeOwned {}
 pub type CsvFile = CsvFormat<Csv>;
+
+#[derive(Debug)]
+pub struct TabDelimiter;
+impl Delimiter for TabDelimiter {
+    fn delimiter() -> u8 {
+        b'\t'
+    }
+    fn format() -> String {
+        "tsv".into()
+    }
+}
+pub type TsvFormat<F> = DelimitedFormat<F, TabDelimiter>;
+martian_filetype! {Tsv, "tsv"}
+impl<T> FileStorage<Vec<T>> for Tsv where T: Serialize + DeserializeOwned {}
+pub type TsvFile = TsvFormat<Tsv>;
 
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
@@ -156,8 +171,21 @@ mod tests {
     }
 
     #[test]
+    fn test_tsv_write() -> Result<(), Error> {
+        let dir = tempfile::tempdir()?;
+        let cells_tsv = TsvFile::new(dir.path(), "test");
+        cells_tsv.write(&cells())?;
+        assert_eq!(
+            std::fs::read_to_string(&cells_tsv)?,
+            "barcode\tgenome\nACGT\thg19\nTCAT\tmm10\n"
+        );
+        Ok(())
+    }
+
+    #[test]
     fn test_round_trip() -> Result<(), Error> {
         assert!(crate::round_trip_check::<CsvFile, _>(&cells())?);
+        assert!(crate::round_trip_check::<TsvFile, _>(&cells())?);
         Ok(())
     }
 }
