@@ -18,7 +18,7 @@
 //!
 //! fn main() -> Result<(), Error> {
 //!     let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
-//!     let json_file = JsonFile::from("example");
+//!     let json_file = JsonFile::from("json_example");
 //!     // The two function below are simple wrappers over serde_json
 //!     json_file.write(&chem)?; // Writes pretty formatted with 4 space indent
 //!     let decoded: Chemistry = json_file.read()?;
@@ -50,7 +50,7 @@
 //! # use std::fs;
 //!
 //! fn main() -> Result<(), Error> {
-//!     let json_file = JsonFile::from("example_lazy");
+//!     let json_file = JsonFile::from("json_example_lazy");
 //!     let mut writer: LazyJsonWriter<i32> = json_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite<i32>`
 //!     for val in 0..10_000i32 {

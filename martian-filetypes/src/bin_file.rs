@@ -26,7 +26,7 @@
 //!
 //! fn main() -> Result<(), Error> {
 //!     let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
-//!     let bin_file = BincodeFile::from("example");
+//!     let bin_file = BincodeFile::from("bin_example");
 //!     // The two functions below are simple wrappers over bincode crate functions
 //!     bin_file.write(&chem)?;
 //!     let decoded: Chemistry = bin_file.read()?;
@@ -53,7 +53,7 @@
 //! use serde::{Serialize, Deserialize};
 //!
 //! fn main() -> Result<(), Error> {
-//!     let bin_file = BincodeFile::from("example_lazy");
+//!     let bin_file = BincodeFile::from("bin_example_lazy");
 //!     let mut writer: LazyBincodeWriter<i32> = bin_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite<i32>`
 //!     for val in 0..10_000i32 {

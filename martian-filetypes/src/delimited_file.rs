@@ -1,5 +1,34 @@
+//!
 //! A delimited file such as a csv file or a tab file stores a list of
 //! items of type `T`.
+//!
+//! ## Simple read/write example
+//! `CsvFile` implements `FileTypeIO<T>` for any type `T` which can be [de]serialized.
+//! ```rust
+//! use martian_filetypes::{FileTypeIO, delimited_file::CsvFile};
+//! use martian::Error;
+//! use serde::{Serialize, Deserialize};
+//!
+//! #[derive(Debug, PartialEq, Serialize, Deserialize)]
+//! struct BarcodeSummary {
+//!     umis: u32,
+//!     reads: u32,
+//! }
+//!
+//! fn main() -> Result<(), Error> {
+//!     let csv_file = CsvFile::from("csv_example");
+//!     let summary = vec![
+//! 		BarcodeSummary { umis: 10, reads: 15},
+//! 		BarcodeSummary { umis: 200, reads: 1005},
+//! 	];
+//!     // The two function below are simple wrappers over csv crate
+//!     csv_file.write(&summary)?; // Writes pretty formatted with 4 space indent
+//!     let decoded: Vec<BarcodeSummary> = csv_file.read()?;
+//!     assert_eq!(summary, decoded);
+//!     # std::fs::remove_file(csv_file)?; // Remove the file (hidden from the doc)
+//!     Ok(())
+//! }
+//! ```
 
 use crate::{FileStorage, FileTypeIO};
 use martian::{Error, MartianFileType};
@@ -62,6 +91,22 @@ where
 {
     fn as_ref(&self) -> &Path {
         self.path.as_ref()
+    }
+}
+
+impl<F, D, P> From<P> for DelimitedFormat<F, D>
+where
+    PathBuf: From<P>,
+    F: MartianFileType,
+    D: Delimiter + Debug,
+{
+    fn from(source: P) -> Self {
+        let path_buf = PathBuf::from(source);
+        let file_name = path_buf.file_name().unwrap();
+        match path_buf.parent() {
+            Some(path) => DelimitedFormat::new(path, file_name),
+            None => DelimitedFormat::new("", file_name),
+        }
     }
 }
 
