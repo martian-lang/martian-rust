@@ -34,7 +34,8 @@
 //! }
 //! ```
 
-use crate::{FileStorage, FileTypeIO};
+use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use failure::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
@@ -197,6 +198,104 @@ where
     }
 }
 
+pub struct LazyTabularReader<F, D, T, R>
+where
+    F: MartianFileType,
+    D: TableConfig + Debug,
+    R: Read,
+    T: DeserializeOwned,
+{
+    reader: csv::DeserializeRecordsIntoIter<R, T>,
+    phantom: PhantomData<(F, D)>,
+}
+
+impl<F, D, T, R> Iterator for LazyTabularReader<F, D, T, R>
+where
+    F: MartianFileType,
+    D: TableConfig + Debug,
+    R: Read,
+    T: DeserializeOwned,
+{
+    type Item = Result<T, Error>;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.reader.next() {
+            Some(Ok(item)) => Some(Ok(item)),
+            Some(Err(e)) => Some(Err(e.into())),
+            None => None,
+        }
+    }
+}
+
+impl<F, D, T, R> LazyRead<T, R> for LazyTabularReader<F, D, T, R>
+where
+    F: MartianFileType,
+    D: TableConfig + Debug,
+    R: Read,
+    T: DeserializeOwned,
+{
+    type FileType = DelimitedFormat<F, D>;
+    fn with_reader(reader: R) -> Result<Self, Error> {
+        let rdr = csv::ReaderBuilder::new()
+            .delimiter(D::delimiter())
+            .has_headers(D::header())
+            .from_reader(reader);
+        Ok(LazyTabularReader {
+            reader: rdr.into_deserialize::<T>(),
+            phantom: PhantomData,
+        })
+    }
+}
+
+pub struct LazyTabularWriter<F, D, T, W>
+where
+    F: MartianFileType,
+    W: Write,
+    D: TableConfig + Debug,
+{
+    writer: csv::Writer<W>,
+    phantom: PhantomData<(F, D, T)>,
+}
+
+impl<F, D, T, W> LazyWrite<T, W> for LazyTabularWriter<F, D, T, W>
+where
+    F: MartianFileType,
+    W: Write,
+    D: TableConfig + Debug,
+    T: Serialize,
+{
+    type FileType = DelimitedFormat<F, D>;
+    fn with_writer(writer: W) -> Result<Self, Error> {
+        Ok(LazyTabularWriter {
+            writer: csv::WriterBuilder::default()
+                .delimiter(D::delimiter())
+                .has_headers(D::header())
+                .from_writer(writer),
+            phantom: PhantomData,
+        })
+    }
+    fn write_item(&mut self, item: &T) -> Result<(), Error> {
+        Ok(self.writer.serialize(item)?)
+    }
+    fn finish(self) -> Result<W, Error> {
+        match self.writer.into_inner() {
+            Ok(w) => Ok(w),
+            Err(e) => Err(format_err!("Error: {}", e.error())),
+        }
+    }
+}
+
+impl<F, D, T, W, R> LazyAgents<T, W, R> for DelimitedFormat<F, D>
+where
+    F: MartianFileType,
+    D: TableConfig + Debug,
+    T: Serialize + DeserializeOwned,
+    W: Write,
+    R: Read,
+{
+    type LazyWriter = LazyTabularWriter<F, D, T, W>;
+    type LazyReader = LazyTabularReader<F, D, T, R>;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -248,6 +347,13 @@ mod tests {
     fn test_round_trip() -> Result<(), Error> {
         assert!(crate::round_trip_check::<CsvFile, _>(&cells())?);
         assert!(crate::round_trip_check::<TsvFile, _>(&cells())?);
+        Ok(())
+    }
+
+    #[test]
+    fn test_lazy_round_trip() -> Result<(), Error> {
+        assert!(crate::lazy_round_trip_check::<CsvFile, _>(&cells(), true)?);
+        assert!(crate::lazy_round_trip_check::<TsvFile, _>(&cells(), true)?);
         Ok(())
     }
 }
