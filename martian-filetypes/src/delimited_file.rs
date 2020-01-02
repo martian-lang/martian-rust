@@ -22,7 +22,11 @@
 //! 		BarcodeSummary { umis: 200, reads: 1005},
 //! 	];
 //!     // The two function below are simple wrappers over csv crate
-//!     csv_file.write(&summary)?; // Writes pretty formatted with 4 space indent
+//!     csv_file.write(&summary)?;
+//! 	assert_eq!(
+//! 		std::fs::read_to_string(&csv_file)?,
+//!         "umis,reads\n10,15\n200,1005\n"
+//!     );
 //!     let decoded: Vec<BarcodeSummary> = csv_file.read()?;
 //!     assert_eq!(summary, decoded);
 //!     # std::fs::remove_file(csv_file)?; // Remove the file (hidden from the doc)

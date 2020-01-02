@@ -151,6 +151,7 @@ use std::string::ToString;
 
 pub mod bin_file;
 pub mod delimited_file;
+pub mod gzip_file;
 pub mod json_file;
 pub mod lz4_file;
 pub(crate) mod macros;
@@ -332,7 +333,7 @@ where
     };
 
     // TEST 2: Write as Lz4<F> and read from Lz4<F>
-    let pass_compressed = {
+    let pass_compressed_lz4 = {
         let dir = tempfile::tempdir()?;
         let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file_roundtrip_compressed");
         file.write(input)?;
@@ -340,7 +341,16 @@ where
         input == &decoded
     };
 
-    Ok(pass_direct && pass_compressed)
+    // TEST 3: Write as Gzip<F> and read from Gzip<F>
+    let pass_compressed_gzip = {
+        let dir = tempfile::tempdir()?;
+        let file = gzip_file::Gzip::<F>::new(dir.path(), "my_file_roundtrip_compressed");
+        file.write(input)?;
+        let decoded: T = file.read()?;
+        input == &decoded
+    };
+
+    Ok(pass_direct && pass_compressed_lz4 && pass_compressed_gzip)
 }
 
 #[cfg(test)]
