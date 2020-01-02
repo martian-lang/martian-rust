@@ -44,7 +44,7 @@ use std::io::{Read, Write};
 use std::marker::PhantomData;
 use std::path::{Path, PathBuf};
 
-pub trait Delimiter {
+pub trait TableConfig {
     fn delimiter() -> u8;
     fn format() -> String;
     fn header() -> bool {
@@ -57,7 +57,7 @@ pub trait Delimiter {
 pub struct DelimitedFormat<F, D>
 where
     F: MartianFileType,
-    D: Delimiter + Debug,
+    D: TableConfig + Debug,
 {
     path: PathBuf,
     #[serde(skip)]
@@ -67,7 +67,7 @@ where
 impl<F, D> MartianFileType for DelimitedFormat<F, D>
 where
     F: MartianFileType,
-    D: Delimiter + Debug,
+    D: TableConfig + Debug,
 {
     fn extension() -> String {
         if F::extension().ends_with(&D::format()) || D::format() == "" {
@@ -91,7 +91,7 @@ where
 impl<F, D> AsRef<Path> for DelimitedFormat<F, D>
 where
     F: MartianFileType,
-    D: Delimiter + Debug,
+    D: TableConfig + Debug,
 {
     fn as_ref(&self) -> &Path {
         self.path.as_ref()
@@ -102,7 +102,7 @@ impl<F, D, P> From<P> for DelimitedFormat<F, D>
 where
     PathBuf: From<P>,
     F: MartianFileType,
-    D: Delimiter + Debug,
+    D: TableConfig + Debug,
 {
     fn from(source: P) -> Self {
         let path_buf = PathBuf::from(source);
@@ -117,15 +117,15 @@ where
 impl<F, D, T> FileStorage<Vec<T>> for DelimitedFormat<F, D>
 where
     F: MartianFileType + FileStorage<Vec<T>>,
-    D: Delimiter + Debug,
+    D: TableConfig + Debug,
 {
 }
 
-macro_rules! delimiter {
+macro_rules! table_config {
     ($name:ident, $delim:expr, $format: expr, $header: expr) => {
         #[derive(Debug)]
         pub struct $name;
-        impl Delimiter for $name {
+        impl TableConfig for $name {
             fn delimiter() -> u8 {
                 $delim
             }
@@ -138,7 +138,7 @@ macro_rules! delimiter {
         }
     };
     ($name:ident, $delim:expr, $format: expr) => {
-        delimiter!($name, $delim, $format, true);
+        table_config!($name, $delim, $format, true);
     };
 }
 
@@ -148,13 +148,21 @@ impl<T> FileStorage<Vec<T>> for Csv where T: Serialize + DeserializeOwned {}
 martian_filetype! {Tsv, "tsv"}
 impl<T> FileStorage<Vec<T>> for Tsv where T: Serialize + DeserializeOwned {}
 
-delimiter! { CommaDelimiter, b',', "csv" }
+table_config! { CommaDelimiter, b',', "csv" }
 pub type CsvFormat<F> = DelimitedFormat<F, CommaDelimiter>;
 pub type CsvFile = CsvFormat<Csv>;
 
-delimiter! { TabDelimiter, b'\t', "tsv" }
+table_config! { CommaDelimiterNoHeader, b',', "csv", false }
+pub type CsvFormatNoHeader<F> = DelimitedFormat<F, CommaDelimiterNoHeader>;
+pub type CsvFileNoHeader = CsvFormatNoHeader<Csv>;
+
+table_config! { TabDelimiter, b'\t', "tsv" }
 pub type TsvFormat<F> = DelimitedFormat<F, TabDelimiter>;
 pub type TsvFile = TsvFormat<Tsv>;
+
+table_config! { TabDelimiterNoHeader, b'\t', "tsv", false }
+pub type TsvFormatNoHeader<F> = DelimitedFormat<F, TabDelimiterNoHeader>;
+pub type TsvFileNoHeader = TsvFormatNoHeader<Tsv>;
 
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
@@ -163,7 +171,7 @@ impl<F, D, T> FileTypeIO<Vec<T>> for DelimitedFormat<F, D>
 where
     T: Serialize + DeserializeOwned,
     F: MartianFileType + FileStorage<Vec<T>> + Debug,
-    D: Delimiter + Debug,
+    D: TableConfig + Debug,
 {
     fn read_from<R: Read>(reader: R) -> Result<Vec<T>, Error> {
         let mut rdr = csv::ReaderBuilder::new()
