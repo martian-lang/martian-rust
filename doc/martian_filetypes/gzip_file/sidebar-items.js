@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Gzip","A struct that wraps a basic `MartianFileType` and adds gzip compression capability."]]});
