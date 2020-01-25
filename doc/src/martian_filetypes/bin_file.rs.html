@@ -611,7 +611,7 @@
 <span class="doccomment">/// stores a list of items.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span> <span class="op">=</span> <span class="ident">Bincode</span>, <span class="ident">R</span> <span class="op">=</span> <span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
@@ -624,7 +624,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
@@ -654,7 +654,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
 {
@@ -716,7 +716,7 @@
 <span class="doccomment">/// stores a list of items</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyBincodeWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span> <span class="op">=</span> <span class="ident">Bincode</span>, <span class="ident">W</span> <span class="op">=</span> <span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span>,
 {
@@ -728,7 +728,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyBincodeWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span>,
 {
@@ -755,7 +755,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BinaryFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">R</span>: <span class="ident">Read</span>,
     <span class="ident">W</span>: <span class="ident">Write</span>,
     <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
