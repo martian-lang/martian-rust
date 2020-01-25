@@ -700,7 +700,7 @@
 <span class="doccomment">/// read or written. For example, you might have a fasta file and you might</span>
 <span class="doccomment">/// want to iterate over individual sequences in the file without</span>
 <span class="doccomment">/// reading everything into memory at once.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LazyFileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">Sized</span> {
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LazyFileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Reader</span>: <span class="ident">io</span>::<span class="ident">Read</span>;
     <span class="kw">type</span> <span class="ident">Writer</span>: <span class="ident">io</span>::<span class="ident">Write</span>;
 
@@ -755,7 +755,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">LazyFileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">F</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">io</span>::<span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">io</span>::<span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">F</span>: <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">io</span>::<span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">io</span>::<span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Writer</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>;
     <span class="kw">type</span> <span class="ident">Reader</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>;
