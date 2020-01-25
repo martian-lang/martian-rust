@@ -248,7 +248,7 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
 /// read or written. For example, you might have a fasta file and you might
 /// want to iterate over individual sequences in the file without
 /// reading everything into memory at once.
-pub trait LazyFileTypeIO<T>: MartianFileType + Sized {
+pub trait LazyFileTypeIO<T>: MartianFileType + Sized + FileStorage<Vec<T>> {
     type Reader: io::Read;
     type Writer: io::Write;
 
@@ -303,7 +303,7 @@ pub trait LazyAgents<T, W: io::Write, R: io::Read>: Sized + MartianFileType {
 
 impl<F, T> LazyFileTypeIO<T> for F
 where
-    F: LazyAgents<T, io::BufWriter<File>, io::BufReader<File>>,
+    F: LazyAgents<T, io::BufWriter<File>, io::BufReader<File>> + FileStorage<Vec<T>>,
 {
     type Writer = io::BufWriter<File>;
     type Reader = io::BufReader<File>;
