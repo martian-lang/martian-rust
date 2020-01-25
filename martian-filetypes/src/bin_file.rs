@@ -155,7 +155,7 @@ enum FileMode {
 /// stores a list of items.
 pub struct LazyBincodeReader<T, F = Bincode, R = BufReader<File>>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     T: Any + DeserializeOwned,
 {
@@ -168,7 +168,7 @@ where
 
 impl<T, F, R> LazyRead<T, R> for LazyBincodeReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     T: Any + Serialize + DeserializeOwned,
 {
@@ -198,7 +198,7 @@ where
 
 impl<T, F, R> Iterator for LazyBincodeReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     T: Any + DeserializeOwned,
 {
@@ -260,7 +260,7 @@ struct LazyMarker<T>(PhantomData<T>);
 /// stores a list of items
 pub struct LazyBincodeWriter<T, F = Bincode, W = BufWriter<File>>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     W: Write,
     T: Any + Serialize,
 {
@@ -272,7 +272,7 @@ where
 
 impl<T, F, W> LazyWrite<T, W> for LazyBincodeWriter<T, F, W>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     W: Write,
     T: Any + Serialize,
 {
@@ -299,7 +299,7 @@ where
 
 impl<T, F, W, R> LazyAgents<T, W, R> for BinaryFormat<F>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     W: Write,
     T: Any + Serialize + DeserializeOwned,

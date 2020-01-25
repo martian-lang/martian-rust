@@ -130,7 +130,7 @@ where
 /// stores a list of items.
 pub struct LazyJsonReader<T, F = Json, R = BufReader<File>>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -141,7 +141,7 @@ where
 
 impl<T, F, R> LazyRead<T, R> for LazyJsonReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -164,7 +164,7 @@ where
 
 impl<T, F, R> Iterator for LazyJsonReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -215,7 +215,7 @@ enum WriterState {
 /// stores a list of items.
 pub struct LazyJsonWriter<T, F = Json, W = BufWriter<File>>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -228,7 +228,7 @@ where
 
 impl<T, F, W> LazyWrite<T, W> for LazyJsonWriter<T, F, W>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -283,7 +283,7 @@ where
 
 impl<F, T, W, R> LazyAgents<T, W, R> for JsonFormat<F>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     R: Read,
     W: Write,
     T: Serialize + DeserializeOwned,
@@ -294,7 +294,7 @@ where
 
 impl<T, F, W> Drop for LazyJsonWriter<T, F, W>
 where
-    F: MartianFileType + FileStorage<T>,
+    F: MartianFileType + FileStorage<Vec<T>>,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
