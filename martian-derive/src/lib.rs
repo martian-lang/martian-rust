@@ -334,6 +334,11 @@ macro_rules! attr_parse {
         impl FromStr for MakeMroAttr {
             type Err = String;
             fn from_str(s: &str) -> Result<Self, Self::Err> {
+                // When we specify negative values, for e.g #[make_mro(threads = -4)]
+                // casting the attribute Tokenstream to String intoduces an additional
+                // space after `-`, i.e we get "threads=- 4". So we get rid of the
+                // whitespaces here
+                let s: String = s.split_whitespace().collect();
                 if s.is_empty() {
                     return Ok(MakeMroAttr::default());
                 }
@@ -837,6 +842,17 @@ mod tests {
         assert!("mem_gb=10, thread=5".parse::<MakeMroAttr>().is_err());
         assert!(
             "mem_gb=10, threads=-1, volatile=strict"
+                .parse::<MakeMroAttr>()
+                .unwrap()
+                == MakeMroAttr {
+                    mem_gb: Some(10),
+                    threads: Some(-1),
+                    volatile: Some(Volatile::Strict),
+                    ..Default::default()
+                }
+        );
+        assert!(
+            "mem_gb=10, threads=- 1, volatile=strict"
                 .parse::<MakeMroAttr>()
                 .unwrap()
                 == MakeMroAttr {
