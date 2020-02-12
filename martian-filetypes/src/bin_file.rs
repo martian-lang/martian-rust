@@ -90,11 +90,9 @@ use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use std::any::{Any, TypeId};
-use std::collections::hash_map::DefaultHasher;
+use std::any::{type_name, Any};
 use std::fmt::Debug;
 use std::fs::File;
-use std::hash::{Hash, Hasher};
 use std::io::{self, BufReader, BufWriter, Read, Write};
 use std::iter::Iterator;
 use std::marker::PhantomData;
@@ -102,13 +100,6 @@ use std::marker::PhantomData;
 martian_filetype! {Bincode, "bincode"}
 impl<T> FileStorage<T> for Bincode where T: Serialize + DeserializeOwned {}
 pub type BincodeFile = BinaryFormat<Bincode>;
-
-fn type_id_hash<T: Any>() -> u64 {
-    let typeid = TypeId::of::<T>();
-    let mut hasher = DefaultHasher::new();
-    typeid.hash(&mut hasher);
-    hasher.finish()
-}
 
 crate::martian_filetype_inner! {
     /// Binary format
@@ -125,21 +116,26 @@ where
     F: FileStorage<T> + Debug,
 {
     fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
-        let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
+        let actual_type: String = bincode::deserialize_from(&mut reader)?;
 
-        if actual_type_hash == type_id_hash::<T>() {
+        if actual_type == type_name::<T>() {
             Ok(bincode::deserialize_from(&mut reader)?)
-        } else if actual_type_hash == type_id_hash::<LazyMarker<T>>() {
+        } else if actual_type == type_name::<LazyMarker<T>>() {
             Err(format_err!(
                 "Lazily written bincode files cannot be read using FileTypeIO::read(). Use LazyFileTypeIO::read_all() instead."
             ))
         } else {
-            Err(format_err!("Data type does not match expected type"))
+            Err(format_err!(
+                "Data type {} does not match expected type {} or {}",
+                actual_type,
+                type_name::<T>(),
+                type_name::<LazyMarker<T>>()
+            ))
         }
     }
 
     fn write_into<W: Write>(mut writer: W, input: &T) -> Result<(), Error> {
-        let type_hash = type_id_hash::<T>();
+        let type_hash = type_name::<T>();
         bincode::serialize_into(&mut writer, &type_hash)?;
         bincode::serialize_into(&mut writer, &input)?;
         Ok(())
@@ -174,15 +170,18 @@ where
 {
     type FileType = BinaryFormat<F>;
     fn with_reader(mut reader: R) -> Result<Self, Error> {
-        let actual_type_hash: u64 = bincode::deserialize_from(&mut reader)?;
-        let mode = if actual_type_hash == type_id_hash::<Vec<T>>() {
+        let actual_type: String = bincode::deserialize_from(&mut reader)?;
+        let mode = if actual_type == type_name::<Vec<T>>() {
             let total_items: usize = bincode::deserialize_from(&mut reader)?;
             FileMode::Vec(total_items)
-        } else if actual_type_hash == type_id_hash::<LazyMarker<Vec<T>>>() {
+        } else if actual_type == type_name::<LazyMarker<Vec<T>>>() {
             FileMode::Lazy
         } else {
             return Err(format_err!(
-                "Data type in bincode file does not match expected type"
+                "Data type {} does not match expected type {} or {}",
+                actual_type,
+                type_name::<Vec<T>>(),
+                type_name::<LazyMarker<Vec<T>>>()
             ));
         };
 
@@ -278,7 +277,7 @@ where
 {
     type FileType = BinaryFormat<F>;
     fn with_writer(mut writer: W) -> Result<Self, Error> {
-        let type_hash = type_id_hash::<LazyMarker<Vec<T>>>(); // The file stores Vec<T>, not T
+        let type_hash = type_name::<LazyMarker<Vec<T>>>(); // The file stores Vec<T>, not T
         bincode::serialize_into(&mut writer, &type_hash)?;
         Ok(LazyBincodeWriter {
             writer,
