@@ -4,8 +4,8 @@ error[E0308]: mismatched types
 27 |         feat_file.write(&creature)?; // This is a compiler error
    |                         ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
    |
-   = note: expected type `&Feature`
-              found type `&Creature`
+   = note: expected reference `&Feature`
+              found reference `&Creature`
 
 error[E0308]: mismatched types
   --> $DIR/invalid_type_write.rs:32:25
@@ -13,7 +13,5 @@ error[E0308]: mismatched types
 32 |         feat_file.write(&creature)?; // This is a compiler error
    |                         ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
    |
-   = note: expected type `&Feature`
-              found type `&Creature`
-
-For more information about this error, try `rustc --explain E0308`.
+   = note: expected reference `&Feature`
+              found reference `&Creature`
