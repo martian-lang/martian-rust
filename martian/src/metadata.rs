@@ -20,8 +20,8 @@ type Result<T> = std::result::Result<T, Error>;
 const METADATA_PREFIX: &str = "_";
 
 /// Tracking the metadata for one Martian chunk invocation
-#[derive(Debug, Clone)]
-pub struct Metadata<'a> {
+#[derive(Debug)]
+pub struct Metadata {
     pub stage_name: String,
     pub stage_type: String,
     metadata_path: String,
@@ -30,7 +30,7 @@ pub struct Metadata<'a> {
     raw_jobinfo: JsonDict,
     pub jobinfo: JobInfo, // Partially parsed Job info
     cache: HashSet<String>,
-    log_file: &'a File,
+    log_file: File,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -90,8 +90,8 @@ pub fn make_timestamp_now() -> String {
     make_timestamp(Local::now())
 }
 
-impl<'a> Metadata<'a> {
-    pub fn new(args: Vec<String>, log_file: &'a File) -> Metadata {
+impl Metadata {
+    pub fn new(args: Vec<String>, log_file: File) -> Metadata {
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
         Metadata {
@@ -115,7 +115,7 @@ impl<'a> Metadata<'a> {
     }
 
     /// Write to a file inside the chunk
-    pub fn write_raw(&mut self, name: &str, text: String) -> Result<()> {
+    pub fn write_raw(&mut self, name: &str, text: &str) -> Result<()> {
         let mut f = File::create(self.make_path(name))?;
         f.write_all(text.as_bytes())?;
         self.update_journal(name)?;
@@ -162,7 +162,7 @@ impl<'a> Metadata<'a> {
         // Serialize using `json::encode`
         let obj = json!(object.clone());
         let encoded = serde_json::to_string_pretty(&obj)?;
-        self.write_raw(name, encoded)?;
+        self.write_raw(name, &encoded)?;
         Ok(())
     }
 
@@ -217,7 +217,11 @@ impl<'a> Metadata<'a> {
     }
 
     pub fn assert(&mut self, message: &str) -> Result<()> {
-        write_errors(&format!("ASSERT:{} {}", make_timestamp_now(), message))
+        write_errors(&format!("ASSERT:{}", message))
+    }
+
+    pub fn stackvars(&mut self, message: &str) -> Result<()> {
+        self.write_raw("stackvars", message)
     }
 
     /// Write finalized _jobinfo data
