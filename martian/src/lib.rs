@@ -19,7 +19,7 @@ use backtrace::Backtrace;
 use log::{error, info};
 use chrono::Local;
 
-pub use failure::{format_err, Error};
+pub use failure::{format_err, Error, ResultExt};
 
 mod metadata;
 pub use metadata::*;
@@ -47,26 +47,21 @@ pub fn initialize(args: Vec<String>, log_file: File) -> Result<Metadata, Error> 
     Ok(md)
 }
 
-fn write_errors(msg: &str) -> Result<(), Error> {
-    unsafe {
-        let mut err_file = File::from_raw_fd(4);
-        let _ = err_file.write(msg.as_bytes())?;
-        Ok(())
-    }
-}
-
-/// Log a panic to the martian output machinery
-pub fn log_panic(panic: &panic::PanicInfo) {
-    let payload = match panic.payload().downcast_ref::<String>() {
-        Some(as_string) => as_string.to_string(),
-        None => format!("{:?}", panic.payload()),
+fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
+    let mut err_file = unsafe {
+        File::from_raw_fd(4)
     };
 
-    let loc = panic.location().expect("location");
-    let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
+    let msg = if is_assert {
+        format!("ASSERT:{}", msg)
+    } else {
+        msg.to_string()
+    };
 
-    let _ = write_errors(&msg);
+    let _ = err_file.write(msg.as_bytes())?;
+    Ok(())
 }
+
 
 fn setup_logging(log_file: &File, level: LevelFilter) {
     let base_config = fern::Dispatch::new().level(level);
@@ -86,26 +81,66 @@ fn setup_logging(log_file: &File, level: LevelFilter) {
     }
 }
 
-/// Run the martian adapter using the given cmdline args
-/// provided by the martian runtime. The caller should
-/// unwrap() the result and call sys::exit() on the 
-/// return value.
-pub fn martian_main<S: std::hash::BuildHasher>(
-    args: Vec<String>,
+pub struct MartianAdapter<S> {
     stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
-) -> Result<usize, Error> {
-    martian_main_with_log_level(args, stage_map, LevelFilter::Debug)
+    log_level: LevelFilter,
+    is_error_assert: Box<dyn (Fn(&Error) -> bool) + 'static>,
 }
 
+impl<S: std::hash::BuildHasher> MartianAdapter<S> {
+    pub fn new(stage_map: HashMap<String, Box<dyn RawMartianStage>, S>) -> MartianAdapter<S> {
+        MartianAdapter {
+            stage_map,
+            log_level: LevelFilter::Warn,
+            is_error_assert: Box::new(|_| false),
+        }
+    }
+
+    pub fn log_level(self, log_level: LevelFilter) -> MartianAdapter<S> {
+        MartianAdapter {
+            log_level,
+            .. self
+        }
+    }
+
+    pub fn assert_if<F: 'static + Fn(&Error) -> bool>(self, predicate: F) -> MartianAdapter<S> {
+        MartianAdapter {
+            is_error_assert: Box::new(predicate),
+            .. self
+        }
+    }
+
+    pub fn run(self, args: Vec<String>) -> (i32, Option<Error>) {
+        martian_entry_point(
+            args,
+            self.stage_map,
+            self.log_level,
+            self.is_error_assert)
+    }
+}
+
+
 /// Run the martian adapter using the given cmdline args
-/// provided by the martian runtime. The caller should
-/// unwrap() the result and call sys::exit() on the 
-/// return value.
-pub fn martian_main_with_log_level<S: std::hash::BuildHasher>(
+/// provided by the martian runtime. If there is an error
+/// in the stage setup, this returns Err(e). If the stage
+/// is executed it returns `Ok((returncode, option_error))`. 
+/// The caller should call sys::exit() with the returncode. 
+/// If the stage itself failed, the error causing the failure 
+/// will be returned in the `option_error`.
+/// Arguments:
+///  - `args`: vector of command line arguments, typicall supplied by Martian runtime.
+///  - `stage_map`: names and implementations of the Martian stages that can be run by this binary.
+///  - `level`: the level of log messages that are emitted to the _log file
+///  - `is_error_assert`: a predicate determining whether to emit an error as an ASSERT
+///    to Martian. ASSERT errors indicate an unrecoverable configuration error, and will
+///    prevent the user from restarting the pipeline. The is_error_assert function should 
+///    use downcasting to match the error against a set of error types that should generate an assert.
+fn martian_entry_point<S: std::hash::BuildHasher>(
     args: Vec<String>,
     stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
     level: LevelFilter,
-) -> Result<usize, Error> {
+    is_error_assert: Box<dyn Fn(&Error) -> bool>,
+) -> (i32, Option<Error>) {
     info!("got args: {:?}", args);
 
     // turn on backtrace capture
@@ -118,13 +153,32 @@ pub fn martian_main_with_log_level<S: std::hash::BuildHasher>(
     // Hook rust logging up to Martian _log file
     setup_logging(&log_file, level);
 
+
     // setup Martian metadata (and an extra copy for use in the panic handler
-    let mut md = initialize(args, log_file)?;
+    let _md = initialize(args, log_file).context("IO Error initializing stage");
+
+    // special handler for error in stage setup
+    let mut md = match _md {
+        Ok(m) => m,
+        Err(e) => {
+            let _ = write_errors(&format!("{:?}", e), false);
+            return (1, Some(e.into()))
+        }
+    };
 
     // Get the stage implementation
-    let stage = stage_map
+    let _stage = stage_map
         .get(&md.stage_name)
-        .ok_or_else(|| format_err!("couldn't find requested stage: {}", md.stage_name))?;
+        .ok_or_else(|| format_err!("Couldn't find requested Martian stage: {}", md.stage_name));
+
+    // special handler for non-existent stage
+    let stage = match _stage {
+        Ok(s) => s,
+        Err(e) => {
+            let _ = write_errors(&format!("{:?}", e), false);
+            return (1, Some(e))
+        }
+    };
 
     // will write to this from panic handler if needed.
     // panic handler has separate write code to avoid locking.
@@ -165,7 +219,7 @@ pub fn martian_main_with_log_level<S: std::hash::BuildHasher>(
         });
     
         // write to _errors
-        let _ = write_errors(&msg);
+        let _ = write_errors(&msg, false);
 
         // call default panic handler (not sure if this is a good idea or not)
         p(info);
@@ -185,7 +239,7 @@ pub fn martian_main_with_log_level<S: std::hash::BuildHasher>(
     match result {
 
         // exit code = 0
-        Ok(()) => Ok(0),
+        Ok(()) => (0, None),
 
         // write message and stack trace, exit code = 1;
         Err(e) => {
@@ -193,12 +247,10 @@ pub fn martian_main_with_log_level<S: std::hash::BuildHasher>(
             if !bt.is_empty() {
                 let _ = md.stackvars(&bt.to_string());
             }
-            let _ = write_errors(&format!("{}", e));
-            Ok(1)
+            let _ = write_errors(&format!("{}", e), is_error_assert(&e));
+            (1, Some(e))
         }
     }
-
-    
 }
 
 const MRO_HEADER: &str = r#"#

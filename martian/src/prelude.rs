@@ -10,7 +10,7 @@ pub use crate::stage::{
     MartianFileType, MartianMain, MartianMakePath, MartianRover, MartianStage, MartianVoid,
     RawMartianStage, Resource, StageDef,
 };
-pub use crate::{martian_main, martian_main_with_log_level, martian_make_mro};
+pub use crate::{MartianAdapter, martian_make_mro};
 pub use failure::Error;
 pub use log::LevelFilter;
 pub use martian_stages;

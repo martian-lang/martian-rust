@@ -39,9 +39,16 @@ fn main() -> Result<(), Error> {
 
     if args.cmd_martian {
         // Call the martian adapter
-        martian_main(args.arg_adapter, stage_registry)?;
-    // If you want explicit control over the log level, use:
-    // martian_main_with_log_level(...)
+        let adapter = MartianAdapter::new(stage_registry);
+
+        // If you want explicit control over the log level use for example:
+        // let adapter = adapter.log_level(LevelFilter::Info);
+
+        // run the stage
+        let (retcode, _) = adapter.run(args.arg_adapter);
+
+        // exit with the right error code
+        std::process::exit(retcode);
     } else if args.cmd_mro {
         // Create the mro for all the stages in this adapter
         martian_make_mro(args.flag_file, args.flag_rewrite, mro_registry)?;

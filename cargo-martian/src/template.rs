@@ -13,9 +13,10 @@ use serde::{open}Serialize, Deserialize{close};
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
 // - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
-//                Error (from failure crate), LevelFilter (from log crate)
+//                Error (from failure crate), LevelFilter (from log crate),
+//                MartianRunner
 // - Macros: martian_stages!
-// - Functions: martian_main, martian_main_with_log_level, martian_make_mro
+// - Functions: martian_make_mro
 use martian::prelude::*;
 
 // Bring the procedural macros in scope:
@@ -104,9 +105,10 @@ use serde::{open}Serialize, Deserialize{close};
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
 // - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
-//                Error (from failure crate), LevelFilter (from log crate)
+//                Error (from failure crate), LevelFilter (from log crate),
+//                MartianRunner
 // - Macros: martian_stages!
-// - Functions: martian_main, martian_main_with_log_level, martian_make_mro
+// - Functions: martian_make_mro
 use martian::prelude::*;
 
 // Bring the procedural macros in scope:
@@ -233,10 +235,14 @@ fn main() -> Result<(), Error> {open}
     ];
 
     if args.cmd_martian {open}
-        // Call the martian adapter
-        martian_main(args.arg_adapter, stage_registry)?;
+        // Setup the martian adapter
+        let runner = MartianAdapter::new(stage_registry);
         // If you want explicit control over the log level, use:
-        // martian_main_with_log_level(...)
+        // let runner = runner.log_level();
+        // run the stage
+        let (retcode, _) = runner.run(args.arg_adapter);
+        // return from the process
+        std::sys::exit(retcode);
     {close} else if args.cmd_mro {open}
         // Create the mro for all the stages in this adapter
         martian_make_mro(args.flag_file, args.flag_rewrite, mro_registry)?;

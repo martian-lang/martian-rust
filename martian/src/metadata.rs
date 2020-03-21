@@ -217,7 +217,7 @@ impl Metadata {
     }
 
     pub fn assert(&mut self, message: &str) -> Result<()> {
-        write_errors(&format!("ASSERT:{}", message))
+        write_errors(message, true)
     }
 
     pub fn stackvars(&mut self, message: &str) -> Result<()> {
