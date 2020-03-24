@@ -312,7 +312,7 @@ _TIMESTAMP_REGEX = re.compile(
 
 _QUOTED_PATH_REGEX = re.compile('"/.*/([^/]+)"')
 _PATH_REGEX = re.compile('^/.*/([^/]+)$')
-
+_TRACEBACK_PATH_REGEX = re.compile('^[ ]+at.*:[0-9]+$')
 
 def clean_value(value):
     """Remove absolute paths and timestamps."""
@@ -329,7 +329,8 @@ def clean_line(line):
         """Just take the matched group."""
         return '"%s"' % match.group(1)
     return _TIMESTAMP_REGEX.sub('__TIMESTAMP__',
-                                _QUOTED_PATH_REGEX.sub(pathrepl, line))
+                                _TRACEBACK_PATH_REGEX.sub('__LINE__',
+                                    _QUOTED_PATH_REGEX.sub(pathrepl, line)))
 
 
 def compare_lines(output, expect, filename):
@@ -420,6 +421,7 @@ _SPECIAL_FILES = {
     '_outs': compare_json,
     '_args': compare_json,
     '_stage_defs': compare_json,
+    '_stackvars': compare_lines,
     '_vdrkill.partial': compare_json,
 }
 

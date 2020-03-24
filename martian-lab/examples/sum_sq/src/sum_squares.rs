@@ -89,6 +89,9 @@ impl MartianStage for SumSquares {
     ) -> Result<Self::ChunkOutputs, Error> {
 
         if chunk_args.value == 123456789.0 {
+            // let the other chunks finish
+            let dur = std::time::Duration::new(3, 0);
+            std::thread::sleep(dur);
             return Err(failure::format_err!("hit special failure value"));
         }
 
