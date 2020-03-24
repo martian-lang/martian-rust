@@ -45,7 +45,7 @@ fn main() -> Result<(), Error> {
         // let adapter = adapter.log_level(LevelFilter::Info);
 
         // run the stage
-        let (retcode, _) = adapter.run(args.arg_adapter);
+        let retcode = adapter.run(args.arg_adapter);
 
         // exit with the right error code
         std::process::exit(retcode);

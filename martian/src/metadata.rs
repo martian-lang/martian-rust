@@ -2,7 +2,7 @@ use std;
 use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
 use std::io::{Read, Write};
-use std::os::unix::io::FromRawFd;
+use std::os::unix::io::{IntoRawFd, FromRawFd};
 use std::path::PathBuf;
 
 use crate::write_errors;
@@ -30,7 +30,6 @@ pub struct Metadata {
     raw_jobinfo: JsonDict,
     pub jobinfo: JobInfo, // Partially parsed Job info
     cache: HashSet<String>,
-    log_file: File,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -91,7 +90,7 @@ pub fn make_timestamp_now() -> String {
 }
 
 impl Metadata {
-    pub fn new(args: Vec<String>, log_file: File) -> Metadata {
+    pub fn new(args: Vec<String>) -> Metadata {
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
         Metadata {
@@ -103,7 +102,6 @@ impl Metadata {
             cache: HashSet::new(),
             raw_jobinfo: Map::new(),
             jobinfo: JobInfo::default(),
-            log_file,
         }
     }
 
@@ -201,10 +199,13 @@ impl Metadata {
 
     /// Write to _log
     pub fn log(&mut self, level: &str, message: &str) -> Result<()> {
-        self.log_file
+        let mut log_file = unsafe { File::from_raw_fd(3) };
+        
+        log_file
             .write(&format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
-            .and(self.log_file.flush())?;
+            .and(log_file.flush())?;
 
+        let _ = log_file.into_raw_fd();
         Ok(())
     }
 

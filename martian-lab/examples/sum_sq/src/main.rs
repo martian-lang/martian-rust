@@ -45,7 +45,7 @@ fn main() -> Result<(), Error> {
         // If you want explicit control over the log level use for example:
         // let adapter = adapter.log_level(LevelFilter::Info);
 
-        let (retcode, _) = adapter.run(args.arg_adapter);
+        let retcode = adapter.run(args.arg_adapter);
         std::process::exit(retcode);
 
     } else if args.cmd_mro {

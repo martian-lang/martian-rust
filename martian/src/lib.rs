@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
 use std::io::Write as IoWrite;
-use std::os::unix::io::FromRawFd;
+use std::os::unix::io::{IntoRawFd, FromRawFd};
 use std::panic;
 use std::path::Path;
 use std::io;
@@ -39,8 +39,8 @@ pub use log::LevelFilter;
 pub mod prelude;
 
 
-pub fn initialize(args: Vec<String>, log_file: File) -> Result<Metadata, Error> {
-    let mut md = Metadata::new(args, log_file);
+pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
+    let mut md = Metadata::new(args);
     println!("got metadata: {:?}", md);
     md.update_jobinfo()?;
 
@@ -48,9 +48,7 @@ pub fn initialize(args: Vec<String>, log_file: File) -> Result<Metadata, Error> 
 }
 
 fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
-    let mut err_file = unsafe {
-        File::from_raw_fd(4)
-    };
+    let mut err_file: File = unsafe { File::from_raw_fd(4) };
 
     let msg = if is_assert {
         format!("ASSERT:{}", msg)
@@ -59,11 +57,14 @@ fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
     };
 
     let _ = err_file.write(msg.as_bytes())?;
+
+    // Avoid closing err_file
+    let _ = err_file.into_raw_fd();
     Ok(())
 }
 
 
-fn setup_logging(log_file: &File, level: LevelFilter) {
+fn setup_logging(log_file: File, level: LevelFilter) {
     let base_config = fern::Dispatch::new().level(level);
 
     let logger_config = fern::Dispatch::new()
@@ -71,7 +72,7 @@ fn setup_logging(log_file: &File, level: LevelFilter) {
             let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
             out.finish(format_args!("[{}][{}] {}", time_str, record.level(), msg))
         })
-        .chain(log_file.try_clone().expect("couldn't open log file"))
+        .chain(log_file)
         .chain(io::stdout());
 
     let cfg = base_config.chain(logger_config).apply();
@@ -81,6 +82,7 @@ fn setup_logging(log_file: &File, level: LevelFilter) {
     }
 }
 
+/// Configure the Martian adapter for executing stage code
 pub struct MartianAdapter<S> {
     stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
     log_level: LevelFilter,
@@ -88,6 +90,9 @@ pub struct MartianAdapter<S> {
 }
 
 impl<S: std::hash::BuildHasher> MartianAdapter<S> {
+    /// Build a new Martian adapter with the given registry of Martian stages
+    /// Arguments:
+    ///  - `stage_map`: names and implementations of the Martian stages that can be run by this binary.
     pub fn new(stage_map: HashMap<String, Box<dyn RawMartianStage>, S>) -> MartianAdapter<S> {
         MartianAdapter {
             stage_map,
@@ -96,6 +101,8 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
         }
     }
 
+    /// Set the minimum severity level of log messages that are emitted to the Martian
+    /// _log file.
     pub fn log_level(self, log_level: LevelFilter) -> MartianAdapter<S> {
         MartianAdapter {
             log_level,
@@ -103,6 +110,10 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
         }
     }
 
+    ///  Set `is_error_assert`, predicate determining whether to emit an error as an ASSERT
+    ///  to Martian. ASSERT errors indicate an unrecoverable configuration error, and will
+    ///  prevent the user from restarting the pipeline. The is_error_assert function should 
+    ///  use downcasting to match the error against a set of error types that should generate an assert.
     pub fn assert_if<F: 'static + Fn(&Error) -> bool>(self, predicate: F) -> MartianAdapter<S> {
         MartianAdapter {
             is_error_assert: Box::new(predicate),
@@ -110,7 +121,24 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
         }
     }
 
-    pub fn run(self, args: Vec<String>) -> (i32, Option<Error>) {
+    /// Run the martian adapter using the given cmdline args
+    /// provided by the martian runtime. If there is an error
+    /// in the stage setup, this returns Err(e). If the stage
+    /// is executed it returns `returncode`. 
+    /// The caller should call sys::exit() with the returncode. 
+    /// If the stage itself failed, the error causing the failure 
+    /// will be returned in the `option_error`.
+    /// Arguments:
+    ///  - `args`: vector of command line arguments, typically supplied by Martian runtime.
+    #[must_use = "Martian stage binaries should call std::process::exit() on the return_code"]
+    pub fn run(self, args: Vec<String>) -> i32 {
+        self.run_get_error(args).0
+    }
+
+    /// Like `run()` but also return an error thrown by the stage (if any). May be useful 
+    /// for unit testing purposes.
+    #[must_use = "Martian stage binaries should call std::process::exit() on the return_code"]
+    pub fn run_get_error(self, args: Vec<String>) -> (i32, Option<Error>) {
         martian_entry_point(
             args,
             self.stage_map,
@@ -120,21 +148,7 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
 }
 
 
-/// Run the martian adapter using the given cmdline args
-/// provided by the martian runtime. If there is an error
-/// in the stage setup, this returns Err(e). If the stage
-/// is executed it returns `Ok((returncode, option_error))`. 
-/// The caller should call sys::exit() with the returncode. 
-/// If the stage itself failed, the error causing the failure 
-/// will be returned in the `option_error`.
-/// Arguments:
-///  - `args`: vector of command line arguments, typicall supplied by Martian runtime.
-///  - `stage_map`: names and implementations of the Martian stages that can be run by this binary.
-///  - `level`: the level of log messages that are emitted to the _log file
-///  - `is_error_assert`: a predicate determining whether to emit an error as an ASSERT
-///    to Martian. ASSERT errors indicate an unrecoverable configuration error, and will
-///    prevent the user from restarting the pipeline. The is_error_assert function should 
-///    use downcasting to match the error against a set of error types that should generate an assert.
+/// See docs on MartianAdapter methods for details.
 fn martian_entry_point<S: std::hash::BuildHasher>(
     args: Vec<String>,
     stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
@@ -146,16 +160,13 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     // turn on backtrace capture
     std::env::set_var("RUST_BACKTRACE", "1");
 
-    // The log file is opened by the monitor process and should never be closed by
-    // the adapter.
-    let log_file: File = unsafe { File::from_raw_fd(3) };
-
     // Hook rust logging up to Martian _log file
-    setup_logging(&log_file, level);
+    let log_file: File = unsafe { File::from_raw_fd(3) };
+    setup_logging(log_file, level);
 
 
     // setup Martian metadata (and an extra copy for use in the panic handler
-    let _md = initialize(args, log_file).context("IO Error initializing stage");
+    let _md = initialize(args).context("IO Error initializing stage");
 
     // special handler for error in stage setup
     let mut md = match _md {
@@ -236,7 +247,9 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
             panic!("Unrecognized stage type");
         };
 
-    match result {
+
+
+    let res = match result {
 
         // exit code = 0
         Ok(()) => (0, None),
@@ -250,7 +263,9 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
             let _ = write_errors(&format!("{}", e), is_error_assert(&e));
             (1, Some(e))
         }
-    }
+    };
+
+    res
 }
 
 const MRO_HEADER: &str = r#"#

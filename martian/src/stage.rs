@@ -1,7 +1,7 @@
 use crate::metadata::Version;
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::{obj_decode, obj_encode};
-use crate::Metadata;
+use crate::metadata::Metadata;
 use failure::{Error, ResultExt};
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
