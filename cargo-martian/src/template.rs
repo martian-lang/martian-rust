@@ -12,9 +12,8 @@ use serde::{open}Serialize, Deserialize{close};
 
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
-// - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
-//                Error (from failure crate), LevelFilter (from log crate),
-//                MartianRunner
+// - Struct/Enum: MartianAdapter, MartianRover, Resource, StageDef, MartianVoid,
+//                Error (from failure crate), LevelFilter (from log crate)
 // - Macros: martian_stages!
 // - Functions: martian_make_mro
 use martian::prelude::*;
@@ -104,9 +103,8 @@ use serde::{open}Serialize, Deserialize{close};
 
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
-// - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
-//                Error (from failure crate), LevelFilter (from log crate),
-//                MartianRunner
+// - Struct/Enum: MartianAdapter, MartianRover, Resource, StageDef, MartianVoid,
+//                Error (from failure crate), LevelFilter (from log crate)
 // - Macros: martian_stages!
 // - Functions: martian_make_mro
 use martian::prelude::*;
