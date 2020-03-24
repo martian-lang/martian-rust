@@ -41,7 +41,6 @@ pub mod prelude;
 
 pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
     let mut md = Metadata::new(args);
-    println!("got metadata: {:?}", md);
     md.update_jobinfo()?;
 
     Ok(md)
