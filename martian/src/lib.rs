@@ -56,7 +56,7 @@ fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
         msg.to_string()
     };
 
-    let _ = err_file.write(msg.as_bytes())?;
+    let _ = err_file.write(msg.as_bytes());
 
     // Avoid closing err_file
     let _ = err_file.into_raw_fd();
