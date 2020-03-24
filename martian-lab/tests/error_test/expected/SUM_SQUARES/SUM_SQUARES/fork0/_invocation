@@ -1,0 +1,10 @@
+@include "pipeline.mro"
+
+call SUM_SQUARES(
+    values = [
+        1,
+        2,
+        3,
+        123456789,
+    ],
+)

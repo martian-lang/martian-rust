@@ -14,6 +14,8 @@ use martian::prelude::*;
 // #[derive(MartianStruct)], #[derive(MartianType)], #[make_mro], martian_filetype!
 use martian_derive::*;
 
+use failure;
+
 // NOTE: The following four structs will serve as the associated type for the
 // trait. The struct fields need to be owned and are limited to
 // - Basic int/float/bool/String types, PathBuf, Vec, Option, HashMap, HashSet
@@ -85,6 +87,14 @@ impl MartianStage for SumSquares {
         chunk_args: Self::ChunkInputs,
         _rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error> {
+
+        if chunk_args.value == 123456789.0 {
+            // let the other chunks finish
+            let dur = std::time::Duration::new(3, 0);
+            std::thread::sleep(dur);
+            return Err(failure::format_err!("hit special failure value"));
+        }
+
         Ok(SumSquaresChunkOutputs {
             square: chunk_args.value * chunk_args.value,
         })

@@ -13,6 +13,8 @@ script:
   - ../martian_test.py main_test.json
   - cd ../split_test
   - ../martian_test.py split_test.json
+  - cd ../error_test
+  - ../martian_test.py error_test.json
   - cd ../../../
   - cargo doc --verbose --all
   - mv target/doc book/

@@ -5,25 +5,21 @@
 //! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
 //!
 
-pub use failure::{format_err, Error};
-use failure_derive::Fail;
 
-use backtrace::Backtrace;
-use std::io;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
-use std::thread;
-
-use log::{error, info};
-
-use chrono::Local;
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
 use std::io::Write as IoWrite;
-use std::os::unix::io::FromRawFd;
+use std::os::unix::io::{IntoRawFd, FromRawFd};
 use std::panic;
 use std::path::Path;
+use std::io;
+
+use backtrace::Backtrace;
+use log::{error, info};
+use chrono::Local;
+
+pub use failure::{format_err, Error, ResultExt};
 
 mod metadata;
 pub use metadata::*;
@@ -40,75 +36,34 @@ pub mod mro;
 pub use mro::*;
 
 pub use log::LevelFilter;
-
 pub mod prelude;
 
-/// Ways a stage can fail.
-///
-/// The failure can either be a controlled failure or an unexpected
-/// failure.
-#[derive(Debug, Fail)]
-pub enum StageError {
-    /// Controlled shutdown for known condition in data or config
-    #[fail(display = "{}", message)]
-    MartianExit { message: String },
 
-    /// Unexpected error
-    #[fail(display = "{}", message)]
-    PipelineError { message: String },
-}
-
-pub fn initialize(args: Vec<String>, log_file: &File) -> Result<Metadata, Error> {
-    let mut md = Metadata::new(args, log_file);
-    println!("got metadata: {:?}", md);
+pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
+    let mut md = Metadata::new(args);
     md.update_jobinfo()?;
 
     Ok(md)
 }
 
-pub fn handle_stage_error(err: Error) {
-    // Try to handle know StageError cases
-    match err.downcast::<StageError>() {
-        Ok(ref e) => {
-            match *e {
-                StageError::MartianExit { message: ref m } => {
-                    let _ = write_errors(&format!("ASSERT: {}", m));
-                }
-                // No difference here at this point
-                StageError::PipelineError { message: ref m } => {
-                    let _ = write_errors(&format!("ASSERT: {}", m));
-                }
-            }
-        }
-        Err(ref e) => {
-            let msg = format!("stage error:{}\n{}", e.as_fail(), e.backtrace());
-            let _ = write_errors(&msg);
-        }
-    }
-}
+fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
+    let mut err_file: File = unsafe { File::from_raw_fd(4) };
 
-fn write_errors(msg: &str) -> Result<(), Error> {
-    unsafe {
-        let mut err_file = File::from_raw_fd(4);
-        let _ = err_file.write(msg.as_bytes())?;
-        Ok(())
-    }
-}
-
-/// Log a panic to the martian output machinery
-pub fn log_panic(panic: &panic::PanicInfo) {
-    let payload = match panic.payload().downcast_ref::<String>() {
-        Some(as_string) => as_string.to_string(),
-        None => format!("{:?}", panic.payload()),
+    let msg = if is_assert {
+        format!("ASSERT:{}", msg)
+    } else {
+        msg.to_string()
     };
 
-    let loc = panic.location().expect("location");
-    let msg = format!("{}: {}\n{}", loc.file(), loc.line(), payload);
+    let _ = err_file.write(msg.as_bytes());
 
-    let _ = write_errors(&msg);
+    // Avoid closing err_file
+    let _ = err_file.into_raw_fd();
+    Ok(())
 }
 
-fn setup_logging(log_file: &File, level: LevelFilter) {
+
+fn setup_logging(log_file: File, level: LevelFilter) {
     let base_config = fern::Dispatch::new().level(level);
 
     let logger_config = fern::Dispatch::new()
@@ -116,7 +71,7 @@ fn setup_logging(log_file: &File, level: LevelFilter) {
             let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
             out.finish(format_args!("[{}][{}] {}", time_str, record.level(), msg))
         })
-        .chain(log_file.try_clone().expect("couldn't open log file"))
+        .chain(log_file)
         .chain(io::stdout());
 
     let cfg = base_config.chain(logger_config).apply();
@@ -126,45 +81,119 @@ fn setup_logging(log_file: &File, level: LevelFilter) {
     }
 }
 
-pub fn martian_main<S: ::std::hash::BuildHasher>(
-    args: Vec<String>,
+/// Configure the Martian adapter for executing stage code
+pub struct MartianAdapter<S> {
     stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
-) -> Result<(), Error> {
-    martian_main_with_log_level(args, stage_map, LevelFilter::Debug)
+    log_level: LevelFilter,
+    is_error_assert: Box<dyn (Fn(&Error) -> bool) + 'static>,
 }
 
-pub fn martian_main_with_log_level<S: ::std::hash::BuildHasher>(
+impl<S: std::hash::BuildHasher> MartianAdapter<S> {
+    /// Build a new Martian adapter with the given registry of Martian stages
+    /// Arguments:
+    ///  - `stage_map`: names and implementations of the Martian stages that can be run by this binary.
+    pub fn new(stage_map: HashMap<String, Box<dyn RawMartianStage>, S>) -> MartianAdapter<S> {
+        MartianAdapter {
+            stage_map,
+            log_level: LevelFilter::Warn,
+            is_error_assert: Box::new(|_| false),
+        }
+    }
+
+    /// Set the minimum severity level of log messages that are emitted to the Martian
+    /// _log file.
+    pub fn log_level(self, log_level: LevelFilter) -> MartianAdapter<S> {
+        MartianAdapter {
+            log_level,
+            .. self
+        }
+    }
+
+    ///  Set `is_error_assert`, predicate determining whether to emit an error as an ASSERT
+    ///  to Martian. ASSERT errors indicate an unrecoverable configuration error, and will
+    ///  prevent the user from restarting the pipeline. The is_error_assert function should 
+    ///  use downcasting to match the error against a set of error types that should generate an assert.
+    pub fn assert_if<F: 'static + Fn(&Error) -> bool>(self, predicate: F) -> MartianAdapter<S> {
+        MartianAdapter {
+            is_error_assert: Box::new(predicate),
+            .. self
+        }
+    }
+
+    /// Run the martian adapter using the given cmdline args
+    /// provided by the martian runtime. The caller should call sys::exit() witih
+    /// the returncode returned by this function.
+    /// Arguments:
+    ///  - `args`: vector of command line arguments, typically supplied by Martian runtime.
+    #[must_use = "Martian stage binaries should call std::process::exit() on the return_code"]
+    pub fn run(self, args: Vec<String>) -> i32 {
+        self.run_get_error(args).0
+    }
+
+    /// Like `run()` but also return an error thrown by the stage (if any). May be useful
+    /// for unit testing purposes.
+    #[must_use = "Martian stage binaries should call std::process::exit() on the return_code"]
+    pub fn run_get_error(self, args: Vec<String>) -> (i32, Option<Error>) {
+        martian_entry_point(
+            args,
+            self.stage_map,
+            self.log_level,
+            self.is_error_assert)
+    }
+}
+
+
+/// See docs on MartianAdapter methods for details.
+fn martian_entry_point<S: std::hash::BuildHasher>(
     args: Vec<String>,
     stage_map: HashMap<String, Box<dyn RawMartianStage>, S>,
     level: LevelFilter,
-) -> Result<(), Error> {
+    is_error_assert: Box<dyn Fn(&Error) -> bool>,
+) -> (i32, Option<Error>) {
     info!("got args: {:?}", args);
 
-    // The log file is opened by the monitor process and should never be closed by
-    // the adapter.
-    let log_file: File = unsafe { File::from_raw_fd(3) };
+    // turn on backtrace capture
+    std::env::set_var("RUST_BACKTRACE", "1");
 
     // Hook rust logging up to Martian _log file
-    setup_logging(&log_file, level);
+    let log_file: File = unsafe { File::from_raw_fd(3) };
+    setup_logging(log_file, level);
 
-    // setup Martian metadata
-    let md = initialize(args, &log_file)?;
+
+    // setup Martian metadata (and an extra copy for use in the panic handler
+    let _md = initialize(args).context("IO Error initializing stage");
+
+    // special handler for error in stage setup
+    let mut md = match _md {
+        Ok(m) => m,
+        Err(e) => {
+            let _ = write_errors(&format!("{:?}", e), false);
+            return (1, Some(e.into()))
+        }
+    };
 
     // Get the stage implementation
-    let stage = stage_map
+    let _stage = stage_map
         .get(&md.stage_name)
-        .ok_or_else(|| failure::err_msg("couldn't find requested stage"))?;
+        .ok_or_else(|| format_err!("Couldn't find requested Martian stage: {}", md.stage_name));
 
-    // Setup monitor thread -- this handles heartbeat & memory checking
-    let stage_done = Arc::new(AtomicBool::new(false));
+    // special handler for non-existent stage
+    let stage = match _stage {
+        Ok(s) => s,
+        Err(e) => {
+            let _ = write_errors(&format!("{:?}", e), false);
+            return (1, Some(e))
+        }
+    };
+
+    // will write to this from panic handler if needed.
+    // panic handler has separate write code to avoid locking.
+    let stackvars_path = md.make_path("stackvars");
 
     // Setup panic hook. If a stage panics, we'll shutdown cleanly to martian
     let p = panic::take_hook();
     panic::set_hook(Box::new(move |info| {
         let backtrace = Backtrace::new();
-
-        let thread = thread::current();
-        let thread = thread.name().unwrap_or("unnamed");
 
         let msg = match info.payload().downcast_ref::<&'static str>() {
             Some(s) => *s,
@@ -176,33 +205,62 @@ pub fn martian_main_with_log_level<S: ::std::hash::BuildHasher>(
 
         let msg = match info.location() {
             Some(location) => format!(
-                "thread '{}' panicked at '{}': {}:{}{:?}",
-                thread,
+                "stage failed unexpectedly: '{}' {}:{}:\n{:?}",
                 msg,
                 location.file(),
                 location.line(),
                 backtrace
             ),
-            None => format!("thread '{}' panicked at '{}'{:?}", thread, msg, backtrace),
+            None => format!("stage failed unexpectedly: '{}':\n{:?}", msg, backtrace),
         };
 
+        // write to _log
         error!("{}", msg);
-        let _ = write_errors(&msg);
+
+        // write stack trace to to _stackvars. 
+        // this will just give up if any errors are encountere
+        let bt_string = format!("{:?}", backtrace);
+        let _ = File::create(&stackvars_path).map(|mut f| {
+            let _ = f.write_all(bt_string.as_bytes());
+        });
+    
+        // write to _errors
+        let _ = write_errors(&msg, false);
+
+        // call default panic handler (not sure if this is a good idea or not)
         p(info);
     }));
 
-    if md.stage_type == "split" {
-        stage.split(md)?;
-    } else if md.stage_type == "main" {
-        stage.main(md)?;
-    } else if md.stage_type == "join" {
-        stage.join(md)?;
-    } else {
-        panic!("Unrecognized stage type");
+    let result = 
+        if md.stage_type == "split" {
+           stage.split(&mut md)
+        } else if md.stage_type == "main" {
+            stage.main(&mut md)
+        } else if md.stage_type == "join" {
+            stage.join(&mut md)
+        } else {
+            panic!("Unrecognized stage type");
+        };
+
+
+
+    let res = match result {
+
+        // exit code = 0
+        Ok(()) => (0, None),
+
+        // write message and stack trace, exit code = 1;
+        Err(e) => {
+            let bt = e.backtrace();
+            if !bt.is_empty() {
+                let _ = md.stackvars(&bt.to_string());
+            }
+            let _ = write_errors(&format!("{}", e), is_error_assert(&e));
+            (1, Some(e))
+        }
     };
 
-    stage_done.store(true, Ordering::Relaxed);
-    Ok(())
+    res
 }
 
 const MRO_HEADER: &str = r#"#

@@ -1,7 +1,7 @@
 use crate::metadata::Version;
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::{obj_decode, obj_encode};
-use crate::Metadata;
+use crate::metadata::Metadata;
 use failure::{Error, ResultExt};
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
@@ -318,7 +318,7 @@ pub struct MartianRover {
     version: Version,
 }
 
-impl<'a> From<&'a Metadata<'a>> for MartianRover {
+impl<'a> From<&'a Metadata> for MartianRover {
     fn from(md: &Metadata) -> MartianRover {
         MartianRover {
             files_path: PathBuf::from(&md.files_path),
@@ -546,9 +546,9 @@ pub trait MartianStage: MroMaker {
 /// A raw martian stage that works with untype metadata. It is recommended
 /// not to implement this directly. Use `MartianMain` or `MartianStage` traits instead
 pub trait RawMartianStage {
-    fn split(&self, metadata: Metadata) -> Result<(), Error>;
-    fn main(&self, metadata: Metadata) -> Result<(), Error>;
-    fn join(&self, metadata: Metadata) -> Result<(), Error>;
+    fn split(&self, metadata: &mut Metadata) -> Result<(), Error>;
+    fn main(&self, metadata: &mut Metadata) -> Result<(), Error>;
+    fn join(&self, metadata: &mut Metadata) -> Result<(), Error>;
 }
 
 impl<T> MartianStage for T
@@ -620,14 +620,15 @@ where
     }
 }
 
+
 impl<T> RawMartianStage for T
 where
     T: MartianStage,
 {
-    fn split(&self, mut md: Metadata) -> Result<(), Error> {
+    fn split(&self, md: &mut Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
-        let rover = MartianRover::from(&md);
+        let rover: MartianRover = MartianRover::from(&*md);
         let stage_defs = MartianStage::split(self, args, rover)?;
         let stage_def_obj = obj_encode(&stage_defs)?;
         md.write_json_obj("stage_defs", &stage_def_obj)?;
@@ -635,11 +636,11 @@ where
         Ok(())
     }
 
-    fn main(&self, mut md: Metadata) -> Result<(), Error> {
+    fn main(&self, md: &mut Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
         let chunk_args: <T as MartianStage>::ChunkInputs = obj_decode(&args_obj)?;
-        let rover = MartianRover::from(&md);
+        let rover = MartianRover::from(&*md);
         // let outs = md.read_json_obj("outs")?;
         let outs = MartianStage::main(self, args, chunk_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
@@ -648,10 +649,10 @@ where
         Ok(())
     }
 
-    fn join(&self, mut md: Metadata) -> Result<(), Error> {
+    fn join(&self, md: &mut Metadata) -> Result<(), Error> {
         let args_obj = md.read_json_obj("args")?;
         let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
-        let rover = MartianRover::from(&md);
+        let rover = MartianRover::from(&*md);
         // let outs = md.read_json_obj("outs")?;
         let chunk_defs = {
             let chunk_defs_obj = md.read_json_obj_array("chunk_defs")?;
