@@ -4,7 +4,7 @@ Tests for a pipeline with splits.  It consists of a single stage, SUM_SQUARES,
 which splits, computes the square of each argument in the input list in a
 separate chunk, and then sums the chunk outputs in a join phase.
 
-split_test.json tests normal operation
+error_test.json tests normal operation
 
 # How to test
 
@@ -13,11 +13,11 @@ split_test.json tests normal operation
 cargo b --example sum_sq
 ```
 
-2. Navigate to the `split_test` directory
+2. Navigate to the `error_test` directory
 
 3. Make sure `mrp` is in your path. You also need `realpath`
 
 4. Run the test
 ```
-../martian_test.py split_test.json
+../martian_test.py error_test.json
 ```

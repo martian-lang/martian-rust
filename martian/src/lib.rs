@@ -121,12 +121,8 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
     }
 
     /// Run the martian adapter using the given cmdline args
-    /// provided by the martian runtime. If there is an error
-    /// in the stage setup, this returns Err(e). If the stage
-    /// is executed it returns `returncode`. 
-    /// The caller should call sys::exit() with the returncode. 
-    /// If the stage itself failed, the error causing the failure 
-    /// will be returned in the `option_error`.
+    /// provided by the martian runtime. The caller should call sys::exit() witih
+    /// the returncode returned by this function.
     /// Arguments:
     ///  - `args`: vector of command line arguments, typically supplied by Martian runtime.
     #[must_use = "Martian stage binaries should call std::process::exit() on the return_code"]
@@ -134,7 +130,7 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
         self.run_get_error(args).0
     }
 
-    /// Like `run()` but also return an error thrown by the stage (if any). May be useful 
+    /// Like `run()` but also return an error thrown by the stage (if any). May be useful
     /// for unit testing purposes.
     #[must_use = "Martian stage binaries should call std::process::exit() on the return_code"]
     pub fn run_get_error(self, args: Vec<String>) -> (i32, Option<Error>) {
