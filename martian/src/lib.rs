@@ -276,15 +276,7 @@ pub fn martian_make_mro(
         }
     }
 
-    let mut filetype_header = FiletypeHeader::default();
-    let mut mro_string = String::new();
-    for stage_mro in mro_registry {
-        filetype_header.add_stage(&stage_mro);
-        writeln!(&mut mro_string, "{}", stage_mro)?;
-    }
-    mro_string.pop();
-
-    let final_mro_string = format!("{}{}{}", MRO_HEADER, filetype_header, mro_string);
+    let final_mro_string = make_mro_string(&mro_registry);
     match file_name {
         Some(f) => {
             let mut output = File::create(f)?;
@@ -295,4 +287,21 @@ pub fn martian_make_mro(
         }
     }
     Ok(())
+}
+
+pub fn make_mro_string(mro_registry: &[StageMro]) -> String {
+    let mut filetype_header = FiletypeHeader::default();
+    let mut struct_header = StructHeader::default();
+    let mut mro_string = String::new();
+    for stage_mro in mro_registry {
+        filetype_header.add_stage(&stage_mro);
+        struct_header.add_stage(&stage_mro);
+        writeln!(&mut mro_string, "{}", stage_mro).unwrap();
+    }
+    mro_string.pop();
+
+    format!(
+        "{}{}{}{}",
+        MRO_HEADER, filetype_header, struct_header, mro_string
+    )
 }

@@ -520,6 +520,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     // Handle generics in the struct
     let (impl_generics, ty_generics, where_clause) = item_struct.generics.split_for_impl();
     let item_ident = item_struct.ident.clone();
+    let item_ident_str = item_ident.to_string();
     let final_token = quote![
         #[automatically_derived]
         impl #impl_generics ::martian::MartianStruct for #item_ident #ty_generics #where_clause {
@@ -527,6 +528,16 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                 vec![
                     #(#vec_inner),*
                 ]
+            }
+        }
+
+        #[automatically_derived]
+        impl #impl_generics ::martian::AsMartianPrimaryType for #item_ident #ty_generics #where_clause {
+            fn as_martian_primary_type() -> ::martian::MartianPrimaryType {
+                let fields = <#item_ident #ty_generics as ::martian::MartianStruct>::mro_fields();
+                ::martian::MartianPrimaryType::Struct(
+                    ::martian::mro::StructDef::new(#item_ident_str.into(), fields)
+                )
             }
         }
     ];

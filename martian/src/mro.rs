@@ -85,6 +85,12 @@ pub struct StructDef {
     fields: Vec<MroField>,
 }
 
+impl StructDef {
+    pub fn new(name: String, fields: Vec<MroField>) -> Self {
+        StructDef { name, fields }
+    }
+}
+
 impl MroDisplay for StructDef {
     fn min_width(&self) -> usize {
         0
@@ -609,6 +615,7 @@ impl MroDisplay for FiletypeHeader {
 mro_display_to_display! { FiletypeHeader }
 
 /// All the structs that need to be defined in an mro
+#[derive(Debug, Default)]
 pub struct StructHeader(BTreeMap<String, StructDef>);
 
 impl From<&StageMro> for StructHeader {
@@ -685,7 +692,13 @@ pub trait MroMaker {
     fn mro(adapter_name: impl ToString, stage_key: impl ToString) -> String {
         let stage_mro = Self::stage_mro(adapter_name, stage_key);
         let filetype = FiletypeHeader::from(&stage_mro);
-        format!("{}{}", filetype.to_string(), stage_mro.to_string())
+        let struct_header = StructHeader::from(&stage_mro);
+        format!(
+            "{}{}{}",
+            filetype.to_string(),
+            struct_header.to_string(),
+            stage_mro.to_string()
+        )
     }
     fn stage_name() -> String;
     fn stage_in_and_out() -> InAndOut;
