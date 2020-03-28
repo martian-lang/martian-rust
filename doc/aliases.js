@@ -6,7 +6,6 @@ ALIASES["backtrace_sys"] = {};
 ALIASES["bincode"] = {};
 ALIASES["bstr"] = {};
 ALIASES["byteorder"] = {};
-ALIASES["c2_chacha"] = {};
 ALIASES["cargo_martian"] = {};
 ALIASES["cfg_if"] = {};
 ALIASES["chrono"] = {};
