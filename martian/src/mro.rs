@@ -78,6 +78,47 @@ macro_rules! usize_field_len {
     };
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
+pub struct StructDef {
+    name: String,
+    fields: Vec<MroField>,
+}
+
+impl MroDisplay for StructDef {
+    fn min_width(&self) -> usize {
+        0
+    }
+    fn mro_string_no_width(&self) -> String {
+        self.mro_string_with_width(self.min_width())
+    }
+
+    fn mro_string_with_width(&self, field_width: usize) -> String {
+        let mut result = String::new();
+        // Determing the field width for the type field
+        let ty_width = self
+            .fields
+            .iter()
+            .map(|field| field.min_width())
+            .max()
+            .unwrap_or(0);
+
+        // The indent for the struct entries
+        let indent = format!("{blank:indent$}", blank = "", indent = field_width);
+        writeln!(&mut result, "struct {}(", self.name).unwrap();
+
+        for field in &self.fields {
+            let field_mro = field.mro_string(Some(ty_width));
+            writeln!(&mut result, "{}{},", indent, field_mro).unwrap();
+        }
+
+        writeln!(&mut result, ")").unwrap();
+
+        result
+    }
+}
+
+mro_display_to_display! {StructDef, TAB_WIDTH_FOR_MRO}
+
 /// Primary data types in Martian world
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub enum MartianPrimaryType {
@@ -88,7 +129,7 @@ pub enum MartianPrimaryType {
     Map,
     Path,
     FileType(String),
-    Struct { name: String, fields: Vec<MroField> },
+    Struct(StructDef),
 }
 
 impl MroDisplay for MartianPrimaryType {
@@ -102,7 +143,7 @@ impl MroDisplay for MartianPrimaryType {
             MartianPrimaryType::Map => "map",
             MartianPrimaryType::Path => "path",
             MartianPrimaryType::FileType(ref ext) => ext,
-            MartianPrimaryType::Struct { ref name, .. } => name,
+            MartianPrimaryType::Struct(ref def) => &def.name,
         };
         value.to_string()
     }
@@ -556,6 +597,9 @@ impl MroDisplay for FiletypeHeader {
 }
 
 mro_display_to_display! { FiletypeHeader }
+
+/// All the structs that need to be defined in an mro
+pub struct StructHeader(HashMap<String, StructDef>);
 
 /// An object that can generate a `StageMro`
 ///
@@ -1211,10 +1255,10 @@ mod tests {
             inputs: vec![MroField::new("raw_matrix", Primary(FileType("h5".into())))],
             outputs: vec![MroField::new(
                 "mex_files",
-                Primary(Struct {
+                Primary(Struct(StructDef {
                     name: "MexFiles".to_string(),
                     fields: vec![],
-                }),
+                })),
             )],
         };
         let expected = indoc!(
@@ -1225,5 +1269,28 @@ mod tests {
         );
         assert_eq!(in_out.mro_string(None), expected);
         assert_eq!(in_out.to_string(), expected);
+    }
+
+    #[test]
+    fn test_struct_display() {
+        let struct_def = StructDef {
+            name: "MexFiles".to_string(),
+            fields: vec![
+                MroField::new("matrix", Primary(FileType("mtx".into()))),
+                MroField::new("barcodes", Primary(Path)),
+                MroField::new("features", Primary(Path)),
+            ],
+        };
+
+        let expected = indoc!(
+            r#"
+            struct MexFiles(
+                mtx  matrix,
+                path barcodes,
+                path features,
+            )
+        "#
+        );
+        assert_eq!(struct_def.to_string(), expected);
     }
 }
