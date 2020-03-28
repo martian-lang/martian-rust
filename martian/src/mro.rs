@@ -88,6 +88,7 @@ pub enum MartianPrimaryType {
     Map,
     Path,
     FileType(String),
+    Struct { name: String, fields: Vec<MroField> },
 }
 
 impl MroDisplay for MartianPrimaryType {
@@ -101,6 +102,7 @@ impl MroDisplay for MartianPrimaryType {
             MartianPrimaryType::Map => "map",
             MartianPrimaryType::Path => "path",
             MartianPrimaryType::FileType(ref ext) => ext,
+            MartianPrimaryType::Struct { ref name, .. } => name,
         };
         value.to_string()
     }
@@ -125,7 +127,7 @@ impl FromStr for MartianPrimaryType {
 mro_display_to_display! {MartianPrimaryType}
 
 /// Primary Data type in martian + Arrays (which are derived from primary types)
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub enum MartianBlanketType {
     Primary(MartianPrimaryType),
     Array(MartianPrimaryType),
@@ -254,7 +256,7 @@ impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
 /// - MroField { name: "unsorted", ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
 /// - MroField { name: "reverse", ty: MartianBlanketType::Primary(MartianPrimaryType::Bool)}
 /// - MroField { name: "sorted", ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
-#[derive(Debug, Serialize, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, Clone, Deserialize, PartialEq, Eq, Hash)]
 pub struct MroField {
     name: String,
     ty: MartianBlanketType,
@@ -541,7 +543,6 @@ impl MroDisplay for FiletypeHeader {
             return result;
         }
         let mut extensions: Vec<_> = self.0.iter().collect();
-        writeln!(&mut result).unwrap();
         extensions.sort();
         for ext in extensions {
             writeln!(&mut result, "filetype {};", ext).unwrap();
@@ -1141,7 +1142,7 @@ mod tests {
         assert_eq!(FiletypeHeader(HashSet::new()).to_string(), "");
         assert_eq!(
             FiletypeHeader(vec!["txt"].into_iter().map(|x| x.to_string()).collect()).to_string(),
-            "\nfiletype txt;\n\n"
+            "filetype txt;\n\n"
         );
         assert_eq!(
             FiletypeHeader(
@@ -1153,7 +1154,6 @@ mod tests {
             .to_string(),
             indoc![
                 "
-
             filetype bam;
             filetype json;
             filetype txt;
@@ -1203,5 +1203,27 @@ mod tests {
             .to_string()
             .parse::<MartianBlanketType>()
             .is_err())
+    }
+
+    #[test]
+    fn test_in_and_out_display_with_struct() {
+        let in_out = InAndOut {
+            inputs: vec![MroField::new("raw_matrix", Primary(FileType("h5".into())))],
+            outputs: vec![MroField::new(
+                "mex_files",
+                Primary(Struct {
+                    name: "MexFiles".to_string(),
+                    fields: vec![],
+                }),
+            )],
+        };
+        let expected = indoc!(
+            "
+            in  h5       raw_matrix,
+            out MexFiles mex_files,
+        "
+        );
+        assert_eq!(in_out.mro_string(None), expected);
+        assert_eq!(in_out.to_string(), expected);
     }
 }
