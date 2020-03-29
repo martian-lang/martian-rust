@@ -238,7 +238,7 @@ fn main() -> Result<(), Error> {open}
         // If you want explicit control over the log level, use:
         // let runner = runner.log_level();
         // run the stage
-        let (retcode, _) = runner.run(args.arg_adapter);
+        let retcode = runner.run(args.arg_adapter);
         // return from the process
         std::sys::exit(retcode);
     {close} else if args.cmd_mro {open}
