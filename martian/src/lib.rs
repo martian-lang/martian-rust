@@ -5,19 +5,18 @@
 //! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
 //!
 
-
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
+use std::io;
 use std::io::Write as IoWrite;
-use std::os::unix::io::{IntoRawFd, FromRawFd};
+use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::panic;
 use std::path::Path;
-use std::io;
 
 use backtrace::Backtrace;
-use log::{error, info};
 use chrono::Local;
+use log::{error, info};
 
 pub use failure::{format_err, Error, ResultExt};
 
@@ -37,7 +36,6 @@ pub use mro::*;
 
 pub use log::LevelFilter;
 pub mod prelude;
-
 
 pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
     let mut md = Metadata::new(args);
@@ -61,7 +59,6 @@ fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
     let _ = err_file.into_raw_fd();
     Ok(())
 }
-
 
 fn setup_logging(log_file: File, level: LevelFilter) {
     let base_config = fern::Dispatch::new().level(level);
@@ -103,20 +100,17 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
     /// Set the minimum severity level of log messages that are emitted to the Martian
     /// _log file.
     pub fn log_level(self, log_level: LevelFilter) -> MartianAdapter<S> {
-        MartianAdapter {
-            log_level,
-            .. self
-        }
+        MartianAdapter { log_level, ..self }
     }
 
     ///  Set `is_error_assert`, predicate determining whether to emit an error as an ASSERT
     ///  to Martian. ASSERT errors indicate an unrecoverable configuration error, and will
-    ///  prevent the user from restarting the pipeline. The is_error_assert function should 
+    ///  prevent the user from restarting the pipeline. The is_error_assert function should
     ///  use downcasting to match the error against a set of error types that should generate an assert.
     pub fn assert_if<F: 'static + Fn(&Error) -> bool>(self, predicate: F) -> MartianAdapter<S> {
         MartianAdapter {
             is_error_assert: Box::new(predicate),
-            .. self
+            ..self
         }
     }
 
@@ -134,14 +128,9 @@ impl<S: std::hash::BuildHasher> MartianAdapter<S> {
     /// for unit testing purposes.
     #[must_use = "Martian stage binaries should call std::process::exit() on the return_code"]
     pub fn run_get_error(self, args: Vec<String>) -> (i32, Option<Error>) {
-        martian_entry_point(
-            args,
-            self.stage_map,
-            self.log_level,
-            self.is_error_assert)
+        martian_entry_point(args, self.stage_map, self.log_level, self.is_error_assert)
     }
 }
-
 
 /// See docs on MartianAdapter methods for details.
 fn martian_entry_point<S: std::hash::BuildHasher>(
@@ -159,7 +148,6 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let log_file: File = unsafe { File::from_raw_fd(3) };
     setup_logging(log_file, level);
 
-
     // setup Martian metadata (and an extra copy for use in the panic handler
     let _md = initialize(args).context("IO Error initializing stage");
 
@@ -168,7 +156,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         Ok(m) => m,
         Err(e) => {
             let _ = write_errors(&format!("{:?}", e), false);
-            return (1, Some(e.into()))
+            return (1, Some(e.into()));
         }
     };
 
@@ -182,7 +170,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         Ok(s) => s,
         Err(e) => {
             let _ = write_errors(&format!("{:?}", e), false);
-            return (1, Some(e))
+            return (1, Some(e));
         }
     };
 
@@ -217,13 +205,13 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         // write to _log
         error!("{}", msg);
 
-        // write stack trace to to _stackvars. 
+        // write stack trace to to _stackvars.
         // this will just give up if any errors are encountere
         let bt_string = format!("{:?}", backtrace);
         let _ = File::create(&stackvars_path).map(|mut f| {
             let _ = f.write_all(bt_string.as_bytes());
         });
-    
+
         // write to _errors
         let _ = write_errors(&msg, false);
 
@@ -231,21 +219,17 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         p(info);
     }));
 
-    let result = 
-        if md.stage_type == "split" {
-           stage.split(&mut md)
-        } else if md.stage_type == "main" {
-            stage.main(&mut md)
-        } else if md.stage_type == "join" {
-            stage.join(&mut md)
-        } else {
-            panic!("Unrecognized stage type");
-        };
-
-
+    let result = if md.stage_type == "split" {
+        stage.split(&mut md)
+    } else if md.stage_type == "main" {
+        stage.main(&mut md)
+    } else if md.stage_type == "join" {
+        stage.join(&mut md)
+    } else {
+        panic!("Unrecognized stage type");
+    };
 
     let res = match result {
-
         // exit code = 0
         Ok(()) => (0, None),
 
@@ -264,11 +248,12 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 }
 
 const MRO_HEADER: &str = r#"#
-# Copyright (c) 2019 10X Genomics, Inc. All rights reserved.
+# Copyright (c) 2020 10X Genomics, Inc. All rights reserved.
 #
 # WARNING: This file is auto-generated.
 # DO NOT MODIFY THIS FILE DIRECTLY
 #
+
 "#;
 pub fn martian_make_mro(
     file_name: Option<impl AsRef<Path>>,
@@ -291,15 +276,7 @@ pub fn martian_make_mro(
         }
     }
 
-    let mut filetype_header = FiletypeHeader::default();
-    let mut mro_string = String::new();
-    for stage_mro in mro_registry {
-        filetype_header.add_stage(&stage_mro);
-        writeln!(&mut mro_string, "{}", stage_mro)?;
-    }
-    mro_string.pop();
-
-    let final_mro_string = format!("{}{}{}", MRO_HEADER, filetype_header, mro_string);
+    let final_mro_string = make_mro_string(&mro_registry);
     match file_name {
         Some(f) => {
             let mut output = File::create(f)?;
@@ -310,4 +287,21 @@ pub fn martian_make_mro(
         }
     }
     Ok(())
+}
+
+pub fn make_mro_string(mro_registry: &[StageMro]) -> String {
+    let mut filetype_header = FiletypeHeader::default();
+    let mut struct_header = StructHeader::default();
+    let mut mro_string = String::new();
+    for stage_mro in mro_registry {
+        filetype_header.add_stage(&stage_mro);
+        struct_header.add_stage(&stage_mro);
+        writeln!(&mut mro_string, "{}", stage_mro).unwrap();
+    }
+    mro_string.pop();
+
+    format!(
+        "{}{}{}{}",
+        MRO_HEADER, filetype_header, struct_header, mro_string
+    )
 }

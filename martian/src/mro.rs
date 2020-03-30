@@ -13,6 +13,7 @@
 use crate::MartianVoid;
 use failure::{format_err, Error};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Display, Write};
 use std::path::{Path, PathBuf};
@@ -78,6 +79,53 @@ macro_rules! usize_field_len {
     };
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
+pub struct StructDef {
+    name: String,
+    fields: Vec<MroField>,
+}
+
+impl StructDef {
+    pub fn new(name: String, fields: Vec<MroField>) -> Self {
+        StructDef { name, fields }
+    }
+}
+
+impl MroDisplay for StructDef {
+    fn min_width(&self) -> usize {
+        0
+    }
+    fn mro_string_no_width(&self) -> String {
+        self.mro_string_with_width(self.min_width())
+    }
+
+    fn mro_string_with_width(&self, field_width: usize) -> String {
+        let mut result = String::new();
+        // Determing the field width for the type field
+        let ty_width = self
+            .fields
+            .iter()
+            .map(|field| field.min_width())
+            .max()
+            .unwrap_or(0);
+
+        // The indent for the struct entries
+        let indent = format!("{blank:indent$}", blank = "", indent = field_width);
+        writeln!(&mut result, "struct {}(", self.name).unwrap();
+
+        for field in &self.fields {
+            let field_mro = field.mro_string(Some(ty_width));
+            writeln!(&mut result, "{}{},", indent, field_mro).unwrap();
+        }
+
+        writeln!(&mut result, ")").unwrap();
+
+        result
+    }
+}
+
+mro_display_to_display! {StructDef, TAB_WIDTH_FOR_MRO}
+
 /// Primary data types in Martian world
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub enum MartianPrimaryType {
@@ -88,6 +136,7 @@ pub enum MartianPrimaryType {
     Map,
     Path,
     FileType(String),
+    Struct(StructDef),
 }
 
 impl MroDisplay for MartianPrimaryType {
@@ -101,6 +150,7 @@ impl MroDisplay for MartianPrimaryType {
             MartianPrimaryType::Map => "map",
             MartianPrimaryType::Path => "path",
             MartianPrimaryType::FileType(ref ext) => ext,
+            MartianPrimaryType::Struct(ref def) => &def.name,
         };
         value.to_string()
     }
@@ -125,10 +175,19 @@ impl FromStr for MartianPrimaryType {
 mro_display_to_display! {MartianPrimaryType}
 
 /// Primary Data type in martian + Arrays (which are derived from primary types)
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub enum MartianBlanketType {
     Primary(MartianPrimaryType),
     Array(MartianPrimaryType),
+}
+
+impl MartianBlanketType {
+    fn inner(&self) -> &MartianPrimaryType {
+        match *self {
+            MartianBlanketType::Primary(ref primary) => primary,
+            MartianBlanketType::Array(ref primary) => primary,
+        }
+    }
 }
 
 impl MroDisplay for MartianBlanketType {
@@ -254,7 +313,7 @@ impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
 /// - MroField { name: "unsorted", ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
 /// - MroField { name: "reverse", ty: MartianBlanketType::Primary(MartianPrimaryType::Bool)}
 /// - MroField { name: "sorted", ty: MartianBlanketType::Array(MartianPrimaryType::Int)}
-#[derive(Debug, Serialize, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, Clone, Deserialize, PartialEq, Eq, Hash)]
 pub struct MroField {
     name: String,
     ty: MartianBlanketType,
@@ -433,6 +492,9 @@ pub struct InAndOut {
 }
 
 impl InAndOut {
+    fn iter_mro_fields(&self) -> impl Iterator<Item = &MroField> {
+        self.inputs.iter().chain(self.outputs.iter())
+    }
     fn retain_field_names(&self) -> Vec<String> {
         self.outputs
             .iter()
@@ -444,18 +506,10 @@ impl InAndOut {
 
 impl MroDisplay for InAndOut {
     fn min_width(&self) -> usize {
-        std::cmp::max(
-            self.inputs
-                .iter()
-                .map(|field| field.min_width())
-                .max()
-                .unwrap_or(0),
-            self.outputs
-                .iter()
-                .map(|field| field.min_width())
-                .max()
-                .unwrap_or(0),
-        )
+        self.iter_mro_fields()
+            .map(|field| field.min_width())
+            .max()
+            .unwrap_or(0)
     }
 
     fn mro_string_no_width(&self) -> String {
@@ -487,36 +541,26 @@ pub struct FiletypeHeader(HashSet<String>);
 
 impl From<&MroField> for FiletypeHeader {
     fn from(field: &MroField) -> FiletypeHeader {
-        let mut result = HashSet::new();
-        match field.ty {
-            MartianBlanketType::Primary(MartianPrimaryType::FileType(ref ext)) => {
-                result.insert(ext.to_string());
-            }
-            MartianBlanketType::Array(MartianPrimaryType::FileType(ref ext)) => {
-                result.insert(ext.to_string());
-            }
-            _ => {}
-        }
-        FiletypeHeader(result)
+        let mut result = FiletypeHeader(HashSet::new());
+        result.add_mro_field(field);
+        result
     }
 }
 
 impl From<&InAndOut> for FiletypeHeader {
     fn from(in_out: &InAndOut) -> FiletypeHeader {
-        let mut result = HashSet::new();
-        for field in in_out.inputs.iter().chain(in_out.outputs.iter()) {
-            result.extend(FiletypeHeader::from(field).0);
+        let mut result = FiletypeHeader(HashSet::new());
+        for field in in_out.iter_mro_fields() {
+            result.add_mro_field(field);
         }
-        FiletypeHeader(result)
+        result
     }
 }
 
 impl From<&StageMro> for FiletypeHeader {
     fn from(stage_mro: &StageMro) -> FiletypeHeader {
-        let mut result = FiletypeHeader::from(&stage_mro.stage_in_out);
-        if let Some(ref chunk_in_out) = stage_mro.chunk_in_out {
-            result.0.extend(FiletypeHeader::from(chunk_in_out).0)
-        }
+        let mut result = FiletypeHeader(HashSet::new());
+        result.add_stage(stage_mro);
         result
     }
 }
@@ -525,7 +569,22 @@ impl FiletypeHeader {
     /// Find out all the filetypes in the stage and add the extensions
     /// to the internal hashset which stores all the extensions
     pub fn add_stage(&mut self, stage_mro: &StageMro) {
-        self.0.extend(FiletypeHeader::from(stage_mro).0);
+        for field in stage_mro.iter_mro_fields() {
+            self.add_mro_field(field);
+        }
+    }
+    pub fn add_mro_field(&mut self, mro_field: &MroField) {
+        match mro_field.ty.inner() {
+            MartianPrimaryType::FileType(ref ext) => {
+                self.0.insert(ext.to_string());
+            }
+            MartianPrimaryType::Struct(ref def) => {
+                for field in &def.fields {
+                    self.add_mro_field(field);
+                }
+            }
+            _ => {}
+        }
     }
 }
 
@@ -541,7 +600,6 @@ impl MroDisplay for FiletypeHeader {
             return result;
         }
         let mut extensions: Vec<_> = self.0.iter().collect();
-        writeln!(&mut result).unwrap();
         extensions.sort();
         for ext in extensions {
             writeln!(&mut result, "filetype {};", ext).unwrap();
@@ -555,6 +613,63 @@ impl MroDisplay for FiletypeHeader {
 }
 
 mro_display_to_display! { FiletypeHeader }
+
+/// All the structs that need to be defined in an mro
+#[derive(Debug, Default)]
+pub struct StructHeader(BTreeMap<String, StructDef>);
+
+impl From<&StageMro> for StructHeader {
+    fn from(stage_mro: &StageMro) -> StructHeader {
+        let mut result = StructHeader(BTreeMap::new());
+        result.add_stage(stage_mro);
+        result
+    }
+}
+
+impl StructHeader {
+    /// Find out all the structs in the stage and add it to the
+    /// internal hashmap which stores all the structs
+    pub fn add_stage(&mut self, stage_mro: &StageMro) {
+        for field in stage_mro.iter_mro_fields() {
+            self.add_mro_field(field);
+        }
+    }
+    pub fn add_mro_field(&mut self, mro_field: &MroField) {
+        if let MartianPrimaryType::Struct(ref def) = mro_field.ty.inner() {
+            for field in &def.fields {
+                self.add_mro_field(field);
+            }
+            if self.0.contains_key(&def.name) {
+                assert_eq!(
+                    &self.0[&def.name], def,
+                    "struct {} has conflicting definitions.\nDefinition 1: {:?}\nDefinition 2: {:?}",
+                    def.name, &self.0[&def.name], def
+                );
+            } else {
+                self.0.insert(def.name.clone(), def.clone());
+            }
+        }
+    }
+}
+
+impl MroDisplay for StructHeader {
+    fn min_width(&self) -> usize {
+        0
+    }
+    fn mro_string_no_width(&self) -> String {
+        self.mro_string_with_width(self.min_width())
+    }
+    fn mro_string_with_width(&self, field_width: usize) -> String {
+        let mut result = String::new();
+
+        for struct_def in self.0.values() {
+            writeln!(&mut result, "{}", struct_def.mro_string(Some(field_width))).unwrap();
+        }
+        result
+    }
+}
+
+mro_display_to_display! {StructHeader, TAB_WIDTH_FOR_MRO}
 
 /// An object that can generate a `StageMro`
 ///
@@ -577,7 +692,13 @@ pub trait MroMaker {
     fn mro(adapter_name: impl ToString, stage_key: impl ToString) -> String {
         let stage_mro = Self::stage_mro(adapter_name, stage_key);
         let filetype = FiletypeHeader::from(&stage_mro);
-        format!("{}{}", filetype.to_string(), stage_mro.to_string())
+        let struct_header = StructHeader::from(&stage_mro);
+        format!(
+            "{}{}{}",
+            filetype.to_string(),
+            struct_header.to_string(),
+            stage_mro.to_string()
+        )
     }
     fn stage_name() -> String;
     fn stage_in_and_out() -> InAndOut;
@@ -660,6 +781,13 @@ impl MroDisplay for StageMro {
 mro_display_to_display! {StageMro, TAB_WIDTH_FOR_MRO}
 
 impl StageMro {
+    fn iter_mro_fields(&self) -> impl Iterator<Item = &MroField> {
+        self.stage_in_out.iter_mro_fields().chain(
+            self.chunk_in_out
+                .iter()
+                .flat_map(|in_out| in_out.iter_mro_fields()),
+        )
+    }
     fn minified_chunk_in_outs(&self) -> Option<InAndOut> {
         match self.chunk_in_out {
             Some(ref chunk_in_out) => {
@@ -728,6 +856,7 @@ impl StageMro {
 mod tests {
     use super::*;
     use indoc::indoc;
+    use pretty_assertions::assert_eq;
     use MartianBlanketType::*;
     use MartianPrimaryType::*;
 
@@ -1120,6 +1249,20 @@ mod tests {
     }
 
     #[test]
+    fn test_filetype_header_from_struct() {
+        assert_eq!(
+            FiletypeHeader::from(&MroField::new(
+                "foo",
+                Primary(Struct(StructDef {
+                    name: "MexFiles".to_string(),
+                    fields: vec![MroField::new("foo", Array(FileType("txt".into())))],
+                }))
+            )),
+            FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
+        );
+    }
+
+    #[test]
     fn test_filetype_header_from_in_out() {
         let filetype = FiletypeHeader::from(&InAndOut {
             inputs: vec![
@@ -1141,7 +1284,7 @@ mod tests {
         assert_eq!(FiletypeHeader(HashSet::new()).to_string(), "");
         assert_eq!(
             FiletypeHeader(vec!["txt"].into_iter().map(|x| x.to_string()).collect()).to_string(),
-            "\nfiletype txt;\n\n"
+            "filetype txt;\n\n"
         );
         assert_eq!(
             FiletypeHeader(
@@ -1153,7 +1296,6 @@ mod tests {
             .to_string(),
             indoc![
                 "
-
             filetype bam;
             filetype json;
             filetype txt;
@@ -1203,5 +1345,150 @@ mod tests {
             .to_string()
             .parse::<MartianBlanketType>()
             .is_err())
+    }
+
+    #[test]
+    fn test_in_and_out_display_with_struct() {
+        let in_out = InAndOut {
+            inputs: vec![MroField::new("raw_matrix", Primary(FileType("h5".into())))],
+            outputs: vec![MroField::new(
+                "mex_files",
+                Primary(Struct(StructDef {
+                    name: "MexFiles".to_string(),
+                    fields: vec![],
+                })),
+            )],
+        };
+        let expected = indoc!(
+            "
+            in  h5       raw_matrix,
+            out MexFiles mex_files,
+        "
+        );
+        assert_eq!(in_out.mro_string(None), expected);
+        assert_eq!(in_out.to_string(), expected);
+    }
+
+    #[test]
+    fn test_struct_display() {
+        let struct_def = StructDef {
+            name: "MexFiles".to_string(),
+            fields: vec![
+                MroField::new("matrix", Primary(FileType("mtx".into()))),
+                MroField::new("barcodes", Primary(Path)),
+                MroField::new("features", Primary(Path)),
+            ],
+        };
+
+        let expected = indoc!(
+            r#"
+            struct MexFiles(
+                mtx  matrix,
+                path barcodes,
+                path features,
+            )
+        "#
+        );
+        assert_eq!(struct_def.to_string(), expected);
+    }
+
+    #[test]
+    fn test_struct_header_display() {
+        let struct_def = StructDef {
+            name: "MexFiles".to_string(),
+            fields: vec![
+                MroField::new("matrix", Primary(FileType("mtx".into()))),
+                MroField::new("barcodes", Primary(Path)),
+                MroField::new("features", Primary(Path)),
+            ],
+        };
+        let mut map = BTreeMap::new();
+        map.insert(struct_def.name.clone(), struct_def);
+        let header = StructHeader(map);
+
+        let expected = indoc!(
+            r#"
+            struct MexFiles(
+                mtx  matrix,
+                path barcodes,
+                path features,
+            )
+
+        "#
+        );
+        assert_eq!(header.to_string(), expected);
+    }
+
+    #[test]
+    fn test_struct_header_recursive_display() {
+        let sample_def = StructDef {
+            name: "SampleDef".into(),
+            fields: vec![MroField::new("read_path", Primary(Path))],
+        };
+        let chemistry_def = StructDef {
+            name: "ChemistryDef".into(),
+            fields: vec![
+                MroField::new("name", Primary(Str)),
+                MroField::new("barcode_read", Primary(Str)),
+                MroField::new("barcode_length", Primary(Int)),
+            ],
+        };
+        let rna_chunk = StructDef {
+            name: "RnaChunk".to_string(),
+            fields: vec![
+                MroField::new("chemistry_def", Primary(Struct(chemistry_def.clone()))),
+                MroField::new("chunk_id", Primary(Int)),
+                MroField::new("r1", Primary(FileType("fastq.gz".into()))),
+            ],
+        };
+
+        let stage_mro = StageMro {
+            stage_name: "SETUP_CHUNKS".into(),
+            adapter_name: "my_adapter".into(),
+            stage_key: "setup_chunks".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![
+                    MroField::new("sample_defs", Array(Struct(sample_def))),
+                    MroField::new(
+                        "custom_chemistry_def",
+                        Primary(Struct(chemistry_def.clone())),
+                    ),
+                ],
+                outputs: vec![
+                    MroField::new("read_chunks", Array(Struct(rna_chunk))),
+                    MroField::new("chemistry_def", Primary(Struct(chemistry_def))),
+                ],
+            },
+            chunk_in_out: None,
+            using_attrs: MroUsing::default(),
+        };
+        stage_mro.verify();
+
+        assert_eq!(
+            FiletypeHeader::from(&stage_mro),
+            FiletypeHeader(vec!["fastq.gz".into()].into_iter().collect())
+        );
+
+        let expected = indoc!(
+            r#"
+            struct ChemistryDef(
+                string name,
+                string barcode_read,
+                int    barcode_length,
+            )
+
+            struct RnaChunk(
+                ChemistryDef chemistry_def,
+                int          chunk_id,
+                fastq.gz     r1,
+            )
+
+            struct SampleDef(
+                path read_path,
+            )
+
+        "#
+        );
+        assert_eq!(StructHeader::from(&stage_mro).to_string(), expected);
     }
 }

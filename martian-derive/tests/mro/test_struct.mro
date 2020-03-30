@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2020 10X Genomics, Inc. All rights reserved.
+#
+# WARNING: This file is auto-generated.
+# DO NOT MODIFY THIS FILE DIRECTLY
+#
+
+filetype fastq;
+filetype json;
+
+struct ChemistryDef(
+    string name,
+    string barcode_read,
+    int    barcode_length,
+)
+
+struct Config(
+    SampleDef[] sample_def,
+    path        reference_path,
+    int         force_cells,
+    json        primers,
+)
+
+struct RnaChunk(
+    ChemistryDef chemistry_def,
+    int          chunk_id,
+    fastq        r1,
+)
+
+struct SampleDef(
+    path read_path,
+)
+
+stage SETUP_CHUNKS(
+    in  Config       config,
+    in  ChemistryDef custom_chemistry_def,
+    out RnaChunk[]   chunks,
+    out ChemistryDef chemistry_def,
+    src comp         "my_adapter martian setup_chunks",
+)

@@ -1,10 +1,13 @@
+use martian::make_mro_string;
 use martian::mro::*;
 use martian::prelude::*;
 use martian_derive::{make_mro, martian_filetype, MartianStruct, MartianType};
+use pretty_assertions::assert_eq;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::marker::PhantomData;
+use std::path::PathBuf;
 
 martian_filetype! {FastqFile, "fastq"}
 martian_filetype! {TxtFile, "txt"}
@@ -62,7 +65,10 @@ fn test_main_only() {
 
     let expected = include_str!("mro/test_main_only.mro");
 
-    assert_eq!(SumSquares::mro("adapter", "sum_squares"), expected);
+    assert_eq!(
+        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        expected
+    );
 }
 
 #[test]
@@ -90,7 +96,10 @@ fn test_main_only_generic_associated_type() {
 
     let expected = include_str!("mro/test_main_only.mro");
 
-    assert_eq!(SumSquares::mro("adapter", "sum_squares"), expected);
+    assert_eq!(
+        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        expected
+    );
 }
 
 #[test]
@@ -122,7 +131,7 @@ fn test_main_only_generic_stage_struct() {
     let expected = include_str!("mro/test_main_only.mro");
 
     assert_eq!(
-        SumSquares::<Vec<f32>>::mro("adapter", "sum_squares"),
+        make_mro_string(&[SumSquares::<Vec<f32>>::stage_mro("adapter", "sum_squares")]),
         expected
     );
 }
@@ -170,7 +179,10 @@ fn test_empty_split() {
 
     let expected = include_str!("mro/test_empty_split.mro");
 
-    assert_eq!(ChunkReads::mro("my_adapter", "chunker"), expected)
+    assert_eq!(
+        make_mro_string(&[ChunkReads::stage_mro("my_adapter", "chunker")]),
+        expected
+    )
 }
 
 #[test]
@@ -220,7 +232,10 @@ fn test_non_empty_split() {
 
     let expected = include_str!("mro/test_non_empty_split.mro");
 
-    assert_eq!(ChunkerStage::mro("my_adapter", "chunker"), expected)
+    assert_eq!(
+        make_mro_string(&[ChunkerStage::stage_mro("my_adapter", "chunker")]),
+        expected
+    )
 }
 
 #[test]
@@ -250,7 +265,10 @@ fn test_with_filetype() {
 
     let expected = include_str!("mro/test_with_filetype.mro");
 
-    assert_eq!(SumSquares::mro("adapter", "sum_squares"), expected);
+    assert_eq!(
+        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        expected
+    );
 }
 
 #[test]
@@ -295,7 +313,7 @@ fn test_with_custom_type() {
     let expected = include_str!("mro/test_with_custom_type.mro");
 
     assert_eq!(
-        DetectChemistry::mro("adapter", "detect_chemistry"),
+        make_mro_string(&[DetectChemistry::stage_mro("adapter", "detect_chemistry")]),
         expected
     );
 }
@@ -351,7 +369,10 @@ fn test_retain() {
 
     let expected = include_str!("mro/test_retain.mro");
 
-    assert_eq!(SortByPos::mro("adapter", "sort_reads_by_pos"), expected);
+    assert_eq!(
+        make_mro_string(&[SortByPos::stage_mro("adapter", "sort_reads_by_pos")]),
+        expected
+    );
 }
 
 #[test]
@@ -378,5 +399,69 @@ fn test_main_only_full_name() {
 
     let expected = include_str!("mro/test_main_only.mro");
 
-    assert_eq!(SumSquares::mro("adapter", "sum_squares"), expected);
+    assert_eq!(
+        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        expected
+    );
+}
+
+#[test]
+fn test_with_struct() {
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct ChemistryDef {
+        name: String,
+        barcode_read: String,
+        barcode_length: u8,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct Config {
+        sample_def: Vec<SampleDef>,
+        reference_path: PathBuf,
+        force_cells: u8,
+        primers: JsonFile,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct RnaChunk {
+        chemistry_def: ChemistryDef,
+        chunk_id: u8,
+        r1: FastqFile,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct SampleDef {
+        read_path: PathBuf,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SI {
+        config: Config,
+        custom_chemistry_def: ChemistryDef,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SO {
+        chunks: Vec<RnaChunk>,
+        chemistry_def: ChemistryDef,
+    }
+
+    pub struct SetupChunks;
+
+    #[make_mro]
+    impl MartianMain for SetupChunks {
+        type StageInputs = SI;
+        type StageOutputs = SO;
+
+        fn main(&self, _: Self::StageInputs, _: MartianRover) -> Result<Self::StageOutputs, Error> {
+            unimplemented!()
+        }
+    }
+
+    let expected = include_str!("mro/test_struct.mro");
+
+    assert_eq!(
+        make_mro_string(&[SetupChunks::stage_mro("my_adapter", "setup_chunks")]),
+        expected
+    );
 }
