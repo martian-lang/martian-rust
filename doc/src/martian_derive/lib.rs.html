@@ -871,6 +871,17 @@
 <span id="871">871</span>
 <span id="872">872</span>
 <span id="873">873</span>
+<span id="874">874</span>
+<span id="875">875</span>
+<span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
+<span id="879">879</span>
+<span id="880">880</span>
+<span id="881">881</span>
+<span id="882">882</span>
+<span id="883">883</span>
+<span id="884">884</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;256&quot;</span>]</span>
 
@@ -1394,6 +1405,7 @@
     <span class="comment">// Handle generics in the struct</span>
     <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="ident">ty_generics</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="ident">item_struct</span>.<span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
     <span class="kw">let</span> <span class="ident">item_ident</span> <span class="op">=</span> <span class="ident">item_struct</span>.<span class="ident">ident</span>.<span class="ident">clone</span>();
+    <span class="kw">let</span> <span class="ident">item_ident_str</span> <span class="op">=</span> <span class="ident">item_ident</span>.<span class="ident">to_string</span>();
     <span class="kw">let</span> <span class="ident">final_token</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span>[
         <span class="attribute">#[<span class="ident">automatically_derived</span>]</span>
         <span class="kw">impl</span> #<span class="ident">impl_generics</span> ::<span class="ident">martian</span>::<span class="ident">MartianStruct</span> <span class="kw">for</span> #<span class="ident">item_ident</span> #<span class="ident">ty_generics</span> #<span class="ident">where_clause</span> {
@@ -1401,6 +1413,16 @@
                 <span class="macro">vec</span><span class="macro">!</span>[
                     #(#<span class="ident">vec_inner</span>),<span class="op">*</span>
                 ]
+            }
+        }
+
+        <span class="attribute">#[<span class="ident">automatically_derived</span>]</span>
+        <span class="kw">impl</span> #<span class="ident">impl_generics</span> ::<span class="ident">martian</span>::<span class="ident">AsMartianPrimaryType</span> <span class="kw">for</span> #<span class="ident">item_ident</span> #<span class="ident">ty_generics</span> #<span class="ident">where_clause</span> {
+            <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">martian</span>::<span class="ident">MartianPrimaryType</span> {
+                <span class="kw">let</span> <span class="ident">fields</span> <span class="op">=</span> <span class="op">&lt;</span>#<span class="ident">item_ident</span> #<span class="ident">ty_generics</span> <span class="kw">as</span> ::<span class="ident">martian</span>::<span class="ident">MartianStruct</span><span class="op">&gt;</span>::<span class="ident">mro_fields</span>();
+                ::<span class="ident">martian</span>::<span class="ident">MartianPrimaryType</span>::<span class="ident">Struct</span>(
+                    ::<span class="ident">martian</span>::<span class="ident">mro</span>::<span class="ident">StructDef</span>::<span class="ident">new</span>(#<span class="ident">item_ident_str</span>.<span class="ident">into</span>(), <span class="ident">fields</span>)
+                )
             }
         }
     ];
