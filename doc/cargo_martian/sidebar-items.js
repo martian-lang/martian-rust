@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["USAGE",""],["VERSION",""],["_IMPL_DESERIALIZE_FOR_Args",""]],"fn":[["main",""]],"mod":[["metadata",""],["template",""]],"struct":[["Args",""]]});
+initSidebarItems({"constant":[["USAGE",""],["VERSION",""]],"fn":[["main",""]],"mod":[["metadata",""],["template",""]],"struct":[["Args",""]]});

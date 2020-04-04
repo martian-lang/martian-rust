@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Kind",""],["_IMPL_DESERIALIZE_FOR_Metadata",""],["_IMPL_DESERIALIZE_FOR_Package",""],["_IMPL_DESERIALIZE_FOR_Target",""],["_IMPL_SERIALIZE_FOR_Kind",""],["_IMPL_SERIALIZE_FOR_Metadata",""],["_IMPL_SERIALIZE_FOR_Package",""],["_IMPL_SERIALIZE_FOR_Target",""]],"enum":[["Kind",""]],"struct":[["Metadata",""],["Package",""],["Target",""]]});
+initSidebarItems({"enum":[["Kind",""]],"struct":[["Metadata",""],["Package",""],["Target",""]]});
