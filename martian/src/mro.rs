@@ -279,9 +279,14 @@ impl<T: AsMartianBlanketType> AsMartianBlanketType for Option<T> {
     }
 }
 
-impl<T: AsMartianPrimaryType> AsMartianBlanketType for Vec<T> {
+impl<T: AsMartianBlanketType> AsMartianBlanketType for Vec<T> {
     fn as_martian_blanket_type() -> MartianBlanketType {
-        MartianBlanketType::Array(T::as_martian_primary_type())
+        match T::as_martian_blanket_type() {
+            MartianBlanketType::Primary(primary) => MartianBlanketType::Array(primary),
+            MartianBlanketType::Array(_) => {
+                unimplemented!("Array of arrays are not supported in martian")
+            }
+        }
     }
 }
 
@@ -1490,5 +1495,13 @@ mod tests {
         "#
         );
         assert_eq!(StructHeader::from(&stage_mro).to_string(), expected);
+    }
+
+    #[test]
+    fn test_vec_option() {
+        assert_eq!(
+            Vec::<Option<u32>>::as_martian_blanket_type(),
+            MartianBlanketType::Array(MartianPrimaryType::Int)
+        );
     }
 }
