@@ -1505,6 +1505,11 @@
 <span id="1505">1505</span>
 <span id="1506">1506</span>
 <span id="1507">1507</span>
+<span id="1508">1508</span>
+<span id="1509">1509</span>
+<span id="1510">1510</span>
+<span id="1511">1511</span>
+<span id="1512">1512</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This module defines objects that would help auto generate mro definitions</span>
@@ -1643,6 +1648,7 @@
     <span class="ident">Bool</span>,
     <span class="ident">Map</span>,
     <span class="ident">Path</span>,
+    <span class="ident">File</span>,
     <span class="ident">FileType</span>(<span class="ident">String</span>),
     <span class="ident">Struct</span>(<span class="ident">StructDef</span>),
 }
@@ -1657,6 +1663,7 @@
             <span class="ident">MartianPrimaryType</span>::<span class="ident">Bool</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;bool&quot;</span>,
             <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;map&quot;</span>,
             <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;path&quot;</span>,
+            <span class="ident">MartianPrimaryType</span>::<span class="ident">File</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;file&quot;</span>,
             <span class="ident">MartianPrimaryType</span>::<span class="ident">FileType</span>(<span class="kw-2">ref</span> <span class="ident">ext</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ext</span>,
             <span class="ident">MartianPrimaryType</span>::<span class="ident">Struct</span>(<span class="kw-2">ref</span> <span class="ident">def</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">def</span>.<span class="ident">name</span>,
         };
@@ -1674,7 +1681,8 @@
             <span class="string">&quot;bool&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Bool</span>,
             <span class="string">&quot;map&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Map</span>,
             <span class="string">&quot;path&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">Path</span>,
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(<span class="string">&quot;Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path]&quot;</span>, <span class="ident">s</span>)),
+            <span class="string">&quot;file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">MartianPrimaryType</span>::<span class="ident">File</span>,
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(<span class="string">&quot;Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path, file]&quot;</span>, <span class="ident">s</span>)),
         };
         <span class="prelude-val">Ok</span>(<span class="ident">prim_ty</span>)
     }
@@ -2831,6 +2839,7 @@
         <span class="ident">roundtrip_assert</span>(<span class="ident">Bool</span>);
         <span class="ident">roundtrip_assert</span>(<span class="ident">Map</span>);
         <span class="ident">roundtrip_assert</span>(<span class="ident">Path</span>);
+        <span class="ident">roundtrip_assert</span>(<span class="ident">File</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">FileType</span>(<span class="string">&quot;foo&quot;</span>.<span class="ident">into</span>())
             .<span class="ident">to_string</span>()
             .<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianPrimaryType</span><span class="op">&gt;</span>()
@@ -2854,6 +2863,7 @@
         <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Bool</span>);
         <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Map</span>);
         <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">Path</span>);
+        <span class="ident">roundtrip_blanket_assert</span>(<span class="ident">File</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">Primary</span>(<span class="ident">FileType</span>(<span class="string">&quot;foo&quot;</span>.<span class="ident">into</span>()))
             .<span class="ident">to_string</span>()
             .<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">MartianBlanketType</span><span class="op">&gt;</span>()
