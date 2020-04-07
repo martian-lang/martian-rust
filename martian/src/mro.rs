@@ -135,6 +135,7 @@ pub enum MartianPrimaryType {
     Bool,
     Map,
     Path,
+    File,
     FileType(String),
     Struct(StructDef),
 }
@@ -149,6 +150,7 @@ impl MroDisplay for MartianPrimaryType {
             MartianPrimaryType::Bool => "bool",
             MartianPrimaryType::Map => "map",
             MartianPrimaryType::Path => "path",
+            MartianPrimaryType::File => "file",
             MartianPrimaryType::FileType(ref ext) => ext,
             MartianPrimaryType::Struct(ref def) => &def.name,
         };
@@ -166,7 +168,8 @@ impl FromStr for MartianPrimaryType {
             "bool" => MartianPrimaryType::Bool,
             "map" => MartianPrimaryType::Map,
             "path" => MartianPrimaryType::Path,
-            _ => return Err(format_err!("Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path]", s)),
+            "file" => MartianPrimaryType::File,
+            _ => return Err(format_err!("Cannot find the martian primary type from {}. Supported entries are [int, float, string, bool, map, path, file]", s)),
         };
         Ok(prim_ty)
     }
@@ -1323,6 +1326,7 @@ mod tests {
         roundtrip_assert(Bool);
         roundtrip_assert(Map);
         roundtrip_assert(Path);
+        roundtrip_assert(File);
         assert!(FileType("foo".into())
             .to_string()
             .parse::<MartianPrimaryType>()
@@ -1346,6 +1350,7 @@ mod tests {
         roundtrip_blanket_assert(Bool);
         roundtrip_blanket_assert(Map);
         roundtrip_blanket_assert(Path);
+        roundtrip_blanket_assert(File);
         assert!(Primary(FileType("foo".into()))
             .to_string()
             .parse::<MartianBlanketType>()
