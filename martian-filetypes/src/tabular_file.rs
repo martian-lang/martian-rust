@@ -124,7 +124,7 @@ where
 
 macro_rules! table_config {
     ($name:ident, $delim:expr, $format: expr, $header: expr) => {
-        #[derive(Debug)]
+        #[derive(Debug, Clone, Copy)]
         pub struct $name;
         impl TableConfig for $name {
             fn delimiter() -> u8 {
@@ -355,5 +355,11 @@ mod tests {
         assert!(crate::lazy_round_trip_check::<CsvFile, _>(&cells(), true)?);
         assert!(crate::lazy_round_trip_check::<TsvFile, _>(&cells(), true)?);
         Ok(())
+    }
+
+    #[test]
+    fn test_clone() {
+        let t = TsvFile::from("test");
+        let _ = t.clone();
     }
 }
