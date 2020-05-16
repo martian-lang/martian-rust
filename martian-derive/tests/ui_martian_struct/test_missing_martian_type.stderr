@@ -7,3 +7,4 @@ error[E0277]: the trait bound `Foo: martian::stage::MartianFileType` is not sati
   = note: required because of the requirements on the impl of `martian::mro::AsMartianPrimaryType` for `Foo`
   = note: required because of the requirements on the impl of `martian::mro::AsMartianBlanketType` for `Foo`
   = note: required by `martian::mro::AsMartianBlanketType::as_martian_blanket_type`
+  = note: this error originates in a derive macro (in Nightly builds, run with -Z macro-backtrace for more info)

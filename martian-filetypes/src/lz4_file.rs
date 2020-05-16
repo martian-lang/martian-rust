@@ -45,8 +45,9 @@
 //! The example below illustrates writing an integer one by one into an lz4 compressed Bincode file
 //!
 //! #### IMPORTANT
-//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing. If you
-//! don't do this, the program will panic when the writer is dropped.
+//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing and capture
+//! the resulting errors. When the writer is dropped, we attempt to complete the writing, but
+//! ignoring the errors.
 //!
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
@@ -67,7 +68,7 @@
 //!         lz4_writer.write_item(&0i32)?;
 //!     }
 //!     lz4_writer.finish()?; // The file writing is not completed until finish() is called.
-//!     // IF YOU DON'T CALL finish(), THE PROGRAM WILL PANIC WHEN THE WRITER IS DROPPED
+//!     // IF YOU DON'T CALL finish(), THE FILE COULD BE INCOMPLETE UNTIL THE WRITER IS DROPPED
 //!
 //!     // For this extreme case of compression, the output file will be just 194 bytes, as opposed to
 //!     // 39KB uncompressed
@@ -182,14 +183,25 @@ where
     }
 
     fn finish(mut self) -> Result<W, Error> {
-        let inner = match self.inner.take() {
-            Some(inn) => inn,
-            None => unreachable!(),
-        };
-        let encoder = inner.finish()?;
-        let (writer, result) = encoder.finish(); // weird API. Why not just return Result<W>?
-        result?;
-        Ok(writer)
+        Ok(self._finished()?.unwrap())
+    }
+}
+
+impl<L, T, W> LazyLz4Writer<L, T, W>
+where
+    L: LazyWrite<T, lz4::Encoder<W>>,
+    W: Write,
+{
+    fn _finished(&mut self) -> Result<Option<W>, Error> {
+        match self.inner.take() {
+            Some(inner) => {
+                let encoder = inner.finish()?;
+                let (writer, result) = encoder.finish(); // weird API. Why not just return Result<W>?
+                result?;
+                Ok(Some(writer))
+            }
+            None => Ok(None),
+        }
     }
 }
 
@@ -199,16 +211,8 @@ where
     W: Write,
 {
     fn drop(&mut self) {
-        use std::io::stderr;
-        use std::thread::panicking;
-        if self.inner.is_some() {
-            let msg = "finish() needs to be called for a LazyLz4Writer explicitly\n";
-            if panicking() {
-                write!(stderr(), "{}", msg).ok();
-            } else {
-                panic!(msg)
-            }
-        }
+        // Use the finish() method to capture the IO error on closing the writers
+        let _ = self._finished();
     }
 }
 
@@ -398,13 +402,18 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn test_json_lz4_lazy_write_no_finish() {
         let dir = tempfile::tempdir().unwrap();
         let file = Lz4::<JsonFile>::new(dir.path(), "file");
         let mut writer = file.lazy_writer().unwrap();
         for i in 0..10 {
             writer.write_item(&i).unwrap();
+        }
+        drop(writer);
+        let reader = file.lazy_reader().unwrap();
+        for (i, val) in reader.enumerate() {
+            let val: usize = val.unwrap();
+            assert_eq!(val, i);
         }
     }
 
