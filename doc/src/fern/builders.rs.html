@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/fern-0.5.9/src/builders.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>builders.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../fern/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/fern-0.6.0/src/builders.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>builders.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../fern/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1440,21 +1440,37 @@
 <span id="1440">1440</span>
 <span id="1441">1441</span>
 <span id="1442">1442</span>
+<span id="1443">1443</span>
+<span id="1444">1444</span>
+<span id="1445">1445</span>
+<span id="1446">1446</span>
+<span id="1447">1447</span>
+<span id="1448">1448</span>
+<span id="1449">1449</span>
+<span id="1450">1450</span>
+<span id="1451">1451</span>
+<span id="1452">1452</span>
+<span id="1453">1453</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">borrow</span>::<span class="ident">Cow</span>,
     <span class="ident">cmp</span>, <span class="ident">fmt</span>, <span class="ident">fs</span>, <span class="ident">io</span>,
     <span class="ident">io</span>::<span class="ident">Write</span>,
-    <span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>},
     <span class="ident">sync</span>::{<span class="ident">mpsc</span>::<span class="ident">Sender</span>, <span class="ident">Arc</span>, <span class="ident">Mutex</span>},
 };
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 
 <span class="kw">use</span> <span class="ident">log</span>::<span class="ident">Log</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">log_impl</span>, <span class="ident">log_impl</span>::<span class="ident">DateBasedState</span>, <span class="ident">Filter</span>, <span class="ident">FormatCallback</span>, <span class="ident">Formatter</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">log_impl</span>, <span class="ident">Filter</span>, <span class="ident">FormatCallback</span>, <span class="ident">Formatter</span>};
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">log_impl</span>::<span class="ident">DateBasedState</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Syslog4Rfc3164Logger</span>, <span class="ident">Syslog4Rfc5424Logger</span>};
@@ -1950,6 +1966,7 @@
                     <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
                     <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">OtherStatic</span>(<span class="ident">child_log</span>))
                 }
+                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
                 <span class="ident">OutputInner</span>::<span class="ident">DateBased</span> { <span class="ident">config</span> } <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
 
@@ -2109,6 +2126,7 @@
     <span class="doccomment">/// Panics with messages text for all messages.</span>
     <span class="ident">Panic</span>,
     <span class="doccomment">/// File logger with custom date and timestamp suffix in file name.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
     <span class="ident">DateBased</span> { <span class="ident">config</span>: <span class="ident">DateBased</span> },
 }
 
@@ -2702,6 +2720,7 @@
                 .<span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="string">&quot;&lt;boxed logger&gt;&quot;</span>)
                 .<span class="ident">finish</span>(),
             <span class="ident">OutputInner</span>::<span class="ident">Panic</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>.<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::Panic&quot;</span>).<span class="ident">finish</span>(),
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
             <span class="ident">OutputInner</span>::<span class="ident">DateBased</span> { <span class="kw-2">ref</span> <span class="ident">config</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_struct</span>(<span class="string">&quot;Output::DateBased&quot;</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;config&quot;</span>, <span class="ident">config</span>)
@@ -2720,6 +2739,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// The log file will be rotated automatically when the date changes.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DateBased</span> {
     <span class="ident">file_prefix</span>: <span class="ident">PathBuf</span>,
     <span class="ident">file_suffix</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
@@ -2727,6 +2747,7 @@
     <span class="ident">utc_time</span>: <span class="ident">bool</span>,
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">DateBased</span> {
     <span class="doccomment">/// Create new date-based file logger with the given file prefix and</span>
     <span class="doccomment">/// strftime-based suffix pattern.</span>
@@ -2876,6 +2897,7 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">DateBased</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Create an output logger which defers to the given date-based logger. Use</span>
     <span class="doccomment">/// configuration methods on [DateBased] to set line separator and filename.</span>
