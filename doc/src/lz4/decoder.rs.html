@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/lz4-1.23.1/src/decoder.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>decoder.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../lz4/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/lz4-1.23.2/src/decoder.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>decoder.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../lz4/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -308,7 +308,6 @@
 <span id="308">308</span>
 <span id="309">309</span>
 <span id="310">310</span>
-<span id="311">311</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">liblz4</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">libc</span>::<span class="ident">size_t</span>;
@@ -336,8 +335,8 @@
     <span class="doccomment">/// `finish()`</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">r</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">Decoder</span> {
-            <span class="ident">r</span>: <span class="ident">r</span>,
-            <span class="ident">c</span>: <span class="macro">try</span><span class="macro">!</span>(<span class="ident">DecoderContext</span>::<span class="ident">new</span>()),
+            <span class="ident">r</span>,
+            <span class="ident">c</span>: <span class="ident">DecoderContext</span>::<span class="ident">new</span>()<span class="question-mark">?</span>,
             <span class="ident">buf</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; <span class="ident">BUFFER_SIZE</span>].<span class="ident">into_boxed_slice</span>(),
             <span class="ident">pos</span>: <span class="ident">BUFFER_SIZE</span>,
             <span class="ident">len</span>: <span class="ident">BUFFER_SIZE</span>,
@@ -367,18 +366,19 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Read</span> <span class="kw">for</span> <span class="ident">Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">next</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">next</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">buf</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">dst_offset</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">while</span> <span class="ident">dst_offset</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">len</span> {
-                <span class="kw">let</span> <span class="ident">need</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">next</span> {
-                    <span class="bool-val">true</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">len</span>(),
-                    <span class="bool-val">false</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">next</span>,
+                <span class="kw">let</span> <span class="ident">need</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">next</span> {
+                    <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">len</span>()
+                } <span class="kw">else</span> {
+                    <span class="self">self</span>.<span class="ident">next</span>
                 };
-                <span class="self">self</span>.<span class="ident">len</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">r</span>.<span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">buf</span>[<span class="number">0</span>..<span class="ident">need</span>]));
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">len</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">0</span> {
+                <span class="self">self</span>.<span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">r</span>.<span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">buf</span>[<span class="number">0</span>..<span class="ident">need</span>])<span class="question-mark">?</span>;
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">len</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                     <span class="kw">break</span>;
                 }
                 <span class="self">self</span>.<span class="ident">pos</span> <span class="op">=</span> <span class="number">0</span>;
@@ -387,7 +387,7 @@
             <span class="kw">while</span> (<span class="ident">dst_offset</span> <span class="op">&lt;</span> <span class="ident">buf</span>.<span class="ident">len</span>()) <span class="kw-2">&amp;</span><span class="op">&amp;</span> (<span class="self">self</span>.<span class="ident">pos</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">len</span>) {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">src_size</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">len</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">pos</span>) <span class="kw">as</span> <span class="ident">size_t</span>;
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">dst_size</span> <span class="op">=</span> (<span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">dst_offset</span>) <span class="kw">as</span> <span class="ident">size_t</span>;
-                <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">check_error</span>(<span class="kw">unsafe</span> {
+                <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">check_error</span>(<span class="kw">unsafe</span> {
                     <span class="ident">LZ4F_decompress</span>(
                         <span class="self">self</span>.<span class="ident">c</span>.<span class="ident">c</span>,
                         <span class="ident">buf</span>[<span class="ident">dst_offset</span>..].<span class="ident">as_mut_ptr</span>(),
@@ -396,7 +396,7 @@
                         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">src_size</span>,
                         <span class="ident">ptr</span>::<span class="ident">null</span>(),
                     )
-                }));
+                })<span class="question-mark">?</span>;
                 <span class="self">self</span>.<span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="ident">src_size</span> <span class="kw">as</span> <span class="ident">usize</span>;
                 <span class="ident">dst_offset</span> <span class="op">+</span><span class="op">=</span> <span class="ident">dst_size</span> <span class="kw">as</span> <span class="ident">usize</span>;
                 <span class="kw">if</span> <span class="ident">len</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
@@ -414,9 +414,7 @@
 <span class="kw">impl</span> <span class="ident">DecoderContext</span> {
     <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">DecoderContext</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">LZ4FDecompressionContext</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>());
-        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">check_error</span>(<span class="kw">unsafe</span> {
-            <span class="ident">LZ4F_createDecompressionContext</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">context</span>, <span class="ident">LZ4F_VERSION</span>)
-        }));
+        <span class="ident">check_error</span>(<span class="kw">unsafe</span> { <span class="ident">LZ4F_createDecompressionContext</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">context</span>, <span class="ident">LZ4F_VERSION</span>) })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">DecoderContext</span> { <span class="ident">c</span>: <span class="ident">context</span> })
     }
 }
@@ -431,8 +429,8 @@
 <span class="kw">mod</span> <span class="ident">test</span> {
     <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">rand</span>;
 
-    <span class="kw">use</span> <span class="self">self</span>::<span class="ident">rand</span>::<span class="ident">Rng</span>;
     <span class="kw">use</span> <span class="self">self</span>::<span class="ident">rand</span>::<span class="ident">rngs</span>::<span class="ident">StdRng</span>;
+    <span class="kw">use</span> <span class="self">self</span>::<span class="ident">rand</span>::<span class="ident">Rng</span>;
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw">super</span>::<span class="ident">encoder</span>::{<span class="ident">Encoder</span>, <span class="ident">EncoderBuilder</span>};
     <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Decoder</span>;
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">Cursor</span>, <span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="ident">Read</span>, <span class="prelude-ty">Result</span>, <span class="ident">Write</span>};
@@ -447,7 +445,7 @@
 
     <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span>, <span class="ident">Rn</span>: <span class="ident">Rng</span><span class="op">&gt;</span> <span class="ident">ErrorWrapper</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">Rn</span><span class="op">&gt;</span> {
         <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rng</span>: <span class="ident">Rn</span>, <span class="ident">read</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-            <span class="ident">ErrorWrapper</span> { <span class="ident">r</span>: <span class="ident">read</span>, <span class="ident">rng</span>: <span class="ident">rng</span> }
+            <span class="ident">ErrorWrapper</span> { <span class="ident">r</span>: <span class="ident">read</span>, <span class="ident">rng</span> }
         }
     }
 
