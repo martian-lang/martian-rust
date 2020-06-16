@@ -38,4 +38,4 @@
              at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:67
   16: main
   17: __libc_start_main
-  18: <unknown>
+  18: _start
