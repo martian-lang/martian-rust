@@ -1,6 +1,6 @@
 language: rust
 rust:
-  - stable
+  - 1.43.1
 env:
   global:
     - RUST_BACKTRACE=1
