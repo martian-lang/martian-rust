@@ -1,41 +1,41 @@
    0: failure::backtrace::internal::InternalBacktrace::new
-             at /mnt/bazelbuild/user/patrick/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.7/src/backtrace/internal.rs:46
+             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/backtrace/internal.rs:46
    1: failure::backtrace::Backtrace::new
-             at /mnt/bazelbuild/user/patrick/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.7/src/backtrace/mod.rs:121
+             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/backtrace/mod.rs:121
    2: <failure::error::error_impl::ErrorImpl as core::convert::From<F>>::from
-             at /mnt/bazelbuild/user/patrick/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.7/src/error/error_impl.rs:19
+             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/error/error_impl.rs:19
    3: <failure::error::Error as core::convert::From<F>>::from
-             at /mnt/bazelbuild/user/patrick/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.7/src/error/mod.rs:36
+             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/error/mod.rs:36
    4: failure::error_message::err_msg
-             at /mnt/bazelbuild/user/patrick/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.7/src/error_message.rs:12
+             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/error_message.rs:12
    5: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
-             at martian-lab/examples/sum_sq/src/sum_squares.rs:92
+             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:95
    6: <T as martian::stage::RawMartianStage>::main
-             at /mnt/home/pat/code/martian-rust/martian/src/stage.rs:645
+             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/stage.rs:645
    7: martian::martian_entry_point
-             at /mnt/home/pat/code/martian-rust/martian/src/lib.rs:242
+             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:225
    8: martian::MartianAdapter<S>::run_get_error
-             at /mnt/home/pat/code/martian-rust/martian/src/lib.rs:141
+             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:131
    9: martian::MartianAdapter<S>::run
-             at /mnt/home/pat/code/martian-rust/martian/src/lib.rs:134
+             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:124
   10: sum_sq::main
-             at martian-lab/examples/sum_sq/src/main.rs:48
+             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48
   11: std::rt::lang_start::{{closure}}
-             at /rustc/1572c433eed495d0ade41511ae106b180e02851d/src/libstd/rt.rs:67
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:67
   12: std::rt::lang_start_internal::{{closure}}
-             at src/libstd/rt.rs:52
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:52
       std::panicking::try::do_call
-             at src/libstd/panicking.rs:303
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/panicking.rs:303
   13: __rust_maybe_catch_panic
-             at src/libpanic_unwind/lib.rs:86
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libpanic_unwind/lib.rs:86
   14: std::panicking::try
-             at src/libstd/panicking.rs:281
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/panicking.rs:281
       std::panic::catch_unwind
-             at src/libstd/panic.rs:394
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/panic.rs:394
       std::rt::lang_start_internal
-             at src/libstd/rt.rs:51
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:51
   15: std::rt::lang_start
-             at /rustc/1572c433eed495d0ade41511ae106b180e02851d/src/libstd/rt.rs:67
+             at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:67
   16: main
   17: __libc_start_main
   18: _start

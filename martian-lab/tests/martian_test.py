@@ -333,6 +333,24 @@ def clean_line(line):
                                     _QUOTED_PATH_REGEX.sub(pathrepl, line)))
 
 
+def compare_traceback(output, expect, filename):
+    """Compare two traceback files, replacing everything that might be an absolute path
+    with the base path, and timestamps with __TIMESTAMP__."""
+    with open(os.path.join(output, filename)) as act:
+        with open(os.path.join(expect, filename)) as exp:
+            for actual, expected in zip_longest(act, exp):
+                if actual and expected:
+                    if expected.endswith('<unknown>\n') and actual.endswith('_start\n'):
+                        continue
+                    if actual.endswith('<unknown>\n') and expected.endswith('_start\n'):
+                        continue
+                    if clean_line(actual) != clean_line(expected):
+                        sys.stderr.write(
+                            'Expected:\n%s\nActual:\n%s\n' %
+                            (clean_line(expected), clean_line(actual)))
+                        return False
+    return True
+
 def compare_lines(output, expect, filename):
     """Compare two files, replacing everything that might be an absolute path
     with the base path, and timestamps with __TIMESTAMP__."""
@@ -421,7 +439,7 @@ _SPECIAL_FILES = {
     '_outs': compare_json,
     '_args': compare_json,
     '_stage_defs': compare_json,
-    '_stackvars': compare_lines,
+    '_stackvars': compare_traceback,
     '_vdrkill.partial': compare_json,
 }
 
