@@ -256,6 +256,40 @@ where
     phantom: PhantomData<(F, D, T)>,
 }
 
+/// Hack because the csv crate does not expose this explicitly
+pub fn tabular_file_header<T>() -> Result<Vec<String>, Error>
+where
+    T: Serialize + Default,
+{
+    let mut buffer = Vec::new();
+    let mut wtr = csv::WriterBuilder::default()
+        .has_headers(true)
+        .from_writer(&mut buffer);
+    // The header row is written automatically.
+    wtr.serialize(T::default())?;
+    wtr.flush()?;
+    drop(wtr);
+    let mut rdr = csv::ReaderBuilder::new()
+        .has_headers(true)
+        .from_reader(buffer.as_slice());
+    let headers = rdr.headers()?;
+    Ok(headers.iter().map(|h| h.to_string()).collect())
+}
+
+impl<F, D, T, W> LazyTabularWriter<F, D, T, W>
+where
+    F: MartianFileType,
+    W: Write,
+    D: TableConfig + Debug,
+    T: Serialize + Default,
+{
+    pub fn write_header(&mut self) -> Result<(), Error> {
+        Ok(self
+            .writer
+            .write_byte_record(&csv::ByteRecord::from(tabular_file_header::<T>()?))?)
+    }
+}
+
 impl<F, D, T, W> LazyWrite<T, W> for LazyTabularWriter<F, D, T, W>
 where
     F: MartianFileType,
@@ -299,8 +333,9 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::LazyFileTypeIO;
 
-    #[derive(Serialize, Deserialize, PartialEq)]
+    #[derive(Serialize, Deserialize, PartialEq, Default)]
     struct Cell {
         barcode: String,
         genome: String,
@@ -361,5 +396,26 @@ mod tests {
     fn test_clone() {
         let t = TsvFile::from("test");
         let _ = t.clone();
+    }
+
+    #[test]
+    fn test_lazy_header_only() -> Result<(), Error> {
+        let dir = tempfile::tempdir()?;
+        let cells_tsv = TsvFile::new(dir.path(), "test");
+        let mut writer: LazyTabularWriter<_, _, Cell, _> = cells_tsv.lazy_writer()?;
+        writer.write_header()?;
+        writer.finish()?;
+        assert_eq!(std::fs::read_to_string(&cells_tsv)?, "barcode\tgenome\n");
+        Ok(())
+    }
+
+    #[test]
+    fn test_lazy_no_header() -> Result<(), Error> {
+        let dir = tempfile::tempdir()?;
+        let cells_tsv = TsvFile::new(dir.path(), "test");
+        let writer: LazyTabularWriter<_, _, Cell, _> = cells_tsv.lazy_writer()?;
+        writer.finish()?;
+        assert_eq!(std::fs::read_to_string(&cells_tsv)?, "");
+        Ok(())
     }
 }
