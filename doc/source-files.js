@@ -1,9 +1,10 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["addr2line"] = {"name":"","files":["lazy.rs","lib.rs"]};
+sourcesIndex["adler"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["adler32"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["aho_corasick"] = {"name":"","dirs":[{"name":"packed","dirs":[{"name":"teddy","files":["compile.rs","mod.rs","runtime.rs"]}],"files":["api.rs","mod.rs","pattern.rs","rabinkarp.rs","vector.rs"]}],"files":["ahocorasick.rs","automaton.rs","buffer.rs","byte_frequencies.rs","classes.rs","dfa.rs","error.rs","lib.rs","nfa.rs","prefilter.rs","state_id.rs"]};
 sourcesIndex["backtrace"] = {"name":"","dirs":[{"name":"backtrace","files":["libunwind.rs","mod.rs"]},{"name":"symbolize","dirs":[{"name":"gimli","files":["elf.rs","mmap_unix.rs","stash.rs"]}],"files":["gimli.rs","mod.rs"]}],"files":["capture.rs","lib.rs","print.rs","types.rs"]};
-sourcesIndex["bincode"] = {"name":"","dirs":[{"name":"de","files":["mod.rs","read.rs"]},{"name":"ser","files":["mod.rs"]}],"files":["config.rs","error.rs","internal.rs","lib.rs"]};
+sourcesIndex["bincode"] = {"name":"","dirs":[{"name":"config","files":["endian.rs","int.rs","legacy.rs","limit.rs","mod.rs","trailing.rs"]},{"name":"de","files":["mod.rs","read.rs"]},{"name":"ser","files":["mod.rs"]}],"files":["error.rs","internal.rs","lib.rs"]};
 sourcesIndex["bstr"] = {"name":"","dirs":[{"name":"byteset","files":["mod.rs","scalar.rs"]},{"name":"search","files":["byte_frequencies.rs","mod.rs","prefilter.rs","twoway.rs"]},{"name":"unicode","dirs":[{"name":"fsm","files":["grapheme_break_fwd.rs","grapheme_break_rev.rs","mod.rs","regional_indicator_rev.rs","sentence_break_fwd.rs","simple_word_fwd.rs","whitespace_anchored_fwd.rs","whitespace_anchored_rev.rs","word_break_fwd.rs"]}],"files":["grapheme.rs","mod.rs","sentence.rs","whitespace.rs","word.rs"]}],"files":["ascii.rs","bstr.rs","bstring.rs","cow.rs","ext_slice.rs","ext_vec.rs","impls.rs","io.rs","lib.rs","utf8.rs"]};
 sourcesIndex["byteorder"] = {"name":"","files":["io.rs","lib.rs"]};
 sourcesIndex["cargo_martian"] = {"name":"","files":["main.rs","metadata.rs","template.rs"]};
