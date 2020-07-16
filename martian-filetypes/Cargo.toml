@@ -3,6 +3,7 @@ name = "martian-filetypes"
 version = "0.19.0"
 authors = ["Sreenath Krishnan <sreenathk.89@gmail.com>"]
 edition = "2018"
+include = ["src/**/*"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -19,7 +20,7 @@ flate2 = "1"
 
 [dev-dependencies]
 tempfile = "3"
-criterion = "0.2"
+criterion = "0.3"
 file_diff = "1.0"
 trybuild = "1.0"
 
