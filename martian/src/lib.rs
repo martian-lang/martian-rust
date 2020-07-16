@@ -283,7 +283,7 @@ pub fn martian_make_mro(
             output.write_all(final_mro_string.as_bytes())?;
         }
         None => {
-            println!("{}", final_mro_string);
+            print!("{}", final_mro_string);
         }
     }
     Ok(())
