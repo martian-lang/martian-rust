@@ -1,7 +1,6 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["addr2line"] = {"name":"","files":["lazy.rs","lib.rs"]};
-sourcesIndex["adler"] = {"name":"","files":["lib.rs"]};
-sourcesIndex["adler32"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["adler"] = {"name":"","files":["algo.rs","lib.rs"]};
 sourcesIndex["aho_corasick"] = {"name":"","dirs":[{"name":"packed","dirs":[{"name":"teddy","files":["compile.rs","mod.rs","runtime.rs"]}],"files":["api.rs","mod.rs","pattern.rs","rabinkarp.rs","vector.rs"]}],"files":["ahocorasick.rs","automaton.rs","buffer.rs","byte_frequencies.rs","classes.rs","dfa.rs","error.rs","lib.rs","nfa.rs","prefilter.rs","state_id.rs"]};
 sourcesIndex["backtrace"] = {"name":"","dirs":[{"name":"backtrace","files":["libunwind.rs","mod.rs"]},{"name":"symbolize","dirs":[{"name":"gimli","files":["elf.rs","mmap_unix.rs","stash.rs"]}],"files":["gimli.rs","mod.rs"]}],"files":["capture.rs","lib.rs","print.rs","types.rs"]};
 sourcesIndex["bincode"] = {"name":"","dirs":[{"name":"config","files":["endian.rs","int.rs","legacy.rs","limit.rs","mod.rs","trailing.rs"]},{"name":"de","files":["mod.rs","read.rs"]},{"name":"ser","files":["mod.rs"]}],"files":["error.rs","internal.rs","lib.rs"]};
