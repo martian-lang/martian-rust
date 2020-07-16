@@ -20,7 +20,7 @@ flate2 = "1"
 
 [dev-dependencies]
 tempfile = "3"
-criterion = "0.2"
+criterion = "0.3"
 file_diff = "1.0"
 trybuild = "1.0"
 
