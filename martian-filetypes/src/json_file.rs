@@ -39,8 +39,8 @@
 //! per read[write].
 //!
 //! ### IMPORTANT
-//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing. If you
-//! don't do this, the program will panic when the writer is dropped.
+//! It is stringly recommended to call **`finish()`** on a lazy writer to complete the writing.
+//! If you don't do this, we will attempt to finish the writing in `drop()` ignoring all errors
 //!
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
@@ -57,7 +57,6 @@
 //!         writer.write_item(&val)?;
 //!     }
 //!     writer.finish()?; // The file writing is not completed until finish() is called.
-//!     // IF YOU DON'T CALL finish(), THE PROGRAM WILL PANIC WHEN THE WRITER IS DROPPED
 //!
 //!     // We could have collected the vector and invoked write().
 //!     // Both approaches will give you an identical json file.
@@ -268,16 +267,27 @@ where
     }
 
     fn finish(mut self) -> Result<W, Error> {
-        let mut writer = match self.writer.take() {
-            Some(w) => w,
-            None => unreachable!(),
-        };
-        self.writer = None;
-        match self.state {
-            WriterState::Start => writer.write_all(b"[]")?,
-            WriterState::Scribe => writer.write_all("\n]".as_bytes())?,
+        Ok(self._finished()?.unwrap())
+    }
+}
+
+impl<T, F, W> LazyJsonWriter<T, F, W>
+where
+    F: MartianFileType + FileStorage<Vec<T>>,
+    W: Write,
+    T: Serialize + DeserializeOwned,
+{
+    fn _finished(&mut self) -> Result<Option<W>, Error> {
+        match self.writer.take() {
+            Some(mut writer) => {
+                match self.state {
+                    WriterState::Start => writer.write_all(b"[]")?,
+                    WriterState::Scribe => writer.write_all("\n]".as_bytes())?,
+                }
+                Ok(Some(writer))
+            }
+            None => Ok(None),
         }
-        Ok(writer)
     }
 }
 
@@ -299,16 +309,8 @@ where
     T: Serialize + DeserializeOwned,
 {
     fn drop(&mut self) {
-        use std::io::stderr;
-        use std::thread::panicking;
-        if self.writer.is_some() {
-            let msg = "finish() needs to be called for a LazyJsonWriter explicitly\n";
-            if panicking() {
-                write!(stderr(), "{}", msg).ok();
-            } else {
-                panic!(msg)
-            }
-        }
+        // Use the finish() method to capture the IO error on closing the writers
+        let _ = self._finished();
     }
 }
 
@@ -472,7 +474,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn test_json_lazy_write_no_finish() {
         let dir = tempfile::tempdir().unwrap();
         let json_file = JsonFile::new(dir.path(), "lazy_write");
@@ -480,6 +481,12 @@ mod tests {
         let mut writer = json_file.lazy_writer().unwrap();
         for i in &input {
             writer.write_item(i).unwrap();
+        }
+        drop(writer);
+        let reader = json_file.lazy_reader().unwrap();
+        for (i, val) in reader.enumerate() {
+            let val: usize = val.unwrap();
+            assert_eq!(val, i);
         }
     }
 
