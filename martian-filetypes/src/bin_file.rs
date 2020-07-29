@@ -42,10 +42,6 @@
 //! of type `T` can also be incrementally written to a bincode file.
 //! `BincodeFile` implements `LazyFileTypeIO<T>` for any type `T` which can be [de]serialized.
 //!
-//! #### IMPORTANT
-//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing. If you
-//! don't do this, the program will panic when the writer is dropped.
-//!
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::bin_file::{BincodeFile, LazyBincodeReader, LazyBincodeWriter};
@@ -60,7 +56,6 @@
 //!         writer.write_item(&val)?;
 //!     }
 //!     writer.finish()?; // The file writing is not completed until finish() is called.
-//!     // IF YOU DON'T CALL finish(), THE PROGRAM WILL PANIC WHEN THE WRITER IS DROPPED
 //!
 //!     // We could have collected the vector and invoked write().
 //!     // Both approaches will give you a bincode file which you can lazily read.
