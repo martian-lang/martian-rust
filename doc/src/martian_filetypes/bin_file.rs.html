@@ -447,11 +447,6 @@
 <span id="447">447</span>
 <span id="448">448</span>
 <span id="449">449</span>
-<span id="450">450</span>
-<span id="451">451</span>
-<span id="452">452</span>
-<span id="453">453</span>
-<span id="454">454</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This module defines a `BincodeFile` and implements `FileTypeIO&lt;T&gt;` and</span>
@@ -497,10 +492,6 @@
 <span class="doccomment">//! of type `T` can also be incrementally written to a bincode file.</span>
 <span class="doccomment">//! `BincodeFile` implements `LazyFileTypeIO&lt;T&gt;` for any type `T` which can be [de]serialized.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! #### IMPORTANT</span>
-<span class="doccomment">//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing. If you</span>
-<span class="doccomment">//! don&#39;t do this, the program will panic when the writer is dropped.</span>
-<span class="doccomment">//!</span>
 <span class="doccomment">//! ```rust</span>
 <span class="doccomment">//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};</span>
 <span class="doccomment">//! use martian_filetypes::bin_file::{BincodeFile, LazyBincodeReader, LazyBincodeWriter};</span>
@@ -515,7 +506,6 @@
 <span class="doccomment">//!         writer.write_item(&amp;val)?;</span>
 <span class="doccomment">//!     }</span>
 <span class="doccomment">//!     writer.finish()?; // The file writing is not completed until finish() is called.</span>
-<span class="doccomment">//!     // IF YOU DON&#39;T CALL finish(), THE PROGRAM WILL PANIC WHEN THE WRITER IS DROPPED</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!     // We could have collected the vector and invoked write().</span>
 <span class="doccomment">//!     // Both approaches will give you a bincode file which you can lazily read.</span>
