@@ -624,11 +624,17 @@ mro_display_to_display! { FiletypeHeader }
 
 /// All the structs that need to be defined in an mro
 #[derive(Debug, Default)]
-pub struct StructHeader(BTreeMap<String, StructDef>);
+pub struct StructHeader {
+    pub struct_map: BTreeMap<String, StructDef>, // map of names to definitions
+    pub struct_order: Vec<String>,               // for maintaining insertion order
+}
 
 impl From<&StageMro> for StructHeader {
     fn from(stage_mro: &StageMro) -> StructHeader {
-        let mut result = StructHeader(BTreeMap::new());
+        let mut result = StructHeader{
+            struct_map: BTreeMap::new(),
+            struct_order: vec![],
+        };
         result.add_stage(stage_mro);
         result
     }
@@ -647,14 +653,15 @@ impl StructHeader {
             for field in &def.fields {
                 self.add_mro_field(field);
             }
-            if self.0.contains_key(&def.name) {
+            if self.struct_map.contains_key(&def.name) {
                 assert_eq!(
-                    &self.0[&def.name], def,
+                    &self.struct_map[&def.name], def,
                     "struct {} has conflicting definitions.\nDefinition 1: {:?}\nDefinition 2: {:?}",
-                    def.name, &self.0[&def.name], def
+                    def.name, &self.struct_map[&def.name], def
                 );
             } else {
-                self.0.insert(def.name.clone(), def.clone());
+                self.struct_map.insert(def.name.clone(), def.clone());
+                self.struct_order.push(def.name.clone());
             }
         }
     }
@@ -670,7 +677,8 @@ impl MroDisplay for StructHeader {
     fn mro_string_with_width(&self, field_width: usize) -> String {
         let mut result = String::new();
 
-        for struct_def in self.0.values() {
+        for struct_name in self.struct_order.iter() {
+            let struct_def = self.struct_map.get(struct_name).expect("Error in StructHeader: Value in the struct_order vector was not found in the struct_map.");
             writeln!(&mut result, "{}", struct_def.mro_string(Some(field_width))).unwrap();
         }
         result
@@ -1413,8 +1421,11 @@ mod tests {
             ],
         };
         let mut map = BTreeMap::new();
-        map.insert(struct_def.name.clone(), struct_def);
-        let header = StructHeader(map);
+        map.insert(struct_def.name.clone(), struct_def.clone());
+        let header = StructHeader{
+            struct_map: map,
+            struct_order: vec![struct_def.name.clone()]
+        };
 
         let expected = indoc!(
             r#"
@@ -1481,6 +1492,10 @@ mod tests {
 
         let expected = indoc!(
             r#"
+            struct SampleDef(
+                path read_path,
+            )
+
             struct ChemistryDef(
                 string name,
                 string barcode_read,
@@ -1491,10 +1506,6 @@ mod tests {
                 ChemistryDef chemistry_def,
                 int          chunk_id,
                 fastq.gz     r1,
-            )
-
-            struct SampleDef(
-                path read_path,
             )
 
         "#
