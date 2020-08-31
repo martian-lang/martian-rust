@@ -624,7 +624,7 @@ mro_display_to_display! { FiletypeHeader }
 
 /// All the structs that need to be defined in an mro
 #[derive(Debug, Default)]
-pub struct StructHeader(BTreeMap<String, StructDef>);
+pub struct StructHeader(BTreeMap<String, (StructDef, usize)>); // key = struct name, val = (struct def, insertion index)
 
 impl From<&StageMro> for StructHeader {
     fn from(stage_mro: &StageMro) -> StructHeader {
@@ -649,12 +649,13 @@ impl StructHeader {
             }
             if self.0.contains_key(&def.name) {
                 assert_eq!(
-                    &self.0[&def.name], def,
+                    &self.0[&def.name].0, def,
                     "struct {} has conflicting definitions.\nDefinition 1: {:?}\nDefinition 2: {:?}",
                     def.name, &self.0[&def.name], def
                 );
             } else {
-                self.0.insert(def.name.clone(), def.clone());
+                let index = self.0.len();
+                self.0.insert(def.name.clone(), (def.clone(), index));
             }
         }
     }
@@ -670,8 +671,16 @@ impl MroDisplay for StructHeader {
     fn mro_string_with_width(&self, field_width: usize) -> String {
         let mut result = String::new();
 
-        for struct_def in self.0.values() {
-            writeln!(&mut result, "{}", struct_def.mro_string(Some(field_width))).unwrap();
+        let mut struct_defs: Vec<(StructDef, usize)> = self.0.values().cloned().collect();
+        struct_defs.sort_by_key(|x| x.1);
+
+        for struct_def in struct_defs.iter() {
+            writeln!(
+                &mut result,
+                "{}",
+                struct_def.0.mro_string(Some(field_width))
+            )
+            .unwrap();
         }
         result
     }
@@ -1413,7 +1422,7 @@ mod tests {
             ],
         };
         let mut map = BTreeMap::new();
-        map.insert(struct_def.name.clone(), struct_def);
+        map.insert(struct_def.name.clone(), (struct_def, 0));
         let header = StructHeader(map);
 
         let expected = indoc!(
@@ -1481,6 +1490,10 @@ mod tests {
 
         let expected = indoc!(
             r#"
+            struct SampleDef(
+                path read_path,
+            )
+
             struct ChemistryDef(
                 string name,
                 string barcode_read,
@@ -1491,10 +1504,6 @@ mod tests {
                 ChemistryDef chemistry_def,
                 int          chunk_id,
                 fastq.gz     r1,
-            )
-
-            struct SampleDef(
-                path read_path,
             )
 
         "#

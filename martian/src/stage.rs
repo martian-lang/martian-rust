@@ -1,7 +1,7 @@
+use crate::metadata::Metadata;
 use crate::metadata::Version;
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::{obj_decode, obj_encode};
-use crate::metadata::Metadata;
 use failure::{Error, ResultExt};
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
@@ -619,7 +619,6 @@ where
         StageKind::MainOnly
     }
 }
-
 
 impl<T> RawMartianStage for T
 where

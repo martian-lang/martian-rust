@@ -56,7 +56,7 @@ where
             })
         })
         .sample_size(10)
-        .throughput(Throughput::Elements(data.len() as u32)),
+        .throughput(Throughput::Elements(data.len() as u64)),
     );
 }
 
@@ -99,7 +99,7 @@ where
                 })
             })
             .sample_size(10)
-            .throughput(Throughput::Elements(elements)),
+            .throughput(Throughput::Elements(elements.into())),
     );
 }
 

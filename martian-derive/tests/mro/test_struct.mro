@@ -8,10 +8,8 @@
 filetype fastq;
 filetype json;
 
-struct ChemistryDef(
-    string name,
-    string barcode_read,
-    int    barcode_length,
+struct SampleDef(
+    path read_path,
 )
 
 struct Config(
@@ -21,14 +19,16 @@ struct Config(
     json        primers,
 )
 
+struct ChemistryDef(
+    string name,
+    string barcode_read,
+    int    barcode_length,
+)
+
 struct RnaChunk(
     ChemistryDef chemistry_def,
     int          chunk_id,
     fastq        r1,
-)
-
-struct SampleDef(
-    path read_path,
 )
 
 stage SETUP_CHUNKS(
