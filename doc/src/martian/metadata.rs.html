@@ -290,7 +290,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::{<span class="ident">rename</span>, <span class="ident">File</span>, <span class="ident">OpenOptions</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::{<span class="ident">IntoRawFd</span>, <span class="ident">FromRawFd</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::{<span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">write_errors</span>;
@@ -488,7 +488,7 @@
     <span class="doccomment">/// Write to _log</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">log_file</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">File</span>::<span class="ident">from_raw_fd</span>(<span class="number">3</span>) };
-        
+
         <span class="ident">log_file</span>
             .<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{} [{}] {}&quot;</span>, <span class="ident">make_timestamp_now</span>(), <span class="ident">level</span>, <span class="ident">message</span>).<span class="ident">as_bytes</span>())
             .<span class="ident">and</span>(<span class="ident">log_file</span>.<span class="ident">flush</span>())<span class="question-mark">?</span>;

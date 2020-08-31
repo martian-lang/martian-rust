@@ -57,7 +57,7 @@ of type <code>T</code> can also be incrementally written to a bincode file.
     <span class="comment">// Note that the bincode files **will not be identical** in the two cases.</span>
     <span class="comment">// let vals: Vec&lt;_&gt; = (0..10_000).into_iter().collect()</span>
     <span class="comment">// bin_file.write(&amp;vals)?;</span>
-     
+
     <span class="comment">// Type inference engine should figure out the type automatically,</span>
     <span class="comment">// but it is shown here for illustration.</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">bin_file</span>.<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>;

@@ -55,7 +55,7 @@ If you don't do this, we will attempt to finish the writing in <code>drop()</cod
     <span class="comment">// Both approaches will give you an identical json file.</span>
     <span class="comment">// let vals: Vec&lt;_&gt; = (0..10_000).into_iter().collect()</span>
     <span class="comment">// json_file.write(&amp;vals)?;</span>
-     
+
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">LazyJsonReader</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">json_file</span>.<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max_val</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="comment">// reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;</span>

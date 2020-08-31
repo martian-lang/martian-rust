@@ -465,7 +465,7 @@
 <span class="doccomment">//!     let decoded: Chemistry = lz4_json_file.read()?;</span>
 <span class="doccomment">//!     assert_eq!(chem, decoded);</span>
 <span class="doccomment">//!     # std::fs::remove_file(lz4_json_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!     </span>
+<span class="doccomment">//!</span>
 <span class="doccomment">//!     // --------------------- Bincode ----------------------------------</span>
 <span class="doccomment">//!     let lz4_bin_file: Lz4&lt;BincodeFile&gt; = Lz4::from(&quot;example&quot;); // example.bincode.lz4</span>
 <span class="doccomment">//!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()</span>
@@ -509,7 +509,7 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//!     // For this extreme case of compression, the output file will be just 194 bytes, as opposed to</span>
 <span class="doccomment">//!     // 39KB uncompressed</span>
-<span class="doccomment">//!     </span>
+<span class="doccomment">//!</span>
 <span class="doccomment">//!     let mut lz4_reader = lz4_bin_file.lazy_reader()?;</span>
 <span class="doccomment">//!     // The type of the lz4_reader will be inferred by the compiler as:</span>
 <span class="doccomment">//!     // LazyLz4Reader&lt;LazyBincodeReader&lt;i32, lz4::decoder::Decoder&lt;BufReader&lt;File&gt;&gt;&gt;, i32, BufReader&lt;File&gt;&gt;</span>
