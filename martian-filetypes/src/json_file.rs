@@ -62,7 +62,7 @@
 //!     // Both approaches will give you an identical json file.
 //!     // let vals: Vec<_> = (0..10_000).into_iter().collect()
 //!     // json_file.write(&vals)?;
-//!     
+//!
 //!     let mut reader: LazyJsonReader<i32> = json_file.lazy_reader()?;
 //!     let mut max_val = 0;
 //!     // reader is an `Iterator` over values of type Result<`i32`, Error>

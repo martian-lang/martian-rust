@@ -624,8 +624,7 @@ mro_display_to_display! { FiletypeHeader }
 
 /// All the structs that need to be defined in an mro
 #[derive(Debug, Default)]
-pub struct StructHeader(BTreeMap<String, (StructDef, usize)>);  // key = struct name, val = (struct def, insertion index)
-
+pub struct StructHeader(BTreeMap<String, (StructDef, usize)>); // key = struct name, val = (struct def, insertion index)
 
 impl From<&StageMro> for StructHeader {
     fn from(stage_mro: &StageMro) -> StructHeader {
@@ -676,7 +675,12 @@ impl MroDisplay for StructHeader {
         struct_defs.sort_by_key(|x| x.1);
 
         for struct_def in struct_defs.iter() {
-            writeln!(&mut result, "{}", struct_def.0.mro_string(Some(field_width))).unwrap();
+            writeln!(
+                &mut result,
+                "{}",
+                struct_def.0.mro_string(Some(field_width))
+            )
+            .unwrap();
         }
         result
     }
@@ -1418,7 +1422,7 @@ mod tests {
             ],
         };
         let mut map = BTreeMap::new();
-        map.insert(struct_def.name.clone(), (struct_def,0));
+        map.insert(struct_def.name.clone(), (struct_def, 0));
         let header = StructHeader(map);
 
         let expected = indoc!(

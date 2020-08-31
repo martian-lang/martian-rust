@@ -2,7 +2,7 @@ use std;
 use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
 use std::io::{Read, Write};
-use std::os::unix::io::{IntoRawFd, FromRawFd};
+use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::PathBuf;
 
 use crate::write_errors;
@@ -200,7 +200,7 @@ impl Metadata {
     /// Write to _log
     pub fn log(&mut self, level: &str, message: &str) -> Result<()> {
         let mut log_file = unsafe { File::from_raw_fd(3) };
-        
+
         log_file
             .write(&format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
             .and(log_file.flush())?;

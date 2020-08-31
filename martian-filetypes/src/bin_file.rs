@@ -62,7 +62,7 @@
 //!     // Note that the bincode files **will not be identical** in the two cases.
 //!     // let vals: Vec<_> = (0..10_000).into_iter().collect()
 //!     // bin_file.write(&vals)?;
-//!     
+//!
 //!     // Type inference engine should figure out the type automatically,
 //!     // but it is shown here for illustration.
 //!     let mut reader: LazyBincodeReader<i32> = bin_file.lazy_reader()?;
