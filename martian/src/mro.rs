@@ -12,10 +12,12 @@
 
 use crate::MartianVoid;
 use failure::{format_err, Error};
+use metric::TxHashMap;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Display, Write};
+use std::hash::Hash;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::string::ToString;
@@ -182,6 +184,7 @@ mro_display_to_display! {MartianPrimaryType}
 pub enum MartianBlanketType {
     Primary(MartianPrimaryType),
     Array(MartianPrimaryType),
+    TypedMap(MartianPrimaryType),
 }
 
 impl MartianBlanketType {
@@ -189,6 +192,7 @@ impl MartianBlanketType {
         match *self {
             MartianBlanketType::Primary(ref primary) => primary,
             MartianBlanketType::Array(ref primary) => primary,
+            MartianBlanketType::TypedMap(ref primary) => primary,
         }
     }
 }
@@ -199,6 +203,7 @@ impl MroDisplay for MartianBlanketType {
         match *self {
             MartianBlanketType::Primary(ref primary) => primary.to_string(),
             MartianBlanketType::Array(ref primary) => format!("{}[]", primary.to_string()),
+            MartianBlanketType::TypedMap(ref primary) => format!("map<{}>", primary.to_string()),
         }
     }
 }
@@ -208,8 +213,15 @@ impl FromStr for MartianBlanketType {
     type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.ends_with("[]") {
+            // array
             let t = s.get(0..s.len() - 2).unwrap();
             Ok(MartianBlanketType::Array(MartianPrimaryType::from_str(t)?))
+        } else if s.starts_with("map<") && s.ends_with(">") {
+            // typed map
+            let t = s.get(4..s.len() - 1).unwrap();
+            Ok(MartianBlanketType::TypedMap(MartianPrimaryType::from_str(
+                t,
+            )?))
         } else {
             Ok(MartianBlanketType::Primary(MartianPrimaryType::from_str(
                 s,
@@ -286,6 +298,7 @@ impl<T: AsMartianBlanketType> AsMartianBlanketType for Vec<T> {
     fn as_martian_blanket_type() -> MartianBlanketType {
         match T::as_martian_blanket_type() {
             MartianBlanketType::Primary(primary) => MartianBlanketType::Array(primary),
+            MartianBlanketType::TypedMap(_) => MartianBlanketType::Array(MartianPrimaryType::Map),
             MartianBlanketType::Array(_) => {
                 unimplemented!("Array of arrays are not supported in martian")
             }
@@ -302,6 +315,21 @@ impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
 impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
     fn as_martian_primary_type() -> MartianPrimaryType {
         MartianPrimaryType::Map
+    }
+}
+
+// ideally we'd allow for any HashMap to be turned into a typed Map when possible, or an untyped Map by default
+// but a typed map can only be made for Rust HashMap with a key implementing Display
+// and a value implementing MartianPrimaryType
+// it is not possible to have such a default implementation without specialization, which is an unstable feature
+// and it is impossible to check what traits are implemented for a HashMap's K,V at runtime.
+// instead, we introduce a TypedMap type which holds a TxHashMap and converts into a Martian typed map
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TypedMap<K: Display + Eq + Hash, V: AsMartianPrimaryType> (pub TxHashMap<K, V>);
+
+impl<K: Display + Eq + Hash, V: AsMartianPrimaryType> AsMartianBlanketType for TypedMap<K, V> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        MartianBlanketType::TypedMap(V::as_martian_primary_type())
     }
 }
 

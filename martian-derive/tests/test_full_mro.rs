@@ -465,3 +465,42 @@ fn test_with_struct() {
         expected
     );
 }
+
+#[test]
+fn test_typed_map() {
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct ReadsStruct {
+        name: String,
+        reads_map: TypedMap<String, FastqFile>,
+        multi_reads_map: Vec<TypedMap<String, FastqFile>>,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SI {
+        reads_struct: ReadsStruct,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SO {
+        multi_reads_struct: Vec<ReadsStruct>,
+    }
+
+    pub struct StageName;
+
+    #[make_mro]
+    impl MartianMain for StageName {
+        type StageInputs = SI;
+        type StageOutputs = SO;
+
+        fn main(&self, _: Self::StageInputs, _: MartianRover) -> Result<Self::StageOutputs, Error> {
+            unimplemented!()
+        }
+    }
+
+    let expected = include_str!("mro/test_typed_map.mro");
+
+    assert_eq!(
+        make_mro_string(&[StageName::stage_mro("my_adapter", "stage_name")]),
+        expected
+    );
+}

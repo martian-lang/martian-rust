@@ -87,7 +87,6 @@ impl MartianStage for SumSquares {
         chunk_args: Self::ChunkInputs,
         _rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error> {
-
         if chunk_args.value == 123456789.0 {
             // let the other chunks finish
             let dur = std::time::Duration::new(3, 0);
