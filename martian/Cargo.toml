@@ -19,7 +19,7 @@ heck = "*"
 tempfile = "3"
 rustc_version = "0.2"
 rayon = { version = ">=1.0", optional = true }
-metric = {git = 'https://github.com/10XDev/rust-utils-10x.git', version = ">=0.1.0"}
+metric = {git = 'https://github.com/10XDev/rust-utils-10x.git', version = "*"}
 
 [dev-dependencies]
 indoc = "0.3.3"
