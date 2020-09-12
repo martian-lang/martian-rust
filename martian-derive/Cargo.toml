@@ -13,7 +13,6 @@ quote = "1.0"
 proc-macro2 = "1.0"
 martian = { path = "../martian" }
 serde = { version = '1.0', features = ['derive'] }
-metric = {git = 'https://github.com/10XDev/rust-utils-10x.git', rev = "03b018dfb0cc29110241051d15161d3b8b8db0a3"}
 
 [lib]
 proc-macro = true

@@ -12,7 +12,6 @@
 
 use crate::MartianVoid;
 use failure::{format_err, Error};
-use metric::TxHashMap;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::collections::{HashMap, HashSet};
@@ -325,7 +324,7 @@ impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
 // and it is impossible to check what traits are implemented for a HashMap's K,V at runtime.
 // instead, we introduce a TypedMap type which holds a TxHashMap and converts into a Martian typed map
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct TypedMap<K: Display + Eq + Hash, V: AsMartianPrimaryType> (pub TxHashMap<K, V>);
+pub struct TypedMap<K: Display + Eq + Hash, V: AsMartianPrimaryType>(pub HashMap<K, V>);
 
 impl<K: Display + Eq + Hash, V: AsMartianPrimaryType> AsMartianBlanketType for TypedMap<K, V> {
     fn as_martian_blanket_type() -> MartianBlanketType {
