@@ -1,17 +1,19 @@
-use std;
-use std::collections::HashSet;
-use std::fs::{rename, File, OpenOptions};
-use std::io::{Read, Write};
-use std::os::unix::io::{FromRawFd, IntoRawFd};
-use std::path::PathBuf;
-
 use crate::write_errors;
-use chrono::*;
-use failure::Error;
+use chrono::{DateTime, Local};
+use failure::{Error, ResultExt};
 use rustc_version;
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::map::Map;
 use serde_json::{self, json, Value};
+use std;
+use std::any::type_name;
+use std::collections::HashSet;
+use std::fs::{rename, File, OpenOptions};
+use std::io::Write;
+use std::os::unix::io::{FromRawFd, IntoRawFd};
+use std::path::Path;
+use std::path::PathBuf;
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
@@ -147,14 +149,6 @@ impl Metadata {
         self.update_journal_main(name, false)
     }
 
-    /*
-    fn write_json(&mut self, name: &str, object: &Json) {
-        // Serialize using `json::encode`
-        let encoded = json::encode(object).unwrap();
-        self.write_raw(name, encoded);
-    }
-    */
-
     /// Write JSON to a chunk file
     pub(crate) fn write_json_obj(&mut self, name: &str, object: &JsonDict) -> Result<()> {
         // Serialize using `json::encode`
@@ -164,25 +158,31 @@ impl Metadata {
         Ok(())
     }
 
-    pub(crate) fn read_json(&self, name: &str) -> Result<Json> {
-        let mut f = File::open(self.make_path(name))?;
-        let mut buf = String::new();
-        f.read_to_string(&mut buf)?;
-
-        let json = serde_json::from_str(&buf)?;
-        Ok(json)
+    pub(crate) fn decode<T: Sized + DeserializeOwned>(&self, name: &str) -> Result<T> {
+        Self::_decode(self.make_path(name))
     }
 
-    pub(crate) fn read_json_obj(&self, json: &str) -> Result<JsonDict> {
-        let r = self.read_json(json)?;
-        Ok(r.as_object().unwrap().clone())
-    }
-
-    pub(crate) fn read_json_obj_array(&self, name: &str) -> Result<Vec<JsonDict>> {
-        let json = self.read_json(name)?;
-        let arr = json.as_array().unwrap();
-        let r: Vec<JsonDict> = arr.iter().map(|o| o.as_object().unwrap().clone()).collect();
-        Ok(r)
+    fn _decode<T: Sized + DeserializeOwned>(file: impl AsRef<Path>) -> Result<T> {
+        let buf = std::fs::read_to_string(&file)
+            .with_context(|e| format!("Failed to read file {:?} due to: {}", file.as_ref(), e))?;
+        Ok(serde_json::from_str(&buf).with_context(|e| {
+            let buf_lines: Vec<_> = buf
+                .lines()
+                .enumerate()
+                .map(|(i, line)| format!("{:>4}: {}", i + 1, line))
+                .collect();
+            format!(
+                "The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
+                following error:\n\n{}\n\nThis typically happens when one or more fields in the \
+                struct {} cannot be built from the JSON. The contents of the JSON are shown below: \
+                \n{}",
+                file.as_ref().file_name().unwrap(),
+                type_name::<T>(),
+                e,
+                type_name::<T>(),
+                buf_lines.join("\n")
+            )
+        })?)
     }
 
     fn _append(&mut self, name: &str, message: &str) -> Result<()> {
@@ -227,7 +227,7 @@ impl Metadata {
 
     /// Write finalized _jobinfo data
     pub fn update_jobinfo(&mut self) -> Result<()> {
-        let mut raw_jobinfo = self.read_json_obj("jobinfo")?;
+        let mut raw_jobinfo: JsonDict = self.decode("jobinfo")?;
         let jobinfo: JobInfo = serde_json::from_value(Value::Object(raw_jobinfo.clone()))?;
 
         let info = RustAdapterInfo::new();
@@ -283,5 +283,19 @@ mod tests {
         assert_eq!(jobinfo.version.martian, "v3.2.2");
         assert_eq!(jobinfo.version.pipelines, "7000.1.52-187");
         Ok(())
+    }
+
+    #[test]
+    fn test_decode_err() {
+        use serde::Deserialize;
+        #[derive(Debug, Deserialize)]
+        #[allow(dead_code)]
+        struct Foo {
+            bar: u32,
+            val: i32,
+        }
+
+        let e: Result<Foo> = Metadata::_decode("tests/invalid_args.json");
+        insta::assert_display_snapshot_matches!(e.unwrap_err());
     }
 }

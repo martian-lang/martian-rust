@@ -4,21 +4,9 @@
 //! other crates.
 use crate::{Json, JsonDict};
 use failure::Error;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
-use serde_json::json;
 use std::path::Path;
 use std::path::PathBuf;
-
-/// Shortcut function to decode a json dictionary into an object
-pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {
-    Ok(json_decode(json!(s))?)
-}
-
-/// Shortcut function to decode a json Value into an object
-fn json_decode<T: DeserializeOwned>(s: Json) -> Result<T, Error> {
-    Ok(serde_json::from_value(s)?)
-}
 
 /// Shortcut function to encode an object as a Json dictionary
 pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {
@@ -191,39 +179,5 @@ mod tests {
     #[should_panic]
     fn test_set_extension_extension_dot() {
         let _ = set_extension("/path/to/file", ".foo");
-    }
-
-    #[test]
-    fn test_obj_decode_err() {
-        use serde::Deserialize;
-        #[derive(Debug, Deserialize)]
-        #[allow(dead_code)]
-        struct Foo {
-            bar: u32,
-            val: i32,
-        }
-
-        let j = serde_json::from_str::<Json>(
-            r#"{
-                    "bar": 100,
-                    "val": null
-                }"#,
-        )
-        .unwrap()
-        .as_object()
-        .unwrap()
-        .clone();
-
-        println!("{:#?}", j);
-
-        let e: Result<Foo, _> = obj_decode(&j);
-        println!("{:?}", e.unwrap_err());
-
-        let e: Result<Foo, _> = serde_json::from_str(
-            r#"{
-                    "val": null
-                }"#,
-        );
-        println!("{:?}", e.unwrap_err());
     }
 }
