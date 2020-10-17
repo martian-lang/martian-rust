@@ -16,7 +16,7 @@ pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {
 }
 
 /// Shortcut function to decode a json Value into an object
-pub fn json_decode<T: DeserializeOwned>(s: Json) -> Result<T, Error> {
+fn json_decode<T: DeserializeOwned>(s: Json) -> Result<T, Error> {
     Ok(serde_json::from_value(s)?)
 }
 
@@ -26,7 +26,7 @@ pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {
 }
 
 /// Shortcut function to encode an object as a json value
-pub fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
+fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
     Ok(serde_json::to_value(v)?)
 }
 
@@ -191,5 +191,39 @@ mod tests {
     #[should_panic]
     fn test_set_extension_extension_dot() {
         let _ = set_extension("/path/to/file", ".foo");
+    }
+
+    #[test]
+    fn test_obj_decode_err() {
+        use serde::Deserialize;
+        #[derive(Debug, Deserialize)]
+        #[allow(dead_code)]
+        struct Foo {
+            bar: u32,
+            val: i32,
+        }
+
+        let j = serde_json::from_str::<Json>(
+            r#"{
+                    "bar": 100,
+                    "val": null
+                }"#,
+        )
+        .unwrap()
+        .as_object()
+        .unwrap()
+        .clone();
+
+        println!("{:#?}", j);
+
+        let e: Result<Foo, _> = obj_decode(&j);
+        println!("{:?}", e.unwrap_err());
+
+        let e: Result<Foo, _> = serde_json::from_str(
+            r#"{
+                    "val": null
+                }"#,
+        );
+        println!("{:?}", e.unwrap_err());
     }
 }
