@@ -1,6 +1,4 @@
 ---
-created: "2020-10-17T15:02:12.419604Z"
-creator: insta@0.7.4
 source: martian/src/metadata.rs
 expression: e.unwrap_err()
 ---

@@ -296,6 +296,6 @@ mod tests {
         }
 
         let e: Result<Foo> = Metadata::_decode("tests/invalid_args.json");
-        insta::assert_display_snapshot_matches!(e.unwrap_err());
+        insta::assert_display_snapshot!(e.unwrap_err());
     }
 }
