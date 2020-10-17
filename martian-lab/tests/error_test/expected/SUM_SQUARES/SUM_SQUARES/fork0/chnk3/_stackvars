@@ -20,7 +20,7 @@
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:124
   10: sum_sq::main
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48
-  11: core::ops::function::FnOnce::call_once
+  11: std::rt::lang_start::{{closure}}
              at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:67
   12: std::rt::lang_start_internal::{{closure}}
              at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:52
@@ -38,4 +38,4 @@
              at /rustc/8d69840ab92ea7f4d323420088dd8c9775f180cd/src/libstd/rt.rs:67
   16: main
   17: __libc_start_main
-  18: _start
+  18: <unknown>
