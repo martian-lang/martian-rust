@@ -47,7 +47,6 @@ fn main() -> Result<(), Error> {
 
         let retcode = adapter.run(args.arg_adapter);
         std::process::exit(retcode);
-
     } else if args.cmd_mro {
         // Create the mro for all the stages in this adapter
         martian_make_mro(args.flag_file, args.flag_rewrite, mro_registry)?;
