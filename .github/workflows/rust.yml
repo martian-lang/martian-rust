@@ -1,0 +1,34 @@
+name: Rust
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check Rust formatting
+      run: cargo fmt -- --check
+    - name: Build
+      run: cargo build --verbose --all
+    - name: Run tests
+      run: cargo test --verbose --all
+    - name: Martian Integration tests
+      run: |
+        cargo build --examples
+        export PATH=$TRAVIS_BUILD_DIR/deps/bin:$PATH
+        cd martian-lab/tests/main_test
+        ../martian_test.py main_test.json
+        cd ../split_test
+        ../martian_test.py split_test.json
+        cd ../error_test
+        ../martian_test.py error_test.json
