@@ -1,7 +1,7 @@
 use crate::metadata::Metadata;
 use crate::metadata::Version;
 use crate::mro::{MartianStruct, MroMaker};
-use crate::utils::{obj_decode, obj_encode};
+use crate::utils::obj_encode;
 use failure::{Error, ResultExt};
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
@@ -625,8 +625,7 @@ where
     T: MartianStage,
 {
     fn split(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args_obj = md.read_json_obj("args")?;
-        let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
+        let args: <T as MartianStage>::StageInputs = md.decode("args")?;
         let rover: MartianRover = MartianRover::from(&*md);
         let stage_defs = MartianStage::split(self, args, rover)?;
         let stage_def_obj = obj_encode(&stage_defs)?;
@@ -636,9 +635,8 @@ where
     }
 
     fn main(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args_obj = md.read_json_obj("args")?;
-        let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
-        let chunk_args: <T as MartianStage>::ChunkInputs = obj_decode(&args_obj)?;
+        let args: <T as MartianStage>::StageInputs = md.decode("args")?;
+        let chunk_args: <T as MartianStage>::ChunkInputs = md.decode("args")?;
         let rover = MartianRover::from(&*md);
         // let outs = md.read_json_obj("outs")?;
         let outs = MartianStage::main(self, args, chunk_args, rover)?;
@@ -649,28 +647,11 @@ where
     }
 
     fn join(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args_obj = md.read_json_obj("args")?;
-        let args: <T as MartianStage>::StageInputs = obj_decode(&args_obj)?;
+        let args: <T as MartianStage>::StageInputs = md.decode("args")?;
         let rover = MartianRover::from(&*md);
         // let outs = md.read_json_obj("outs")?;
-        let chunk_defs = {
-            let chunk_defs_obj = md.read_json_obj_array("chunk_defs")?;
-            let mut defs = Vec::new();
-            for obj in chunk_defs_obj {
-                let def: <T as MartianStage>::ChunkInputs = obj_decode(&obj)?;
-                defs.push(def);
-            }
-            defs
-        };
-        let chunk_outs = {
-            let chunk_outs_obj = md.read_json_obj_array("chunk_outs")?;
-            let mut outs = Vec::new();
-            for obj in chunk_outs_obj {
-                let out: <T as MartianStage>::ChunkOutputs = obj_decode(&obj)?;
-                outs.push(out);
-            }
-            outs
-        };
+        let chunk_defs: Vec<<T as MartianStage>::ChunkInputs> = md.decode("chunk_defs")?;
+        let chunk_outs: Vec<<T as MartianStage>::ChunkOutputs> = md.decode("chunk_outs")?;
         let outs = MartianStage::join(self, args, chunk_defs, chunk_outs, rover)?;
         let outs_obj = obj_encode(&outs)?;
         md.write_json_obj("outs", &outs_obj)?;

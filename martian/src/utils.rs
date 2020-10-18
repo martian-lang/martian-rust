@@ -4,21 +4,9 @@
 //! other crates.
 use crate::{Json, JsonDict};
 use failure::Error;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
-use serde_json::json;
 use std::path::Path;
 use std::path::PathBuf;
-
-/// Shortcut function to decode a json dictionary into an object
-pub fn obj_decode<T: DeserializeOwned>(s: &JsonDict) -> Result<T, Error> {
-    Ok(json_decode(json!(s))?)
-}
-
-/// Shortcut function to decode a json Value into an object
-pub fn json_decode<T: DeserializeOwned>(s: Json) -> Result<T, Error> {
-    Ok(serde_json::from_value(s)?)
-}
 
 /// Shortcut function to encode an object as a Json dictionary
 pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {
@@ -26,7 +14,7 @@ pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {
 }
 
 /// Shortcut function to encode an object as a json value
-pub fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
+fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
     Ok(serde_json::to_value(v)?)
 }
 

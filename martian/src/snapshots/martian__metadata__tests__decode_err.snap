@@ -1,0 +1,13 @@
+---
+source: martian/src/metadata.rs
+expression: e.unwrap_err()
+---
+The martian-rust adapter failed while deserializing the file "invalid_args.json" as martian::metadata::tests::test_decode_err::Foo due to the following error:
+
+invalid type: null, expected i32 at line 3 column 15
+
+This typically happens when one or more fields in the struct martian::metadata::tests::test_decode_err::Foo cannot be built from the JSON. The contents of the JSON are shown below: 
+   1: {
+   2:     "bar": 100,
+   3:     "val": null
+   4: }
