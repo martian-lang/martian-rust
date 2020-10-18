@@ -286,21 +286,37 @@
 <span id="285">285</span>
 <span id="286">286</span>
 <span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::{<span class="ident">rename</span>, <span class="ident">File</span>, <span class="ident">OpenOptions</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::{<span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span>;
-
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">write_errors</span>;
-<span class="kw">use</span> <span class="ident">chrono</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">failure</span>::<span class="ident">Error</span>;
+<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Local</span>};
+<span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">Error</span>, <span class="ident">ResultExt</span>};
 <span class="kw">use</span> <span class="ident">rustc_version</span>;
+<span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="ident">map</span>::<span class="ident">Map</span>;
 <span class="kw">use</span> <span class="ident">serde_json</span>::{<span class="self">self</span>, <span class="ident">json</span>, <span class="ident">Value</span>};
+<span class="kw">use</span> <span class="ident">std</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">type_name</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::{<span class="ident">rename</span>, <span class="ident">File</span>, <span class="ident">OpenOptions</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::{<span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span>;
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">JsonDict</span> <span class="op">=</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Json</span> <span class="op">=</span> <span class="ident">Value</span>;
@@ -436,14 +452,6 @@
         <span class="self">self</span>.<span class="ident">update_journal_main</span>(<span class="ident">name</span>, <span class="bool-val">false</span>)
     }
 
-    <span class="comment">/*
-    fn write_json(&amp;mut self, name: &amp;str, object: &amp;Json) {
-        // Serialize using `json::encode`
-        let encoded = json::encode(object).unwrap();
-        self.write_raw(name, encoded);
-    }
-    */</span>
-
     <span class="doccomment">/// Write JSON to a chunk file</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">write_json_obj</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">object</span>: <span class="kw-2">&amp;</span><span class="ident">JsonDict</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="comment">// Serialize using `json::encode`</span>
@@ -453,25 +461,31 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Json</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">File</span>::<span class="ident">open</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
-        <span class="ident">f</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>)<span class="question-mark">?</span>;
-
-        <span class="kw">let</span> <span class="ident">json</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">json</span>)
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">decode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">Self</span>::<span class="ident">_decode</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json_obj</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">json</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_json</span>(<span class="ident">json</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">r</span>.<span class="ident">as_object</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>())
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">read_json_obj_array</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;&gt;</span> {
-        <span class="kw">let</span> <span class="ident">json</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_json</span>(<span class="ident">name</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="ident">json</span>.<span class="ident">as_array</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">r</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">JsonDict</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">arr</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">o</span><span class="op">|</span> <span class="ident">o</span>.<span class="ident">as_object</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>()).<span class="ident">collect</span>();
-        <span class="prelude-val">Ok</span>(<span class="ident">r</span>)
+    <span class="kw">fn</span> <span class="ident">_decode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="ident">file</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="ident">file</span>)
+            .<span class="ident">with_context</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Failed to read file {:?} due to: {}&quot;</span>, <span class="ident">file</span>.<span class="ident">as_ref</span>(), <span class="ident">e</span>))<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>).<span class="ident">with_context</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="ident">buf_lines</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">buf</span>
+                .<span class="ident">lines</span>()
+                .<span class="ident">enumerate</span>()
+                .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">line</span>)<span class="op">|</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:&gt;4}: {}&quot;</span>, <span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">line</span>))
+                .<span class="ident">collect</span>();
+            <span class="macro">format</span><span class="macro">!</span>(
+                <span class="string">&quot;The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
+                following error:\n\n{}\n\nThis typically happens when one or more fields in the \
+                struct {} cannot be built from the JSON. The contents of the JSON are shown below: \
+                \n{}&quot;</span>,
+                <span class="ident">file</span>.<span class="ident">as_ref</span>().<span class="ident">file_name</span>().<span class="ident">unwrap</span>(),
+                <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(),
+                <span class="ident">e</span>,
+                <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(),
+                <span class="ident">buf_lines</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
+            )
+        })<span class="question-mark">?</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">_append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
@@ -516,7 +530,7 @@
 
     <span class="doccomment">/// Write finalized _jobinfo data</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_jobinfo</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw_jobinfo</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_json_obj</span>(<span class="string">&quot;jobinfo&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw_jobinfo</span>: <span class="ident">JsonDict</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">decode</span>(<span class="string">&quot;jobinfo&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">jobinfo</span>: <span class="ident">JobInfo</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">Value</span>::<span class="ident">Object</span>(<span class="ident">raw_jobinfo</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">RustAdapterInfo</span>::<span class="ident">new</span>();
@@ -572,6 +586,20 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">martian</span>, <span class="string">&quot;v3.2.2&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">pipelines</span>, <span class="string">&quot;7000.1.52-187&quot;</span>);
         <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_decode_err</span>() {
+        <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Deserialize</span>;
+        <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
+        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+        <span class="kw">struct</span> <span class="ident">Foo</span> {
+            <span class="ident">bar</span>: <span class="ident">u32</span>,
+            <span class="ident">val</span>: <span class="ident">i32</span>,
+        }
+
+        <span class="kw">let</span> <span class="ident">e</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Metadata</span>::<span class="ident">_decode</span>(<span class="string">&quot;tests/invalid_args.json&quot;</span>);
+        <span class="ident">insta</span>::<span class="macro">assert_display_snapshot</span><span class="macro">!</span>(<span class="ident">e</span>.<span class="ident">unwrap_err</span>());
     }
 }
 </pre></div>
