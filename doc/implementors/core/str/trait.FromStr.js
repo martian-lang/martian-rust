@@ -5,6 +5,6 @@ implementors["martian"] = [{"text":"impl FromStr for MartianPrimaryType","synthe
 implementors["proc_macro2"] = [{"text":"impl FromStr for TokenStream","synthetic":false,"types":[]}];
 implementors["regex"] = [{"text":"impl FromStr for Regex","synthetic":false,"types":[]},{"text":"impl FromStr for Regex","synthetic":false,"types":[]}];
 implementors["semver"] = [{"text":"impl FromStr for Version","synthetic":false,"types":[]},{"text":"impl FromStr for VersionReq","synthetic":false,"types":[]}];
-implementors["semver_parser"] = [{"text":"impl FromStr for Op","synthetic":false,"types":[]}];
+implementors["semver_parser"] = [{"text":"impl FromStr for RangeSet","synthetic":false,"types":[]}];
 implementors["serde_json"] = [{"text":"impl FromStr for Number","synthetic":false,"types":[]},{"text":"impl FromStr for Value","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
