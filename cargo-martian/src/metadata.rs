@@ -34,6 +34,8 @@ pub enum Kind {
     Bench,
     #[serde(rename = "lib")]
     Lib,
+    #[serde(rename = "proc-macro")]
+    ProcMacro,
 }
 
 impl Metadata {
