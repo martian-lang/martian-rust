@@ -973,7 +973,7 @@ its type signature might look a little daunting:</p>
 <li><code>self</code> is a special parameter that corresponds to the <code>Writer</code> itself.</li>
 <li><code>record</code> is the CSV record we'd like to write. Its type is <code>I</code>, which is
 a generic type.</li>
-<li>In the method's <code>where</code> clause, the <code>I</code> type is contrained by the
+<li>In the method's <code>where</code> clause, the <code>I</code> type is constrained by the
 <code>IntoIterator&lt;Item=T&gt;</code> bound. What that means is that <code>I</code> must satisfy the
 <code>IntoIterator</code> trait. If you look at the documentation of the
 <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html"><code>IntoIterator</code> trait</a>,

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc_version-0.3.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../rustc_version/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc_version-0.3.3/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../rustc_version/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
                 <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
@@ -353,6 +353,75 @@
 <span id="352">352</span>
 <span id="353">353</span>
 <span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2016 rustc-version-rs developers</span>
 <span class="comment">//</span>
@@ -378,33 +447,30 @@
 <span class="doccomment">//! ```rust</span>
 <span class="doccomment">//! // This could be a cargo build script</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! extern crate rustc_version;</span>
 <span class="doccomment">//! use rustc_version::{version, version_meta, Channel, Version};</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() {</span>
-<span class="doccomment">//!     // Assert we haven&#39;t travelled back in time</span>
-<span class="doccomment">//!     assert!(version().unwrap().major &gt;= 1);</span>
+<span class="doccomment">//! // Assert we haven&#39;t travelled back in time</span>
+<span class="doccomment">//! assert!(version().unwrap().major &gt;= 1);</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     // Set cfg flags depending on release channel</span>
-<span class="doccomment">//!     match version_meta().unwrap().channel {</span>
-<span class="doccomment">//!         Channel::Stable =&gt; {</span>
-<span class="doccomment">//!             println!(&quot;cargo:rustc-cfg=RUSTC_IS_STABLE&quot;);</span>
-<span class="doccomment">//!         }</span>
-<span class="doccomment">//!         Channel::Beta =&gt; {</span>
-<span class="doccomment">//!             println!(&quot;cargo:rustc-cfg=RUSTC_IS_BETA&quot;);</span>
-<span class="doccomment">//!         }</span>
-<span class="doccomment">//!         Channel::Nightly =&gt; {</span>
-<span class="doccomment">//!             println!(&quot;cargo:rustc-cfg=RUSTC_IS_NIGHTLY&quot;);</span>
-<span class="doccomment">//!         }</span>
-<span class="doccomment">//!         Channel::Dev =&gt; {</span>
-<span class="doccomment">//!             println!(&quot;cargo:rustc-cfg=RUSTC_IS_DEV&quot;);</span>
-<span class="doccomment">//!         }</span>
+<span class="doccomment">//! // Set cfg flags depending on release channel</span>
+<span class="doccomment">//! match version_meta().unwrap().channel {</span>
+<span class="doccomment">//!     Channel::Stable =&gt; {</span>
+<span class="doccomment">//!         println!(&quot;cargo:rustc-cfg=RUSTC_IS_STABLE&quot;);</span>
 <span class="doccomment">//!     }</span>
+<span class="doccomment">//!     Channel::Beta =&gt; {</span>
+<span class="doccomment">//!         println!(&quot;cargo:rustc-cfg=RUSTC_IS_BETA&quot;);</span>
+<span class="doccomment">//!     }</span>
+<span class="doccomment">//!     Channel::Nightly =&gt; {</span>
+<span class="doccomment">//!         println!(&quot;cargo:rustc-cfg=RUSTC_IS_NIGHTLY&quot;);</span>
+<span class="doccomment">//!     }</span>
+<span class="doccomment">//!     Channel::Dev =&gt; {</span>
+<span class="doccomment">//!         println!(&quot;cargo:rustc-cfg=RUSTC_IS_DEV&quot;);</span>
+<span class="doccomment">//!     }</span>
+<span class="doccomment">//! }</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     // Check for a minimum version</span>
-<span class="doccomment">//!     if version().unwrap() &gt;= Version::parse(&quot;1.4.0&quot;).unwrap() {</span>
-<span class="doccomment">//!         println!(&quot;cargo:rustc-cfg=compiler_has_important_bugfix&quot;);</span>
-<span class="doccomment">//!     }</span>
+<span class="doccomment">//! // Check for a minimum version</span>
+<span class="doccomment">//! if version().unwrap() &gt;= Version::parse(&quot;1.4.0&quot;).unwrap() {</span>
+<span class="doccomment">//!     println!(&quot;cargo:rustc-cfg=compiler_has_important_bugfix&quot;);</span>
 <span class="doccomment">//! }</span>
 <span class="doccomment">//! ```</span>
 
@@ -415,18 +481,17 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="macro">doctest</span><span class="macro">!</span>(<span class="string">&quot;../README.md&quot;</span>);
 
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">semver</span>;
-<span class="kw">use</span> <span class="ident">semver</span>::<span class="ident">Identifier</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">process</span>::<span class="ident">Command</span>;
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">env</span>, <span class="ident">str</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">OsString</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">env</span>, <span class="ident">error</span>, <span class="ident">fmt</span>, <span class="ident">io</span>, <span class="ident">num</span>, <span class="ident">str</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">ffi</span>::<span class="ident">OsString</span>, <span class="ident">str</span>::<span class="ident">FromStr</span>};
 
+<span class="kw">use</span> <span class="ident">semver</span>::{<span class="self">self</span>, <span class="ident">Identifier</span>};
 <span class="comment">// Convenience re-export to allow version comparison without needing to add</span>
 <span class="comment">// semver crate.</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">semver</span>::<span class="ident">Version</span>;
 
-<span class="kw">mod</span> <span class="ident">errors</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">errors</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">Error</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// Release channel of the compiler.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>)]</span>
@@ -441,7 +506,70 @@
     <span class="ident">Stable</span>,
 }
 
-<span class="doccomment">/// Rustc version plus metada like git short hash and build date.</span>
+<span class="doccomment">/// LLVM version</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// LLVM&#39;s version numbering scheme is not semver compatible until version 4.0</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// rustc [just prints the major and minor versions], so other parts of the version are not included.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// [just prints the major and minor versions]: https://github.com/rust-lang/rust/blob/b5c9e2448c9ace53ad5c11585803894651b18b0a/compiler/rustc_codegen_llvm/src/llvm_util.rs#L173-L178</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LlvmVersion</span> {
+    <span class="comment">// fields must be ordered major, minor for comparison to be correct</span>
+    <span class="doccomment">/// Major version</span>
+    <span class="kw">pub</span> <span class="ident">major</span>: <span class="ident">u64</span>,
+    <span class="doccomment">/// Minor version</span>
+    <span class="kw">pub</span> <span class="ident">minor</span>: <span class="ident">u64</span>,
+    <span class="comment">// TODO: expose micro version here</span>
+}
+
+<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">LlvmVersion</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}.{}&quot;</span>, <span class="self">self</span>.<span class="ident">major</span>, <span class="self">self</span>.<span class="ident">minor</span>)
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">LlvmVersion</span> {
+    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">LlvmVersionParseError</span>;
+
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parts</span> <span class="op">=</span> <span class="ident">s</span>
+            .<span class="ident">split</span>(<span class="string">&#39;.&#39;</span>)
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">part</span><span class="op">|</span> <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">LlvmVersionParseError</span><span class="op">&gt;</span> {
+                <span class="kw">if</span> <span class="ident">part</span> <span class="op">==</span> <span class="string">&quot;0&quot;</span> {
+                    <span class="prelude-val">Ok</span>(<span class="number">0</span>)
+                } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">part</span>.<span class="ident">starts_with</span>(<span class="string">&#39;0&#39;</span>) {
+                    <span class="prelude-val">Err</span>(<span class="ident">LlvmVersionParseError</span>::<span class="ident">ComponentMustNotHaveLeadingZeros</span>)
+                } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">part</span>.<span class="ident">starts_with</span>(<span class="string">&#39;-&#39;</span>) <span class="op">||</span> <span class="ident">part</span>.<span class="ident">starts_with</span>(<span class="string">&#39;+&#39;</span>) {
+                    <span class="prelude-val">Err</span>(<span class="ident">LlvmVersionParseError</span>::<span class="ident">ComponentMustNotHaveSign</span>)
+                } <span class="kw">else</span> {
+                    <span class="prelude-val">Ok</span>(<span class="ident">part</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>)
+                }
+            });
+
+        <span class="kw">let</span> <span class="ident">major</span> <span class="op">=</span> <span class="ident">parts</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>()<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">minor</span> <span class="op">=</span> <span class="number">0</span>;
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">part</span>) <span class="op">=</span> <span class="ident">parts</span>.<span class="ident">next</span>() {
+            <span class="ident">minor</span> <span class="op">=</span> <span class="ident">part</span><span class="question-mark">?</span>;
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">major</span> <span class="op">&lt;</span> <span class="number">4</span> {
+            <span class="comment">// LLVM versions earlier than 4.0 have significant minor versions, so require the minor version in this case.</span>
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">LlvmVersionParseError</span>::<span class="ident">MinorVersionRequiredBefore4</span>);
+        }
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) <span class="op">=</span> <span class="ident">parts</span>.<span class="ident">next</span>() {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>);
+        }
+
+        <span class="kw">if</span> <span class="ident">parts</span>.<span class="ident">next</span>().<span class="ident">is_some</span>() {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">LlvmVersionParseError</span>::<span class="ident">TooManyComponents</span>);
+        }
+
+        <span class="prelude-val">Ok</span>(<span class="self">Self</span> { <span class="ident">major</span>, <span class="ident">minor</span> })
+    }
+}
+
+<span class="doccomment">/// Rustc version plus metadata like git short hash and build date.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">VersionMeta</span> {
     <span class="doccomment">/// Version of the compiler</span>
@@ -464,17 +592,27 @@
 
     <span class="doccomment">/// Short version string of the compiler</span>
     <span class="kw">pub</span> <span class="ident">short_version_string</span>: <span class="ident">String</span>,
+
+    <span class="doccomment">/// Version of LLVM used by the compiler</span>
+    <span class="kw">pub</span> <span class="ident">llvm_version</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">LlvmVersion</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">VersionMeta</span> {
     <span class="doccomment">/// Returns the version metadata for `cmd`, which should be a `rustc` command.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">for_command</span>(<span class="ident">cmd</span>: <span class="ident">Command</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VersionMeta</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cmd</span> <span class="op">=</span> <span class="ident">cmd</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">for_command</span>(<span class="kw-2">mut</span> <span class="ident">cmd</span>: <span class="ident">Command</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VersionMeta</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">cmd</span>
+            .<span class="ident">arg</span>(<span class="string">&quot;-vV&quot;</span>)
+            .<span class="ident">output</span>()
+            .<span class="ident">map_err</span>(<span class="ident">Error</span>::<span class="ident">CouldNotExecuteCommand</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">cmd</span>.<span class="ident">arg</span>(<span class="string">&quot;-vV&quot;</span>).<span class="ident">output</span>().<span class="ident">map_err</span>(<span class="ident">Error</span>::<span class="ident">CouldNotExecuteCommand</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">out</span>.<span class="ident">stdout</span>)<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">out</span>.<span class="ident">status</span>.<span class="ident">success</span>() {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">CommandError</span> {
+                <span class="ident">stdout</span>: <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="kw-2">&amp;</span><span class="ident">out</span>.<span class="ident">stdout</span>).<span class="ident">into</span>(),
+                <span class="ident">stderr</span>: <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="kw-2">&amp;</span><span class="ident">out</span>.<span class="ident">stderr</span>).<span class="ident">into</span>(),
+            });
+        }
 
-        <span class="ident">version_meta_for</span>(<span class="ident">out</span>)
+        <span class="ident">version_meta_for</span>(<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">out</span>.<span class="ident">stdout</span>)<span class="question-mark">?</span>)
     }
 }
 
@@ -495,218 +633,218 @@
 <span class="doccomment">/// the SemVer version and additional metadata</span>
 <span class="doccomment">/// like the git short hash and build date.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">version_meta_for</span>(<span class="ident">verbose_version_string</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VersionMeta</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">out</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">verbose_version_string</span>.<span class="ident">lines</span>().<span class="ident">collect</span>();
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
+    <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">line</span>) <span class="kw">in</span> <span class="ident">verbose_version_string</span>.<span class="ident">lines</span>().<span class="ident">enumerate</span>() {
+        <span class="kw">if</span> <span class="ident">i</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="ident">map</span>.<span class="ident">insert</span>(<span class="string">&quot;short&quot;</span>, <span class="ident">line</span>);
+            <span class="kw">continue</span>;
+        }
 
-    <span class="kw">if</span> <span class="op">!</span>(<span class="ident">out</span>.<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="number">6</span> <span class="op">&amp;&amp;</span> <span class="ident">out</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">8</span>) {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnexpectedVersionFormat</span>);
-    }
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parts</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot;: &quot;</span>);
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">parts</span>.<span class="ident">next</span>() {
+            <span class="prelude-val">Some</span>(<span class="ident">key</span>) <span class="op">=&gt;</span> <span class="ident">key</span>,
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
+        };
 
-    <span class="kw">let</span> <span class="ident">short_version_string</span> <span class="op">=</span> <span class="ident">out</span>[<span class="number">0</span>];
-
-    <span class="kw">fn</span> <span class="ident">expect_prefix</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">line</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="ident">prefix</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="ident">line</span>.<span class="ident">starts_with</span>(<span class="ident">prefix</span>) {
-            <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="ident">line</span>[<span class="ident">prefix</span>.<span class="ident">len</span>()..])
-        } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnexpectedVersionFormat</span>)
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">parts</span>.<span class="ident">next</span>() {
+            <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">key</span>, <span class="ident">value</span>);
         }
     }
 
-    <span class="kw">let</span> <span class="ident">commit_hash</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">expect_prefix</span>(<span class="ident">out</span>[<span class="number">2</span>], <span class="string">&quot;commit-hash: &quot;</span>)<span class="question-mark">?</span> {
-        <span class="string">&quot;unknown&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-        <span class="ident">hash</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">hash</span>.<span class="ident">to_owned</span>()),
-    };
-
-    <span class="kw">let</span> <span class="ident">commit_date</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">expect_prefix</span>(<span class="ident">out</span>[<span class="number">3</span>], <span class="string">&quot;commit-date: &quot;</span>)<span class="question-mark">?</span> {
-        <span class="string">&quot;unknown&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-        <span class="ident">hash</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">hash</span>.<span class="ident">to_owned</span>()),
-    };
-
-    <span class="comment">// Handle that the build date may or may not be present.</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idx</span> <span class="op">=</span> <span class="number">4</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">build_date</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-    <span class="kw">if</span> <span class="ident">out</span>[<span class="ident">idx</span>].<span class="ident">starts_with</span>(<span class="string">&quot;build-date&quot;</span>) {
-        <span class="ident">build_date</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">expect_prefix</span>(<span class="ident">out</span>[<span class="ident">idx</span>], <span class="string">&quot;build-date: &quot;</span>)<span class="question-mark">?</span> {
-            <span class="string">&quot;unknown&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            <span class="ident">s</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">s</span>.<span class="ident">to_owned</span>()),
-        };
-        <span class="ident">idx</span> <span class="op">+=</span> <span class="number">1</span>;
-    }
-
-    <span class="kw">let</span> <span class="ident">host</span> <span class="op">=</span> <span class="ident">expect_prefix</span>(<span class="ident">out</span>[<span class="ident">idx</span>], <span class="string">&quot;host: &quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">idx</span> <span class="op">+=</span> <span class="number">1</span>;
-    <span class="kw">let</span> <span class="ident">release</span> <span class="op">=</span> <span class="ident">expect_prefix</span>(<span class="ident">out</span>[<span class="ident">idx</span>], <span class="string">&quot;release: &quot;</span>)<span class="question-mark">?</span>;
-
+    <span class="kw">let</span> <span class="ident">short_version_string</span> <span class="op">=</span> <span class="ident">expect_key</span>(<span class="string">&quot;short&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">host</span> <span class="op">=</span> <span class="ident">expect_key</span>(<span class="string">&quot;host&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">release</span> <span class="op">=</span> <span class="ident">expect_key</span>(<span class="string">&quot;release&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">semver</span>: <span class="ident">Version</span> <span class="op">=</span> <span class="ident">release</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
 
-    <span class="kw">let</span> <span class="ident">channel</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">semver</span>.<span class="ident">pre</span>.<span class="ident">is_empty</span>() {
-        <span class="ident">Channel</span>::<span class="ident">Stable</span>
-    } <span class="kw">else</span> {
-        <span class="kw">match</span> <span class="ident">semver</span>.<span class="ident">pre</span>[<span class="number">0</span>] {
-            <span class="ident">Identifier</span>::<span class="ident">AlphaNumeric</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="kw">if</span> <span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;dev&quot;</span> <span class="op">=&gt;</span> <span class="ident">Channel</span>::<span class="ident">Dev</span>,
-            <span class="ident">Identifier</span>::<span class="ident">AlphaNumeric</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="kw">if</span> <span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;beta&quot;</span> <span class="op">=&gt;</span> <span class="ident">Channel</span>::<span class="ident">Beta</span>,
-            <span class="ident">Identifier</span>::<span class="ident">AlphaNumeric</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="kw">if</span> <span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;nightly&quot;</span> <span class="op">=&gt;</span> <span class="ident">Channel</span>::<span class="ident">Nightly</span>,
-            <span class="kw-2">ref</span> <span class="ident">x</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnknownPreReleaseTag</span>(<span class="ident">x</span>.<span class="ident">clone</span>())),
-        }
+    <span class="kw">let</span> <span class="ident">channel</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">semver</span>.<span class="ident">pre</span>.<span class="ident">first</span>() {
+        <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="ident">Channel</span>::<span class="ident">Stable</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">Identifier</span>::<span class="ident">AlphaNumeric</span>(<span class="ident">s</span>)) <span class="kw">if</span> <span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;dev&quot;</span> <span class="op">=&gt;</span> <span class="ident">Channel</span>::<span class="ident">Dev</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">Identifier</span>::<span class="ident">AlphaNumeric</span>(<span class="ident">s</span>)) <span class="kw">if</span> <span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;beta&quot;</span> <span class="op">=&gt;</span> <span class="ident">Channel</span>::<span class="ident">Beta</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">Identifier</span>::<span class="ident">AlphaNumeric</span>(<span class="ident">s</span>)) <span class="kw">if</span> <span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;nightly&quot;</span> <span class="op">=&gt;</span> <span class="ident">Channel</span>::<span class="ident">Nightly</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnknownPreReleaseTag</span>(<span class="ident">x</span>.<span class="ident">clone</span>())),
+    };
+
+    <span class="kw">let</span> <span class="ident">commit_hash</span> <span class="op">=</span> <span class="ident">expect_key_or_unknown</span>(<span class="string">&quot;commit-hash&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">commit_date</span> <span class="op">=</span> <span class="ident">expect_key_or_unknown</span>(<span class="string">&quot;commit-date&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">build_date</span> <span class="op">=</span> <span class="ident">map</span>
+        .<span class="ident">get</span>(<span class="string">&quot;build-date&quot;</span>)
+        .<span class="ident">filter</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span> <span class="op">!=</span> <span class="string">&quot;unknown&quot;</span>)
+        .<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">v</span><span class="op">|</span> <span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">v</span>));
+    <span class="kw">let</span> <span class="ident">llvm_version</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">map</span>.<span class="ident">get</span>(<span class="string">&quot;LLVM version&quot;</span>) {
+        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">v</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>),
+        <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
     };
 
     <span class="prelude-val">Ok</span>(<span class="ident">VersionMeta</span> {
-        <span class="ident">semver</span>: <span class="ident">semver</span>,
-        <span class="ident">commit_hash</span>: <span class="ident">commit_hash</span>,
-        <span class="ident">commit_date</span>: <span class="ident">commit_date</span>,
-        <span class="ident">build_date</span>: <span class="ident">build_date</span>,
-        <span class="ident">channel</span>: <span class="ident">channel</span>,
-        <span class="ident">host</span>: <span class="ident">host</span>.<span class="ident">into</span>(),
-        <span class="ident">short_version_string</span>: <span class="ident">short_version_string</span>.<span class="ident">into</span>(),
+        <span class="ident">semver</span>,
+        <span class="ident">commit_hash</span>,
+        <span class="ident">commit_date</span>,
+        <span class="ident">build_date</span>,
+        <span class="ident">channel</span>,
+        <span class="ident">host</span>,
+        <span class="ident">short_version_string</span>,
+        <span class="ident">llvm_version</span>,
     })
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">smoketest</span>() {
-    <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">version</span>().<span class="ident">unwrap</span>();
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">major</span> <span class="op">&gt;=</span> <span class="number">1</span>);
-
-    <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">version_meta</span>().<span class="ident">unwrap</span>();
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">semver</span>.<span class="ident">major</span> <span class="op">&gt;=</span> <span class="number">1</span>);
-
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">version</span>().<span class="ident">unwrap</span>() <span class="op">&gt;=</span> <span class="ident">Version</span>::<span class="ident">parse</span>(<span class="string">&quot;1.0.0&quot;</span>).<span class="ident">unwrap</span>());
+<span class="kw">fn</span> <span class="ident">expect_key_or_unknown</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">match</span> <span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">key</span>) {
+        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>) <span class="kw">if</span> <span class="ident">v</span> <span class="op">==</span> <span class="string">&quot;unknown&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">v</span>))),
+        <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnexpectedVersionFormat</span>),
+    }
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">parse_unexpected</span>() {
-    <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">version_meta_for</span>(
-<span class="string">&quot;rustc 1.0.0 (a59de37e9 2015-05-13) (built 2015-05-14)
-binary: rustc
-commit-hash: a59de37e99060162a2674e3ff45409ac73595c0e
-commit-date: 2015-05-13
-rust-birthday: 2015-05-14
-host: x86_64-unknown-linux-gnu
-release: 1.0.0&quot;</span>);
-
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="kw">match</span> <span class="ident">res</span> {
-        <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnexpectedVersionFormat</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
-    });
-
+<span class="kw">fn</span> <span class="ident">expect_key</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">key</span>)
+        .<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">v</span><span class="op">|</span> <span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">v</span>))
+        .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">UnexpectedVersionFormat</span>)
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">parse_1_0_0</span>() {
-    <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">version_meta_for</span>(
-<span class="string">&quot;rustc 1.0.0 (a59de37e9 2015-05-13) (built 2015-05-14)
-binary: rustc
-commit-hash: a59de37e99060162a2674e3ff45409ac73595c0e
-commit-date: 2015-05-13
-build-date: 2015-05-14
-host: x86_64-unknown-linux-gnu
-release: 1.0.0&quot;</span>).<span class="ident">unwrap</span>();
-
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">semver</span>, <span class="ident">Version</span>::<span class="ident">parse</span>(<span class="string">&quot;1.0.0&quot;</span>).<span class="ident">unwrap</span>());
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_hash</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;a59de37e99060162a2674e3ff45409ac73595c0e&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_date</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;2015-05-13&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">build_date</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;2015-05-14&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">channel</span>, <span class="ident">Channel</span>::<span class="ident">Stable</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">host</span>, <span class="string">&quot;x86_64-unknown-linux-gnu&quot;</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">short_version_string</span>, <span class="string">&quot;rustc 1.0.0 (a59de37e9 2015-05-13) (built 2015-05-14)&quot;</span>);
+<span class="doccomment">/// LLVM Version Parse Error</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">LlvmVersionParseError</span> {
+    <span class="doccomment">/// An error occurred in parsing a version component as an integer</span>
+    <span class="ident">ParseIntError</span>(<span class="ident">num</span>::<span class="ident">ParseIntError</span>),
+    <span class="doccomment">/// A version component must not have leading zeros</span>
+    <span class="ident">ComponentMustNotHaveLeadingZeros</span>,
+    <span class="doccomment">/// A version component has a sign</span>
+    <span class="ident">ComponentMustNotHaveSign</span>,
+    <span class="doccomment">/// Minor version component must be zero on LLVM versions later than 4.0</span>
+    <span class="ident">MinorVersionMustBeZeroAfter4</span>,
+    <span class="doccomment">/// Minor version component is required on LLVM versions earlier than 4.0</span>
+    <span class="ident">MinorVersionRequiredBefore4</span>,
+    <span class="doccomment">/// Too many components</span>
+    <span class="ident">TooManyComponents</span>,
 }
 
-
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">parse_unknown</span>() {
-    <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">version_meta_for</span>(
-<span class="string">&quot;rustc 1.3.0
-binary: rustc
-commit-hash: unknown
-commit-date: unknown
-host: x86_64-unknown-linux-gnu
-release: 1.3.0&quot;</span>).<span class="ident">unwrap</span>();
-
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">semver</span>, <span class="ident">Version</span>::<span class="ident">parse</span>(<span class="string">&quot;1.3.0&quot;</span>).<span class="ident">unwrap</span>());
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_hash</span>, <span class="prelude-val">None</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_date</span>, <span class="prelude-val">None</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">channel</span>, <span class="ident">Channel</span>::<span class="ident">Stable</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">host</span>, <span class="string">&quot;x86_64-unknown-linux-gnu&quot;</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">short_version_string</span>, <span class="string">&quot;rustc 1.3.0&quot;</span>);
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">num</span>::<span class="ident">ParseIntError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LlvmVersionParseError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">num</span>::<span class="ident">ParseIntError</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">LlvmVersionParseError</span>::<span class="ident">ParseIntError</span>(<span class="ident">e</span>)
+    }
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">parse_nightly</span>() {
-    <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">version_meta_for</span>(
-<span class="string">&quot;rustc 1.5.0-nightly (65d5c0833 2015-09-29)
-binary: rustc
-commit-hash: 65d5c083377645a115c4ac23a620d3581b9562b6
-commit-date: 2015-09-29
-host: x86_64-unknown-linux-gnu
-release: 1.5.0-nightly&quot;</span>).<span class="ident">unwrap</span>();
-
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">semver</span>, <span class="ident">Version</span>::<span class="ident">parse</span>(<span class="string">&quot;1.5.0-nightly&quot;</span>).<span class="ident">unwrap</span>());
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_hash</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;65d5c083377645a115c4ac23a620d3581b9562b6&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_date</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;2015-09-29&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">channel</span>, <span class="ident">Channel</span>::<span class="ident">Nightly</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">host</span>, <span class="string">&quot;x86_64-unknown-linux-gnu&quot;</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">short_version_string</span>, <span class="string">&quot;rustc 1.5.0-nightly (65d5c0833 2015-09-29)&quot;</span>);
+<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">LlvmVersionParseError</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">ParseIntError</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+                <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;error parsing LLVM version component: {}&quot;</span>, <span class="ident">e</span>)
+            }
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">ComponentMustNotHaveLeadingZeros</span> <span class="op">=&gt;</span> {
+                <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;a version component must not have leading zeros&quot;</span>)
+            }
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">ComponentMustNotHaveSign</span> <span class="op">=&gt;</span> {
+                <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;a version component must not have a sign&quot;</span>)
+            }
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">MinorVersionMustBeZeroAfter4</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(
+                <span class="ident">f</span>,
+                <span class="string">&quot;LLVM&#39;s minor version component must be 0 for versions greater than 4.0&quot;</span>
+            ),
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">MinorVersionRequiredBefore4</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(
+                <span class="ident">f</span>,
+                <span class="string">&quot;LLVM&#39;s minor version component is required for versions less than 4.0&quot;</span>
+            ),
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">TooManyComponents</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;too many version components&quot;</span>),
+        }
+    }
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">parse_stable</span>() {
-    <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">version_meta_for</span>(
-<span class="string">&quot;rustc 1.3.0 (9a92aaf19 2015-09-15)
-binary: rustc
-commit-hash: 9a92aaf19a64603b02b4130fe52958cc12488900
-commit-date: 2015-09-15
-host: x86_64-unknown-linux-gnu
-release: 1.3.0&quot;</span>).<span class="ident">unwrap</span>();
-
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">semver</span>, <span class="ident">Version</span>::<span class="ident">parse</span>(<span class="string">&quot;1.3.0&quot;</span>).<span class="ident">unwrap</span>());
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_hash</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;9a92aaf19a64603b02b4130fe52958cc12488900&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_date</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;2015-09-15&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">channel</span>, <span class="ident">Channel</span>::<span class="ident">Stable</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">host</span>, <span class="string">&quot;x86_64-unknown-linux-gnu&quot;</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">short_version_string</span>, <span class="string">&quot;rustc 1.3.0 (9a92aaf19 2015-09-15)&quot;</span>);
+<span class="kw">impl</span> <span class="ident">error</span>::<span class="ident">Error</span> <span class="kw">for</span> <span class="ident">LlvmVersionParseError</span> {
+    <span class="kw">fn</span> <span class="ident">source</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>(<span class="kw">dyn</span> <span class="ident">error</span>::<span class="ident">Error</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>)<span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">ParseIntError</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>),
+            <span class="ident">LlvmVersionParseError</span>::<span class="ident">ComponentMustNotHaveLeadingZeros</span>
+            <span class="op">|</span> <span class="ident">LlvmVersionParseError</span>::<span class="ident">ComponentMustNotHaveSign</span>
+            <span class="op">|</span> <span class="ident">LlvmVersionParseError</span>::<span class="ident">MinorVersionMustBeZeroAfter4</span>
+            <span class="op">|</span> <span class="ident">LlvmVersionParseError</span>::<span class="ident">MinorVersionRequiredBefore4</span>
+            <span class="op">|</span> <span class="ident">LlvmVersionParseError</span>::<span class="ident">TooManyComponents</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+        }
+    }
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">parse_1_16_0_nightly</span>() {
-    <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">version_meta_for</span>(
-<span class="string">&quot;rustc 1.16.0-nightly (5d994d8b7 2017-01-05)
-binary: rustc
-commit-hash: 5d994d8b7e482e87467d4a521911477bd8284ce3
-commit-date: 2017-01-05
-host: x86_64-unknown-linux-gnu
-release: 1.16.0-nightly
-LLVM version: 3.9&quot;</span>).<span class="ident">unwrap</span>();
-
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">semver</span>, <span class="ident">Version</span>::<span class="ident">parse</span>(<span class="string">&quot;1.16.0-nightly&quot;</span>).<span class="ident">unwrap</span>());
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_hash</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;5d994d8b7e482e87467d4a521911477bd8284ce3&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">commit_date</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;2017-01-05&quot;</span>.<span class="ident">into</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">channel</span>, <span class="ident">Channel</span>::<span class="ident">Nightly</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">host</span>, <span class="string">&quot;x86_64-unknown-linux-gnu&quot;</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">version</span>.<span class="ident">short_version_string</span>, <span class="string">&quot;rustc 1.16.0-nightly (5d994d8b7 2017-01-05)&quot;</span>);
+<span class="doccomment">/// The error type for this crate.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
+    <span class="doccomment">/// An error occurred while trying to find the `rustc` to run.</span>
+    <span class="ident">CouldNotExecuteCommand</span>(<span class="ident">io</span>::<span class="ident">Error</span>),
+    <span class="doccomment">/// Error output from the command that was run.</span>
+    <span class="ident">CommandError</span> {
+        <span class="doccomment">/// stdout output from the command</span>
+        <span class="ident">stdout</span>: <span class="ident">String</span>,
+        <span class="doccomment">/// stderr output from the command</span>
+        <span class="ident">stderr</span>: <span class="ident">String</span>,
+    },
+    <span class="doccomment">/// The output of `rustc -vV` was not valid utf-8.</span>
+    <span class="ident">Utf8Error</span>(<span class="ident">str</span>::<span class="ident">Utf8Error</span>),
+    <span class="doccomment">/// The output of `rustc -vV` was not in the expected format.</span>
+    <span class="ident">UnexpectedVersionFormat</span>,
+    <span class="doccomment">/// An error occurred in parsing a `VersionReq`.</span>
+    <span class="ident">ReqParseError</span>(<span class="ident">semver</span>::<span class="ident">ReqParseError</span>),
+    <span class="doccomment">/// An error occurred in parsing the semver.</span>
+    <span class="ident">SemVerError</span>(<span class="ident">semver</span>::<span class="ident">SemVerError</span>),
+    <span class="doccomment">/// The pre-release tag is unknown.</span>
+    <span class="ident">UnknownPreReleaseTag</span>(<span class="ident">Identifier</span>),
+    <span class="doccomment">/// An error occurred in parsing a `LlvmVersion`.</span>
+    <span class="ident">LlvmVersionError</span>(<span class="ident">LlvmVersionParseError</span>),
 }
 
-<span class="comment">/*
-#[test]
-fn version_matches_replacement() {
-    let f = |s1: &amp;str, s2: &amp;str| {
-        let a = Version::parse(s1).unwrap();
-        let b = Version::parse(s2).unwrap();
-        println!(&quot;{} &lt;= {} : {}&quot;, s1, s2, a &lt;= b);
-    };
-
-    println!();
-
-    f(&quot;1.5.0&quot;,         &quot;1.5.0&quot;);
-    f(&quot;1.5.0-nightly&quot;, &quot;1.5.0&quot;);
-    f(&quot;1.5.0&quot;,         &quot;1.5.0-nightly&quot;);
-    f(&quot;1.5.0-nightly&quot;, &quot;1.5.0-nightly&quot;);
-
-    f(&quot;1.5.0&quot;,         &quot;1.6.0&quot;);
-    f(&quot;1.5.0-nightly&quot;, &quot;1.6.0&quot;);
-    f(&quot;1.5.0&quot;,         &quot;1.6.0-nightly&quot;);
-    f(&quot;1.5.0-nightly&quot;, &quot;1.6.0-nightly&quot;);
-
-    panic!();
-
+<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Error</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">CouldNotExecuteCommand</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;could not execute command: {}&quot;</span>, <span class="ident">e</span>),
+            <span class="ident">CommandError</span> {
+                <span class="kw-2">ref</span> <span class="ident">stdout</span>,
+                <span class="kw-2">ref</span> <span class="ident">stderr</span>,
+            } <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(
+                <span class="ident">f</span>,
+                <span class="string">&quot;error from command -- stderr:\n\n{}\n\nstderr:\n\n{}&quot;</span>,
+                <span class="ident">stderr</span>, <span class="ident">stdout</span>,
+            ),
+            <span class="ident">Utf8Error</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;invalid UTF-8 output from `rustc -vV`&quot;</span>),
+            <span class="ident">UnexpectedVersionFormat</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;unexpected `rustc -vV` format&quot;</span>),
+            <span class="ident">ReqParseError</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;error parsing version requirement: {}&quot;</span>, <span class="ident">e</span>),
+            <span class="ident">SemVerError</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;error parsing version: {}&quot;</span>, <span class="ident">e</span>),
+            <span class="ident">UnknownPreReleaseTag</span>(<span class="kw-2">ref</span> <span class="ident">i</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;unknown pre-release tag: {}&quot;</span>, <span class="ident">i</span>),
+            <span class="ident">LlvmVersionError</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;error parsing LLVM&#39;s version: {}&quot;</span>, <span class="ident">e</span>),
+        }
+    }
 }
-*/</span>
+
+<span class="kw">impl</span> <span class="ident">error</span>::<span class="ident">Error</span> <span class="kw">for</span> <span class="ident">Error</span> {
+    <span class="kw">fn</span> <span class="ident">source</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>(<span class="kw">dyn</span> <span class="ident">error</span>::<span class="ident">Error</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>)<span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">CouldNotExecuteCommand</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>),
+            <span class="ident">CommandError</span> { .. } <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">Utf8Error</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>),
+            <span class="ident">UnexpectedVersionFormat</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">ReqParseError</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>),
+            <span class="ident">SemVerError</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>),
+            <span class="ident">UnknownPreReleaseTag</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">LlvmVersionError</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>),
+        }
+    }
+}
+
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_from</span> {
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">err_ty</span>:<span class="ident">ty</span> <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span>:<span class="ident">ident</span>),<span class="op">*</span> $(,)<span class="kw-2">*</span>) <span class="op">=&gt;</span> {
+        $(
+            <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">err_ty</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Error</span> {
+                <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err_ty</span>) <span class="op">-&gt;</span> <span class="ident">Error</span> {
+                    <span class="ident">Error</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span>(<span class="ident">e</span>)
+                }
+            }
+        )<span class="op">*</span>
+    }
+}
+
+<span class="macro">impl_from</span><span class="macro">!</span> {
+    <span class="ident">str</span>::<span class="ident">Utf8Error</span> <span class="op">=&gt;</span> <span class="ident">Utf8Error</span>,
+    <span class="ident">semver</span>::<span class="ident">SemVerError</span> <span class="op">=&gt;</span> <span class="ident">SemVerError</span>,
+    <span class="ident">semver</span>::<span class="ident">ReqParseError</span> <span class="op">=&gt;</span> <span class="ident">ReqParseError</span>,
+    <span class="ident">LlvmVersionParseError</span> <span class="op">=&gt;</span> <span class="ident">LlvmVersionError</span>,
+}
+
+<span class="doccomment">/// The result type for this crate.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span> <span class="op">=</span> <span class="ident">Error</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">result</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span>;
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "rustc_version";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
