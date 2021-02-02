@@ -36,6 +36,8 @@ pub enum Kind {
     Lib,
     #[serde(rename = "proc-macro")]
     ProcMacro,
+    #[serde(rename = "staticlib")]
+    StaticLib,
 }
 
 impl Metadata {
