@@ -106,8 +106,8 @@ pub fn make_mro(
         fn using_attributes() -> ::martian::MroUsing {
             ::martian::MroUsing {
                 #mem_gb_quote
-                #vmem_gb_quote
                 #threads_quote
+                #vmem_gb_quote
                 #volatile_quote
                 ..Default::default()
             }
