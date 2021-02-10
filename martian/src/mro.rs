@@ -490,7 +490,7 @@ macro_rules! mro_using {
     };
 }
 
-mro_using! {mem_gb: i16, vmem_gb: i16, threads: i16, volatile: Volatile}
+mro_using! {mem_gb: i16, threads: i16, vmem_gb: i16, volatile: Volatile}
 
 /// Input and outputs fields together
 #[derive(Debug, Default)]
