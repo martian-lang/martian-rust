@@ -202,7 +202,16 @@ impl MroDisplay for MartianBlanketType {
         match *self {
             MartianBlanketType::Primary(ref primary) => primary.to_string(),
             MartianBlanketType::Array(ref primary) => format!("{}[]", primary.to_string()),
-            MartianBlanketType::TypedMap(ref primary) => format!("map<{}>", primary.to_string()),
+            MartianBlanketType::TypedMap(ref primary) => {
+                // map of maps not allowed in Martian
+                // this is a little hacky, we allow TypedMap<map> to be passed around internally in Martian-rust
+                // but we just print it as "map"
+                if primary.to_string() == "map".to_string(){
+                    "map".to_string()    
+                } else {
+                    format!("map<{}>", primary.to_string())
+                }
+            },
         }
     }
 }
