@@ -286,10 +286,10 @@ impl<T: AsMartianPrimaryType> AsMartianBlanketType for T {
     }
 }
 
-impl<T: AsMartianBlanketType> AsMartianBlanketType for Option<T> {
-    fn as_martian_blanket_type() -> MartianBlanketType {
+impl<T: AsMartianPrimaryType> AsMartianPrimaryType for Option<T> {
+    fn as_martian_primary_type() -> MartianPrimaryType {
         // Any variable can be `null` in Martian
-        T::as_martian_blanket_type()
+        T::as_martian_primary_type()
     }
 }
 
