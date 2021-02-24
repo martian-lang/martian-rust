@@ -311,25 +311,16 @@ impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
     }
 }
 
-impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType for HashMap<K, V, H> {
-    fn as_martian_blanket_type() -> MartianBlanketType {
-        MartianBlanketType::TypedMap(V::as_martian_primary_type())
-    }
-}
-
 // ideally we'd allow for any HashMap to be turned into a typed Map when possible, or an untyped Map by default
-// but a typed map can only be made for Rust HashMap with a key implementing Display
+// but a typed map can only be made for Rust HashMap with a key implementing Display + Eq + Hash
 // and a value implementing MartianPrimaryType
 // it is not possible to have multiple implementations ranked in priority without specialization, which is an unstable feature
 // and it is impossible to check what traits are implemented for a HashMap's K,V at runtime.
-// instead, we introduce an UntypedMap type which holds a TxHashMap and converts into a Martian untyped map
-// we will use this type to wrap any of the untyped maps that pop up in Cellranger
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct UntypedMap<K: PartialEq + Eq + std::hash::Hash, V: std::hash::Hash, H: std::hash::BuildHasher+ Default>(pub HashMap<K, V, H>);
-
-impl<K: PartialEq + Eq + std::hash::Hash, V: std::hash::Hash, H: std::hash::BuildHasher + Default> AsMartianPrimaryType for UntypedMap<K, V, H> {
-    fn as_martian_primary_type() -> MartianPrimaryType {
-        MartianPrimaryType::Map
+// instead, the current solution is that any HashMap not meeting these trait bounds must manually specify the type
+// using #[mro_type = "map"]
+impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType for HashMap<K, V, H> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        MartianBlanketType::TypedMap(V::as_martian_primary_type())
     }
 }
 
