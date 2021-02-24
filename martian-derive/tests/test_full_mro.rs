@@ -471,8 +471,8 @@ fn test_typed_map() {
     #[derive(Serialize, Deserialize, MartianStruct)]
     struct ReadsStruct {
         name: String,
-        reads_map: TypedMap<String, FastqFile>,
-        multi_reads_map: Vec<TypedMap<String, FastqFile>>,
+        reads_map: TxHashMap<String, FastqFile>,
+        multi_reads_map: Vec<TxHashMap<String, FastqFile>>,
     }
 
     #[derive(Serialize, Deserialize, MartianStruct)]

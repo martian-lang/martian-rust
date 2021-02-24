@@ -311,24 +311,31 @@ impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
     }
 }
 
-impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
+impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianPrimaryType for HashMap<K, V, H> {
     fn as_martian_primary_type() -> MartianPrimaryType {
         MartianPrimaryType::Map
+    }
+}
+
+impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType for HashMap<K, V, H> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        MartianBlanketType::TypedMap(V::as_martian_primary_type())
     }
 }
 
 // ideally we'd allow for any HashMap to be turned into a typed Map when possible, or an untyped Map by default
 // but a typed map can only be made for Rust HashMap with a key implementing Display
 // and a value implementing MartianPrimaryType
-// it is not possible to have such a default implementation without specialization, which is an unstable feature
+// it is not possible to have multiple implementations ranked in priority without specialization, which is an unstable feature
 // and it is impossible to check what traits are implemented for a HashMap's K,V at runtime.
-// instead, we introduce a TypedMap type which holds a TxHashMap and converts into a Martian typed map
+// instead, we introduce an UntypedMap type which holds a TxHashMap and converts into a Martian untyped map
+// we will use this type to wrap any of the untyped maps that pop up in Cellranger
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct TypedMap<K: Display + Eq + Hash, V: AsMartianPrimaryType>(pub HashMap<K, V>);
+pub struct UntypedMap<K, V, H>(pub HashMap<K, V, H>);
 
-impl<K: Display + Eq + Hash, V: AsMartianPrimaryType> AsMartianBlanketType for TypedMap<K, V> {
-    fn as_martian_blanket_type() -> MartianBlanketType {
-        MartianBlanketType::TypedMap(V::as_martian_primary_type())
+impl<K, V, H> AsMartianPrimaryType for UntypedMap<K, V, H> {
+    fn as_martian_primary_type() -> MartianPrimaryType {
+        MartianPrimaryType::Map
     }
 }
 
