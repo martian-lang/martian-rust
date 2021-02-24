@@ -11,6 +11,7 @@ pub use crate::stage::{
     RawMartianStage, Resource, StageDef,
 };
 pub use crate::{martian_make_mro, MartianAdapter};
+pub use crate::mro::UntypedMap;
 pub use failure::Error;
 pub use log::LevelFilter;
 pub use martian_stages;
