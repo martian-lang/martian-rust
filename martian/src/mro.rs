@@ -206,12 +206,12 @@ impl MroDisplay for MartianBlanketType {
                 // map of maps not allowed in Martian
                 // this is a little hacky, we allow TypedMap<map> to be passed around internally in Martian-rust
                 // but we just print it as "map"
-                if primary.to_string() == "map".to_string(){
-                    "map".to_string()    
+                if primary.to_string() == "map".to_string() {
+                    "map".to_string()
                 } else {
                     format!("map<{}>", primary.to_string())
                 }
-            },
+            }
         }
     }
 }
@@ -351,7 +351,9 @@ impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType fo
     }
 }
 
-impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType for Option<HashMap<K, V, H>> {
+impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType
+    for Option<HashMap<K, V, H>>
+{
     fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::TypedMap(V::as_martian_primary_type())
     }
