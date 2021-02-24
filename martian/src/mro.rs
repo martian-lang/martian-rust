@@ -305,7 +305,25 @@ impl<T: AsMartianBlanketType> AsMartianBlanketType for Vec<T> {
     }
 }
 
+impl<T: AsMartianBlanketType> AsMartianBlanketType for Option<Vec<T>> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        match T::as_martian_blanket_type() {
+            MartianBlanketType::Primary(primary) => MartianBlanketType::Array(primary),
+            MartianBlanketType::TypedMap(_) => MartianBlanketType::Array(MartianPrimaryType::Map),
+            MartianBlanketType::Array(_) => {
+                unimplemented!("Array of arrays are not supported in martian")
+            }
+        }
+    }
+}
+
 impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        MartianBlanketType::Array(K::as_martian_primary_type())
+    }
+}
+
+impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for Option<HashSet<K, H>> {
     fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::Array(K::as_martian_primary_type())
     }
@@ -319,6 +337,12 @@ impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
 // instead, the current solution is that any HashMap not meeting these trait bounds must manually specify the type
 // using #[mro_type = "map"]
 impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType for HashMap<K, V, H> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        MartianBlanketType::TypedMap(V::as_martian_primary_type())
+    }
+}
+
+impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType for Option<HashMap<K, V, H>> {
     fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::TypedMap(V::as_martian_primary_type())
     }
