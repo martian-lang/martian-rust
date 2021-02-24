@@ -1,10 +1,10 @@
-error[E0277]: the trait bound `Foo: martian::stage::MartianFileType` is not satisfied
+error[E0277]: the trait bound `Foo: martian::MartianFileType` is not satisfied
  --> $DIR/test_missing_martian_type.rs:5:10
   |
 5 | #[derive(MartianStruct)]
-  |          ^^^^^^^^^^^^^ the trait `martian::stage::MartianFileType` is not implemented for `Foo`
+  |          ^^^^^^^^^^^^^ the trait `martian::MartianFileType` is not implemented for `Foo`
   |
-  = note: required because of the requirements on the impl of `martian::mro::AsMartianPrimaryType` for `Foo`
-  = note: required because of the requirements on the impl of `martian::mro::AsMartianBlanketType` for `Foo`
-  = note: required by `martian::mro::AsMartianBlanketType::as_martian_blanket_type`
+  = note: required because of the requirements on the impl of `martian::AsMartianPrimaryType` for `Foo`
+  = note: required because of the requirements on the impl of `martian::AsMartianBlanketType` for `Foo`
+  = note: required by `martian::AsMartianBlanketType::as_martian_blanket_type`
   = note: this error originates in a derive macro (in Nightly builds, run with -Z macro-backtrace for more info)

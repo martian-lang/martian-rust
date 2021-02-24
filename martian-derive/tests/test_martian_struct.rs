@@ -54,7 +54,7 @@ fn test_generic() {
     );
     assert_eq!(
         Generic::<HashMap<String, f32>>::mro_fields(),
-        vec![MroField::new("param", Primary(Map))]
+        vec![MroField::new("param", TypedMap(Float))]
     );
 }
 

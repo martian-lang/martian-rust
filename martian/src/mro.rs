@@ -311,12 +311,6 @@ impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
     }
 }
 
-impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianPrimaryType for HashMap<K, V, H> {
-    fn as_martian_primary_type() -> MartianPrimaryType {
-        MartianPrimaryType::Map
-    }
-}
-
 impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType for HashMap<K, V, H> {
     fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::TypedMap(V::as_martian_primary_type())
@@ -331,9 +325,9 @@ impl<K: Display + Eq + Hash, V: AsMartianPrimaryType, H> AsMartianBlanketType fo
 // instead, we introduce an UntypedMap type which holds a TxHashMap and converts into a Martian untyped map
 // we will use this type to wrap any of the untyped maps that pop up in Cellranger
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct UntypedMap<K, V, H>(pub HashMap<K, V, H>);
+pub struct UntypedMap<K: PartialEq + Eq + std::hash::Hash, V: std::hash::Hash, H: std::hash::BuildHasher+ Default>(pub HashMap<K, V, H>);
 
-impl<K, V, H> AsMartianPrimaryType for UntypedMap<K, V, H> {
+impl<K: PartialEq + Eq + std::hash::Hash, V: std::hash::Hash, H: std::hash::BuildHasher + Default> AsMartianPrimaryType for UntypedMap<K, V, H> {
     fn as_martian_primary_type() -> MartianPrimaryType {
         MartianPrimaryType::Map
     }
