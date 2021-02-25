@@ -494,7 +494,7 @@ fn test_typed_map() {
     #[derive(Serialize, Deserialize, MartianStruct)]
     pub struct SO {
         multi_reads_struct: Vec<ReadsStruct>,
-        complicated_struct2: ComplicatedStruct, 
+        complicated_struct2: ComplicatedStruct,
     }
 
     pub struct StageName;
