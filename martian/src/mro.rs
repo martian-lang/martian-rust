@@ -320,11 +320,7 @@ impl<T: AsMartianBlanketType> AsMartianBlanketType for Option<T> {
 
 impl<T: AsMartianBlanketType> AsMartianBlanketType for Vec<T> {
     fn as_martian_blanket_type() -> MartianBlanketType {
-        if let MartianBlanketType::Array(_) = T::as_martian_blanket_type() {
-            unimplemented!("Array of arrays are not supported in martian")
-        } else {
-            MartianBlanketType::Array(Box::new(T::as_martian_blanket_type()))
-        }
+        MartianBlanketType::Array(Box::new(T::as_martian_blanket_type()))
     }
 }
 
