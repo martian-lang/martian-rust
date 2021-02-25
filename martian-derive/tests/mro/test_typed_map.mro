@@ -8,9 +8,9 @@
 filetype fastq;
 
 struct ReadsStruct(
-    string     name,
-    map<fastq> reads_map,
-    map[]      multi_reads_map,
+    string       name,
+    map<fastq>   reads_map,
+    map<fastq>[] multi_reads_map,
 )
 
 stage STAGE_NAME(
