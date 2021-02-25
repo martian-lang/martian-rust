@@ -201,18 +201,17 @@ impl MroDisplay for MartianBlanketType {
     fn mro_string_no_width(&self) -> String {
         match *self {
             MartianBlanketType::Primary(ref primary) => primary.to_string(),
-            MartianBlanketType::Array(ref blanket) => format!("{}[]", blanket.mro_string_no_width()),
+            MartianBlanketType::Array(ref blanket) => {
+                format!("{}[]", blanket.mro_string_no_width())
+            }
             MartianBlanketType::TypedMap(ref blanket) => {
                 // map of maps not allowed in Martian
                 // this is a little hacky, we allow TypedMap<map> to be passed around internally in Martian-rust
                 // but we just print it as "map"
                 match **blanket {
-                    MartianBlanketType::TypedMap(_) | MartianBlanketType::Primary(MartianPrimaryType::Map) => {
-                        "map".to_string()
-                    }
-                    _ => {
-                        format!("map<{}>", blanket.to_string())
-                    }
+                    MartianBlanketType::TypedMap(_)
+                    | MartianBlanketType::Primary(MartianPrimaryType::Map) => "map".to_string(),
+                    _ => format!("map<{}>", blanket.to_string()),
                 }
             }
         }
@@ -226,13 +225,15 @@ impl FromStr for MartianBlanketType {
         if s.ends_with("[]") {
             // array
             let t = s.get(0..s.len() - 2).unwrap();
-            Ok(MartianBlanketType::Array(Box::new(MartianBlanketType::from_str(t)?)))
+            Ok(MartianBlanketType::Array(Box::new(
+                MartianBlanketType::from_str(t)?,
+            )))
         } else if s.starts_with("map<") && s.ends_with(">") {
             // typed map
             let t = s.get(4..s.len() - 1).unwrap();
-            Ok(MartianBlanketType::TypedMap(Box::new(MartianBlanketType::from_str(
-                t,
-            )?)))
+            Ok(MartianBlanketType::TypedMap(Box::new(
+                MartianBlanketType::from_str(t)?,
+            )))
         } else {
             Ok(MartianBlanketType::Primary(MartianPrimaryType::from_str(
                 s,
@@ -252,7 +253,6 @@ impl From<MartianPrimaryType> for Box<MartianBlanketType> {
         Box::new(MartianBlanketType::Primary(other.clone()))
     }
 }
-
 
 /// A trait that tells you how to convert a Rust data type to a
 /// basic Martian type.
@@ -1302,7 +1302,10 @@ mod tests {
             FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
         );
         assert_eq!(
-            FiletypeHeader::from(&MroField::new("foo", Primary(FileType("json".into()).into()))),
+            FiletypeHeader::from(&MroField::new(
+                "foo",
+                Primary(FileType("json".into()).into())
+            )),
             FiletypeHeader(vec!["json".to_string()].into_iter().collect())
         );
     }
