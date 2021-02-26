@@ -479,6 +479,8 @@ fn test_typed_map() {
     struct ComplicatedStruct {
         name: String,
         matrix: Vec<Vec<usize>>,
+        map_of_struct: HashMap<String, ReadsStruct>,
+        map_vec_struct: HashMap<usize, Vec<ReadsStruct>>,
         map_of_lists: HashMap<String, Vec<usize>>,
         map_of_matrices: HashMap<String, Vec<Vec<usize>>>,
         vec_of_maps: Vec<HashMap<String, FastqFile>>,
@@ -487,6 +489,7 @@ fn test_typed_map() {
 
     #[derive(Serialize, Deserialize, MartianStruct)]
     pub struct SI {
+        complicated_stuff: Vec<HashMap<usize, Vec<Option<ReadsStruct>>>>,
         reads_struct: ReadsStruct,
         complicated_struct: ComplicatedStruct,
     }

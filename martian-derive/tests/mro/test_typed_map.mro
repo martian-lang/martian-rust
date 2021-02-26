@@ -16,6 +16,8 @@ struct ReadsStruct(
 struct ComplicatedStruct(
     string             name,
     int[][]            matrix,
+    map<ReadsStruct>   map_of_struct,
+    map<ReadsStruct[]> map_vec_struct,
     map<int[]>         map_of_lists,
     map<int[][]>       map_of_matrices,
     map<fastq>[]       vec_of_maps,
@@ -23,9 +25,10 @@ struct ComplicatedStruct(
 )
 
 stage STAGE_NAME(
-    in  ReadsStruct       reads_struct,
-    in  ComplicatedStruct complicated_struct,
-    out ReadsStruct[]     multi_reads_struct,
-    out ComplicatedStruct complicated_struct2,
-    src comp              "my_adapter martian stage_name",
+    in  map<ReadsStruct[]>[] complicated_stuff,
+    in  ReadsStruct          reads_struct,
+    in  ComplicatedStruct    complicated_struct,
+    out ReadsStruct[]        multi_reads_struct,
+    out ComplicatedStruct    complicated_struct2,
+    src comp                 "my_adapter martian stage_name",
 )
