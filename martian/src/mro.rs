@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Display, Write};
+use std::hash::Hash;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::string::ToString;
@@ -181,14 +182,16 @@ mro_display_to_display! {MartianPrimaryType}
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub enum MartianBlanketType {
     Primary(MartianPrimaryType),
-    Array(MartianPrimaryType),
+    Array(Box<MartianBlanketType>),
+    TypedMap(Box<MartianBlanketType>),
 }
 
 impl MartianBlanketType {
-    fn inner(&self) -> &MartianPrimaryType {
-        match *self {
-            MartianBlanketType::Primary(ref primary) => primary,
-            MartianBlanketType::Array(ref primary) => primary,
+    fn inner(&self) -> MartianPrimaryType {
+        match &*self {
+            MartianBlanketType::Primary(ref primary) => primary.clone(),
+            MartianBlanketType::Array(ref blanket) => blanket.inner().clone(),
+            MartianBlanketType::TypedMap(ref blanket) => blanket.inner().clone(),
         }
     }
 }
@@ -198,7 +201,19 @@ impl MroDisplay for MartianBlanketType {
     fn mro_string_no_width(&self) -> String {
         match *self {
             MartianBlanketType::Primary(ref primary) => primary.to_string(),
-            MartianBlanketType::Array(ref primary) => format!("{}[]", primary.to_string()),
+            MartianBlanketType::Array(ref blanket) => {
+                format!("{}[]", blanket.mro_string_no_width())
+            }
+            MartianBlanketType::TypedMap(ref blanket) => {
+                // map of maps not allowed in Martian
+                // this is a little hacky, we allow TypedMap<map> to be passed around internally in Martian-rust
+                // but we just print it as "map"
+                match **blanket {
+                    MartianBlanketType::TypedMap(_)
+                    | MartianBlanketType::Primary(MartianPrimaryType::Map) => "map".to_string(),
+                    _ => format!("map<{}>", blanket.to_string()),
+                }
+            }
         }
     }
 }
@@ -208,13 +223,34 @@ impl FromStr for MartianBlanketType {
     type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.ends_with("[]") {
+            // array
             let t = s.get(0..s.len() - 2).unwrap();
-            Ok(MartianBlanketType::Array(MartianPrimaryType::from_str(t)?))
+            Ok(MartianBlanketType::Array(Box::new(
+                MartianBlanketType::from_str(t)?,
+            )))
+        } else if s.starts_with("map<") && s.ends_with(">") {
+            // typed map
+            let t = s.get(4..s.len() - 1).unwrap();
+            Ok(MartianBlanketType::TypedMap(Box::new(
+                MartianBlanketType::from_str(t)?,
+            )))
         } else {
             Ok(MartianBlanketType::Primary(MartianPrimaryType::from_str(
                 s,
             )?))
         }
+    }
+}
+
+impl From<MartianPrimaryType> for MartianBlanketType {
+    fn from(other: MartianPrimaryType) -> Self {
+        MartianBlanketType::Primary(other.clone())
+    }
+}
+
+impl From<MartianPrimaryType> for Box<MartianBlanketType> {
+    fn from(other: MartianPrimaryType) -> Self {
+        Box::new(MartianBlanketType::Primary(other.clone()))
     }
 }
 
@@ -284,24 +320,26 @@ impl<T: AsMartianBlanketType> AsMartianBlanketType for Option<T> {
 
 impl<T: AsMartianBlanketType> AsMartianBlanketType for Vec<T> {
     fn as_martian_blanket_type() -> MartianBlanketType {
-        match T::as_martian_blanket_type() {
-            MartianBlanketType::Primary(primary) => MartianBlanketType::Array(primary),
-            MartianBlanketType::Array(_) => {
-                unimplemented!("Array of arrays are not supported in martian")
-            }
-        }
+        MartianBlanketType::Array(Box::new(T::as_martian_blanket_type()))
     }
 }
 
 impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
     fn as_martian_blanket_type() -> MartianBlanketType {
-        MartianBlanketType::Array(K::as_martian_primary_type())
+        MartianBlanketType::Array(Box::new(K::as_martian_blanket_type()))
     }
 }
 
-impl<K, V, H> AsMartianPrimaryType for HashMap<K, V, H> {
-    fn as_martian_primary_type() -> MartianPrimaryType {
-        MartianPrimaryType::Map
+// ideally we'd allow for any HashMap to be turned into a typed Map when possible, or an untyped Map by default
+// but a typed map can only be made for Rust HashMap with a key implementing Display + Eq + Hash
+// and a value implementing MartianPrimaryType
+// it is not possible to have multiple implementations ranked in priority without specialization, which is an unstable feature
+// and it is impossible to check what traits are implemented for a HashMap's K,V at runtime.
+// instead, the current solution is that any HashMap not meeting these trait bounds must manually specify the type
+// using #[mro_type = "map"]
+impl<K, V: AsMartianBlanketType, H> AsMartianBlanketType for HashMap<K, V, H> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        MartianBlanketType::TypedMap(Box::new(V::as_martian_blanket_type()))
     }
 }
 
@@ -888,13 +926,13 @@ mod tests {
     #[test]
     fn test_martian_type_display() {
         assert_eq!(Primary(Int).mro_string_no_width(), "int");
-        assert_eq!(Array(Int).mro_string(Some(7)), "int[]  ");
+        assert_eq!(Array(Int.into()).mro_string(Some(7)), "int[]  ");
         assert_eq!(
-            Array(FileType("txt".into())).mro_string_with_width(5),
+            Array(FileType("txt".into()).into()).mro_string_with_width(5),
             "txt[]"
         );
         assert_eq!(
-            Primary(FileType("fastq.lz4".into())).mro_string(None),
+            Primary(FileType("fastq.lz4".into()).into()).mro_string(None),
             "fastq.lz4"
         );
     }
@@ -986,12 +1024,12 @@ mod tests {
     fn test_in_and_out_display() {
         let in_out = InAndOut {
             inputs: vec![
-                MroField::new("unsorted", Array(Float)),
-                MroField::new("reverse", Primary(Bool)),
+                MroField::new("unsorted", Array(Float.into())),
+                MroField::new("reverse", Primary(Bool.into())),
             ],
             outputs: vec![
-                MroField::new("sorted", Array(Float)),
-                MroField::new("sum", Primary(Float)),
+                MroField::new("sorted", Array(Float.into())),
+                MroField::new("sum", Primary(Float.into())),
             ],
         };
         let expected = indoc!(
@@ -1026,12 +1064,12 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             },
             chunk_in_out: Some(InAndOut {
-                inputs: vec![MroField::new("value", Primary(Float))],
-                outputs: vec![MroField::new("value", Primary(Float))],
+                inputs: vec![MroField::new("value", Primary(Float.into()))],
+                outputs: vec![MroField::new("value", Primary(Float.into()))],
             }),
             using_attrs: MroUsing::default(),
         };
@@ -1057,8 +1095,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             },
             chunk_in_out: Some(InAndOut::default()),
             using_attrs: MroUsing::default(),
@@ -1084,8 +1122,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             },
             chunk_in_out: None,
             using_attrs: MroUsing::default(),
@@ -1114,8 +1152,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             },
             chunk_in_out: None,
             using_attrs: MroUsing {
@@ -1150,8 +1188,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::retained("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::retained("sum", Primary(Float.into()))],
             },
             chunk_in_out: None,
             using_attrs: MroUsing {
@@ -1172,11 +1210,11 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             },
             chunk_in_out: Some(InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
                 outputs: Vec::new(),
             }),
             using_attrs: MroUsing {
@@ -1196,8 +1234,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
@@ -1219,12 +1257,12 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float.into()))],
             }),
             using_attrs: MroUsing {
                 mem_gb: Some(1),
@@ -1252,15 +1290,18 @@ mod tests {
     #[test]
     fn test_filetype_header_from_mro_field() {
         assert_eq!(
-            FiletypeHeader::from(&MroField::new("foo", Array(Float))),
+            FiletypeHeader::from(&MroField::new("foo", Array(Float.into()))),
             FiletypeHeader(HashSet::new())
         );
         assert_eq!(
-            FiletypeHeader::from(&MroField::new("foo", Array(FileType("txt".into())))),
+            FiletypeHeader::from(&MroField::new("foo", Array(FileType("txt".into()).into()))),
             FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
         );
         assert_eq!(
-            FiletypeHeader::from(&MroField::new("foo", Primary(FileType("json".into())))),
+            FiletypeHeader::from(&MroField::new(
+                "foo",
+                Primary(FileType("json".into()).into())
+            )),
             FiletypeHeader(vec!["json".to_string()].into_iter().collect())
         );
     }
@@ -1272,7 +1313,7 @@ mod tests {
                 "foo",
                 Primary(Struct(StructDef {
                     name: "MexFiles".to_string(),
-                    fields: vec![MroField::new("foo", Array(FileType("txt".into())))],
+                    fields: vec![MroField::new("foo", Array(FileType("txt".into()).into()))],
                 }))
             )),
             FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
@@ -1349,7 +1390,7 @@ mod tests {
         let roundtrip_blanket_assert = |t: MartianPrimaryType| {
             let p = Primary(t.clone());
             assert_eq!(p, p.to_string().parse::<MartianBlanketType>().unwrap());
-            let a = Array(t);
+            let a = Array(t.into());
             assert_eq!(a, a.to_string().parse::<MartianBlanketType>().unwrap());
         };
         roundtrip_blanket_assert(Int);
@@ -1467,15 +1508,15 @@ mod tests {
             stage_key: "setup_chunks".into(),
             stage_in_out: InAndOut {
                 inputs: vec![
-                    MroField::new("sample_defs", Array(Struct(sample_def))),
+                    MroField::new("sample_defs", Array(Struct(sample_def).into())),
                     MroField::new(
                         "custom_chemistry_def",
                         Primary(Struct(chemistry_def.clone())),
                     ),
                 ],
                 outputs: vec![
-                    MroField::new("read_chunks", Array(Struct(rna_chunk))),
-                    MroField::new("chemistry_def", Primary(Struct(chemistry_def))),
+                    MroField::new("read_chunks", Array(Struct(rna_chunk).into())),
+                    MroField::new("chemistry_def", Primary(Struct(chemistry_def).into())),
                 ],
             },
             chunk_in_out: None,
@@ -1515,7 +1556,7 @@ mod tests {
     fn test_vec_option() {
         assert_eq!(
             Vec::<Option<u32>>::as_martian_blanket_type(),
-            MartianBlanketType::Array(MartianPrimaryType::Int)
+            MartianBlanketType::Array(MartianPrimaryType::Int.into())
         );
     }
 }

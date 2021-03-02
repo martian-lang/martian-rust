@@ -15,7 +15,7 @@ fn test_simple_vec() {
         #[allow(dead_code)]
         values: Vec<f64>,
     }
-    let expected = vec![MroField::new("values", Array(Float))];
+    let expected = vec![MroField::new("values", Array(Float.into()))];
     assert_eq!(expected, SimpleVec::mro_fields())
 }
 
@@ -46,15 +46,15 @@ fn test_generic() {
     );
     assert_eq!(
         Generic::<Vec<bool>>::mro_fields(),
-        vec![MroField::new("param", Array(Bool))]
+        vec![MroField::new("param", Array(Bool.into()))]
     );
     assert_eq!(
         Generic::<Vec<String>>::mro_fields(),
-        vec![MroField::new("param", Array(Str))]
+        vec![MroField::new("param", Array(Str.into()))]
     );
     assert_eq!(
         Generic::<HashMap<String, f32>>::mro_fields(),
-        vec![MroField::new("param", Primary(Map))]
+        vec![MroField::new("param", TypedMap(Float.into()))]
     );
 }
 
@@ -85,7 +85,7 @@ fn test_retain() {
         #[mro_retain]
         values: Vec<f64>,
     }
-    let expected = vec![MroField::retained("values", Array(Float))];
+    let expected = vec![MroField::retained("values", Array(Float.into()))];
     assert_eq!(expected, SimpleVec::mro_fields())
 }
 
@@ -109,7 +109,7 @@ fn test_mro_type_attr() {
         #[mro_type = "map[]"]
         values: Vec<Bar>,
     }
-    let expected = vec![MroField::new("values", Array(Map))];
+    let expected = vec![MroField::new("values", Array(Map.into()))];
     assert_eq!(expected, SimpleVec::mro_fields());
 }
 
@@ -135,6 +135,6 @@ fn test_mro_type_retain_attr() {
         #[mro_type = "map[]"]
         values: Vec<Bar>,
     }
-    let expected = vec![MroField::retained("values", Array(Map))];
+    let expected = vec![MroField::retained("values", Array(Map.into()))];
     assert_eq!(expected, SimpleVec::mro_fields());
 }

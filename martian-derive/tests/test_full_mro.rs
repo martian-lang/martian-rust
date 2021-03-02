@@ -465,3 +465,57 @@ fn test_with_struct() {
         expected
     );
 }
+
+#[test]
+fn test_typed_map() {
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct ReadsStruct {
+        name: String,
+        reads_map: HashMap<String, FastqFile>,
+        multi_reads_map: Vec<HashMap<String, FastqFile>>,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct ComplicatedStruct {
+        name: String,
+        matrix: Vec<Vec<usize>>,
+        map_of_struct: HashMap<String, ReadsStruct>,
+        map_vec_struct: HashMap<usize, Vec<ReadsStruct>>,
+        map_of_lists: HashMap<String, Vec<usize>>,
+        map_of_matrices: HashMap<String, Vec<Vec<usize>>>,
+        vec_of_maps: Vec<HashMap<String, FastqFile>>,
+        ludicrous_map: Option<Vec<Vec<HashMap<String, Vec<Vec<FastqFile>>>>>>,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SI {
+        complicated_stuff: Vec<HashMap<usize, Vec<Option<ReadsStruct>>>>,
+        reads_struct: ReadsStruct,
+        complicated_struct: ComplicatedStruct,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SO {
+        multi_reads_struct: Vec<ReadsStruct>,
+        complicated_struct2: ComplicatedStruct,
+    }
+
+    pub struct StageName;
+
+    #[make_mro]
+    impl MartianMain for StageName {
+        type StageInputs = SI;
+        type StageOutputs = SO;
+
+        fn main(&self, _: Self::StageInputs, _: MartianRover) -> Result<Self::StageOutputs, Error> {
+            unimplemented!()
+        }
+    }
+
+    let expected = include_str!("mro/test_typed_map.mro");
+
+    assert_eq!(
+        make_mro_string(&[StageName::stage_mro("my_adapter", "stage_name")]),
+        expected
+    );
+}

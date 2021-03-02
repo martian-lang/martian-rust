@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2020 10X Genomics, Inc. All rights reserved.
+#
+# WARNING: This file is auto-generated.
+# DO NOT MODIFY THIS FILE DIRECTLY
+#
+
+filetype fastq;
+
+struct ReadsStruct(
+    string       name,
+    map<fastq>   reads_map,
+    map<fastq>[] multi_reads_map,
+)
+
+struct ComplicatedStruct(
+    string             name,
+    int[][]            matrix,
+    map<ReadsStruct>   map_of_struct,
+    map<ReadsStruct[]> map_vec_struct,
+    map<int[]>         map_of_lists,
+    map<int[][]>       map_of_matrices,
+    map<fastq>[]       vec_of_maps,
+    map<fastq[][]>[][] ludicrous_map,
+)
+
+stage STAGE_NAME(
+    in  map<ReadsStruct[]>[] complicated_stuff,
+    in  ReadsStruct          reads_struct,
+    in  ComplicatedStruct    complicated_struct,
+    out ReadsStruct[]        multi_reads_struct,
+    out ComplicatedStruct    complicated_struct2,
+    src comp                 "my_adapter martian stage_name",
+)
