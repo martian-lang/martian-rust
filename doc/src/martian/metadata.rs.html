@@ -300,6 +300,25 @@
 <span id="299">299</span>
 <span id="300">300</span>
 <span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">write_errors</span>;
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Local</span>};
@@ -345,6 +364,8 @@
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;vmemGB&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">vmem_gb</span>: <span class="ident">usize</span>,
     <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">Version</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">profile_mode</span>: <span class="ident">ProfileMode</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
@@ -359,6 +380,23 @@
             <span class="ident">martian</span>: <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
             <span class="ident">pipelines</span>: <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
         }
+    }
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">non_exhaustive</span>]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ProfileMode</span> {
+    <span class="ident">Disable</span>,
+    <span class="ident">Cpu</span>,
+    <span class="ident">Line</span>,
+    <span class="ident">Mem</span>,
+    <span class="ident">Perf</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ProfileMode</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">ProfileMode</span> {
+        <span class="ident">ProfileMode</span>::<span class="ident">Disable</span>
     }
 }
 

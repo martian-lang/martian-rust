@@ -180,7 +180,7 @@ bar,3.14
 }</pre></div>
 <h2 id="non-struct-containers" class="section-header"><a href="#non-struct-containers">Non-Struct Containers</a></h2>
 <p>Nested containers are flattened to their scalar components, with the
-exeption of a few types that are not allowed:</p>
+exception of a few types that are not allowed:</p>
 <table><thead><tr><th>Name</th><th>Example Type</th><th>Example Value</th><th>Output</th></tr></thead><tbody>
 <tr><td>sequence</td><td><code>Vec&lt;u8&gt;</code></td><td><code>vec![1, 2, 3]</code></td><td><code>1,2,3</code></td></tr>
 <tr><td>tuple</td><td><code>(u8, bool)</code></td><td><code>(5, true)</code></td><td><code>5,true</code></td></tr>
@@ -226,7 +226,7 @@ foo,1.1234,2.5678,3.14
     <span class="prelude-val">Ok</span>(())
 }</pre></div>
 <p>However, if <code>has_headers</code> were enabled in the above example, then
-serialization would return an error. Speficially, when <code>has_headers</code> is
+serialization would return an error. Specifically, when <code>has_headers</code> is
 <code>true</code>, there are two restrictions:</p>
 <ol>
 <li>
