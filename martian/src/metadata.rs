@@ -42,6 +42,8 @@ pub struct JobInfo {
     #[serde(rename = "vmemGB")]
     pub vmem_gb: usize,
     pub version: Version,
+    #[serde(default)]
+    pub profile_mode: ProfileMode,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -56,6 +58,23 @@ impl Default for Version {
             martian: "unknown".into(),
             pipelines: "unknown".into(),
         }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+#[non_exhaustive]
+pub enum ProfileMode {
+    Disable,
+    Cpu,
+    Line,
+    Mem,
+    Perf,
+}
+
+impl Default for ProfileMode {
+    fn default() -> ProfileMode {
+        ProfileMode::Disable
     }
 }
 

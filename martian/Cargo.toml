@@ -1,6 +1,6 @@
 [package]
 name = "martian"
-version = "0.22.0"
+version = "0.23.0"
 authors = ["Patrick Marks <patrick@10xgenomics.com>", "Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>"]
 edition = "2018"
 include = ["src/**/*", "README.md"]
