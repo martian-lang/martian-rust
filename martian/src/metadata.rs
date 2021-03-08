@@ -63,6 +63,7 @@ impl Default for Version {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[non_exhaustive]
 pub enum ProfileMode {
     Disable,
     Cpu,
