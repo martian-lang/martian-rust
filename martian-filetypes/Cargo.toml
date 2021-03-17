@@ -30,7 +30,7 @@ name = "benchmarks"
 harness = false
 
 [dev-dependencies.proptest]
-version = "0.10"
+version = "1.0"
 default-features = false
 # Enable all default features not known to break code coverage builds
 features = ["default-code-coverage"]
