@@ -4,6 +4,7 @@ version = "0.23.0"
 authors = ["Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>"]
 edition = "2018"
 include = ["src/lib.rs", "README.md"]
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
