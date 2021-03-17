@@ -1,5 +1,4 @@
 target
-Cargo.lock
 martian-filetypes/example.bincode
 martian-filetypes/example.json
 martian-filetypes/example_lazy.bincode
