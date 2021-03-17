@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["aho_corasick"] = [{"text":"impl Hash for Match","synthetic":false,"types":[]}];
 implementors["bstr"] = [{"text":"impl Hash for BStr","synthetic":false,"types":[]},{"text":"impl Hash for BString","synthetic":false,"types":[]}];
 implementors["byteorder"] = [{"text":"impl Hash for BigEndian","synthetic":false,"types":[]},{"text":"impl Hash for LittleEndian","synthetic":false,"types":[]}];
 implementors["chrono"] = [{"text":"impl&lt;T:&nbsp;Hash&gt; Hash for LocalResult&lt;T&gt;","synthetic":false,"types":[]},{"text":"impl Hash for FixedOffset","synthetic":false,"types":[]},{"text":"impl Hash for NaiveDate","synthetic":false,"types":[]},{"text":"impl Hash for NaiveDateTime","synthetic":false,"types":[]},{"text":"impl Hash for NaiveTime","synthetic":false,"types":[]},{"text":"impl&lt;Tz:&nbsp;TimeZone&gt; Hash for Date&lt;Tz&gt;","synthetic":false,"types":[]},{"text":"impl&lt;Tz:&nbsp;TimeZone&gt; Hash for DateTime&lt;Tz&gt;","synthetic":false,"types":[]},{"text":"impl Hash for Weekday","synthetic":false,"types":[]},{"text":"impl Hash for Month","synthetic":false,"types":[]}];

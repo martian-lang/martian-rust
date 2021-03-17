@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["aho_corasick"] = [{"text":"impl StructuralPartialEq for MatchKind","synthetic":false,"types":[]},{"text":"impl StructuralPartialEq for MatchKind","synthetic":false,"types":[]},{"text":"impl StructuralPartialEq for Match","synthetic":false,"types":[]}];
 implementors["backtrace"] = [{"text":"impl StructuralPartialEq for PrintFmt","synthetic":false,"types":[]}];
 implementors["bstr"] = [{"text":"impl StructuralPartialEq for FromUtf8Error","synthetic":false,"types":[]},{"text":"impl StructuralPartialEq for Utf8Error","synthetic":false,"types":[]}];
 implementors["byteorder"] = [{"text":"impl StructuralPartialEq for BigEndian","synthetic":false,"types":[]},{"text":"impl StructuralPartialEq for LittleEndian","synthetic":false,"types":[]}];

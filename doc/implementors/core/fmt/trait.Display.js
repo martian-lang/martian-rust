@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["aho_corasick"] = [{"text":"impl Display for Error","synthetic":false,"types":[]}];
 implementors["backtrace"] = [{"text":"impl&lt;'a&gt; Display for SymbolName&lt;'a&gt;","synthetic":false,"types":[]},{"text":"impl&lt;'a&gt; Display for BytesOrWideString&lt;'a&gt;","synthetic":false,"types":[]}];
 implementors["bincode"] = [{"text":"impl Display for ErrorKind","synthetic":false,"types":[]}];
 implementors["bstr"] = [{"text":"impl Display for FromUtf8Error","synthetic":false,"types":[]},{"text":"impl Display for BString","synthetic":false,"types":[]},{"text":"impl Display for BStr","synthetic":false,"types":[]},{"text":"impl Display for Utf8Error","synthetic":false,"types":[]}];

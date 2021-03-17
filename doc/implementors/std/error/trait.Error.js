@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["aho_corasick"] = [{"text":"impl Error for Error","synthetic":false,"types":[]}];
 implementors["bincode"] = [{"text":"impl Error for ErrorKind","synthetic":false,"types":[]}];
 implementors["bstr"] = [{"text":"impl Error for FromUtf8Error","synthetic":false,"types":[]},{"text":"impl Error for Utf8Error","synthetic":false,"types":[]}];
 implementors["chrono"] = [{"text":"impl Error for ParseError","synthetic":false,"types":[]},{"text":"impl Error for RoundingError","synthetic":false,"types":[]}];
