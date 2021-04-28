@@ -1,6 +1,6 @@
 error: The input to the martian_filetype! macro needs to be two items separated by a comma.
-    The first item is the struct name that will be generated and the second item is the filetype extension within double quotes.
-    For example martian_filetype! {TxtFile, "txt"}
+The first item is the struct name that will be generated and the second item is the filetype extension within double quotes.
+For example martian_filetype! {TxtFile, "txt"}
  --> $DIR/test_one_input.rs:3:20
   |
 3 | martian_filetype! {txt}

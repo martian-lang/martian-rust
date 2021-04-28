@@ -1,5 +1,5 @@
 error: The extension `"t**xt"` in the martian_filetype! macro should be alphanumeric (internal dots(.) are okay) starting with an alphabet.
-    Found invalid character `*` at position 1
+Found invalid character `*` at position 1
  --> $DIR/test_invalid_char_extension.rs:3:20
   |
 3 | martian_filetype! {TxtFile, "t**xt"}

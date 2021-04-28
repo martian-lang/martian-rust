@@ -36,7 +36,9 @@ pub trait MroDisplay {
                 let min_width = self.min_width();
                 assert!(
                     width >= min_width,
-                    format!("Need a minimum width of {}. Found {}", min_width, width)
+                    "Need a minimum width of {}. Found {}",
+                    min_width,
+                    width
                 );
                 self.mro_string_with_width(width)
             }
