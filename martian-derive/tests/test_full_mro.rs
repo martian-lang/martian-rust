@@ -15,6 +15,9 @@ martian_filetype! {JsonFile, "json"}
 martian_filetype! {BamFile, "bam"}
 martian_filetype! {BamIndexFile, "bam.bai"}
 
+const HEADER: &str = "#
+# Copyright (c) 2021 10X Genomics, Inc. All rights reserved.";
+
 #[test]
 fn test_main_only() {
     #[derive(Serialize, Deserialize, MartianStruct)]
@@ -66,7 +69,7 @@ fn test_main_only() {
     let expected = include_str!("mro/test_main_only.mro");
 
     assert_eq!(
-        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        make_mro_string(HEADER, &[SumSquares::stage_mro("adapter", "sum_squares")]),
         expected
     );
 }
@@ -97,7 +100,7 @@ fn test_main_only_generic_associated_type() {
     let expected = include_str!("mro/test_main_only.mro");
 
     assert_eq!(
-        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        make_mro_string(HEADER, &[SumSquares::stage_mro("adapter", "sum_squares")]),
         expected
     );
 }
@@ -131,7 +134,10 @@ fn test_main_only_generic_stage_struct() {
     let expected = include_str!("mro/test_main_only.mro");
 
     assert_eq!(
-        make_mro_string(&[SumSquares::<Vec<f32>>::stage_mro("adapter", "sum_squares")]),
+        make_mro_string(
+            HEADER,
+            &[SumSquares::<Vec<f32>>::stage_mro("adapter", "sum_squares")]
+        ),
         expected
     );
 }
@@ -180,7 +186,7 @@ fn test_empty_split() {
     let expected = include_str!("mro/test_empty_split.mro");
 
     assert_eq!(
-        make_mro_string(&[ChunkReads::stage_mro("my_adapter", "chunker")]),
+        make_mro_string(HEADER, &[ChunkReads::stage_mro("my_adapter", "chunker")]),
         expected
     )
 }
@@ -233,7 +239,7 @@ fn test_non_empty_split() {
     let expected = include_str!("mro/test_non_empty_split.mro");
 
     assert_eq!(
-        make_mro_string(&[ChunkerStage::stage_mro("my_adapter", "chunker")]),
+        make_mro_string(HEADER, &[ChunkerStage::stage_mro("my_adapter", "chunker")]),
         expected
     )
 }
@@ -266,7 +272,7 @@ fn test_with_filetype() {
     let expected = include_str!("mro/test_with_filetype.mro");
 
     assert_eq!(
-        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        make_mro_string(HEADER, &[SumSquares::stage_mro("adapter", "sum_squares")]),
         expected
     );
 }
@@ -313,7 +319,10 @@ fn test_with_custom_type() {
     let expected = include_str!("mro/test_with_custom_type.mro");
 
     assert_eq!(
-        make_mro_string(&[DetectChemistry::stage_mro("adapter", "detect_chemistry")]),
+        make_mro_string(
+            HEADER,
+            &[DetectChemistry::stage_mro("adapter", "detect_chemistry")]
+        ),
         expected
     );
 }
@@ -370,7 +379,10 @@ fn test_retain() {
     let expected = include_str!("mro/test_retain.mro");
 
     assert_eq!(
-        make_mro_string(&[SortByPos::stage_mro("adapter", "sort_reads_by_pos")]),
+        make_mro_string(
+            HEADER,
+            &[SortByPos::stage_mro("adapter", "sort_reads_by_pos")]
+        ),
         expected
     );
 }
@@ -400,7 +412,7 @@ fn test_main_only_full_name() {
     let expected = include_str!("mro/test_main_only.mro");
 
     assert_eq!(
-        make_mro_string(&[SumSquares::stage_mro("adapter", "sum_squares")]),
+        make_mro_string(HEADER, &[SumSquares::stage_mro("adapter", "sum_squares")]),
         expected
     );
 }
@@ -461,7 +473,10 @@ fn test_with_struct() {
     let expected = include_str!("mro/test_struct.mro");
 
     assert_eq!(
-        make_mro_string(&[SetupChunks::stage_mro("my_adapter", "setup_chunks")]),
+        make_mro_string(
+            HEADER,
+            &[SetupChunks::stage_mro("my_adapter", "setup_chunks")]
+        ),
         expected
     );
 }
@@ -515,7 +530,7 @@ fn test_typed_map() {
     let expected = include_str!("mro/test_typed_map.mro");
 
     assert_eq!(
-        make_mro_string(&[StageName::stage_mro("my_adapter", "stage_name")]),
+        make_mro_string(HEADER, &[StageName::stage_mro("my_adapter", "stage_name")]),
         expected
     );
 }
