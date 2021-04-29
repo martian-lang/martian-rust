@@ -556,7 +556,7 @@ dependencies = [
 
 [[package]]
 name = "martian"
-version = "0.23.0"
+version = "0.24.0"
 dependencies = [
  "backtrace",
  "chrono",
@@ -578,7 +578,7 @@ dependencies = [
 
 [[package]]
 name = "martian-derive"
-version = "0.23.0"
+version = "0.24.0"
 dependencies = [
  "indoc",
  "martian",

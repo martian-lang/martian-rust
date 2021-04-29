@@ -1,6 +1,6 @@
 [package]
 name = "martian-derive"
-version = "0.23.0"
+version = "0.24.0"
 authors = ["Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>"]
 edition = "2018"
 include = ["src/lib.rs", "README.md"]

@@ -49,7 +49,13 @@ fn main() -> Result<(), Error> {
         std::process::exit(retcode);
     } else if args.cmd_mro {
         // Create the mro for all the stages in this adapter
-        martian_make_mro(args.flag_file, args.flag_rewrite, mro_registry)?;
+        martian_make_mro(
+            "#
+# Copyright (c) 2021 10X Genomics, Inc. All rights reserved.",
+            args.flag_file,
+            args.flag_rewrite,
+            mro_registry,
+        )?;
     } else {
         // If you need custom commands, implement them here
         unimplemented!()
