@@ -13,7 +13,7 @@ martian = { path = "../martian" }
 martian-derive = { path = "../martian-derive" }
 serde = { version = '1.0', features = ['derive'] }
 serde_json = "*"
-bincode = "1.1"
+bincode = "1.3"
 failure = "*"
 lz4 = "1.23"
 csv = { version = "1.1.1" }
