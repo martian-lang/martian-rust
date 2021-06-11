@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `martian/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../martian/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../martian/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
@@ -306,6 +308,42 @@
 <span id="305">305</span>
 <span id="306">306</span>
 <span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! # Martian-Rust</span>
 <span class="doccomment">//! This crate provides a strongly typed high level API for implementing martian stages in Rust.</span>
@@ -346,14 +384,14 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">prelude</span>;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">initialize</span>(<span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Metadata</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">initialize</span>(<span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Metadata</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">md</span> <span class="op">=</span> <span class="ident">Metadata</span>::<span class="ident">new</span>(<span class="ident">args</span>);
     <span class="ident">md</span>.<span class="ident">update_jobinfo</span>()<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(<span class="ident">md</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">write_errors</span>(<span class="ident">msg</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">is_assert</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">write_errors</span>(<span class="ident">msg</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">is_assert</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">err_file</span>: <span class="ident">File</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">File</span>::<span class="ident">from_raw_fd</span>(<span class="number">4</span>) };
 
     <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">is_assert</span> {
@@ -375,7 +413,7 @@
     <span class="kw">let</span> <span class="ident">logger_config</span> <span class="op">=</span> <span class="ident">fern</span>::<span class="ident">Dispatch</span>::<span class="ident">new</span>()
         .<span class="ident">format</span>(<span class="op">|</span><span class="ident">out</span>, <span class="ident">msg</span>, <span class="ident">record</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">time_str</span> <span class="op">=</span> <span class="ident">Local</span>::<span class="ident">now</span>().<span class="ident">format</span>(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>).<span class="ident">to_string</span>();
-            <span class="ident">out</span>.<span class="ident">finish</span>(<span class="macro">format_args</span><span class="macro">!</span>(<span class="string">&quot;[{}][{}] {}&quot;</span>, <span class="ident">time_str</span>, <span class="ident">record</span>.<span class="ident">level</span>(), <span class="ident">msg</span>))
+            <span class="ident">out</span>.<span class="ident">finish</span>(<span class="macro">format_args</span><span class="macro">!</span>(<span class="string">&quot;{} [{}] {}&quot;</span>, <span class="ident">time_str</span>, <span class="ident">record</span>.<span class="ident">target</span>(), <span class="ident">msg</span>))
         })
         .<span class="ident">chain</span>(<span class="ident">log_file</span>)
         .<span class="ident">chain</span>(<span class="ident">io</span>::<span class="ident">stdout</span>());
@@ -391,14 +429,14 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="ident">stage_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">RawMartianStage</span><span class="op">&gt;</span>, <span class="ident">S</span><span class="op">&gt;</span>,
     <span class="ident">log_level</span>: <span class="ident">LevelFilter</span>,
-    <span class="ident">is_error_assert</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> (<span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>) <span class="op">+</span> <span class="lifetime">&#39;static</span><span class="op">&gt;</span>,
+    <span class="ident">is_error_assert</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> (<span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>) <span class="op">+</span> <span class="lifetime">&#39;static</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">std</span>::<span class="ident">hash</span>::<span class="ident">BuildHasher</span><span class="op">&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Build a new Martian adapter with the given registry of Martian stages</span>
     <span class="doccomment">/// Arguments:</span>
     <span class="doccomment">///  - `stage_map`: names and implementations of the Martian stages that can be run by this binary.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">stage_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">RawMartianStage</span><span class="op">&gt;</span>, <span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">stage_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">RawMartianStage</span><span class="op">&gt;</span>, <span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">MartianAdapter</span> {
             <span class="ident">stage_map</span>,
             <span class="ident">log_level</span>: <span class="ident">LevelFilter</span>::<span class="ident">Warn</span>,
@@ -408,7 +446,7 @@
 
     <span class="doccomment">/// Set the minimum severity level of log messages that are emitted to the Martian</span>
     <span class="doccomment">/// _log file.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log_level</span>(<span class="self">self</span>, <span class="ident">log_level</span>: <span class="ident">LevelFilter</span>) <span class="op">-&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log_level</span>(<span class="self">self</span>, <span class="ident">log_level</span>: <span class="ident">LevelFilter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">MartianAdapter</span> { <span class="ident">log_level</span>, ..<span class="self">self</span> }
     }
 
@@ -416,7 +454,7 @@
     <span class="doccomment">///  to Martian. ASSERT errors indicate an unrecoverable configuration error, and will</span>
     <span class="doccomment">///  prevent the user from restarting the pipeline. The is_error_assert function should</span>
     <span class="doccomment">///  use downcasting to match the error against a set of error types that should generate an assert.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assert_if</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">bool</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">predicate</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assert_if</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">predicate</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">MartianAdapter</span> {
             <span class="ident">is_error_assert</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">predicate</span>),
             ..<span class="self">self</span>
@@ -429,14 +467,14 @@
     <span class="doccomment">/// Arguments:</span>
     <span class="doccomment">///  - `args`: vector of command line arguments, typically supplied by Martian runtime.</span>
     <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Martian stage binaries should call std::process::exit() on the return_code&quot;</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run</span>(<span class="self">self</span>, <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">i32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run</span>(<span class="self">self</span>, <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span> {
         <span class="self">self</span>.<span class="ident">run_get_error</span>(<span class="ident">args</span>).<span class="number">0</span>
     }
 
     <span class="doccomment">/// Like `run()` but also return an error thrown by the stage (if any). May be useful</span>
     <span class="doccomment">/// for unit testing purposes.</span>
     <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Martian stage binaries should call std::process::exit() on the return_code&quot;</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_get_error</span>(<span class="self">self</span>, <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_get_error</span>(<span class="self">self</span>, <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;</span>) {
         <span class="ident">martian_entry_point</span>(<span class="ident">args</span>, <span class="self">self</span>.<span class="ident">stage_map</span>, <span class="self">self</span>.<span class="ident">log_level</span>, <span class="self">self</span>.<span class="ident">is_error_assert</span>)
     }
 }
@@ -446,8 +484,8 @@
     <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="ident">stage_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">RawMartianStage</span><span class="op">&gt;</span>, <span class="ident">S</span><span class="op">&gt;</span>,
     <span class="ident">level</span>: <span class="ident">LevelFilter</span>,
-    <span class="ident">is_error_assert</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">bool</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;</span>) {
+    <span class="ident">is_error_assert</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span><span class="op">&gt;</span>,
+) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;</span>) {
     <span class="macro">info</span><span class="macro">!</span>(<span class="string">&quot;got args: {:?}&quot;</span>, <span class="ident">args</span>);
 
     <span class="comment">// turn on backtrace capture</span>
@@ -462,8 +500,8 @@
 
     <span class="comment">// special handler for error in stage setup</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">md</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">_md</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">m</span>) <span class="op">=&gt;</span> <span class="ident">m</span>,
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">m</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">m</span>,
+        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">write_errors</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>), <span class="bool-val">false</span>);
             <span class="kw">return</span> (<span class="number">1</span>, <span class="prelude-val">Some</span>(<span class="ident">e</span>.<span class="ident">into</span>()));
         }
@@ -472,12 +510,12 @@
     <span class="comment">// Get the stage implementation</span>
     <span class="kw">let</span> <span class="ident">_stage</span> <span class="op">=</span> <span class="ident">stage_map</span>
         .<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">md</span>.<span class="ident">stage_name</span>)
-        .<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="macro">format_err</span><span class="macro">!</span>(<span class="string">&quot;Couldn&#39;t find requested Martian stage: {}&quot;</span>, <span class="ident">md</span>.<span class="ident">stage_name</span>));
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">format_err</span><span class="macro">!</span>(<span class="string">&quot;Couldn&#39;t find requested Martian stage: {}&quot;</span>, <span class="ident">md</span>.<span class="ident">stage_name</span>));
 
     <span class="comment">// special handler for non-existent stage</span>
     <span class="kw">let</span> <span class="ident">stage</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">_stage</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>,
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">s</span>,
+        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">write_errors</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>), <span class="bool-val">false</span>);
             <span class="kw">return</span> (<span class="number">1</span>, <span class="prelude-val">Some</span>(<span class="ident">e</span>));
         }
@@ -493,22 +531,22 @@
         <span class="kw">let</span> <span class="ident">backtrace</span> <span class="op">=</span> <span class="ident">Backtrace</span>::<span class="ident">new</span>();
 
         <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">info</span>.<span class="ident">payload</span>().<span class="ident">downcast_ref</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="kw-2">*</span><span class="ident">s</span>,
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">info</span>.<span class="ident">payload</span>().<span class="ident">downcast_ref</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>() {
-                <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">s</span>,
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="string">&quot;Box&lt;Any&gt;&quot;</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">s</span>,
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">info</span>.<span class="ident">payload</span>().<span class="ident">downcast_ref</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>() {
+                <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">s</span>,
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;Box&lt;Any&gt;&quot;</span>,
             },
         };
 
         <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">info</span>.<span class="ident">location</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">location</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(
+            <span class="prelude-val">Some</span>(<span class="ident">location</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(
                 <span class="string">&quot;stage failed unexpectedly: &#39;{}&#39; {}:{}:\n{:?}&quot;</span>,
                 <span class="ident">msg</span>,
                 <span class="ident">location</span>.<span class="ident">file</span>(),
                 <span class="ident">location</span>.<span class="ident">line</span>(),
                 <span class="ident">backtrace</span>
             ),
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;stage failed unexpectedly: &#39;{}&#39;:\n{:?}&quot;</span>, <span class="ident">msg</span>, <span class="ident">backtrace</span>),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;stage failed unexpectedly: &#39;{}&#39;:\n{:?}&quot;</span>, <span class="ident">msg</span>, <span class="ident">backtrace</span>),
         };
 
         <span class="comment">// write to _log</span>
@@ -528,11 +566,11 @@
         <span class="ident">p</span>(<span class="ident">info</span>);
     }));
 
-    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">==</span> <span class="string">&quot;split&quot;</span> {
+    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;split&quot;</span> {
         <span class="ident">stage</span>.<span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">md</span>)
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">==</span> <span class="string">&quot;main&quot;</span> {
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;main&quot;</span> {
         <span class="ident">stage</span>.<span class="ident">main</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">md</span>)
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">==</span> <span class="string">&quot;join&quot;</span> {
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;join&quot;</span> {
         <span class="ident">stage</span>.<span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">md</span>)
     } <span class="kw">else</span> {
         <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unrecognized stage type&quot;</span>);
@@ -540,10 +578,10 @@
 
     <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span> {
         <span class="comment">// exit code = 0</span>
-        <span class="prelude-val">Ok</span>(()) <span class="op">=&gt;</span> (<span class="number">0</span>, <span class="prelude-val">None</span>),
+        <span class="prelude-val">Ok</span>(()) <span class="op">=</span><span class="op">&gt;</span> (<span class="number">0</span>, <span class="prelude-val">None</span>),
 
         <span class="comment">// write message and stack trace, exit code = 1;</span>
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">bt</span> <span class="op">=</span> <span class="ident">e</span>.<span class="ident">backtrace</span>();
             <span class="kw">if</span> <span class="op">!</span><span class="ident">bt</span>.<span class="ident">is_empty</span>() {
                 <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">stackvars</span>(<span class="kw-2">&amp;</span><span class="ident">bt</span>.<span class="ident">to_string</span>());
@@ -556,19 +594,24 @@
     <span class="ident">res</span>
 }
 
-<span class="kw">const</span> <span class="ident">MRO_HEADER</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;#
-# Copyright (c) 2020 10X Genomics, Inc. All rights reserved.
-#
-# WARNING: This file is auto-generated.
-# DO NOT MODIFY THIS FILE DIRECTLY
-#
+<span class="kw">fn</span> <span class="ident">get_generator_name</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+    <span class="ident">std</span>::<span class="ident">env</span>::<span class="ident">var</span>(<span class="string">&quot;CARGO_BIN_NAME&quot;</span>)
+        .<span class="ident">or</span>(<span class="ident">std</span>::<span class="ident">env</span>::<span class="ident">var</span>(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
+        .<span class="ident">or</span>(<span class="ident">std</span>::<span class="ident">env</span>::<span class="ident">var</span>(<span class="string">&quot;CARGO_PKG_NAME&quot;</span>))
+        .<span class="ident">unwrap_or</span>(
+            <span class="macro">option_env</span><span class="macro">!</span>(<span class="string">&quot;CARGO_BIN_NAME&quot;</span>)
+                .<span class="ident">or</span>(<span class="macro">option_env</span><span class="macro">!</span>(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
+                .<span class="ident">unwrap_or</span>(<span class="string">&quot;martian-rust&quot;</span>)
+                .<span class="ident">into</span>(),
+        )
+}
 
-&quot;#</span>;
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">martian_make_mro</span>(
-    <span class="ident">file_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">header_comment</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
+    <span class="ident">file_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">rewrite</span>: <span class="ident">bool</span>,
     <span class="ident">mro_registry</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">StageMro</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">f</span>) <span class="op">=</span> <span class="ident">file_name</span> {
         <span class="kw">let</span> <span class="ident">file_path</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">as_ref</span>();
         <span class="kw">if</span> <span class="ident">file_path</span>.<span class="ident">is_dir</span>() {
@@ -585,20 +628,20 @@
         }
     }
 
-    <span class="kw">let</span> <span class="ident">final_mro_string</span> <span class="op">=</span> <span class="ident">make_mro_string</span>(<span class="kw-2">&amp;</span><span class="ident">mro_registry</span>);
+    <span class="kw">let</span> <span class="ident">final_mro_string</span> <span class="op">=</span> <span class="ident">make_mro_string</span>(<span class="ident">header_comment</span>, <span class="kw-2">&amp;</span><span class="ident">mro_registry</span>);
     <span class="kw">match</span> <span class="ident">file_name</span> {
-        <span class="prelude-val">Some</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> {
+        <span class="prelude-val">Some</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">File</span>::<span class="ident">create</span>(<span class="ident">f</span>)<span class="question-mark">?</span>;
             <span class="ident">output</span>.<span class="ident">write_all</span>(<span class="ident">final_mro_string</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
         }
-        <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="macro">print</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">final_mro_string</span>);
         }
     }
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_mro_string</span>(<span class="ident">mro_registry</span>: <span class="kw-2">&amp;</span>[<span class="ident">StageMro</span>]) <span class="op">-&gt;</span> <span class="ident">String</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_mro_string</span>(<span class="ident">header_comment</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">mro_registry</span>: <span class="kw-2">&amp;</span>[<span class="ident">StageMro</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">filetype_header</span> <span class="op">=</span> <span class="ident">FiletypeHeader</span>::<span class="ident">default</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">struct_header</span> <span class="op">=</span> <span class="ident">StructHeader</span>::<span class="ident">default</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mro_string</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
@@ -609,10 +652,42 @@
     }
     <span class="ident">mro_string</span>.<span class="ident">pop</span>();
 
-    <span class="macro">format</span><span class="macro">!</span>(
-        <span class="string">&quot;{}{}{}{}&quot;</span>,
-        <span class="ident">MRO_HEADER</span>, <span class="ident">filetype_header</span>, <span class="ident">struct_header</span>, <span class="ident">mro_string</span>
-    )
+    <span class="kw">if</span> <span class="ident">header_comment</span>.<span class="ident">is_empty</span>() {
+        <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;#
+# Code generated by {}.  DO NOT EDIT.
+#
+
+{}{}{}&quot;</span>,
+            <span class="ident">get_generator_name</span>(),
+            <span class="ident">filetype_header</span>,
+            <span class="ident">struct_header</span>,
+            <span class="ident">mro_string</span>
+        )
+    } <span class="kw">else</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(
+            <span class="ident">header_comment</span>
+                .<span class="ident">lines</span>()
+                .<span class="ident">into_iter</span>()
+                .<span class="ident">all</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">trim_end</span>().<span class="ident">is_empty</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">starts_with</span>(<span class="string">&quot;#&quot;</span>)),
+            <span class="string">&quot;All non-empty header lines must start with &#39;#&#39;, but got\n{}&quot;</span>,
+            <span class="ident">header_comment</span>
+        );
+        <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;{}
+#
+# Code generated by {}.  DO NOT EDIT.
+#
+
+{}{}{}&quot;</span>,
+            <span class="ident">header_comment</span>,
+            <span class="ident">get_generator_name</span>(),
+            <span class="ident">filetype_header</span>,
+            <span class="ident">struct_header</span>,
+            <span class="ident">mro_string</span>
+        )
+    }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "martian";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
