@@ -66,7 +66,7 @@ fn setup_logging(log_file: File, level: LevelFilter) {
     let logger_config = fern::Dispatch::new()
         .format(|out, msg, record| {
             let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
-            out.finish(format_args!("[{}][{}] {}", time_str, record.level(), msg))
+            out.finish(format_args!("{} [{}] {}", time_str, record.target(), msg))
         })
         .chain(log_file)
         .chain(io::stdout());
