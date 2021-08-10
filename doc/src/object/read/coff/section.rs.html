@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.23.0/src/read/coff/section.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>section.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.24.0/src/read/coff/section.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>section.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../object/index.html'><div class='logo-container rust-logo'><img src='../../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
@@ -396,16 +396,37 @@
 <span id="393">393</span>
 <span id="394">394</span>
 <span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">iter</span>, <span class="ident">result</span>, <span class="ident">slice</span>, <span class="ident">str</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">endian</span>::<span class="ident">LittleEndian</span> <span class="kw">as</span> <span class="ident">LE</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">pe</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">pod</span>::<span class="ident">Bytes</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">read</span>::<span class="ident">util</span>::<span class="ident">StringTable</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">read</span>::{
-    <span class="self">self</span>, <span class="ident">CompressedData</span>, <span class="ident">Error</span>, <span class="ident">ObjectSection</span>, <span class="ident">ObjectSegment</span>, <span class="ident">ReadError</span>, <span class="prelude-ty">Result</span>, <span class="ident">SectionFlags</span>,
-    <span class="ident">SectionIndex</span>, <span class="ident">SectionKind</span>,
+    <span class="self">self</span>, <span class="ident">CompressedData</span>, <span class="ident">CompressedFileRange</span>, <span class="ident">Error</span>, <span class="ident">ObjectSection</span>, <span class="ident">ObjectSegment</span>, <span class="ident">ReadError</span>,
+    <span class="ident">ReadRef</span>, <span class="prelude-ty">Result</span>, <span class="ident">SectionFlags</span>, <span class="ident">SectionIndex</span>, <span class="ident">SectionKind</span>,
 };
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">CoffFile</span>, <span class="ident">CoffRelocationIterator</span>};
@@ -419,10 +440,15 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="ident">SectionTable</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Parse the section table.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// `data` must be the data following the optional header.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">pe</span>::<span class="ident">ImageFileHeader</span>, <span class="kw-2">mut</span> <span class="ident">data</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// `data` must be the entire file data.</span>
+    <span class="doccomment">/// `offset` must be after the optional file header.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>(
+        <span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">pe</span>::<span class="ident">ImageFileHeader</span>,
+        <span class="ident">data</span>: <span class="ident">R</span>,
+        <span class="ident">offset</span>: <span class="ident">u64</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">sections</span> <span class="op">=</span> <span class="ident">data</span>
-            .<span class="ident">read_slice</span>(<span class="ident">header</span>.<span class="ident">number_of_sections</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="kw">as</span> <span class="ident">usize</span>)
+            .<span class="ident">read_slice_at</span>(<span class="ident">offset</span>, <span class="ident">header</span>.<span class="ident">number_of_sections</span>.<span class="ident">get</span>(<span class="ident">LE</span>).<span class="ident">into</span>())
             .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF/PE section headers&quot;</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">SectionTable</span> { <span class="ident">sections</span> })
     }
@@ -476,16 +502,13 @@
 
 <span class="doccomment">/// An iterator over the loadable sections of a `CoffFile`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSegmentIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="lifetime">&#39;data</span>: <span class="lifetime">&#39;file</span>,
-{
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSegmentIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">iter</span>: <span class="ident">slice</span>::<span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">pe</span>::<span class="ident">ImageSectionHeader</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">CoffSegmentIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">CoffSegmentIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">section</span><span class="op">|</span> <span class="ident">CoffSegment</span> {
@@ -497,25 +520,22 @@
 
 <span class="doccomment">/// A loadable section of a `CoffFile`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="lifetime">&#39;data</span>: <span class="lifetime">&#39;file</span>,
-{
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">section</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">pe</span>::<span class="ident">ImageSectionHeader</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">section</span>
-            .<span class="ident">coff_bytes</span>(<span class="self">self</span>.<span class="ident">file</span>.<span class="ident">data</span>)
+            .<span class="ident">coff_data</span>(<span class="self">self</span>.<span class="ident">file</span>.<span class="ident">data</span>)
             .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF section offset or size&quot;</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="ident">private</span>::<span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="ident">private</span>::<span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">ObjectSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">ObjectSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CoffSegment</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">address</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="ident">u64</span>::<span class="ident">from</span>(<span class="self">self</span>.<span class="ident">section</span>.<span class="ident">virtual_address</span>.<span class="ident">get</span>(<span class="ident">LE</span>))
@@ -538,11 +558,11 @@
     }
 
     <span class="kw">fn</span> <span class="ident">data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">bytes</span>()<span class="question-mark">?</span>.<span class="number">0</span>)
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">bytes</span>()<span class="question-mark">?</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">data_range</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">address</span>: <span class="ident">u64</span>, <span class="ident">size</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">read</span>::<span class="ident">data_range</span>(
+        <span class="prelude-val">Ok</span>(<span class="ident">read</span>::<span class="ident">util</span>::<span class="ident">data_range</span>(
             <span class="self">self</span>.<span class="ident">bytes</span>()<span class="question-mark">?</span>,
             <span class="self">self</span>.<span class="ident">address</span>(),
             <span class="ident">address</span>,
@@ -563,16 +583,13 @@
 
 <span class="doccomment">/// An iterator over the sections of a `CoffFile`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSectionIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="lifetime">&#39;data</span>: <span class="lifetime">&#39;file</span>,
-{
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSectionIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">iter</span>: <span class="ident">iter</span>::<span class="ident">Enumerate</span><span class="op">&lt;</span><span class="ident">slice</span>::<span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">pe</span>::<span class="ident">ImageSectionHeader</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">CoffSectionIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">CoffSectionIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">index</span>, <span class="ident">section</span>)<span class="op">|</span> <span class="ident">CoffSection</span> {
@@ -585,27 +602,24 @@
 
 <span class="doccomment">/// A section of a `CoffFile`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="lifetime">&#39;data</span>: <span class="lifetime">&#39;file</span>,
-{
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">index</span>: <span class="ident">SectionIndex</span>,
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">section</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">pe</span>::<span class="ident">ImageSectionHeader</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">section</span>
-            .<span class="ident">coff_bytes</span>(<span class="self">self</span>.<span class="ident">file</span>.<span class="ident">data</span>)
+            .<span class="ident">coff_data</span>(<span class="self">self</span>.<span class="ident">file</span>.<span class="ident">data</span>)
             .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF section offset or size&quot;</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="ident">private</span>::<span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="ident">private</span>::<span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> <span class="ident">ObjectSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">RelocationIterator</span> <span class="op">=</span> <span class="ident">CoffRelocationIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">ObjectSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CoffSection</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">RelocationIterator</span> <span class="op">=</span> <span class="ident">CoffRelocationIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SectionIndex</span> {
@@ -635,16 +649,21 @@
     }
 
     <span class="kw">fn</span> <span class="ident">data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">bytes</span>()<span class="question-mark">?</span>.<span class="number">0</span>)
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">bytes</span>()<span class="question-mark">?</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">data_range</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">address</span>: <span class="ident">u64</span>, <span class="ident">size</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">read</span>::<span class="ident">data_range</span>(
+        <span class="prelude-val">Ok</span>(<span class="ident">read</span>::<span class="ident">util</span>::<span class="ident">data_range</span>(
             <span class="self">self</span>.<span class="ident">bytes</span>()<span class="question-mark">?</span>,
             <span class="self">self</span>.<span class="ident">address</span>(),
             <span class="ident">address</span>,
             <span class="ident">size</span>,
         ))
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">compressed_file_range</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">CompressedFileRange</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">CompressedFileRange</span>::<span class="ident">none</span>(<span class="self">self</span>.<span class="ident">file_range</span>()))
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -670,10 +689,8 @@
         <span class="self">self</span>.<span class="ident">section</span>.<span class="ident">kind</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">relocations</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CoffRelocationIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">pointer</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">section</span>.<span class="ident">pointer_to_relocations</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">section</span>.<span class="ident">number_of_relocations</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="kw">let</span> <span class="ident">relocations</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">file</span>.<span class="ident">data</span>.<span class="ident">read_slice_at</span>(<span class="ident">pointer</span>, <span class="ident">number</span>).<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[]);
+    <span class="kw">fn</span> <span class="ident">relocations</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CoffRelocationIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">relocations</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">section</span>.<span class="ident">coff_relocations</span>(<span class="self">self</span>.<span class="ident">file</span>.<span class="ident">data</span>).<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[]);
         <span class="ident">CoffRelocationIterator</span> {
             <span class="ident">file</span>: <span class="self">self</span>.<span class="ident">file</span>,
             <span class="ident">iter</span>: <span class="ident">relocations</span>.<span class="ident">iter</span>(),
@@ -688,33 +705,33 @@
 }
 
 <span class="kw">impl</span> <span class="ident">pe</span>::<span class="ident">ImageSectionHeader</span> {
-    <span class="doccomment">/// Return the offset and size of the section in the file.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Returns `None` for sections that have no data in the file.</span>
-    <span class="kw">fn</span> <span class="ident">coff_file_range</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">u32</span>, <span class="ident">u32</span>)<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">characteristics</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_UNINITIALIZED_DATA</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="prelude-val">None</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">kind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SectionKind</span> {
+        <span class="kw">let</span> <span class="ident">characteristics</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">characteristics</span>.<span class="ident">get</span>(<span class="ident">LE</span>);
+        <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> (<span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_CODE</span> <span class="op">|</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_MEM_EXECUTE</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="ident">SectionKind</span>::<span class="ident">Text</span>
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_INITIALIZED_DATA</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_MEM_DISCARDABLE</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+                <span class="ident">SectionKind</span>::<span class="ident">Other</span>
+            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_MEM_WRITE</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+                <span class="ident">SectionKind</span>::<span class="ident">Data</span>
+            } <span class="kw">else</span> {
+                <span class="ident">SectionKind</span>::<span class="ident">ReadOnlyData</span>
+            }
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_UNINITIALIZED_DATA</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="ident">SectionKind</span>::<span class="ident">UninitializedData</span>
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_LNK_INFO</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="ident">SectionKind</span>::<span class="ident">Linker</span>
         } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pointer_to_raw_data</span>.<span class="ident">get</span>(<span class="ident">LE</span>);
-            <span class="comment">// Note: virtual size is not used for COFF.</span>
-            <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">size_of_raw_data</span>.<span class="ident">get</span>(<span class="ident">LE</span>);
-            <span class="prelude-val">Some</span>((<span class="ident">offset</span>, <span class="ident">size</span>))
+            <span class="ident">SectionKind</span>::<span class="ident">Unknown</span>
         }
     }
+}
 
-    <span class="doccomment">/// Return the section data.</span>
+<span class="kw">impl</span> <span class="ident">pe</span>::<span class="ident">ImageSectionHeader</span> {
+    <span class="doccomment">/// Return the section name.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// Returns `Ok(&amp;[])` if the section has no data.</span>
-    <span class="doccomment">/// Returns `Err` for invalid values.</span>
-    <span class="kw">fn</span> <span class="ident">coff_bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">data</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">result</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>, ()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">offset</span>, <span class="ident">size</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">coff_file_range</span>() {
-            <span class="ident">data</span>.<span class="ident">read_bytes_at</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">size</span> <span class="kw">as</span> <span class="ident">usize</span>)
-        } <span class="kw">else</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]))
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">name</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="self">self</span>, <span class="ident">strings</span>: <span class="ident">StringTable</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="doccomment">/// This handles decoding names that are offsets into the symbol string table.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="self">self</span>, <span class="ident">strings</span>: <span class="ident">StringTable</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>;
         <span class="prelude-val">Ok</span>(<span class="kw">if</span> <span class="ident">bytes</span>[<span class="number">0</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;/&#39;</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="number">0</span>;
@@ -744,35 +761,49 @@
                 .<span class="ident">get</span>(<span class="ident">offset</span>)
                 .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF section name offset&quot;</span>)<span class="question-mark">?</span>
         } <span class="kw">else</span> {
-            <span class="kw">match</span> <span class="ident">bytes</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
-                <span class="prelude-val">Some</span>(<span class="ident">end</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">bytes</span>[..<span class="ident">end</span>],
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">bytes</span>[..],
-            }
+            <span class="self">self</span>.<span class="ident">raw_name</span>()
         })
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">kind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SectionKind</span> {
-        <span class="kw">let</span> <span class="ident">characteristics</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">characteristics</span>.<span class="ident">get</span>(<span class="ident">LE</span>);
-        <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> (<span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_CODE</span> <span class="op">|</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_MEM_EXECUTE</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">SectionKind</span>::<span class="ident">Text</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_INITIALIZED_DATA</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_MEM_DISCARDABLE</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                <span class="ident">SectionKind</span>::<span class="ident">Other</span>
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_MEM_WRITE</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                <span class="ident">SectionKind</span>::<span class="ident">Data</span>
-            } <span class="kw">else</span> {
-                <span class="ident">SectionKind</span>::<span class="ident">ReadOnlyData</span>
-            }
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_UNINITIALIZED_DATA</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">SectionKind</span>::<span class="ident">UninitializedData</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">characteristics</span> <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_LNK_INFO</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">SectionKind</span>::<span class="ident">Linker</span>
-        } <span class="kw">else</span> {
-            <span class="ident">SectionKind</span>::<span class="ident">Unknown</span>
+    <span class="doccomment">/// Return the raw section name.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">raw_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
+        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>;
+        <span class="kw">match</span> <span class="ident">bytes</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
+            <span class="prelude-val">Some</span>(<span class="ident">end</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">bytes</span>[..<span class="ident">end</span>],
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">bytes</span>[..],
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">coff_alignment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
+    <span class="doccomment">/// Return the offset and size of the section in a COFF file.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns `None` for sections that have no data in the file.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">coff_file_range</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">u32</span>, <span class="ident">u32</span>)<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">characteristics</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_CNT_UNINITIALIZED_DATA</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="prelude-val">None</span>
+        } <span class="kw">else</span> {
+            <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pointer_to_raw_data</span>.<span class="ident">get</span>(<span class="ident">LE</span>);
+            <span class="comment">// Note: virtual size is not used for COFF.</span>
+            <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">size_of_raw_data</span>.<span class="ident">get</span>(<span class="ident">LE</span>);
+            <span class="prelude-val">Some</span>((<span class="ident">offset</span>, <span class="ident">size</span>))
+        }
+    }
+
+    <span class="doccomment">/// Return the section data in a COFF file.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns `Ok(&amp;[])` if the section has no data.</span>
+    <span class="doccomment">/// Returns `Err` for invalid values.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">coff_data</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">data</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">result</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>], ()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">offset</span>, <span class="ident">size</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">coff_file_range</span>() {
+            <span class="ident">data</span>.<span class="ident">read_bytes_at</span>(<span class="ident">offset</span>.<span class="ident">into</span>(), <span class="ident">size</span>.<span class="ident">into</span>())
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>[])
+        }
+    }
+
+    <span class="doccomment">/// Return the section alignment in bytes.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This is only valid for sections in a COFF file.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">coff_alignment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">characteristics</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="op">&amp;</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_ALIGN_MASK</span> {
             <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_ALIGN_1BYTES</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
             <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_ALIGN_2BYTES</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">2</span>,
@@ -790,6 +821,19 @@
             <span class="ident">pe</span>::<span class="ident">IMAGE_SCN_ALIGN_8192BYTES</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">8192</span>,
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">16</span>,
         }
+    }
+
+    <span class="doccomment">/// Read the relocations in a COFF file.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// `data` must be the entire file data.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">coff_relocations</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">data</span>: <span class="ident">R</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">pe</span>::<span class="ident">ImageRelocation</span>]<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">pointer</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pointer_to_relocations</span>.<span class="ident">get</span>(<span class="ident">LE</span>).<span class="ident">into</span>();
+        <span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">number_of_relocations</span>.<span class="ident">get</span>(<span class="ident">LE</span>).<span class="ident">into</span>();
+        <span class="ident">data</span>.<span class="ident">read_slice_at</span>(<span class="ident">pointer</span>, <span class="ident">number</span>)
+            .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF relocation offset or number&quot;</span>)
     }
 }
 </pre></div>

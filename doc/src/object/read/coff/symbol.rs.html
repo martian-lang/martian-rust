@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.23.0/src/read/coff/symbol.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>symbol.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.24.0/src/read/coff/symbol.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>symbol.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../object/index.html'><div class='logo-container rust-logo'><img src='../../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
@@ -452,6 +452,46 @@
 <span id="449">449</span>
 <span id="450">450</span>
 <span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">alloc</span>::<span class="ident">fmt</span>;
 <span class="kw">use</span> <span class="ident">alloc</span>::<span class="ident">vec</span>::<span class="ident">Vec</span>;
@@ -461,10 +501,10 @@
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">CoffCommon</span>, <span class="ident">SectionTable</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">endian</span>::{<span class="ident">LittleEndian</span> <span class="kw">as</span> <span class="ident">LE</span>, <span class="ident">U32Bytes</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">pe</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">pod</span>::{<span class="ident">Bytes</span>, <span class="ident">Pod</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">pod</span>::{<span class="ident">bytes_of_slice</span>, <span class="ident">Bytes</span>, <span class="ident">Pod</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">read</span>::<span class="ident">util</span>::<span class="ident">StringTable</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">read</span>::{
-    <span class="self">self</span>, <span class="ident">ObjectSymbol</span>, <span class="ident">ObjectSymbolTable</span>, <span class="ident">ReadError</span>, <span class="prelude-ty">Result</span>, <span class="ident">SectionIndex</span>, <span class="ident">SymbolFlags</span>,
+    <span class="self">self</span>, <span class="ident">ObjectSymbol</span>, <span class="ident">ObjectSymbolTable</span>, <span class="ident">ReadError</span>, <span class="ident">ReadRef</span>, <span class="prelude-ty">Result</span>, <span class="ident">SectionIndex</span>, <span class="ident">SymbolFlags</span>,
     <span class="ident">SymbolIndex</span>, <span class="ident">SymbolKind</span>, <span class="ident">SymbolMap</span>, <span class="ident">SymbolMapEntry</span>, <span class="ident">SymbolScope</span>, <span class="ident">SymbolSection</span>,
 };
 
@@ -479,28 +519,26 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="ident">SymbolTable</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Read the symbol table.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">pe</span>::<span class="ident">ImageFileHeader</span>, <span class="kw-2">mut</span> <span class="ident">data</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">pe</span>::<span class="ident">ImageFileHeader</span>, <span class="ident">data</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="comment">// The symbol table may not be present.</span>
-        <span class="kw">let</span> <span class="ident">symbol_offset</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">pointer_to_symbol_table</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="kw">let</span> (<span class="ident">symbols</span>, <span class="ident">strings</span>) <span class="op">=</span> <span class="kw">if</span> <span class="ident">symbol_offset</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">data</span>.<span class="ident">skip</span>(<span class="ident">symbol_offset</span>)
-                .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF symbol table offset&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">pointer_to_symbol_table</span>.<span class="ident">get</span>(<span class="ident">LE</span>).<span class="ident">into</span>();
+        <span class="kw">let</span> (<span class="ident">symbols</span>, <span class="ident">strings</span>) <span class="op">=</span> <span class="kw">if</span> <span class="ident">offset</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
             <span class="kw">let</span> <span class="ident">symbols</span> <span class="op">=</span> <span class="ident">data</span>
-                .<span class="ident">read_slice</span>(<span class="ident">header</span>.<span class="ident">number_of_symbols</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="kw">as</span> <span class="ident">usize</span>)
-                .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF symbol table size&quot;</span>)<span class="question-mark">?</span>;
+                .<span class="ident">read_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">offset</span>, <span class="ident">header</span>.<span class="ident">number_of_symbols</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="kw">as</span> <span class="ident">usize</span>)
+                .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF symbol table offset or size&quot;</span>)<span class="question-mark">?</span>;
 
             <span class="comment">// Note: don&#39;t update data when reading length; the length includes itself.</span>
             <span class="kw">let</span> <span class="ident">length</span> <span class="op">=</span> <span class="ident">data</span>
-                .<span class="ident">read_at</span>::<span class="op">&lt;</span><span class="ident">U32Bytes</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="number">0</span>)
+                .<span class="ident">read_at</span>::<span class="op">&lt;</span><span class="ident">U32Bytes</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">offset</span>)
                 .<span class="ident">read_error</span>(<span class="string">&quot;Missing COFF string table&quot;</span>)<span class="question-mark">?</span>
                 .<span class="ident">get</span>(<span class="ident">LE</span>);
             <span class="kw">let</span> <span class="ident">strings</span> <span class="op">=</span> <span class="ident">data</span>
-                .<span class="ident">read_bytes</span>(<span class="ident">length</span> <span class="kw">as</span> <span class="ident">usize</span>)
+                .<span class="ident">read_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">offset</span>, <span class="ident">length</span>.<span class="ident">into</span>())
                 .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF string table length&quot;</span>)<span class="question-mark">?</span>;
 
             (<span class="ident">symbols</span>, <span class="ident">strings</span>)
         } <span class="kw">else</span> {
-            (<span class="kw-2">&amp;</span>[][..], <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]))
+            (<span class="kw-2">&amp;</span>[][..], <span class="kw-2">&amp;</span>[][..])
         };
 
         <span class="prelude-val">Ok</span>(<span class="ident">SymbolTable</span> {
@@ -521,23 +559,67 @@
         <span class="self">self</span>.<span class="ident">symbols</span>.<span class="ident">is_empty</span>()
     }
 
-    <span class="doccomment">/// The number of symbols.</span>
+    <span class="doccomment">/// The number of symbol table entries.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This includes auxiliary symbol table entries.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">symbols</span>.<span class="ident">len</span>()
     }
 
+    <span class="doccomment">/// Iterate over the symbols.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span><span class="op">&lt;</span><span class="lifetime">&#39;table</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;table</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SymbolIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;table</span><span class="op">&gt;</span> {
+        <span class="ident">SymbolIterator</span> {
+            <span class="ident">symbols</span>: <span class="self">self</span>,
+            <span class="ident">index</span>: <span class="number">0</span>,
+        }
+    }
+
     <span class="doccomment">/// Return the symbol table entry at the given index.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">symbol</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">pe</span>::<span class="ident">ImageSymbol</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageSymbol</span><span class="op">&gt;</span>(<span class="ident">index</span>)
+        <span class="self">self</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageSymbol</span><span class="op">&gt;</span>(<span class="ident">index</span>, <span class="number">0</span>)
     }
 
-    <span class="doccomment">/// Return the symbol table entry or auxiliary record at the given index.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Pod</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="self">self</span>
-            .<span class="ident">symbols</span>
-            .<span class="ident">get</span>(<span class="ident">index</span>)
+    <span class="doccomment">/// Return the auxiliary function symbol for the symbol table entry at the given index.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Note that the index is of the symbol, not the first auxiliary record.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aux_function</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">pe</span>::<span class="ident">ImageAuxSymbolFunction</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageAuxSymbolFunction</span><span class="op">&gt;</span>(<span class="ident">index</span>, <span class="number">1</span>)
+    }
+
+    <span class="doccomment">/// Return the auxiliary section symbol for the symbol table entry at the given index.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Note that the index is of the symbol, not the first auxiliary record.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aux_section</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">pe</span>::<span class="ident">ImageAuxSymbolSection</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageAuxSymbolSection</span><span class="op">&gt;</span>(<span class="ident">index</span>, <span class="number">1</span>)
+    }
+
+    <span class="doccomment">/// Return the auxiliary file name for the symbol table entry at the given index.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Note that the index is of the symbol, not the first auxiliary record.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aux_file_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>, <span class="ident">aux_count</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">entries</span> <span class="op">=</span> <span class="ident">index</span>
+            .<span class="ident">checked_add</span>(<span class="number">1</span>)
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="prelude-val">Some</span>(<span class="ident">x</span>..<span class="ident">x</span>.<span class="ident">checked_add</span>(<span class="ident">aux_count</span>.<span class="ident">into</span>())<span class="question-mark">?</span>))
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">symbols</span>.<span class="ident">get</span>(<span class="ident">x</span>))
+            .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF symbol index&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">bytes_of_slice</span>(<span class="ident">entries</span>);
+        <span class="comment">// The name is padded with nulls.</span>
+        <span class="prelude-val">Ok</span>(<span class="kw">match</span> <span class="ident">bytes</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
+            <span class="prelude-val">Some</span>(<span class="ident">end</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">bytes</span>[..<span class="ident">end</span>],
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">bytes</span>[..],
+        })
+    }
+
+    <span class="doccomment">/// Return the symbol table entry or auxiliary record at the given index and offset.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Pod</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">index</span>
+            .<span class="ident">checked_add</span>(<span class="ident">offset</span>)
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">symbols</span>.<span class="ident">get</span>(<span class="ident">x</span>))
             .<span class="ident">read_error</span>(<span class="string">&quot;Invalid COFF symbol index&quot;</span>)<span class="question-mark">?</span>;
         <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>.<span class="number">0</span>[..])
             .<span class="ident">read</span>()
@@ -550,9 +632,7 @@
         <span class="ident">f</span>: <span class="ident">F</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SymbolMap</span><span class="op">&lt;</span><span class="ident">Entry</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">symbols</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="self">self</span>.<span class="ident">symbols</span>.<span class="ident">len</span>());
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">i</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">symbol</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbol</span>(<span class="ident">i</span>) {
-            <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">symbol</span>.<span class="ident">number_of_aux_symbols</span> <span class="kw">as</span> <span class="ident">usize</span>;
+        <span class="kw">for</span> (<span class="kw">_</span>, <span class="ident">symbol</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">iter</span>() {
             <span class="kw">if</span> <span class="op">!</span><span class="ident">symbol</span>.<span class="ident">is_definition</span>() {
                 <span class="kw">continue</span>;
             }
@@ -561,6 +641,26 @@
             }
         }
         <span class="ident">SymbolMap</span>::<span class="ident">new</span>(<span class="ident">symbols</span>)
+    }
+}
+
+<span class="doccomment">/// An iterator for symbol entries in a COFF or PE file.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Yields the index and symbol structure for each symbol.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SymbolIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;table</span><span class="op">&gt;</span> {
+    <span class="ident">symbols</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;table</span> <span class="ident">SymbolTable</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+    <span class="ident">index</span>: <span class="ident">usize</span>,
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;table</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">SymbolIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;table</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> (<span class="ident">usize</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">pe</span>::<span class="ident">ImageSymbol</span>);
+
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">index</span>;
+        <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbols</span>.<span class="ident">symbol</span>(<span class="ident">index</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
+        <span class="self">self</span>.<span class="ident">index</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">symbol</span>.<span class="ident">number_of_aux_symbols</span> <span class="kw">as</span> <span class="ident">usize</span>;
+        <span class="prelude-val">Some</span>((<span class="ident">index</span>, <span class="ident">symbol</span>))
     }
 }
 
@@ -614,14 +714,28 @@
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
         }
     }
+
+    <span class="doccomment">/// Return true if the symbol has an auxiliary file name.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_aux_file_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">number_of_aux_symbols</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">storage_class</span> <span class="op">=</span><span class="op">=</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SYM_CLASS_FILE</span>
+    }
+
+    <span class="doccomment">/// Return true if the symbol has an auxiliary function symbol.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_aux_function</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">number_of_aux_symbols</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">derived_type</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SYM_DTYPE_FUNCTION</span>
+    }
+
+    <span class="doccomment">/// Return true if the symbol has an auxiliary section symbol.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_aux_section</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">number_of_aux_symbols</span> <span class="op">&gt;</span> <span class="number">0</span>
+            <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">storage_class</span> <span class="op">=</span><span class="op">=</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SYM_CLASS_STATIC</span>
+            <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">value</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>
+    }
 }
 
 <span class="doccomment">/// A symbol table of a `CoffFile`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSymbolTable</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="lifetime">&#39;data</span>: <span class="lifetime">&#39;file</span>,
-{
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSymbolTable</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffCommon</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
 }
 
@@ -649,10 +763,7 @@
 }
 
 <span class="doccomment">/// An iterator over the symbols of a `CoffFile`.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSymbolIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="lifetime">&#39;data</span>: <span class="lifetime">&#39;file</span>,
-{
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSymbolIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffCommon</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">index</span>: <span class="ident">usize</span>,
 }
@@ -680,10 +791,7 @@
 
 <span class="doccomment">/// A symbol of a `CoffFile`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSymbol</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="lifetime">&#39;data</span>: <span class="lifetime">&#39;file</span>,
-{
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CoffSymbol</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;file</span><span class="op">&gt;</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;file</span> <span class="ident">CoffCommon</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">index</span>: <span class="ident">SymbolIndex</span>,
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">symbol</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">pe</span>::<span class="ident">ImageSymbol</span>,
@@ -698,21 +806,10 @@
     }
 
     <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">storage_class</span> <span class="op">=</span><span class="op">=</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SYM_CLASS_FILE</span> {
-            <span class="comment">// The file name is in the following auxiliary symbol.</span>
-            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">number_of_aux_symbols</span> <span class="op">&gt;</span> <span class="number">0</span> {
-                <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="self">self</span>
-                    .<span class="ident">file</span>
-                    .<span class="ident">symbols</span>
-                    .<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageSymbolBytes</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span> <span class="op">+</span> <span class="number">1</span>)<span class="question-mark">?</span>;
-                <span class="comment">// The name is padded with nulls.</span>
-                <span class="kw">match</span> <span class="ident">s</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
-                    <span class="prelude-val">Some</span>(<span class="ident">end</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">s</span>.<span class="number">0</span>[..<span class="ident">end</span>],
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">s</span>.<span class="number">0</span>[..],
-                }
-            } <span class="kw">else</span> {
-                <span class="kw-2">&amp;</span>[][..]
-            }
+        <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">has_aux_file_name</span>() {
+            <span class="self">self</span>.<span class="ident">file</span>
+                .<span class="ident">symbols</span>
+                .<span class="ident">aux_file_name</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span>, <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">number_of_aux_symbols</span>)<span class="question-mark">?</span>
         } <span class="kw">else</span> {
             <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">name</span>(<span class="self">self</span>.<span class="ident">file</span>.<span class="ident">symbols</span>.<span class="ident">strings</span>())<span class="question-mark">?</span>
         };
@@ -744,12 +841,8 @@
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">storage_class</span> {
             <span class="ident">pe</span>::<span class="ident">IMAGE_SYM_CLASS_STATIC</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// Section symbols may duplicate the size from the section table.</span>
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">value</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">number_of_aux_symbols</span> <span class="op">&gt;</span> <span class="number">0</span> {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">aux</span>) <span class="op">=</span> <span class="self">self</span>
-                        .<span class="ident">file</span>
-                        .<span class="ident">symbols</span>
-                        .<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageAuxSymbolSection</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span> <span class="op">+</span> <span class="number">1</span>)
-                    {
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">has_aux_section</span>() {
+                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">aux</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">file</span>.<span class="ident">symbols</span>.<span class="ident">aux_section</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span>) {
                         <span class="ident">u64</span>::<span class="ident">from</span>(<span class="ident">aux</span>.<span class="ident">length</span>.<span class="ident">get</span>(<span class="ident">LE</span>))
                     } <span class="kw">else</span> {
                         <span class="number">0</span>
@@ -763,15 +856,9 @@
                     <span class="comment">// For undefined symbols, symbol.value is 0 and the size is 0.</span>
                     <span class="comment">// For common data, symbol.value is the size.</span>
                     <span class="ident">u64</span>::<span class="ident">from</span>(<span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">value</span>.<span class="ident">get</span>(<span class="ident">LE</span>))
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">derived_type</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SYM_DTYPE_FUNCTION</span>
-                    <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">number_of_aux_symbols</span> <span class="op">&gt;</span> <span class="number">0</span>
-                {
+                } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">has_aux_function</span>() {
                     <span class="comment">// Function symbols may have a size.</span>
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">aux</span>) <span class="op">=</span> <span class="self">self</span>
-                        .<span class="ident">file</span>
-                        .<span class="ident">symbols</span>
-                        .<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageAuxSymbolFunction</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span> <span class="op">+</span> <span class="number">1</span>)
-                    {
+                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">aux</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">file</span>.<span class="ident">symbols</span>.<span class="ident">aux_function</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span>) {
                         <span class="ident">u64</span>::<span class="ident">from</span>(<span class="ident">aux</span>.<span class="ident">total_size</span>.<span class="ident">get</span>(<span class="ident">LE</span>))
                     } <span class="kw">else</span> {
                         <span class="number">0</span>
@@ -826,7 +913,7 @@
                     <span class="ident">SymbolSection</span>::<span class="ident">Unknown</span>
                 }
             }
-            <span class="ident">index</span> <span class="kw">if</span> <span class="ident">index</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">SymbolSection</span>::<span class="ident">Section</span>(<span class="ident">SectionIndex</span>(<span class="ident">index</span> <span class="kw">as</span> <span class="ident">usize</span>)),
+            <span class="ident">index</span> <span class="kw">if</span> <span class="ident">index</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">SymbolSection</span>::<span class="ident">Section</span>(<span class="ident">SectionIndex</span>(<span class="ident">index</span>.<span class="ident">into</span>())),
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">SymbolSection</span>::<span class="ident">Unknown</span>,
         }
     }
@@ -880,15 +967,8 @@
     }
 
     <span class="kw">fn</span> <span class="ident">flags</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SymbolFlags</span><span class="op">&lt;</span><span class="ident">SectionIndex</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">storage_class</span> <span class="op">=</span><span class="op">=</span> <span class="ident">pe</span>::<span class="ident">IMAGE_SYM_CLASS_STATIC</span>
-            <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">value</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>
-            <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">number_of_aux_symbols</span> <span class="op">&gt;</span> <span class="number">0</span>
-        {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">aux</span>) <span class="op">=</span> <span class="self">self</span>
-                .<span class="ident">file</span>
-                .<span class="ident">symbols</span>
-                .<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">pe</span>::<span class="ident">ImageAuxSymbolSection</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span> <span class="op">+</span> <span class="number">1</span>)
-            {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">has_aux_section</span>() {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">aux</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">file</span>.<span class="ident">symbols</span>.<span class="ident">aux_section</span>(<span class="self">self</span>.<span class="ident">index</span>.<span class="number">0</span>) {
                 <span class="comment">// TODO: use high_number for bigobj</span>
                 <span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="ident">aux</span>.<span class="ident">number</span>.<span class="ident">get</span>(<span class="ident">LE</span>) <span class="kw">as</span> <span class="ident">usize</span>;
                 <span class="kw">return</span> <span class="ident">SymbolFlags</span>::<span class="ident">CoffSection</span> {

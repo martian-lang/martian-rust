@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/gimli-0.23.0/src/read/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/gimli-0.24.0/src/read/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../gimli/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
@@ -761,6 +761,12 @@
 <span id="758">758</span>
 <span id="759">759</span>
 <span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Read DWARF debugging information.</span>
 <span class="doccomment">//!</span>
@@ -781,7 +787,8 @@
 <span class="doccomment">//! // These closures should return a `Reader` instance (e.g. `EndianSlice`).</span>
 <span class="doccomment">//! let loader = |section: gimli::SectionId| { get_file_section_reader(section.name()) };</span>
 <span class="doccomment">//! let sup_loader = |section: gimli::SectionId| { get_sup_file_section_reader(section.name()) };</span>
-<span class="doccomment">//! let dwarf = gimli::Dwarf::load(loader, sup_loader)?;</span>
+<span class="doccomment">//! let mut dwarf = gimli::Dwarf::load(loader)?;</span>
+<span class="doccomment">//! dwarf.load_sup(sup_loader)?;</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! // Iterate over all compilation units.</span>
 <span class="doccomment">//! let mut iter = dwarf.units();</span>
@@ -915,8 +922,10 @@
 <span class="doccomment">//! fn find_sum_of_address_range_lengths(aranges: DebugAranges&lt;EndianSlice&lt;LittleEndian&gt;&gt;)</span>
 <span class="doccomment">//!     -&gt; gimli::Result&lt;u64&gt;</span>
 <span class="doccomment">//! {</span>
-<span class="doccomment">//!     // `DebugAranges::items` returns a `FallibleIterator`!</span>
-<span class="doccomment">//!     aranges.items()</span>
+<span class="doccomment">//!     // `DebugAranges::headers` returns a `FallibleIterator`!</span>
+<span class="doccomment">//!     aranges.headers()</span>
+<span class="doccomment">//!         // `flat_map` is provided by `FallibleIterator`!</span>
+<span class="doccomment">//!         .flat_map(|header| Ok(header.entries()))</span>
 <span class="doccomment">//!         // `map` is provided by `FallibleIterator`!</span>
 <span class="doccomment">//!         .map(|arange| Ok(arange.length()))</span>
 <span class="doccomment">//!         // `fold` is provided by `FallibleIterator`!</span>
@@ -1082,6 +1091,8 @@
     <span class="doccomment">/// An unrecognized operation was found while parsing a DWARF</span>
     <span class="doccomment">/// expression.</span>
     <span class="ident">InvalidExpression</span>(<span class="ident">constants</span>::<span class="ident">DwOp</span>),
+    <span class="doccomment">/// An unsupported operation was found while evaluating a DWARF expression.</span>
+    <span class="ident">UnsupportedEvaluation</span>,
     <span class="doccomment">/// The expression had a piece followed by an expression</span>
     <span class="doccomment">/// terminator without a piece.</span>
     <span class="ident">InvalidPiece</span>,
@@ -1232,6 +1243,7 @@
             <span class="ident">Error</span>::<span class="ident">NotEnoughStackItems</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;Not enough items on stack when evaluating expression&quot;</span>,
             <span class="ident">Error</span>::<span class="ident">TooManyIterations</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;Too many iterations to evaluate DWARF expression&quot;</span>,
             <span class="ident">Error</span>::<span class="ident">InvalidExpression</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;Invalid opcode in DWARF expression&quot;</span>,
+            <span class="ident">Error</span>::<span class="ident">UnsupportedEvaluation</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;Unsupported operation when evaluating expression&quot;</span>,
             <span class="ident">Error</span>::<span class="ident">InvalidPiece</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="string">&quot;DWARF expression has piece followed by non-piece expression at end&quot;</span>
             }

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.23.0/src/read/archive.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>archive.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.24.0/src/read/archive.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>archive.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../object/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
@@ -408,11 +408,38 @@
 <span id="405">405</span>
 <span id="406">406</span>
 <span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Support for archive files.</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">read</span>::{<span class="self">self</span>, <span class="ident">Error</span>, <span class="ident">ReadError</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">archive</span>, <span class="ident">Bytes</span>};
+<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
+
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">archive</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">read</span>::{<span class="self">self</span>, <span class="ident">Error</span>, <span class="ident">ReadError</span>, <span class="ident">ReadRef</span>};
 
 <span class="doccomment">/// The kind of archive format.</span>
 <span class="comment">// TODO: Gnu64 and Darwin64 (and Darwin for writing)</span>
@@ -430,31 +457,34 @@
 
 <span class="doccomment">/// A partially parsed archive file.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArchiveFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
-    <span class="ident">data</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArchiveFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="ident">data</span>: <span class="ident">R</span>,
+    <span class="ident">len</span>: <span class="ident">u64</span>,
+    <span class="ident">offset</span>: <span class="ident">u64</span>,
     <span class="ident">kind</span>: <span class="ident">ArchiveKind</span>,
-    <span class="ident">symbols</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
-    <span class="ident">names</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+    <span class="ident">symbols</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>],
+    <span class="ident">names</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>],
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="ident">ArchiveFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">ArchiveFile</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Parse the archive header and special members.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">Bytes</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tail</span> <span class="op">=</span> <span class="ident">data</span>;
-
-        <span class="kw">let</span> <span class="ident">magic</span> <span class="op">=</span> <span class="ident">tail</span>
-            .<span class="ident">read_bytes</span>(<span class="ident">archive</span>::<span class="ident">MAGIC</span>.<span class="ident">len</span>())
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">data</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">len</span>().<span class="ident">read_error</span>(<span class="string">&quot;Unknown archive length&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tail</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="kw">let</span> <span class="ident">magic</span> <span class="op">=</span> <span class="ident">data</span>
+            .<span class="ident">read_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tail</span>, <span class="ident">archive</span>::<span class="ident">MAGIC</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>)
             .<span class="ident">read_error</span>(<span class="string">&quot;Invalid archive size&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">magic</span>.<span class="number">0</span> <span class="op">!</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">archive</span>::<span class="ident">MAGIC</span>[..] {
+        <span class="kw">if</span> <span class="ident">magic</span> <span class="op">!</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">archive</span>::<span class="ident">MAGIC</span>[..] {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>(<span class="string">&quot;Unsupported archive identifier&quot;</span>));
         }
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">ArchiveFile</span> {
-            <span class="ident">data</span>: <span class="ident">tail</span>,
+            <span class="ident">data</span>,
+            <span class="ident">offset</span>: <span class="ident">tail</span>,
+            <span class="ident">len</span>,
             <span class="ident">kind</span>: <span class="ident">ArchiveKind</span>::<span class="ident">Unknown</span>,
-            <span class="ident">symbols</span>: <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]),
-            <span class="ident">names</span>: <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]),
+            <span class="ident">symbols</span>: <span class="kw-2">&amp;</span>[],
+            <span class="ident">names</span>: <span class="kw-2">&amp;</span>[],
         };
 
         <span class="comment">// The first few members may be special, so parse them.</span>
@@ -467,46 +497,46 @@
         <span class="comment">// - &quot;//&quot;: names table</span>
         <span class="comment">// BSD has:</span>
         <span class="comment">// - &quot;__.SYMDEF&quot; or &quot;__.SYMDEF SORTED&quot;: symbol table (optional)</span>
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">tail</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tail</span>, <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]))<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">&lt;</span> <span class="ident">len</span> {
+            <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="ident">data</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tail</span>, <span class="kw-2">&amp;</span>[])<span class="question-mark">?</span>;
             <span class="kw">if</span> <span class="ident">member</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;/&quot;</span> {
                 <span class="comment">// GNU symbol table (unless we later determine this is COFF).</span>
                 <span class="ident">file</span>.<span class="ident">kind</span> <span class="op">=</span> <span class="ident">ArchiveKind</span>::<span class="ident">Gnu</span>;
-                <span class="ident">file</span>.<span class="ident">symbols</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>;
-                <span class="ident">file</span>.<span class="ident">data</span> <span class="op">=</span> <span class="ident">tail</span>;
+                <span class="ident">file</span>.<span class="ident">symbols</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+                <span class="ident">file</span>.<span class="ident">offset</span> <span class="op">=</span> <span class="ident">tail</span>;
 
-                <span class="kw">if</span> <span class="op">!</span><span class="ident">tail</span>.<span class="ident">is_empty</span>() {
-                    <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tail</span>, <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]))<span class="question-mark">?</span>;
+                <span class="kw">if</span> <span class="ident">tail</span> <span class="op">&lt;</span> <span class="ident">len</span> {
+                    <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="ident">data</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tail</span>, <span class="kw-2">&amp;</span>[])<span class="question-mark">?</span>;
                     <span class="kw">if</span> <span class="ident">member</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;/&quot;</span> {
                         <span class="comment">// COFF linker member.</span>
                         <span class="ident">file</span>.<span class="ident">kind</span> <span class="op">=</span> <span class="ident">ArchiveKind</span>::<span class="ident">Coff</span>;
-                        <span class="ident">file</span>.<span class="ident">symbols</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>;
-                        <span class="ident">file</span>.<span class="ident">data</span> <span class="op">=</span> <span class="ident">tail</span>;
+                        <span class="ident">file</span>.<span class="ident">symbols</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+                        <span class="ident">file</span>.<span class="ident">offset</span> <span class="op">=</span> <span class="ident">tail</span>;
 
-                        <span class="kw">if</span> <span class="op">!</span><span class="ident">tail</span>.<span class="ident">is_empty</span>() {
-                            <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tail</span>, <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]))<span class="question-mark">?</span>;
+                        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">&lt;</span> <span class="ident">len</span> {
+                            <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="ident">data</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tail</span>, <span class="kw-2">&amp;</span>[])<span class="question-mark">?</span>;
                             <span class="kw">if</span> <span class="ident">member</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;//&quot;</span> {
                                 <span class="comment">// COFF names table.</span>
-                                <span class="ident">file</span>.<span class="ident">names</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>;
-                                <span class="ident">file</span>.<span class="ident">data</span> <span class="op">=</span> <span class="ident">tail</span>;
+                                <span class="ident">file</span>.<span class="ident">names</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+                                <span class="ident">file</span>.<span class="ident">offset</span> <span class="op">=</span> <span class="ident">tail</span>;
                             }
                         }
                     } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">member</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;//&quot;</span> {
                         <span class="comment">// GNU names table.</span>
-                        <span class="ident">file</span>.<span class="ident">names</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>;
-                        <span class="ident">file</span>.<span class="ident">data</span> <span class="op">=</span> <span class="ident">tail</span>;
+                        <span class="ident">file</span>.<span class="ident">names</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+                        <span class="ident">file</span>.<span class="ident">offset</span> <span class="op">=</span> <span class="ident">tail</span>;
                     }
                 }
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">member</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;//&quot;</span> {
                 <span class="comment">// GNU names table.</span>
                 <span class="ident">file</span>.<span class="ident">kind</span> <span class="op">=</span> <span class="ident">ArchiveKind</span>::<span class="ident">Gnu</span>;
-                <span class="ident">file</span>.<span class="ident">names</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>;
-                <span class="ident">file</span>.<span class="ident">data</span> <span class="op">=</span> <span class="ident">tail</span>;
+                <span class="ident">file</span>.<span class="ident">names</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+                <span class="ident">file</span>.<span class="ident">offset</span> <span class="op">=</span> <span class="ident">tail</span>;
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">member</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;__.SYMDEF&quot;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">member</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;__.SYMDEF SORTED&quot;</span> {
                 <span class="comment">// BSD symbol table.</span>
                 <span class="ident">file</span>.<span class="ident">kind</span> <span class="op">=</span> <span class="ident">ArchiveKind</span>::<span class="ident">Bsd</span>;
-                <span class="ident">file</span>.<span class="ident">symbols</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>;
-                <span class="ident">file</span>.<span class="ident">data</span> <span class="op">=</span> <span class="ident">tail</span>;
+                <span class="ident">file</span>.<span class="ident">symbols</span> <span class="op">=</span> <span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+                <span class="ident">file</span>.<span class="ident">offset</span> <span class="op">=</span> <span class="ident">tail</span>;
             } <span class="kw">else</span> {
                 <span class="comment">// TODO: This could still be a BSD file. We leave this as unknown for now.</span>
             }
@@ -524,9 +554,11 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This does not return special members.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">members</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ArchiveMemberIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">members</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ArchiveMemberIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span><span class="op">&gt;</span> {
         <span class="ident">ArchiveMemberIterator</span> {
             <span class="ident">data</span>: <span class="self">self</span>.<span class="ident">data</span>,
+            <span class="ident">offset</span>: <span class="self">self</span>.<span class="ident">offset</span>,
+            <span class="ident">len</span>: <span class="self">self</span>.<span class="ident">len</span>,
             <span class="ident">names</span>: <span class="self">self</span>.<span class="ident">names</span>,
         }
     }
@@ -534,21 +566,23 @@
 
 <span class="doccomment">/// An iterator over the members of an archive.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArchiveMemberIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
-    <span class="ident">data</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
-    <span class="ident">names</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArchiveMemberIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="ident">data</span>: <span class="ident">R</span>,
+    <span class="ident">offset</span>: <span class="ident">u64</span>,
+    <span class="ident">len</span>: <span class="ident">u64</span>,
+    <span class="ident">names</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>],
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">ArchiveMemberIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">ArchiveMemberIterator</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ArchiveMember</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">is_empty</span>() {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">offset</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">len</span> {
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
-        <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">data</span>, <span class="self">self</span>.<span class="ident">names</span>);
+        <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">ArchiveMember</span>::<span class="ident">parse</span>(<span class="self">self</span>.<span class="ident">data</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">offset</span>, <span class="self">self</span>.<span class="ident">names</span>);
         <span class="kw">if</span> <span class="ident">member</span>.<span class="ident">is_err</span>() {
-            <span class="self">self</span>.<span class="ident">data</span> <span class="op">=</span> <span class="ident">Bytes</span>(<span class="kw-2">&amp;</span>[]);
+            <span class="self">self</span>.<span class="ident">offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">len</span>;
         }
         <span class="prelude-val">Some</span>(<span class="ident">member</span>)
     }
@@ -559,29 +593,35 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArchiveMember</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
     <span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> <span class="ident">archive</span>::<span class="ident">Header</span>,
     <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>],
-    <span class="ident">data</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+    <span class="ident">offset</span>: <span class="ident">u64</span>,
+    <span class="ident">size</span>: <span class="ident">u64</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> <span class="ident">ArchiveMember</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Parse the archive member header, name, and file data.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This reads the extended name (if any) and adjusts the file size.</span>
-    <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>, <span class="ident">names</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">parse</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>(
+        <span class="ident">data</span>: <span class="ident">R</span>,
+        <span class="ident">offset</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">u64</span>,
+        <span class="ident">names</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>],
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">data</span>
-            .<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">archive</span>::<span class="ident">Header</span><span class="op">&gt;</span>()
+            .<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">archive</span>::<span class="ident">Header</span><span class="op">&gt;</span>(<span class="ident">offset</span>)
             .<span class="ident">read_error</span>(<span class="string">&quot;Invalid archive member header&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="ident">header</span>.<span class="ident">terminator</span> <span class="op">!</span><span class="op">=</span> <span class="ident">archive</span>::<span class="ident">TERMINATOR</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>(<span class="string">&quot;Invalid archive terminator&quot;</span>));
         }
 
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span>
-            <span class="ident">parse_usize_digits</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>.<span class="ident">size</span>, <span class="number">10</span>).<span class="ident">read_error</span>(<span class="string">&quot;Invalid archive member size&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file_data</span> <span class="op">=</span> <span class="ident">data</span>
-            .<span class="ident">read_bytes</span>(<span class="ident">size</span>)
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file_offset</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">offset</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file_size</span> <span class="op">=</span>
+            <span class="ident">parse_u64_digits</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>.<span class="ident">size</span>, <span class="number">10</span>).<span class="ident">read_error</span>(<span class="string">&quot;Invalid archive member size&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw-2">*</span><span class="ident">offset</span> <span class="op">=</span> <span class="ident">offset</span>
+            .<span class="ident">checked_add</span>(<span class="ident">file_size</span>)
             .<span class="ident">read_error</span>(<span class="string">&quot;Archive member size is too large&quot;</span>)<span class="question-mark">?</span>;
         <span class="comment">// Entries are padded to an even number of bytes.</span>
-        <span class="kw">if</span> (<span class="ident">size</span> <span class="op">&amp;</span> <span class="number">1</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">data</span>.<span class="ident">skip</span>(<span class="number">1</span>).<span class="ident">ok</span>();
+        <span class="kw">if</span> (<span class="ident">file_size</span> <span class="op">&amp;</span> <span class="number">1</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="kw-2">*</span><span class="ident">offset</span> <span class="op">=</span> <span class="ident">offset</span>.<span class="ident">saturating_add</span>(<span class="number">1</span>);
         }
 
         <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">header</span>.<span class="ident">name</span>[<span class="number">0</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;/&#39;</span> <span class="op">&amp;&amp;</span> (<span class="ident">header</span>.<span class="ident">name</span>[<span class="number">1</span>] <span class="kw">as</span> <span class="ident">char</span>).<span class="ident">is_digit</span>(<span class="number">10</span>) {
@@ -590,7 +630,7 @@
                 .<span class="ident">read_error</span>(<span class="string">&quot;Invalid archive extended name offset&quot;</span>)<span class="question-mark">?</span>
         } <span class="kw">else</span> <span class="kw">if</span> <span class="kw-2">&amp;</span><span class="ident">header</span>.<span class="ident">name</span>[..<span class="number">3</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&quot;#1/&quot;</span> <span class="op">&amp;&amp;</span> (<span class="ident">header</span>.<span class="ident">name</span>[<span class="number">3</span>] <span class="kw">as</span> <span class="ident">char</span>).<span class="ident">is_digit</span>(<span class="number">10</span>) {
             <span class="comment">// Read file name from the start of the file data.</span>
-            <span class="ident">parse_bsd_extended_name</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>.<span class="ident">name</span>[<span class="number">3</span>..], <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">file_data</span>)
+            <span class="ident">parse_bsd_extended_name</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>.<span class="ident">name</span>[<span class="number">3</span>..], <span class="ident">data</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">file_offset</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">file_size</span>)
                 .<span class="ident">read_error</span>(<span class="string">&quot;Invalid archive extended name length&quot;</span>)<span class="question-mark">?</span>
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">header</span>.<span class="ident">name</span>[<span class="number">0</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;/&#39;</span> {
             <span class="kw">let</span> <span class="ident">name_len</span> <span class="op">=</span>
@@ -606,7 +646,8 @@
         <span class="prelude-val">Ok</span>(<span class="ident">ArchiveMember</span> {
             <span class="ident">header</span>,
             <span class="ident">name</span>,
-            <span class="ident">data</span>: <span class="ident">file_data</span>,
+            <span class="ident">offset</span>: <span class="ident">file_offset</span>,
+            <span class="ident">size</span>: <span class="ident">file_size</span>,
         })
     }
 
@@ -626,37 +667,43 @@
 
     <span class="doccomment">/// Parse the file modification timestamp from the header.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">date</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="ident">parse_usize_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">date</span>, <span class="number">10</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">date</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
+        <span class="ident">parse_u64_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">date</span>, <span class="number">10</span>)
     }
 
     <span class="doccomment">/// Parse the user ID from the header.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">uid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="ident">parse_usize_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">uid</span>, <span class="number">10</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">uid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
+        <span class="ident">parse_u64_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">uid</span>, <span class="number">10</span>)
     }
 
     <span class="doccomment">/// Parse the group ID from the header.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="ident">parse_usize_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">gid</span>, <span class="number">10</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
+        <span class="ident">parse_u64_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">gid</span>, <span class="number">10</span>)
     }
 
     <span class="doccomment">/// Parse the file mode from the header.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="ident">parse_usize_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">mode</span>, <span class="number">8</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
+        <span class="ident">parse_u64_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">header</span>.<span class="ident">mode</span>, <span class="number">8</span>)
+    }
+
+    <span class="doccomment">/// Return the offset and size of the file data.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">file_range</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">u64</span>, <span class="ident">u64</span>) {
+        (<span class="self">self</span>.<span class="ident">offset</span>, <span class="self">self</span>.<span class="ident">size</span>)
     }
 
     <span class="doccomment">/// Return the file data.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>] {
-        <span class="self">self</span>.<span class="ident">data</span>.<span class="number">0</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">data</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">data</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">read</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+        <span class="ident">data</span>.<span class="ident">read_bytes_at</span>(<span class="self">self</span>.<span class="ident">offset</span>, <span class="self">self</span>.<span class="ident">size</span>)
+            .<span class="ident">read_error</span>(<span class="string">&quot;Archive member size is too large&quot;</span>)
     }
 }
 
 <span class="comment">// Ignores bytes starting from the first space.</span>
-<span class="kw">fn</span> <span class="ident">parse_usize_digits</span>(<span class="ident">digits</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">radix</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">parse_u64_digits</span>(<span class="ident">digits</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">radix</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">digits</span>
         .<span class="ident">iter</span>()
         .<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39; &#39;</span>)
@@ -665,41 +712,42 @@
     <span class="kw">if</span> <span class="ident">digits</span>.<span class="ident">is_empty</span>() {
         <span class="kw">return</span> <span class="prelude-val">None</span>;
     }
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">c</span> <span class="kw">in</span> <span class="ident">digits</span> {
         <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> (<span class="ident">c</span> <span class="kw">as</span> <span class="ident">char</span>).<span class="ident">to_digit</span>(<span class="ident">radix</span>)<span class="question-mark">?</span>;
         <span class="ident">result</span> <span class="op">=</span> <span class="ident">result</span>
-            .<span class="ident">checked_mul</span>(<span class="ident">radix</span> <span class="kw">as</span> <span class="ident">usize</span>)<span class="question-mark">?</span>
-            .<span class="ident">checked_add</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">usize</span>)<span class="question-mark">?</span>;
+            .<span class="ident">checked_mul</span>(<span class="ident">u64</span>::<span class="ident">from</span>(<span class="ident">radix</span>))<span class="question-mark">?</span>
+            .<span class="ident">checked_add</span>(<span class="ident">u64</span>::<span class="ident">from</span>(<span class="ident">x</span>))<span class="question-mark">?</span>;
     }
     <span class="prelude-val">Some</span>(<span class="ident">result</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">parse_sysv_extended_name</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>(
-    <span class="ident">digits</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
-    <span class="kw-2">mut</span> <span class="ident">names</span>: <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>], ()<span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">parse_usize_digits</span>(<span class="ident">digits</span>, <span class="number">10</span>).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
-    <span class="ident">names</span>.<span class="ident">skip</span>(<span class="ident">offset</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">names</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;/&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
-        <span class="prelude-val">Some</span>(<span class="ident">len</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">names</span>.<span class="ident">read_bytes</span>(<span class="ident">len</span>)<span class="question-mark">?</span>,
-        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">names</span>,
+<span class="kw">fn</span> <span class="ident">parse_sysv_extended_name</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>(<span class="ident">digits</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">names</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>], ()<span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">parse_u64_digits</span>(<span class="ident">digits</span>, <span class="number">10</span>).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">offset</span>.<span class="ident">try_into</span>().<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> ())<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">name_data</span> <span class="op">=</span> <span class="ident">names</span>.<span class="ident">get</span>(<span class="ident">offset</span>..).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">name_data</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;/&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
+        <span class="prelude-val">Some</span>(<span class="ident">len</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">name_data</span>[..<span class="ident">len</span>],
+        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">name_data</span>,
     };
-    <span class="prelude-val">Ok</span>(<span class="ident">name</span>.<span class="number">0</span>)
+    <span class="prelude-val">Ok</span>(<span class="ident">name</span>)
 }
 
 <span class="doccomment">/// Modifies `data` to start after the extended name.</span>
-<span class="kw">fn</span> <span class="ident">parse_bsd_extended_name</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>(
+<span class="kw">fn</span> <span class="ident">parse_bsd_extended_name</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span>, <span class="ident">R</span>: <span class="ident">ReadRef</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span><span class="op">&gt;</span>(
     <span class="ident">digits</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
-    <span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bytes</span><span class="op">&lt;</span><span class="lifetime">&#39;data</span><span class="op">&gt;</span>,
+    <span class="ident">data</span>: <span class="ident">R</span>,
+    <span class="ident">offset</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">u64</span>,
+    <span class="ident">size</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">u64</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;data</span> [<span class="ident">u8</span>], ()<span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">parse_usize_digits</span>(<span class="ident">digits</span>, <span class="number">10</span>).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_data</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">read_bytes</span>(<span class="ident">len</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">name_data</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
-        <span class="prelude-val">Some</span>(<span class="ident">len</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">name_data</span>.<span class="ident">read_bytes</span>(<span class="ident">len</span>)<span class="question-mark">?</span>,
+    <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">parse_u64_digits</span>(<span class="ident">digits</span>, <span class="number">10</span>).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
+    <span class="kw-2">*</span><span class="ident">size</span> <span class="op">=</span> <span class="ident">size</span>.<span class="ident">checked_sub</span>(<span class="ident">len</span>).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">name_data</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">read_bytes</span>(<span class="ident">offset</span>, <span class="ident">len</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">name_data</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
+        <span class="prelude-val">Some</span>(<span class="ident">len</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">name_data</span>[..<span class="ident">len</span>],
         <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">name_data</span>,
     };
-    <span class="prelude-val">Ok</span>(<span class="ident">name</span>.<span class="number">0</span>)
+    <span class="prelude-val">Ok</span>(<span class="ident">name</span>)
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -709,21 +757,21 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">kind</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;!&lt;arch&gt;\n&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Unknown</span>);
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\
             !&lt;arch&gt;\n\
             /                                               4         `\n\
             0000&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Gnu</span>);
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\
             !&lt;arch&gt;\n\
             //                                              4         `\n\
             0000&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Gnu</span>);
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\
@@ -732,28 +780,28 @@
             0000\
             //                                              4         `\n\
             0000&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Gnu</span>);
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\
             !&lt;arch&gt;\n\
             __.SYMDEF                                       4         `\n\
             0000&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Bsd</span>);
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\
             !&lt;arch&gt;\n\
             #1/9                                            13        `\n\
             __.SYMDEF0000&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Bsd</span>);
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\
             !&lt;arch&gt;\n\
             #1/16                                           20        `\n\
             __.SYMDEF SORTED0000&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Bsd</span>);
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\
@@ -764,7 +812,7 @@
             0000\
             //                                              4         `\n\
             0000&quot;</span>;
-        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Coff</span>);
     }
 
@@ -778,17 +826,18 @@
             odd\n\
             /0              0           0     0     644     4         `\n\
             even&quot;</span>;
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">data</span>[..];
         <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Gnu</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">members</span> <span class="op">=</span> <span class="ident">archive</span>.<span class="ident">members</span>();
 
         <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">members</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">name</span>(), <span class="string">b&quot;0123456789abcde&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(), <span class="string">b&quot;odd&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="string">b&quot;odd&quot;</span>[..]);
 
         <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">members</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">name</span>(), <span class="string">b&quot;0123456789abcdef&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(), <span class="string">b&quot;even&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="string">b&quot;even&quot;</span>[..]);
 
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">members</span>.<span class="ident">next</span>().<span class="ident">is_none</span>());
     }
@@ -801,17 +850,18 @@
             odd\n\
             #1/16           0           0     0     644     20        `\n\
             0123456789abcdefeven&quot;</span>;
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">data</span>[..];
         <span class="kw">let</span> <span class="ident">archive</span> <span class="op">=</span> <span class="ident">ArchiveFile</span>::<span class="ident">parse</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">archive</span>.<span class="ident">kind</span>(), <span class="ident">ArchiveKind</span>::<span class="ident">Unknown</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">members</span> <span class="op">=</span> <span class="ident">archive</span>.<span class="ident">members</span>();
 
         <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">members</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">name</span>(), <span class="string">b&quot;0123456789abcde&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(), <span class="string">b&quot;odd&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="string">b&quot;odd&quot;</span>[..]);
 
         <span class="kw">let</span> <span class="ident">member</span> <span class="op">=</span> <span class="ident">members</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">name</span>(), <span class="string">b&quot;0123456789abcdef&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(), <span class="string">b&quot;even&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">member</span>.<span class="ident">data</span>(<span class="ident">data</span>).<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="string">b&quot;even&quot;</span>[..]);
 
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">members</span>.<span class="ident">next</span>().<span class="ident">is_none</span>());
     }

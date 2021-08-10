@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.23.0/src/elf.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>elf.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.24.0/src/elf.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>elf.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../object/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
@@ -6026,6 +6026,37 @@
 <span id="6023">6023</span>
 <span id="6024">6024</span>
 <span id="6025">6025</span>
+<span id="6026">6026</span>
+<span id="6027">6027</span>
+<span id="6028">6028</span>
+<span id="6029">6029</span>
+<span id="6030">6030</span>
+<span id="6031">6031</span>
+<span id="6032">6032</span>
+<span id="6033">6033</span>
+<span id="6034">6034</span>
+<span id="6035">6035</span>
+<span id="6036">6036</span>
+<span id="6037">6037</span>
+<span id="6038">6038</span>
+<span id="6039">6039</span>
+<span id="6040">6040</span>
+<span id="6041">6041</span>
+<span id="6042">6042</span>
+<span id="6043">6043</span>
+<span id="6044">6044</span>
+<span id="6045">6045</span>
+<span id="6046">6046</span>
+<span id="6047">6047</span>
+<span id="6048">6048</span>
+<span id="6049">6049</span>
+<span id="6050">6050</span>
+<span id="6051">6051</span>
+<span id="6052">6052</span>
+<span id="6053">6053</span>
+<span id="6054">6054</span>
+<span id="6055">6055</span>
+<span id="6056">6056</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! ELF definitions.</span>
 <span class="doccomment">//!</span>
@@ -6477,8 +6508,8 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EM_R32C</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">162</span>;
 <span class="doccomment">/// NXP Semi. TriMedia</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EM_TRIMEDIA</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">163</span>;
-<span class="doccomment">/// QUALCOMM DSP6</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EM_QDSP6</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">164</span>;
+<span class="doccomment">/// QUALCOMM Hexagon</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EM_HEXAGON</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">164</span>;
 <span class="doccomment">/// Intel 8051 and variants</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EM_8051</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">165</span>;
 <span class="doccomment">/// STMicroelectronics STxP7x</span>
@@ -7153,16 +7184,28 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Endian</span><span class="op">&gt;</span> <span class="ident">Rela64</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">get_r_info</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">endian</span>: <span class="ident">E</span>, <span class="ident">is_mips64el</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">r_info</span>.<span class="ident">get</span>(<span class="ident">endian</span>);
+        <span class="kw">if</span> <span class="ident">is_mips64el</span> {
+            <span class="ident">t</span> <span class="op">=</span> (<span class="ident">t</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>)
+                <span class="op">|</span> ((<span class="ident">t</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="op">&amp;</span> <span class="number">0xff000000</span>)
+                <span class="op">|</span> ((<span class="ident">t</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">24</span>) <span class="op">&amp;</span> <span class="number">0x00ff0000</span>)
+                <span class="op">|</span> ((<span class="ident">t</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">40</span>) <span class="op">&amp;</span> <span class="number">0x0000ff00</span>)
+                <span class="op">|</span> ((<span class="ident">t</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">56</span>) <span class="op">&amp;</span> <span class="number">0x000000ff</span>);
+        }
+        <span class="ident">t</span>
+    }
+
     <span class="doccomment">/// Get the `r_sym` component of the `r_info` field.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">r_sym</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">endian</span>: <span class="ident">E</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
-        (<span class="self">self</span>.<span class="ident">r_info</span>.<span class="ident">get</span>(<span class="ident">endian</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">32</span>) <span class="kw">as</span> <span class="ident">u32</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">r_sym</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">endian</span>: <span class="ident">E</span>, <span class="ident">is_mips64el</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
+        (<span class="self">self</span>.<span class="ident">get_r_info</span>(<span class="ident">endian</span>, <span class="ident">is_mips64el</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">32</span>) <span class="kw">as</span> <span class="ident">u32</span>
     }
 
     <span class="doccomment">/// Get the `r_type` component of the `r_info` field.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">r_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">endian</span>: <span class="ident">E</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
-        (<span class="self">self</span>.<span class="ident">r_info</span>.<span class="ident">get</span>(<span class="ident">endian</span>) <span class="op">&amp;</span> <span class="number">0xffff_ffff</span>) <span class="kw">as</span> <span class="ident">u32</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">r_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">endian</span>: <span class="ident">E</span>, <span class="ident">is_mips64el</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
+        (<span class="self">self</span>.<span class="ident">get_r_info</span>(<span class="ident">endian</span>, <span class="ident">is_mips64el</span>) <span class="op">&amp;</span> <span class="number">0xffff_ffff</span>) <span class="kw">as</span> <span class="ident">u32</span>
     }
 
     <span class="doccomment">/// Calculate the `r_info` field given the `r_sym` and `r_type` components.</span>
@@ -10034,6 +10077,25 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">R_AARCH64_TLSDESC</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">1031</span>;
 <span class="doccomment">/// STT_GNU_IFUNC relocation.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">R_AARCH64_IRELATIVE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">1032</span>;
+
+<span class="comment">// AVR values for `Rel*::r_type`.</span>
+
+<span class="doccomment">/// Direct 32 bit</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">R_AVR_32</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">1</span>;
+<span class="doccomment">/// Direct 16 bit</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">R_AVR_16</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">4</span>;
+
+<span class="comment">// MSP430 values for `Rel*::r_type`.</span>
+
+<span class="doccomment">/// Direct 32 bit</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">R_MSP430_32</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">1</span>;
+<span class="doccomment">/// Direct 16 bit</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">R_MSP430_16_BYTE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">5</span>;
+
+<span class="comment">// Hexagon values for `Rel*::r_type`.</span>
+
+<span class="doccomment">/// Direct 32 bit</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">R_HEX_32</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">6</span>;
 
 <span class="comment">// ARM values for `Rel*::r_type`.</span>
 
