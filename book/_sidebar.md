@@ -7,6 +7,7 @@
 * [Stage Traits](content/stage.md)
 * [Associated types](content/associated_types.md)
 * [Chunks & Resources](content/resource.md)
+* [Disabling Stages](content/disabling.md)
 * [Unit Testing stages](content/testing.md)
 * [WIP Dealing with filetypes]()
 * [WIP Macros]()

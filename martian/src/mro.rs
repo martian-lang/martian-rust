@@ -477,7 +477,7 @@ macro_rules! mro_using {
         ///     threads = 16,
         /// )
         /// ```
-        #[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
+        #[derive(Debug, Default, Clone, Serialize, Deserialize)]
         pub struct MroUsing {
             $(pub $property: Option<$type>,)*
         }
@@ -513,7 +513,7 @@ macro_rules! mro_using {
                     return result;
                 }
                 $(
-                    if let Some($property) = self.$property {
+                    if let Some(ref $property) = self.$property {
                         writeln!(
                             &mut result,
                             "{key:<width$} = {value},",
@@ -530,7 +530,7 @@ macro_rules! mro_using {
     };
 }
 
-mro_using! {mem_gb: i16, threads: i16, vmem_gb: i16, volatile: Volatile}
+mro_using! {mem_gb: i16, threads: i16, vmem_gb: i16, volatile: Volatile, disabled: String}
 
 /// Input and outputs fields together
 #[derive(Debug, Default)]
@@ -995,6 +995,19 @@ mod tests {
             indoc!(
                 "
                 threads    = 2,
+            "
+            )
+        );
+
+        assert_eq!(
+            MroUsing {
+                disabled: Some(String::from("self.disabled")),
+                ..Default::default()
+            }
+            .mro_string_no_width(),
+            indoc!(
+                "
+                disabled = self.disabled,
             "
             )
         );

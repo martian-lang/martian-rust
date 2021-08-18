@@ -26,7 +26,7 @@ const INVALID_MRO_TYPE_ERROR: &str = r#""The usage of mro_type should be of form
 /// a stage struct, it derives the trait `MroMaker` to the stage struct, which lets you generate
 /// the mro corresponding to the stage.
 ///
-/// You can optionally specify `mem_gb`, `threads`, `vmem_gb` and `volatile` within this proc-macro.
+/// You can optionally specify `mem_gb`, `threads`, `vmem_gb`, `disable`, and `volatile` within this proc-macro.
 /// For example, use `#[make_mro(mem_gb = 4, threads = 2]` for setting `mem_gb` and `threads` that would
 /// appear in the `using()` section of the mro definition.
 ///
@@ -102,6 +102,7 @@ pub fn make_mro(
         },
         None => quote![volatile: None,],
     };
+    let disabled_quote = parsed_attr.disabled.map(|x| quote![disabled:Some(String::from(#x)),]).unwrap_or(quote![]);
     let using_attributes_fn = quote![
         fn using_attributes() -> ::martian::MroUsing {
             ::martian::MroUsing {
@@ -109,6 +110,7 @@ pub fn make_mro(
                 #threads_quote
                 #vmem_gb_quote
                 #volatile_quote
+                #disabled_quote
                 ..Default::default()
             }
         }
@@ -335,7 +337,7 @@ macro_rules! attr_parse {
             type Err = String;
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 // When we specify negative values, for e.g #[make_mro(threads = -4)]
-                // casting the attribute Tokenstream to String intoduces an additional
+                // casting the attribute Tokenstream to String introduces an additional
                 // space after `-`, i.e we get "threads=- 4". So we get rid of the
                 // whitespaces here
                 let s: String = s.split_whitespace().collect();
@@ -375,6 +377,7 @@ attr_parse!(
     threads: i16,
     vmem_gb: i16,
     volatile: Volatile,
+    disabled: String,
     stage_name: String
 );
 

@@ -30,7 +30,7 @@ fn test_main_only() {
     }
     pub struct SumSquares;
 
-    #[make_mro(mem_gb = 4, threads = 2)]
+    #[make_mro(mem_gb = 4, threads = 2, disabled=UPSTREAM_STAGE.disabled)]
     impl MartianMain for SumSquares {
         type StageInputs = SumSquaresStageInputs;
         type StageOutputs = SumSquaresStageOutputs;
@@ -60,6 +60,7 @@ fn test_main_only() {
     //             mem_gb: Some(4i16),
     //             threads: Some(2i16),
     //             volatile: None,
+    //             disabled: Some("UPSTREAM_STAGE.disabled"),
     //             ..Default::default()
     //         }
     //     }
