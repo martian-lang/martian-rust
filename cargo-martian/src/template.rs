@@ -190,7 +190,7 @@ pub fn new_stage(
     write!(f, "{}", stage_template).expect("Failed writing to file");
 }
 
-const ADAPTER_MAIN_TEMPLATE: &str = r#"
+const ADAPTER_MAIN_TEMPLATE: &str = r##"
 //! Martian-rust adapter {adapter}
 
 use serde::Deserialize;
@@ -240,10 +240,10 @@ fn main() -> Result<(), Error> {open}
         // run the stage
         let retcode = runner.run(args.arg_adapter);
         // return from the process
-        std::sys::exit(retcode);
+        std::process::exit(retcode);
     {close} else if args.cmd_mro {open}
         // Create the mro for all the stages in this adapter
-        martian_make_mro(args.flag_file, args.flag_rewrite, mro_registry)?;
+        martian_make_mro("# Header comment", args.flag_file, args.flag_rewrite, mro_registry)?;
     {close} else {open}
         // If you need custom commands, implement them here
         unimplemented!()
@@ -251,7 +251,7 @@ fn main() -> Result<(), Error> {open}
     
     Ok(())
 {close}
-"#;
+"##;
 
 const CARGO_TOML_ADDITION: &str = r#"
 docopt = "1.0"
