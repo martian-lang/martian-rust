@@ -689,9 +689,15 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
     // and the second part is the extension
     let parts = input.split(',').collect::<Vec<_>>();
     if parts.len() != 2 {
-        return syn::Error::new_spanned(item2, "The input to the martian_filetype! macro needs to be two items separated by a comma.\n\tThe first item is the struct name that will be generated and the second item is the filetype extension within double quotes.\n\tFor example martian_filetype! {TxtFile, \"txt\"}")
-            .to_compile_error()
-            .into();
+        return syn::Error::new_spanned(
+            item2,
+            "The input to the martian_filetype! macro needs to be two items separated by a comma.
+\tThe first item is the struct name that will be generated and the second item is
+\tthe filetype extension within double quotes.
+\tFor example, martian_filetype! {TxtFile, \"txt\"}",
+        )
+        .to_compile_error()
+        .into();
     }
     let struct_name = parts[0].trim();
     let extension = parts[1].trim();

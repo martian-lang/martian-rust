@@ -1,5 +1,5 @@
 error: The extension `"4txt"` in the martian_filetype! macro should be alphanumeric (internal dots(.) are okay) starting with an alphabet.
-Found invalid character `4` at position 0
+    Found invalid character `4` at position 0
  --> $DIR/test_number_extension.rs:3:20
   |
 3 | martian_filetype! {TxtFile, "4txt"}
