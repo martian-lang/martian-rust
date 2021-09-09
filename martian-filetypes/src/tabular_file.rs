@@ -3,7 +3,7 @@
 //! items of type `T`.
 //!
 //! ## Simple read/write example
-//! `CsvFile` implements `FileTypeIO<T>` for any type `T` which can be [de]serialized.
+//! `CsvFile` implements `FileTypeIO<T>` for any serializable type `T`.
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, tabular_file::CsvFile};
 //! use martian::Error;

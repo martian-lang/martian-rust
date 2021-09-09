@@ -12,7 +12,7 @@
 //! can be used to collect all the items in a `Vec<T>`
 //!
 //! ## Simple read/write example
-//! `BincodeFile` implements `FileTypeIO<T>` for any type `T` which can be [de]serialized.
+//! `BincodeFile` implements `FileTypeIO<T>` for any serializable type `T`.
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, bin_file::BincodeFile};
 //! use martian::Error;
@@ -40,7 +40,7 @@
 //! If the bincode file stores a list of items of type `T`, then the items can be read
 //! one at a time without reading the whole file into memory. A list of items
 //! of type `T` can also be incrementally written to a bincode file.
-//! `BincodeFile` implements `LazyFileTypeIO<T>` for any type `T` which can be [de]serialized.
+//! `BincodeFile` implements `LazyFileTypeIO<T>` for any serializable type `T`.
 //!
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};

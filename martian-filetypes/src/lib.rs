@@ -70,7 +70,7 @@
 //! If `F: FileTypeIO<T>`, then a concrete representation of type `T` can be written to [read from]
 //! disk. `MartianFiletype`s which implement this trait are called `Formats`. For example, we can
 //! define a `JsonFormat<F>`, which can write out any type `T` onto disk as json as long as T is
-//! [de]serializable and `F: FileStorage<T>`.
+//! serializable and `F: FileStorage<T>`.
 //!
 //! ```
 //! # use failure::Error;

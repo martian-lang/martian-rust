@@ -4,7 +4,7 @@
 //!
 //!
 //! ## Simple read/write example
-//! `JsonFile` implements `FileTypeIO<T>` for any type `T` which can be [de]serialized.
+//! `JsonFile` implements `FileTypeIO<T>` for any serializable type `T`.
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, json_file::JsonFile};
 //! use martian::Error;
@@ -32,11 +32,11 @@
 //! If the json file stores a list of items of type `T`, then the items can be read
 //! one at a time without reading the whole file into memory. A list of items
 //! of type `T` can also be incrementally written to a json file.
-//! `JsonFile` implements `LazyFileTypeIO<T>` for any type `T` which can be [de]serialized.
-//! The trade off is that lazy reading[writing] seems to be about ~10% slower compared to a
-//! single read[write] after collecting the values into a vector (which consumes
+//! `JsonFile` implements `LazyFileTypeIO<T>` for any serializable type `T`.
+//! The trade off is that lazy reading/writing seems to be about ~10% slower compared to a
+//! single read/write after collecting the values into a vector (which consumes
 //! more memory). The slight performance hit is likely because we need to allocate
-//! per read[write].
+//! per read/write.
 //!
 //! ### IMPORTANT
 //! It is stringly recommended to call **`finish()`** on a lazy writer to complete the writing.
