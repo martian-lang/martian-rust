@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/semver-1.0.4/src/parse.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parse.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/semver-1.0.4/src/parse.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parse.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../semver/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../semver/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -392,12 +391,12 @@
 <span id="389">389</span>
 <span id="390">390</span>
 <span id="391">391</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">backport</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">ErrorKind</span>, <span class="ident">Position</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">identifier</span>::<span class="ident">Identifier</span>;
+</pre><pre class="rust">
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::backport</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::error</span>::{<span class="ident">ErrorKind</span>, <span class="ident">Position</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::identifier::Identifier</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">BuildMetadata</span>, <span class="ident">Comparator</span>, <span class="ident">Op</span>, <span class="ident">Prerelease</span>, <span class="ident">Version</span>, <span class="ident">VersionReq</span>};
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
+<span class="kw">use</span> <span class="ident">core::str::FromStr</span>;
 
 <span class="doccomment">/// Error parsing a SemVer version or version requirement.</span>
 <span class="doccomment">///</span>
@@ -420,46 +419,46 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Version</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Major</span>;
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Major</span>;
         <span class="kw">let</span> (<span class="ident">major</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">numeric_identifier</span>(<span class="ident">text</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">dot</span>(<span class="ident">text</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
 
-        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Minor</span>;
+        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Minor</span>;
         <span class="kw">let</span> (<span class="ident">minor</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">numeric_identifier</span>(<span class="ident">text</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">dot</span>(<span class="ident">text</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
 
-        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Patch</span>;
+        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Patch</span>;
         <span class="kw">let</span> (<span class="ident">patch</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">numeric_identifier</span>(<span class="ident">text</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
 
         <span class="kw">if</span> <span class="ident">text</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Version</span>::<span class="ident">new</span>(<span class="ident">major</span>, <span class="ident">minor</span>, <span class="ident">patch</span>));
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Version::new</span>(<span class="ident">major</span>, <span class="ident">minor</span>, <span class="ident">patch</span>));
         }
 
         <span class="kw">let</span> (<span class="ident">pre</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">text</span>) <span class="op">=</span> <span class="ident">text</span>.<span class="ident">strip_prefix</span>(<span class="string">&#39;-&#39;</span>) {
-            <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Pre</span>;
+            <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Pre</span>;
             <span class="kw">let</span> (<span class="ident">pre</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">prerelease_identifier</span>(<span class="ident">text</span>)<span class="question-mark">?</span>;
             <span class="kw">if</span> <span class="ident">pre</span>.<span class="ident">is_empty</span>() {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">EmptySegment</span>(<span class="ident">pos</span>)));
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::EmptySegment</span>(<span class="ident">pos</span>)));
             }
             (<span class="ident">pre</span>, <span class="ident">text</span>)
         } <span class="kw">else</span> {
-            (<span class="ident">Prerelease</span>::<span class="ident">EMPTY</span>, <span class="ident">text</span>)
+            (<span class="ident">Prerelease::EMPTY</span>, <span class="ident">text</span>)
         };
 
         <span class="kw">let</span> (<span class="ident">build</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">text</span>) <span class="op">=</span> <span class="ident">text</span>.<span class="ident">strip_prefix</span>(<span class="string">&#39;+&#39;</span>) {
-            <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Build</span>;
+            <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Build</span>;
             <span class="kw">let</span> (<span class="ident">build</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">build_identifier</span>(<span class="ident">text</span>)<span class="question-mark">?</span>;
             <span class="kw">if</span> <span class="ident">build</span>.<span class="ident">is_empty</span>() {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">EmptySegment</span>(<span class="ident">pos</span>)));
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::EmptySegment</span>(<span class="ident">pos</span>)));
             }
             (<span class="ident">build</span>, <span class="ident">text</span>)
         } <span class="kw">else</span> {
-            (<span class="ident">BuildMetadata</span>::<span class="ident">EMPTY</span>, <span class="ident">text</span>)
+            (<span class="ident">BuildMetadata::EMPTY</span>, <span class="ident">text</span>)
         };
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">unexpected</span>) <span class="op">=</span> <span class="ident">text</span>.<span class="ident">chars</span>().<span class="ident">next</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedCharAfter</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedCharAfter</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)));
         }
 
         <span class="prelude-val">Ok</span>(<span class="ident">Version</span> {
@@ -475,23 +474,23 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">VersionReq</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">text</span>.<span class="ident">trim_start_matches</span>(<span class="string">&#39; &#39;</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">text</span>) <span class="op">=</span> <span class="ident">wildcard</span>(<span class="ident">text</span>) {
             <span class="kw">if</span> <span class="ident">text</span>.<span class="ident">trim_start_matches</span>(<span class="string">&#39; &#39;</span>).<span class="ident">is_empty</span>() {
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">no_const_vec_new</span>))]</span>
-                <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">VersionReq</span>::<span class="ident">STAR</span>);
+                <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">VersionReq::STAR</span>);
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">no_const_vec_new</span>)]</span> <span class="comment">// rustc &lt;1.39</span>
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">VersionReq</span> {
-                    <span class="ident">comparators</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
+                    <span class="ident">comparators</span>: <span class="ident">Vec::new</span>(),
                 });
             } <span class="kw">else</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedAfterWildcard</span>));
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedAfterWildcard</span>));
             }
         }
 
         <span class="kw">let</span> <span class="ident">depth</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">comparators</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">comparators</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">version_req</span>(<span class="ident">text</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">comparators</span>, <span class="ident">depth</span>)<span class="question-mark">?</span>;
         <span class="kw">unsafe</span> { <span class="ident">comparators</span>.<span class="ident">set_len</span>(<span class="ident">len</span>) }
         <span class="prelude-val">Ok</span>(<span class="ident">VersionReq</span> { <span class="ident">comparators</span> })
@@ -501,12 +500,12 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Comparator</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">text</span>.<span class="ident">trim_start_matches</span>(<span class="string">&#39; &#39;</span>);
         <span class="kw">let</span> (<span class="ident">comparator</span>, <span class="ident">pos</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">comparator</span>(<span class="ident">text</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="op">!</span><span class="ident">rest</span>.<span class="ident">is_empty</span>() {
             <span class="kw">let</span> <span class="ident">unexpected</span> <span class="op">=</span> <span class="ident">rest</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>();
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedCharAfter</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedCharAfter</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)));
         }
         <span class="prelude-val">Ok</span>(<span class="ident">comparator</span>)
     }
@@ -515,10 +514,10 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Prerelease</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">pre</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">prerelease_identifier</span>(<span class="ident">text</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="op">!</span><span class="ident">rest</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">IllegalCharacter</span>(<span class="ident">Position</span>::<span class="ident">Pre</span>)));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::IllegalCharacter</span>(<span class="ident">Position::Pre</span>)));
         }
         <span class="prelude-val">Ok</span>(<span class="ident">pre</span>)
     }
@@ -527,10 +526,10 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">BuildMetadata</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">build</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">build_identifier</span>(<span class="ident">text</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="op">!</span><span class="ident">rest</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">IllegalCharacter</span>(<span class="ident">Position</span>::<span class="ident">Build</span>)));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::IllegalCharacter</span>(<span class="ident">Position::Build</span>)));
         }
         <span class="prelude-val">Ok</span>(<span class="ident">build</span>)
     }
@@ -543,7 +542,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Op</span> {
-    <span class="kw">const</span> <span class="ident">DEFAULT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">Op</span>::<span class="ident">Caret</span>;
+    <span class="kw">const</span> <span class="ident">DEFAULT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">Op::Caret</span>;
 }
 
 <span class="kw">fn</span> <span class="ident">numeric_identifier</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">pos</span>: <span class="ident">Position</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>), <span class="ident">Error</span><span class="op">&gt;</span> {
@@ -555,14 +554,14 @@
             <span class="kw">break</span>;
         }
         <span class="kw">if</span> <span class="ident">value</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">len</span> <span class="op">&gt;</span> <span class="number">0</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">LeadingZero</span>(<span class="ident">pos</span>)));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::LeadingZero</span>(<span class="ident">pos</span>)));
         }
         <span class="kw">match</span> <span class="ident">value</span>
             .<span class="ident">checked_mul</span>(<span class="number">10</span>)
             .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">value</span>.<span class="ident">checked_add</span>((<span class="ident">digit</span> <span class="op">-</span> <span class="string">b&#39;0&#39;</span>) <span class="kw">as</span> <span class="ident">u64</span>))
         {
             <span class="prelude-val">Some</span>(<span class="ident">sum</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">sum</span>,
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">Overflow</span>(<span class="ident">pos</span>))),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::Overflow</span>(<span class="ident">pos</span>))),
         }
         <span class="ident">len</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
     }
@@ -570,9 +569,9 @@
     <span class="kw">if</span> <span class="ident">len</span> <span class="op">&gt;</span> <span class="number">0</span> {
         <span class="prelude-val">Ok</span>((<span class="ident">value</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="ident">len</span>..]))
     } <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">unexpected</span>) <span class="op">=</span> <span class="ident">input</span>[<span class="ident">len</span>..].<span class="ident">chars</span>().<span class="ident">next</span>() {
-        <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedChar</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)))
+        <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedChar</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)))
     } <span class="kw">else</span> {
-        <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEnd</span>(<span class="ident">pos</span>)))
+        <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedEnd</span>(<span class="ident">pos</span>)))
     }
 }
 
@@ -592,21 +591,21 @@
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">rest</span>) <span class="op">=</span> <span class="ident">input</span>.<span class="ident">strip_prefix</span>(<span class="string">&#39;.&#39;</span>) {
         <span class="prelude-val">Ok</span>(<span class="ident">rest</span>)
     } <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">unexpected</span>) <span class="op">=</span> <span class="ident">input</span>.<span class="ident">chars</span>().<span class="ident">next</span>() {
-        <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedCharAfter</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)))
+        <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedCharAfter</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)))
     } <span class="kw">else</span> {
-        <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEnd</span>(<span class="ident">pos</span>)))
+        <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedEnd</span>(<span class="ident">pos</span>)))
     }
 }
 
 <span class="kw">fn</span> <span class="ident">prerelease_identifier</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Prerelease</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>), <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">string</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">identifier</span>(<span class="ident">input</span>, <span class="ident">Position</span>::<span class="ident">Pre</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">identifier</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Identifier</span>::<span class="ident">new_unchecked</span>(<span class="ident">string</span>) };
+    <span class="kw">let</span> (<span class="ident">string</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">identifier</span>(<span class="ident">input</span>, <span class="ident">Position::Pre</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">identifier</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Identifier::new_unchecked</span>(<span class="ident">string</span>) };
     <span class="prelude-val">Ok</span>((<span class="ident">Prerelease</span> { <span class="ident">identifier</span> }, <span class="ident">rest</span>))
 }
 
 <span class="kw">fn</span> <span class="ident">build_identifier</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">BuildMetadata</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>), <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">string</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">identifier</span>(<span class="ident">input</span>, <span class="ident">Position</span>::<span class="ident">Build</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">identifier</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Identifier</span>::<span class="ident">new_unchecked</span>(<span class="ident">string</span>) };
+    <span class="kw">let</span> (<span class="ident">string</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">identifier</span>(<span class="ident">input</span>, <span class="ident">Position::Build</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">identifier</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Identifier::new_unchecked</span>(<span class="ident">string</span>) };
     <span class="prelude-val">Ok</span>((<span class="ident">BuildMetadata</span> { <span class="ident">identifier</span> }, <span class="ident">rest</span>))
 }
 
@@ -629,15 +628,15 @@
                     <span class="kw">if</span> <span class="ident">accumulated_len</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">boundary</span> <span class="op">!</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;.&#39;</span>) {
                         <span class="kw">return</span> <span class="prelude-val">Ok</span>((<span class="string">&quot;&quot;</span>, <span class="ident">input</span>));
                     } <span class="kw">else</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">EmptySegment</span>(<span class="ident">pos</span>)));
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::EmptySegment</span>(<span class="ident">pos</span>)));
                     }
                 }
-                <span class="kw">if</span> <span class="ident">pos</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Pre</span>
+                <span class="kw">if</span> <span class="ident">pos</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Position::Pre</span>
                     <span class="op">&amp;&amp;</span> <span class="ident">segment_len</span> <span class="op">&gt;</span> <span class="number">1</span>
                     <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">segment_has_nondigit</span>
                     <span class="op">&amp;&amp;</span> <span class="ident">input</span>[<span class="ident">accumulated_len</span>..].<span class="ident">starts_with</span>(<span class="string">&#39;0&#39;</span>)
                 {
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">LeadingZero</span>(<span class="ident">pos</span>)));
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::LeadingZero</span>(<span class="ident">pos</span>)));
                 }
                 <span class="ident">accumulated_len</span> <span class="op">+</span><span class="op">=</span> <span class="ident">segment_len</span>;
                 <span class="kw">if</span> <span class="ident">boundary</span> <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;.&#39;</span>) {
@@ -655,25 +654,25 @@
 <span class="kw">fn</span> <span class="ident">op</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Op</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>) {
     <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">as_bytes</span>();
     <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">0</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;=&#39;</span>) {
-        (<span class="ident">Op</span>::<span class="ident">Exact</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
+        (<span class="ident">Op::Exact</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
     } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">0</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;&gt;&#39;</span>) {
         <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">1</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;=&#39;</span>) {
-            (<span class="ident">Op</span>::<span class="ident">GreaterEq</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">2</span>..])
+            (<span class="ident">Op::GreaterEq</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">2</span>..])
         } <span class="kw">else</span> {
-            (<span class="ident">Op</span>::<span class="ident">Greater</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
+            (<span class="ident">Op::Greater</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
         }
     } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">0</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;&lt;&#39;</span>) {
         <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">1</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;=&#39;</span>) {
-            (<span class="ident">Op</span>::<span class="ident">LessEq</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">2</span>..])
+            (<span class="ident">Op::LessEq</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">2</span>..])
         } <span class="kw">else</span> {
-            (<span class="ident">Op</span>::<span class="ident">Less</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
+            (<span class="ident">Op::Less</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
         }
     } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">0</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;~&#39;</span>) {
-        (<span class="ident">Op</span>::<span class="ident">Tilde</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
+        (<span class="ident">Op::Tilde</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
     } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">0</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;^&#39;</span>) {
-        (<span class="ident">Op</span>::<span class="ident">Caret</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
+        (<span class="ident">Op::Caret</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">1</span>..])
     } <span class="kw">else</span> {
-        (<span class="ident">Op</span>::<span class="ident">DEFAULT</span>, <span class="ident">input</span>)
+        (<span class="ident">Op::DEFAULT</span>, <span class="ident">input</span>)
     }
 }
 
@@ -682,16 +681,16 @@
     <span class="kw">let</span> <span class="ident">default_op</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">text</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">text</span>.<span class="ident">trim_start_matches</span>(<span class="string">&#39; &#39;</span>);
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Major</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Major</span>;
     <span class="kw">let</span> (<span class="ident">major</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">numeric_identifier</span>(<span class="ident">text</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">has_wildcard</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
     <span class="kw">let</span> (<span class="ident">minor</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">text</span>) <span class="op">=</span> <span class="ident">text</span>.<span class="ident">strip_prefix</span>(<span class="string">&#39;.&#39;</span>) {
-        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Minor</span>;
+        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Minor</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">text</span>) <span class="op">=</span> <span class="ident">wildcard</span>(<span class="ident">text</span>) {
             <span class="ident">has_wildcard</span> <span class="op">=</span> <span class="bool-val">true</span>;
             <span class="kw">if</span> <span class="ident">default_op</span> {
-                <span class="ident">op</span> <span class="op">=</span> <span class="ident">Op</span>::<span class="ident">Wildcard</span>;
+                <span class="ident">op</span> <span class="op">=</span> <span class="ident">Op::Wildcard</span>;
             }
             (<span class="prelude-val">None</span>, <span class="ident">text</span>)
         } <span class="kw">else</span> {
@@ -703,14 +702,14 @@
     };
 
     <span class="kw">let</span> (<span class="ident">patch</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">text</span>) <span class="op">=</span> <span class="ident">text</span>.<span class="ident">strip_prefix</span>(<span class="string">&#39;.&#39;</span>) {
-        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Patch</span>;
+        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Patch</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">text</span>) <span class="op">=</span> <span class="ident">wildcard</span>(<span class="ident">text</span>) {
             <span class="kw">if</span> <span class="ident">default_op</span> {
-                <span class="ident">op</span> <span class="op">=</span> <span class="ident">Op</span>::<span class="ident">Wildcard</span>;
+                <span class="ident">op</span> <span class="op">=</span> <span class="ident">Op::Wildcard</span>;
             }
             (<span class="prelude-val">None</span>, <span class="ident">text</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">has_wildcard</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedAfterWildcard</span>));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnexpectedAfterWildcard</span>));
         } <span class="kw">else</span> {
             <span class="kw">let</span> (<span class="ident">patch</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">numeric_identifier</span>(<span class="ident">text</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
             (<span class="prelude-val">Some</span>(<span class="ident">patch</span>), <span class="ident">text</span>)
@@ -720,23 +719,23 @@
     };
 
     <span class="kw">let</span> (<span class="ident">pre</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="kw">if</span> <span class="ident">patch</span>.<span class="ident">is_some</span>() <span class="op">&amp;&amp;</span> <span class="ident">text</span>.<span class="ident">starts_with</span>(<span class="string">&#39;-&#39;</span>) {
-        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Pre</span>;
+        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Pre</span>;
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">text</span>[<span class="number">1</span>..];
         <span class="kw">let</span> (<span class="ident">pre</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">prerelease_identifier</span>(<span class="ident">text</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="ident">pre</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">EmptySegment</span>(<span class="ident">pos</span>)));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::EmptySegment</span>(<span class="ident">pos</span>)));
         }
         (<span class="ident">pre</span>, <span class="ident">text</span>)
     } <span class="kw">else</span> {
-        (<span class="ident">Prerelease</span>::<span class="ident">EMPTY</span>, <span class="ident">text</span>)
+        (<span class="ident">Prerelease::EMPTY</span>, <span class="ident">text</span>)
     };
 
     <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">patch</span>.<span class="ident">is_some</span>() <span class="op">&amp;&amp;</span> <span class="ident">text</span>.<span class="ident">starts_with</span>(<span class="string">&#39;+&#39;</span>) {
-        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">Build</span>;
+        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Position::Build</span>;
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">text</span>[<span class="number">1</span>..];
         <span class="kw">let</span> (<span class="ident">build</span>, <span class="ident">text</span>) <span class="op">=</span> <span class="ident">build_identifier</span>(<span class="ident">text</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="ident">build</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">EmptySegment</span>(<span class="ident">pos</span>)));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::EmptySegment</span>(<span class="ident">pos</span>)));
         }
         <span class="ident">text</span>
     } <span class="kw">else</span> {
@@ -769,12 +768,12 @@
         <span class="ident">text</span>.<span class="ident">trim_start_matches</span>(<span class="string">&#39; &#39;</span>)
     } <span class="kw">else</span> {
         <span class="kw">let</span> <span class="ident">unexpected</span> <span class="op">=</span> <span class="ident">text</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>();
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">ExpectedCommaFound</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)));
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::ExpectedCommaFound</span>(<span class="ident">pos</span>, <span class="ident">unexpected</span>)));
     };
 
     <span class="kw">const</span> <span class="ident">MAX_COMPARATORS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">32</span>;
     <span class="kw">if</span> <span class="ident">depth</span> <span class="op">+</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="ident">MAX_COMPARATORS</span> {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">ExcessiveComparators</span>));
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::ExcessiveComparators</span>));
     }
 
     <span class="comment">// Recurse to collect parsed Comparator objects on the stack. We perform a</span>
@@ -785,5 +784,4 @@
     <span class="prelude-val">Ok</span>(<span class="ident">len</span>)
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="semver"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="semver" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.1.6/src/reader.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>reader.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.1.6/src/reader.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>reader.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../csv/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../csv/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -2634,19 +2633,19 @@
 <span id="2631">2631</span>
 <span id="2632">2632</span>
 <span id="2633">2633</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">File</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="self">self</span>, <span class="ident">BufRead</span>, <span class="ident">Seek</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">result</span>;
+</pre><pre class="rust">
+<span class="kw">use</span> <span class="ident">std::fs::File</span>;
+<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">BufRead</span>, <span class="ident">Seek</span>};
+<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
+<span class="kw">use</span> <span class="ident">std::path::Path</span>;
+<span class="kw">use</span> <span class="ident">std::result</span>;
 
 <span class="kw">use</span> <span class="ident">csv_core</span>::{<span class="ident">Reader</span> <span class="kw">as</span> <span class="ident">CoreReader</span>, <span class="ident">ReaderBuilder</span> <span class="kw">as</span> <span class="ident">CoreReaderBuilder</span>};
-<span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">DeserializeOwned</span>;
+<span class="kw">use</span> <span class="ident">serde::de::DeserializeOwned</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">byte_record</span>::{<span class="ident">ByteRecord</span>, <span class="ident">Position</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>, <span class="ident">Utf8Error</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">string_record</span>::<span class="ident">StringRecord</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::byte_record</span>::{<span class="ident">ByteRecord</span>, <span class="ident">Position</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>, <span class="ident">Utf8Error</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::string_record::StringRecord</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Terminator</span>, <span class="ident">Trim</span>};
 
 <span class="doccomment">/// Builds a CSV reader with various configuration knobs.</span>
@@ -2674,8 +2673,8 @@
             <span class="ident">capacity</span>: <span class="number">8</span> <span class="op">*</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>),
             <span class="ident">flexible</span>: <span class="bool-val">false</span>,
             <span class="ident">has_headers</span>: <span class="bool-val">true</span>,
-            <span class="ident">trim</span>: <span class="ident">Trim</span>::<span class="ident">default</span>(),
-            <span class="ident">builder</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">CoreReaderBuilder</span>::<span class="ident">default</span>()),
+            <span class="ident">trim</span>: <span class="ident">Trim::default</span>(),
+            <span class="ident">builder</span>: <span class="ident">Box::new</span>(<span class="ident">CoreReaderBuilder::default</span>()),
         }
     }
 }
@@ -2712,7 +2711,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReaderBuilder</span> {
-        <span class="ident">ReaderBuilder</span>::<span class="ident">default</span>()
+        <span class="ident">ReaderBuilder::default</span>()
     }
 
     <span class="doccomment">/// Build a CSV parser from this configuration that reads data from the</span>
@@ -2738,7 +2737,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_path</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">Reader</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">File</span>::<span class="ident">open</span>(<span class="ident">path</span>)<span class="question-mark">?</span>))
+        <span class="prelude-val">Ok</span>(<span class="ident">Reader::new</span>(<span class="self">self</span>, <span class="ident">File::open</span>(<span class="ident">path</span>)<span class="question-mark">?</span>))
     }
 
     <span class="doccomment">/// Build a CSV parser from this configuration that reads data from `rdr`.</span>
@@ -2767,8 +2766,8 @@
     <span class="doccomment">///     Ok(())</span>
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_reader</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rdr</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">Reader</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">rdr</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_reader</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rdr</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+        <span class="ident">Reader::new</span>(<span class="self">self</span>, <span class="ident">rdr</span>)
     }
 
     <span class="doccomment">/// The field delimiter to use when parsing CSV.</span>
@@ -3349,7 +3348,7 @@
     <span class="doccomment">/// almost 500 bytes on the stack.</span>
     <span class="ident">core</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CoreReader</span><span class="op">&gt;</span>,
     <span class="doccomment">/// The underlying reader.</span>
-    <span class="ident">rdr</span>: <span class="ident">io</span>::<span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>,
+    <span class="ident">rdr</span>: <span class="ident">io::BufReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>,
     <span class="doccomment">/// Various state tracking.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// There is more state embedded in the `CoreReader`.</span>
@@ -3420,7 +3419,7 @@
     <span class="doccomment">/// The header, as raw bytes.</span>
     <span class="ident">byte_record</span>: <span class="ident">ByteRecord</span>,
     <span class="doccomment">/// The header, as valid UTF-8 (or a UTF-8 error).</span>
-    <span class="ident">string_record</span>: <span class="ident">result</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span>, <span class="ident">Utf8Error</span><span class="op">&gt;</span>,
+    <span class="ident">string_record</span>: <span class="ident">result::Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span>, <span class="ident">Utf8Error</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span> {
@@ -3446,27 +3445,27 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_path</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">from_path</span>(<span class="ident">path</span>)
+        <span class="ident">ReaderBuilder::new</span>().<span class="ident">from_path</span>(<span class="ident">path</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new CSV reader given a builder and a source of underlying</span>
     <span class="doccomment">/// bytes.</span>
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">builder</span>: <span class="kw-2">&amp;</span><span class="ident">ReaderBuilder</span>, <span class="ident">rdr</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
         <span class="ident">Reader</span> {
-            <span class="ident">core</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">builder</span>.<span class="ident">builder</span>.<span class="ident">build</span>()),
-            <span class="ident">rdr</span>: <span class="ident">io</span>::<span class="ident">BufReader</span>::<span class="ident">with_capacity</span>(<span class="ident">builder</span>.<span class="ident">capacity</span>, <span class="ident">rdr</span>),
+            <span class="ident">core</span>: <span class="ident">Box::new</span>(<span class="ident">builder</span>.<span class="ident">builder</span>.<span class="ident">build</span>()),
+            <span class="ident">rdr</span>: <span class="ident">io::BufReader::with_capacity</span>(<span class="ident">builder</span>.<span class="ident">capacity</span>, <span class="ident">rdr</span>),
             <span class="ident">state</span>: <span class="ident">ReaderState</span> {
                 <span class="ident">headers</span>: <span class="prelude-val">None</span>,
                 <span class="ident">has_headers</span>: <span class="ident">builder</span>.<span class="ident">has_headers</span>,
                 <span class="ident">flexible</span>: <span class="ident">builder</span>.<span class="ident">flexible</span>,
                 <span class="ident">trim</span>: <span class="ident">builder</span>.<span class="ident">trim</span>,
                 <span class="ident">first_field_count</span>: <span class="prelude-val">None</span>,
-                <span class="ident">cur_pos</span>: <span class="ident">Position</span>::<span class="ident">new</span>(),
+                <span class="ident">cur_pos</span>: <span class="ident">Position::new</span>(),
                 <span class="ident">first</span>: <span class="bool-val">false</span>,
                 <span class="ident">seeked</span>: <span class="bool-val">false</span>,
-                <span class="ident">eof</span>: <span class="ident">ReaderEofState</span>::<span class="ident">NotEof</span>,
+                <span class="ident">eof</span>: <span class="ident">ReaderEofState::NotEof</span>,
             },
         }
     }
@@ -3498,7 +3497,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_reader</span>(<span class="ident">rdr</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">from_reader</span>(<span class="ident">rdr</span>)
+        <span class="ident">ReaderBuilder::new</span>().<span class="ident">from_reader</span>(<span class="ident">rdr</span>)
     }
 
     <span class="doccomment">/// Returns a borrowed iterator over deserialized records.</span>
@@ -3689,7 +3688,7 @@
     <span class="kw">where</span>
         <span class="ident">D</span>: <span class="ident">DeserializeOwned</span>,
     {
-        <span class="ident">DeserializeRecordsIter</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">DeserializeRecordsIter::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns an owned iterator over deserialized records.</span>
@@ -3752,7 +3751,7 @@
     <span class="kw">where</span>
         <span class="ident">D</span>: <span class="ident">DeserializeOwned</span>,
     {
-        <span class="ident">DeserializeRecordsIntoIter</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">DeserializeRecordsIntoIter::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns a borrowed iterator over all records as strings.</span>
@@ -3789,7 +3788,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">records</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StringRecordsIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">StringRecordsIter</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">StringRecordsIter::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns an owned iterator over all records as strings.</span>
@@ -3829,7 +3828,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_records</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StringRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">StringRecordsIntoIter</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">StringRecordsIntoIter::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns a borrowed iterator over all records as raw bytes.</span>
@@ -3866,7 +3865,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">byte_records</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">ByteRecordsIter</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">ByteRecordsIter::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns an owned iterator over all records as raw bytes.</span>
@@ -3906,7 +3905,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_byte_records</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">ByteRecordsIntoIter</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">ByteRecordsIntoIter::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns a reference to the first row read by this parser.</span>
@@ -3965,15 +3964,15 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">headers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">StringRecord</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">headers</span>.<span class="ident">is_none</span>() {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">record</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">record</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
             <span class="self">self</span>.<span class="ident">read_byte_record_impl</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">record</span>)<span class="question-mark">?</span>;
             <span class="self">self</span>.<span class="ident">set_headers_impl</span>(<span class="prelude-val">Err</span>(<span class="ident">record</span>));
         }
         <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">headers</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>();
         <span class="kw">match</span> <span class="ident">headers</span>.<span class="ident">string_record</span> {
             <span class="prelude-val">Ok</span>(<span class="kw-2">ref</span> <span class="ident">record</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">record</span>),
-            <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">Utf8</span> {
-                <span class="ident">pos</span>: <span class="ident">headers</span>.<span class="ident">byte_record</span>.<span class="ident">position</span>().<span class="ident">map</span>(<span class="ident">Clone</span>::<span class="ident">clone</span>),
+            <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::Utf8</span> {
+                <span class="ident">pos</span>: <span class="ident">headers</span>.<span class="ident">byte_record</span>.<span class="ident">position</span>().<span class="ident">map</span>(<span class="ident">Clone::clone</span>),
                 <span class="ident">err</span>: <span class="ident">err</span>.<span class="ident">clone</span>(),
             })),
         }
@@ -4034,7 +4033,7 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">byte_headers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">ByteRecord</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">headers</span>.<span class="ident">is_none</span>() {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">record</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">record</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
             <span class="self">self</span>.<span class="ident">read_byte_record_impl</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">record</span>)<span class="question-mark">?</span>;
             <span class="self">self</span>.<span class="ident">set_headers_impl</span>(<span class="prelude-val">Err</span>(<span class="ident">record</span>));
         }
@@ -4105,7 +4104,7 @@
 
     <span class="kw">fn</span> <span class="ident">set_headers_impl</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">headers</span>: <span class="ident">result</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span>, <span class="ident">ByteRecord</span><span class="op">&gt;</span>,
+        <span class="ident">headers</span>: <span class="ident">result::Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span>, <span class="ident">ByteRecord</span><span class="op">&gt;</span>,
     ) {
         <span class="comment">// If we have string headers, then get byte headers. But if we have</span>
         <span class="comment">// byte headers, then get the string headers (or a UTF-8 error).</span>
@@ -4115,7 +4114,7 @@
                 (<span class="prelude-val">Ok</span>(<span class="ident">string</span>), <span class="ident">bytes</span>)
             }
             <span class="prelude-val">Err</span>(<span class="ident">bytes</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">match</span> <span class="ident">StringRecord</span>::<span class="ident">from_byte_record</span>(<span class="ident">bytes</span>.<span class="ident">clone</span>()) {
+                <span class="kw">match</span> <span class="ident">StringRecord::from_byte_record</span>(<span class="ident">bytes</span>.<span class="ident">clone</span>()) {
                     <span class="prelude-val">Ok</span>(<span class="ident">str_headers</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="prelude-val">Ok</span>(<span class="ident">str_headers</span>), <span class="ident">bytes</span>),
                     <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="prelude-val">Err</span>(<span class="ident">err</span>.<span class="ident">utf8_error</span>().<span class="ident">clone</span>()), <span class="ident">bytes</span>),
                 }
@@ -4262,11 +4261,11 @@
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ByteRecord</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
-        <span class="kw">use</span> <span class="ident">csv_core</span>::<span class="ident">ReadRecordResult</span>::<span class="kw-2">*</span>;
+        <span class="kw">use</span> <span class="ident">csv_core::ReadRecordResult</span>::<span class="kw-2">*</span>;
 
         <span class="ident">record</span>.<span class="ident">clear</span>();
         <span class="ident">record</span>.<span class="ident">set_position</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">cur_pos</span>.<span class="ident">clone</span>()));
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">!</span><span class="op">=</span> <span class="ident">ReaderEofState</span>::<span class="ident">NotEof</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">!</span><span class="op">=</span> <span class="ident">ReaderEofState::NotEof</span> {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
         }
         <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">outlen</span>, <span class="kw-2">mut</span> <span class="ident">endlen</span>) <span class="op">=</span> (<span class="number">0</span>, <span class="number">0</span>);
@@ -4274,7 +4273,7 @@
             <span class="kw">let</span> (<span class="ident">res</span>, <span class="ident">nin</span>, <span class="ident">nout</span>, <span class="ident">nend</span>) <span class="op">=</span> {
                 <span class="kw">let</span> <span class="ident">input_res</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rdr</span>.<span class="ident">fill_buf</span>();
                 <span class="kw">if</span> <span class="ident">input_res</span>.<span class="ident">is_err</span>() {
-                    <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState</span>::<span class="ident">IOError</span>;
+                    <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState::IOError</span>;
                 }
                 <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">input_res</span><span class="question-mark">?</span>;
                 <span class="kw">let</span> (<span class="ident">fields</span>, <span class="ident">ends</span>) <span class="op">=</span> <span class="ident">record</span>.<span class="ident">as_parts</span>();
@@ -4308,7 +4307,7 @@
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>);
                 }
                 <span class="ident">End</span> <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState</span>::<span class="ident">Eof</span>;
+                    <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState::Eof</span>;
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
                 }
             }
@@ -4388,7 +4387,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_done</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">!</span><span class="op">=</span> <span class="ident">ReaderEofState</span>::<span class="ident">NotEof</span>
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">!</span><span class="op">=</span> <span class="ident">ReaderEofState::NotEof</span>
     }
 
     <span class="doccomment">/// Returns true if and only if this reader has been configured to</span>
@@ -4416,7 +4415,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span> <span class="op">+</span> <span class="ident">io</span>::<span class="ident">Seek</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span> <span class="op">+</span> <span class="ident">io::Seek</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Seeks the underlying reader to the position given.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This comes with a few caveats:</span>
@@ -4485,11 +4484,11 @@
         <span class="kw">if</span> <span class="ident">pos</span>.<span class="ident">byte</span>() <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">cur_pos</span>.<span class="ident">byte</span>() {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
         }
-        <span class="self">self</span>.<span class="ident">rdr</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Start</span>(<span class="ident">pos</span>.<span class="ident">byte</span>()))<span class="question-mark">?</span>;
+        <span class="self">self</span>.<span class="ident">rdr</span>.<span class="ident">seek</span>(<span class="ident">io::SeekFrom::Start</span>(<span class="ident">pos</span>.<span class="ident">byte</span>()))<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">core</span>.<span class="ident">reset</span>();
         <span class="self">self</span>.<span class="ident">core</span>.<span class="ident">set_line</span>(<span class="ident">pos</span>.<span class="ident">line</span>());
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">cur_pos</span> <span class="op">=</span> <span class="ident">pos</span>;
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState</span>::<span class="ident">NotEof</span>;
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState::NotEof</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -4508,7 +4507,7 @@
     <span class="doccomment">/// Unlike `seek`, this will always cause an actual seek to be performed.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">seek_raw</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">seek_from</span>: <span class="ident">io</span>::<span class="ident">SeekFrom</span>,
+        <span class="ident">seek_from</span>: <span class="ident">io::SeekFrom</span>,
         <span class="ident">pos</span>: <span class="ident">Position</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">byte_headers</span>()<span class="question-mark">?</span>;
@@ -4517,7 +4516,7 @@
         <span class="self">self</span>.<span class="ident">core</span>.<span class="ident">reset</span>();
         <span class="self">self</span>.<span class="ident">core</span>.<span class="ident">set_line</span>(<span class="ident">pos</span>.<span class="ident">line</span>());
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">cur_pos</span> <span class="op">=</span> <span class="ident">pos</span>;
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState</span>::<span class="ident">NotEof</span>;
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">eof</span> <span class="op">=</span> <span class="ident">ReaderEofState::NotEof</span>;
         <span class="prelude-val">Ok</span>(())
     }
 }
@@ -4532,8 +4531,8 @@
                 <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">first_field_count</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">record</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>),
                 <span class="prelude-val">Some</span>(<span class="ident">expected</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">if</span> <span class="ident">record</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span> <span class="op">!</span><span class="op">=</span> <span class="ident">expected</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">UnequalLengths</span> {
-                            <span class="ident">pos</span>: <span class="ident">record</span>.<span class="ident">position</span>().<span class="ident">map</span>(<span class="ident">Clone</span>::<span class="ident">clone</span>),
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">ErrorKind::UnequalLengths</span> {
+                            <span class="ident">pos</span>: <span class="ident">record</span>.<span class="ident">position</span>().<span class="ident">map</span>(<span class="ident">Clone::clone</span>),
                             <span class="ident">expected_len</span>: <span class="ident">expected</span>,
                             <span class="ident">len</span>: <span class="ident">record</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>,
                         }));
@@ -4556,16 +4555,16 @@
     <span class="ident">_priv</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">DeserializeRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">DeserializeRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="kw-2">mut</span> <span class="ident">rdr</span>: <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DeserializeRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">rdr</span>.<span class="ident">state</span>.<span class="ident">has_headers</span> {
             <span class="prelude-val">None</span>
         } <span class="kw">else</span> {
-            <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">ok</span>().<span class="ident">map</span>(<span class="ident">Clone</span>::<span class="ident">clone</span>)
+            <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">ok</span>().<span class="ident">map</span>(<span class="ident">Clone::clone</span>)
         };
         <span class="ident">DeserializeRecordsIntoIter</span> {
             <span class="ident">rdr</span>: <span class="ident">rdr</span>,
-            <span class="ident">rec</span>: <span class="ident">StringRecord</span>::<span class="ident">new</span>(),
+            <span class="ident">rec</span>: <span class="ident">StringRecord::new</span>(),
             <span class="ident">headers</span>: <span class="ident">headers</span>,
             <span class="ident">_priv</span>: <span class="ident">PhantomData</span>,
         }
@@ -4587,7 +4586,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">Iterator</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">Iterator</span>
     <span class="kw">for</span> <span class="ident">DeserializeRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span>
 {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>;
@@ -4614,16 +4613,16 @@
     <span class="ident">_priv</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">DeserializeRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io::Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">DeserializeRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> <span class="kw-2">mut</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DeserializeRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">rdr</span>.<span class="ident">state</span>.<span class="ident">has_headers</span> {
             <span class="prelude-val">None</span>
         } <span class="kw">else</span> {
-            <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">ok</span>().<span class="ident">map</span>(<span class="ident">Clone</span>::<span class="ident">clone</span>)
+            <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">ok</span>().<span class="ident">map</span>(<span class="ident">Clone::clone</span>)
         };
         <span class="ident">DeserializeRecordsIter</span> {
             <span class="ident">rdr</span>: <span class="ident">rdr</span>,
-            <span class="ident">rec</span>: <span class="ident">StringRecord</span>::<span class="ident">new</span>(),
+            <span class="ident">rec</span>: <span class="ident">StringRecord::new</span>(),
             <span class="ident">headers</span>: <span class="ident">headers</span>,
             <span class="ident">_priv</span>: <span class="ident">PhantomData</span>,
         }
@@ -4640,7 +4639,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">Iterator</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io::Read</span>, <span class="ident">D</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">Iterator</span>
     <span class="kw">for</span> <span class="ident">DeserializeRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>, <span class="ident">D</span><span class="op">&gt;</span>
 {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>;
@@ -4660,9 +4659,9 @@
     <span class="ident">rec</span>: <span class="ident">StringRecord</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">StringRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">StringRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rdr</span>: <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StringRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">StringRecordsIntoIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">StringRecord</span>::<span class="ident">new</span>() }
+        <span class="ident">StringRecordsIntoIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">StringRecord::new</span>() }
     }
 
     <span class="doccomment">/// Return a reference to the underlying CSV reader.</span>
@@ -4681,7 +4680,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">StringRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">StringRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span><span class="op">&gt;</span><span class="op">&gt;</span> {
@@ -4702,9 +4701,9 @@
     <span class="ident">rec</span>: <span class="ident">StringRecord</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">StringRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">StringRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> <span class="kw-2">mut</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StringRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">StringRecordsIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">StringRecord</span>::<span class="ident">new</span>() }
+        <span class="ident">StringRecordsIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">StringRecord::new</span>() }
     }
 
     <span class="doccomment">/// Return a reference to the underlying CSV reader.</span>
@@ -4718,7 +4717,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">StringRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">StringRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StringRecord</span><span class="op">&gt;</span><span class="op">&gt;</span> {
@@ -4736,9 +4735,9 @@
     <span class="ident">rec</span>: <span class="ident">ByteRecord</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rdr</span>: <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">ByteRecordsIntoIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">ByteRecord</span>::<span class="ident">new</span>() }
+        <span class="ident">ByteRecordsIntoIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">ByteRecord::new</span>() }
     }
 
     <span class="doccomment">/// Return a reference to the underlying CSV reader.</span>
@@ -4757,7 +4756,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">ByteRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">ByteRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ByteRecord</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ByteRecord</span><span class="op">&gt;</span><span class="op">&gt;</span> {
@@ -4778,9 +4777,9 @@
     <span class="ident">rec</span>: <span class="ident">ByteRecord</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> <span class="kw-2">mut</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ByteRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="ident">ByteRecordsIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">ByteRecord</span>::<span class="ident">new</span>() }
+        <span class="ident">ByteRecordsIter</span> { <span class="ident">rdr</span>: <span class="ident">rdr</span>, <span class="ident">rec</span>: <span class="ident">ByteRecord::new</span>() }
     }
 
     <span class="doccomment">/// Return a reference to the underlying CSV reader.</span>
@@ -4794,7 +4793,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">ByteRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">ByteRecordsIter</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ByteRecord</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ByteRecord</span><span class="op">&gt;</span><span class="op">&gt;</span> {
@@ -4808,11 +4807,11 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+    <span class="kw">use</span> <span class="ident">std::io</span>;
 
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">byte_record</span>::<span class="ident">ByteRecord</span>;
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">ErrorKind</span>;
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">string_record</span>::<span class="ident">StringRecord</span>;
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::byte_record::ByteRecord</span>;
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::error::ErrorKind</span>;
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::string_record::StringRecord</span>;
 
     <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Position</span>, <span class="ident">ReaderBuilder</span>, <span class="ident">Trim</span>};
 
@@ -4820,11 +4819,11 @@
         <span class="ident">s</span>.<span class="ident">as_bytes</span>()
     }
     <span class="kw">fn</span> <span class="ident">s</span>(<span class="ident">b</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
-        ::<span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="ident">b</span>).<span class="ident">unwrap</span>()
+        <span class="ident">::std::str::from_utf8</span>(<span class="ident">b</span>).<span class="ident">unwrap</span>()
     }
 
     <span class="kw">fn</span> <span class="ident">newpos</span>(<span class="ident">byte</span>: <span class="ident">u64</span>, <span class="ident">line</span>: <span class="ident">u64</span>, <span class="ident">record</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Position</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">Position</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">Position::new</span>();
         <span class="ident">p</span>.<span class="ident">set_byte</span>(<span class="ident">byte</span>).<span class="ident">set_line</span>(<span class="ident">line</span>).<span class="ident">set_record</span>(<span class="ident">record</span>);
         <span class="ident">p</span>
     }
@@ -4833,118 +4832,118 @@
     <span class="kw">fn</span> <span class="ident">read_byte_record</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,\&quot;b,ar\&quot;,baz\nabc,mno,xyz&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span>
-            <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
+            <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;b,ar&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;baz&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;b,ar&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;baz&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;abc&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;mno&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;xyz&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;abc&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;mno&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;xyz&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_trimmed_records_and_headers</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,  bar,\tbaz\n  1,  2,  3\n1\t,\t,3\t\t&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>()
             .<span class="ident">has_headers</span>(<span class="bool-val">true</span>)
-            .<span class="ident">trim</span>(<span class="ident">Trim</span>::<span class="ident">All</span>)
+            .<span class="ident">trim</span>(<span class="ident">Trim::All</span>)
             .<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;1&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;2&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;3&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord</span>::<span class="ident">new</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;1&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;3&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;1&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;2&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;3&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord::new</span>();
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;1&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;3&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]);
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_trimmed_header</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,  bar,\tbaz\n  1,  2,  3\n1\t,\t,3\t\t&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>()
             .<span class="ident">has_headers</span>(<span class="bool-val">true</span>)
-            .<span class="ident">trim</span>(<span class="ident">Trim</span>::<span class="ident">Headers</span>)
+            .<span class="ident">trim</span>(<span class="ident">Trim::Headers</span>)
             .<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;  1&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;  2&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;  3&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;  1&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;  2&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;  3&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_trimed_header_invalid_utf8</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;foo,  b\xFFar,\tbaz\na,b,c\nd,e,f&quot;</span>[..];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>()
             .<span class="ident">has_headers</span>(<span class="bool-val">true</span>)
-            .<span class="ident">trim</span>(<span class="ident">Trim</span>::<span class="ident">Headers</span>)
+            .<span class="ident">trim</span>(<span class="ident">Trim::Headers</span>)
             .<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord::new</span>();
 
         <span class="comment">// force the headers to be read</span>
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>);
         <span class="comment">// Check the byte headers are trimmed</span>
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">byte_headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;b\xFFar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;b\xFFar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap_err</span>().<span class="ident">kind</span>() {
-            <span class="ident">ErrorKind</span>::<span class="ident">Utf8</span> { <span class="ident">pos</span>: <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">pos</span>), <span class="kw-2">ref</span> <span class="ident">err</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="ident">newpos</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>));
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">field</span>(), <span class="number">1</span>);
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">valid_up_to</span>(), <span class="number">3</span>);
+            <span class="ident">ErrorKind::Utf8</span> { <span class="ident">pos</span>: <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">pos</span>), <span class="kw-2">ref</span> <span class="ident">err</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="macro">assert_eq!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="ident">newpos</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>));
+                <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">field</span>(), <span class="number">1</span>);
+                <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">valid_up_to</span>(), <span class="number">3</span>);
             }
-            <span class="kw-2">ref</span> <span class="ident">err</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">err</span>),
+            <span class="kw-2">ref</span> <span class="ident">err</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">err</span>),
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_trimmed_records</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,  bar,\tbaz\n  1,  2,  3\n1\t,\t,3\t\t&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>()
             .<span class="ident">has_headers</span>(<span class="bool-val">true</span>)
-            .<span class="ident">trim</span>(<span class="ident">Trim</span>::<span class="ident">Fields</span>)
+            .<span class="ident">trim</span>(<span class="ident">Trim::Fields</span>)
             .<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;1&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;2&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;3&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;1&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;2&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;3&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">2</span>]));
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;  bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;\tbaz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;  bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;\tbaz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
     }
 
@@ -4952,47 +4951,47 @@
     <span class="kw">fn</span> <span class="ident">read_record_unequal_fails</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo\nbar,baz&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span>
-            <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
+            <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
 
         <span class="kw">match</span> <span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>) {
             <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">err</span>.<span class="ident">kind</span>() {
-                <span class="ident">ErrorKind</span>::<span class="ident">UnequalLengths</span> {
+                <span class="ident">ErrorKind::UnequalLengths</span> {
                     <span class="ident">expected_len</span>: <span class="number">1</span>,
                     <span class="kw-2">ref</span> <span class="ident">pos</span>,
                     <span class="ident">len</span>: <span class="number">2</span>,
                 } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="ident">newpos</span>(<span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>)));
+                    <span class="macro">assert_eq!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="ident">newpos</span>(<span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>)));
                 }
-                <span class="kw-2">ref</span> <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
+                <span class="kw-2">ref</span> <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
             },
-            <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
+            <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_record_unequal_ok</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo\nbar,baz&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>()
             .<span class="ident">has_headers</span>(<span class="bool-val">false</span>)
             .<span class="ident">flexible</span>(<span class="bool-val">true</span>)
             .<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">2</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;bar&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;baz&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">2</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;bar&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;baz&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">1</span>]));
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
     }
 
     <span class="comment">// This tests that even if we get a CSV error, we can continue reading</span>
@@ -5001,98 +5000,98 @@
     <span class="kw">fn</span> <span class="ident">read_record_unequal_continue</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo\nbar,baz\nquux&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span>
-            <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord</span>::<span class="ident">new</span>();
+            <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">ByteRecord::new</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
 
         <span class="kw">match</span> <span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>) {
             <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">err</span>.<span class="ident">kind</span>() {
-                <span class="kw-2">&amp;</span><span class="ident">ErrorKind</span>::<span class="ident">UnequalLengths</span> {
+                <span class="kw-2">&amp;</span><span class="ident">ErrorKind::UnequalLengths</span> {
                     <span class="ident">expected_len</span>: <span class="number">1</span>,
                     <span class="kw-2">ref</span> <span class="ident">pos</span>,
                     <span class="ident">len</span>: <span class="number">2</span>,
                 } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="ident">newpos</span>(<span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>)));
+                    <span class="macro">assert_eq!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="ident">newpos</span>(<span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>)));
                 }
-                <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
+                <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
             },
-            <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
+            <span class="ident">wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">wrong</span>),
         }
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;quux&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;quux&quot;</span>, <span class="ident">s</span>(<span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]));
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_byte_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_record_headers</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,bar,baz\na,b,c\nd,e,f&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">true</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">true</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord::new</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
 
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">byte_headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_record_headers_invalid_utf8</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;foo,b\xFFar,baz\na,b,c\nd,e,f&quot;</span>[..];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">true</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">true</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord::new</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
 
         <span class="comment">// Check that we can read the headers as raw bytes, but that</span>
         <span class="comment">// if we read them as strings, we get an appropriate UTF-8 error.</span>
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">byte_headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;b\xFFar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;b\xFFar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap_err</span>().<span class="ident">kind</span>() {
-            <span class="ident">ErrorKind</span>::<span class="ident">Utf8</span> { <span class="ident">pos</span>: <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">pos</span>), <span class="kw-2">ref</span> <span class="ident">err</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="ident">newpos</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>));
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">field</span>(), <span class="number">1</span>);
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">valid_up_to</span>(), <span class="number">1</span>);
+            <span class="ident">ErrorKind::Utf8</span> { <span class="ident">pos</span>: <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">pos</span>), <span class="kw-2">ref</span> <span class="ident">err</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="macro">assert_eq!</span>(<span class="ident">pos</span>, <span class="kw-2">&amp;</span><span class="ident">newpos</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>));
+                <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">field</span>(), <span class="number">1</span>);
+                <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">valid_up_to</span>(), <span class="number">1</span>);
             }
-            <span class="kw-2">ref</span> <span class="ident">err</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">err</span>),
+            <span class="kw-2">ref</span> <span class="ident">err</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;match failed, got {:?}&quot;</span>, <span class="ident">err</span>),
         }
     }
 
@@ -5100,81 +5099,81 @@
     <span class="kw">fn</span> <span class="ident">read_record_no_headers_before</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,bar,baz\na,b,c\nd,e,f&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span>
-            <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord</span>::<span class="ident">new</span>();
+            <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord::new</span>();
 
         {
             <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+            <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
         }
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_record_no_headers_after</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,bar,baz\na,b,c\nd,e,f&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span>
-            <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord</span>::<span class="ident">new</span>();
+            <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord::new</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
 
         <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">headers</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">0</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;bar&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">1</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">headers</span>[<span class="number">2</span>]);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">seek</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,bar,baz\na,b,c\nd,e,f\ng,h,i&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">from_reader</span>(<span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">data</span>));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>().<span class="ident">from_reader</span>(<span class="ident">io::Cursor::new</span>(<span class="ident">data</span>));
         <span class="ident">rdr</span>.<span class="ident">seek</span>(<span class="ident">newpos</span>(<span class="number">18</span>, <span class="number">3</span>, <span class="number">2</span>)).<span class="ident">unwrap</span>();
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">StringRecord::new</span>();
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">18</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">byte</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert_eq!</span>(<span class="number">18</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">byte</span>());
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;d&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">24</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">byte</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">4</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">line</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">record</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;g&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
+        <span class="macro">assert_eq!</span>(<span class="number">24</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">byte</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">4</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">line</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rdr</span>.<span class="ident">position</span>().<span class="ident">record</span>());
+        <span class="macro">assert!</span>(<span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">rec</span>.<span class="ident">len</span>());
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;g&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rec</span>[<span class="number">0</span>]);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">rdr</span>.<span class="ident">read_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rec</span>).<span class="ident">unwrap</span>());
     }
 
     <span class="comment">// Test that we can read headers after seeking even if the headers weren&#39;t</span>
@@ -5182,9 +5181,9 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">seek_headers_after</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,bar,baz\na,b,c\nd,e,f\ng,h,i&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">from_reader</span>(<span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">data</span>));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>().<span class="ident">from_reader</span>(<span class="ident">io::Cursor::new</span>(<span class="ident">data</span>));
         <span class="ident">rdr</span>.<span class="ident">seek</span>(<span class="ident">newpos</span>(<span class="number">18</span>, <span class="number">3</span>, <span class="number">2</span>)).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>(), <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;baz&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>(), <span class="macro">vec!</span>[<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;baz&quot;</span>]);
     }
 
     <span class="comment">// Test that we can read headers after seeking if the headers were read</span>
@@ -5192,10 +5191,10 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">seek_headers_before_after</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,bar,baz\na,b,c\nd,e,f\ng,h,i&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">from_reader</span>(<span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">data</span>));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>().<span class="ident">from_reader</span>(<span class="ident">io::Cursor::new</span>(<span class="ident">data</span>));
         <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>();
         <span class="ident">rdr</span>.<span class="ident">seek</span>(<span class="ident">newpos</span>(<span class="number">18</span>, <span class="number">3</span>, <span class="number">2</span>)).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">headers</span>, <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">headers</span>, <span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>());
     }
 
     <span class="comment">// Test that even if we didn&#39;t read headers before seeking, if we seek to</span>
@@ -5204,58 +5203,58 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">seek_headers_no_actual_seek</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">b</span>(<span class="string">&quot;foo,bar,baz\na,b,c\nd,e,f\ng,h,i&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">from_reader</span>(<span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">data</span>));
-        <span class="ident">rdr</span>.<span class="ident">seek</span>(<span class="ident">Position</span>::<span class="ident">new</span>()).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>()[<span class="number">0</span>]);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>().<span class="ident">from_reader</span>(<span class="ident">io::Cursor::new</span>(<span class="ident">data</span>));
+        <span class="ident">rdr</span>.<span class="ident">seek</span>(<span class="ident">Position::new</span>()).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>()[<span class="number">0</span>]);
     }
 
     <span class="comment">// Test that position info is reported correctly in absence of headers.</span>
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">positions_no_headers</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>()
             .<span class="ident">has_headers</span>(<span class="bool-val">false</span>)
             .<span class="ident">from_reader</span>(<span class="string">&quot;a,b,c\nx,y,z&quot;</span>.<span class="ident">as_bytes</span>())
             .<span class="ident">into_records</span>();
 
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>().<span class="ident">position</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">byte</span>(), <span class="number">0</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">line</span>(), <span class="number">1</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">record</span>(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">byte</span>(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">line</span>(), <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">record</span>(), <span class="number">0</span>);
 
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>().<span class="ident">position</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">byte</span>(), <span class="number">6</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">line</span>(), <span class="number">2</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">record</span>(), <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">byte</span>(), <span class="number">6</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">line</span>(), <span class="number">2</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">record</span>(), <span class="number">1</span>);
     }
 
     <span class="comment">// Test that position info is reported correctly with headers.</span>
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">positions_headers</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>()
             .<span class="ident">has_headers</span>(<span class="bool-val">true</span>)
             .<span class="ident">from_reader</span>(<span class="string">&quot;a,b,c\nx,y,z&quot;</span>.<span class="ident">as_bytes</span>())
             .<span class="ident">into_records</span>();
 
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>().<span class="ident">position</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">byte</span>(), <span class="number">6</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">line</span>(), <span class="number">2</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">pos</span>.<span class="ident">record</span>(), <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">byte</span>(), <span class="number">6</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">line</span>(), <span class="number">2</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">pos</span>.<span class="ident">record</span>(), <span class="number">1</span>);
     }
 
     <span class="comment">// Test that reading headers on empty data yields an empty record.</span>
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">headers_on_empty_data</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">from_reader</span>(<span class="string">&quot;&quot;</span>.<span class="ident">as_bytes</span>());
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">ReaderBuilder::new</span>().<span class="ident">from_reader</span>(<span class="string">&quot;&quot;</span>.<span class="ident">as_bytes</span>());
         <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">byte_headers</span>().<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">len</span>(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">r</span>.<span class="ident">len</span>(), <span class="number">0</span>);
     }
 
     <span class="comment">// Test that reading the first record on empty data works.</span>
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">no_headers_on_empty_data</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span>
-            <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="string">&quot;&quot;</span>.<span class="ident">as_bytes</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">records</span>().<span class="ident">count</span>(), <span class="number">0</span>);
+            <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="string">&quot;&quot;</span>.<span class="ident">as_bytes</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">rdr</span>.<span class="ident">records</span>().<span class="ident">count</span>(), <span class="number">0</span>);
     }
 
     <span class="comment">// Test that reading the first record on empty data works, even if</span>
@@ -5263,11 +5262,10 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">no_headers_on_empty_data_after_headers</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span>
-            <span class="ident">ReaderBuilder</span>::<span class="ident">new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="string">&quot;&quot;</span>.<span class="ident">as_bytes</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>().<span class="ident">len</span>(), <span class="number">0</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">records</span>().<span class="ident">count</span>(), <span class="number">0</span>);
+            <span class="ident">ReaderBuilder::new</span>().<span class="ident">has_headers</span>(<span class="bool-val">false</span>).<span class="ident">from_reader</span>(<span class="string">&quot;&quot;</span>.<span class="ident">as_bytes</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">rdr</span>.<span class="ident">headers</span>().<span class="ident">unwrap</span>().<span class="ident">len</span>(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">rdr</span>.<span class="ident">records</span>().<span class="ident">count</span>(), <span class="number">0</span>);
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="csv"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="csv" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

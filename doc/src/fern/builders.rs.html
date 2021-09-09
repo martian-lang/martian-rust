@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/fern-0.6.0/src/builders.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>builders.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/fern-0.6.0/src/builders.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>builders.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../fern/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../fern/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1454,26 +1453,26 @@
 <span id="1451">1451</span>
 <span id="1452">1452</span>
 <span id="1453">1453</span>
-</pre><div class="example-wrap"><pre class="rust ">
+</pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std</span>::{
-    <span class="ident">borrow</span>::<span class="ident">Cow</span>,
+    <span class="ident">borrow::Cow</span>,
     <span class="ident">cmp</span>, <span class="ident">fmt</span>, <span class="ident">fs</span>, <span class="ident">io</span>,
-    <span class="ident">io</span>::<span class="ident">Write</span>,
-    <span class="ident">sync</span>::{<span class="ident">mpsc</span>::<span class="ident">Sender</span>, <span class="ident">Arc</span>, <span class="ident">Mutex</span>},
+    <span class="ident">io::Write</span>,
+    <span class="ident">sync</span>::{<span class="ident">mpsc::Sender</span>, <span class="ident">Arc</span>, <span class="ident">Mutex</span>},
 };
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
+<span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
 
-<span class="kw">use</span> <span class="ident">log</span>::<span class="ident">Log</span>;
+<span class="kw">use</span> <span class="ident">log::Log</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">log_impl</span>, <span class="ident">Filter</span>, <span class="ident">FormatCallback</span>, <span class="ident">Formatter</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">log_impl</span>::<span class="ident">DateBasedState</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::log_impl::DateBasedState</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Syslog4Rfc3164Logger</span>, <span class="ident">Syslog4Rfc5424Logger</span>};
@@ -1555,8 +1554,8 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Dispatch</span> {
     <span class="ident">format</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Formatter</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">OutputInner</span><span class="op">&gt;</span>,
-    <span class="ident">default_level</span>: <span class="ident">log</span>::<span class="ident">LevelFilter</span>,
-    <span class="ident">levels</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">log</span>::<span class="ident">LevelFilter</span>)<span class="op">&gt;</span>,
+    <span class="ident">default_level</span>: <span class="ident">log::LevelFilter</span>,
+    <span class="ident">levels</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">log::LevelFilter</span>)<span class="op">&gt;</span>,
     <span class="ident">filters</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Filter</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
@@ -1571,8 +1570,8 @@
 <span class="doccomment">/// [`Dispatch::into_shared`]: struct.Dispatch.html#method.into_shared</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SharedDispatch</span> {
-    <span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">log_impl</span>::<span class="ident">Dispatch</span><span class="op">&gt;</span>,
-    <span class="ident">min_level</span>: <span class="ident">log</span>::<span class="ident">LevelFilter</span>,
+    <span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">log_impl::Dispatch</span><span class="op">&gt;</span>,
+    <span class="ident">min_level</span>: <span class="ident">log::LevelFilter</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Dispatch</span> {
@@ -1581,10 +1580,10 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Dispatch</span> {
             <span class="ident">format</span>: <span class="prelude-val">None</span>,
-            <span class="ident">children</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
-            <span class="ident">default_level</span>: <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>,
-            <span class="ident">levels</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
-            <span class="ident">filters</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
+            <span class="ident">children</span>: <span class="ident">Vec::new</span>(),
+            <span class="ident">default_level</span>: <span class="ident">log::LevelFilter::Trace</span>,
+            <span class="ident">levels</span>: <span class="ident">Vec::new</span>(),
+            <span class="ident">filters</span>: <span class="ident">Vec::new</span>(),
         }
     }
 
@@ -1624,9 +1623,9 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">format</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">formatter</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="ident">FormatCallback</span>, <span class="kw-2">&amp;</span><span class="ident">fmt</span>::<span class="ident">Arguments</span>, <span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Record</span>) <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="ident">FormatCallback</span>, <span class="kw-2">&amp;</span><span class="ident">fmt::Arguments</span>, <span class="kw-2">&amp;</span><span class="ident">log::Record</span>) <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
-        <span class="self">self</span>.<span class="ident">format</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">formatter</span>));
+        <span class="self">self</span>.<span class="ident">format</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Box::new</span>(<span class="ident">formatter</span>));
         <span class="self">self</span>
     }
 
@@ -1675,7 +1674,7 @@
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">level</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="ident">log</span>::<span class="ident">LevelFilter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">level</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="ident">log::LevelFilter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">default_level</span> <span class="op">=</span> <span class="ident">level</span>;
         <span class="self">self</span>
     }
@@ -1740,7 +1739,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">level_for</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(
         <span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">module</span>: <span class="ident">T</span>,
-        <span class="ident">level</span>: <span class="ident">log</span>::<span class="ident">LevelFilter</span>,
+        <span class="ident">level</span>: <span class="ident">log::LevelFilter</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">module</span> <span class="op">=</span> <span class="ident">module</span>.<span class="ident">into</span>();
 
@@ -1795,9 +1794,9 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">filter</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log::Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
-        <span class="self">self</span>.<span class="ident">filters</span>.<span class="ident">push</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">filter</span>));
+        <span class="self">self</span>.<span class="ident">filters</span>.<span class="ident">push</span>(<span class="ident">Box::new</span>(<span class="ident">filter</span>));
         <span class="self">self</span>
     }
 
@@ -1849,7 +1848,7 @@
         <span class="kw">let</span> (<span class="ident">min_level</span>, <span class="ident">dispatch</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">into_dispatch</span>();
 
         <span class="ident">SharedDispatch</span> {
-            <span class="ident">inner</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">dispatch</span>),
+            <span class="ident">inner</span>: <span class="ident">Arc::new</span>(<span class="ident">dispatch</span>),
             <span class="ident">min_level</span>,
         }
     }
@@ -1858,7 +1857,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This could probably be refactored, but having everything in one place</span>
     <span class="doccomment">/// is also nice.</span>
-    <span class="kw">fn</span> <span class="ident">into_dispatch</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">log</span>::<span class="ident">LevelFilter</span>, <span class="ident">log_impl</span>::<span class="ident">Dispatch</span>) {
+    <span class="kw">fn</span> <span class="ident">into_dispatch</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">log::LevelFilter</span>, <span class="ident">log_impl::Dispatch</span>) {
         <span class="kw">let</span> <span class="ident">Dispatch</span> {
             <span class="ident">format</span>,
             <span class="ident">children</span>,
@@ -1867,120 +1866,120 @@
             <span class="kw-2">mut</span> <span class="ident">filters</span>,
         } <span class="op">=</span> <span class="self">self</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Off</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Off</span>;
 
         <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">children</span>
             .<span class="ident">into_iter</span>()
             .<span class="ident">flat_map</span>(<span class="op">|</span><span class="ident">child</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">child</span> {
-                <span class="ident">OutputInner</span>::<span class="ident">Stdout</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Stdout</span>(<span class="ident">log_impl</span>::<span class="ident">Stdout</span> {
+                <span class="ident">OutputInner::Stdout</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Stdout</span>(<span class="ident">log_impl::Stdout</span> {
                         <span class="ident">stream</span>,
                         <span class="ident">line_sep</span>,
                     }))
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">Stderr</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Stderr</span>(<span class="ident">log_impl</span>::<span class="ident">Stderr</span> {
+                <span class="ident">OutputInner::Stderr</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Stderr</span>(<span class="ident">log_impl::Stderr</span> {
                         <span class="ident">stream</span>,
                         <span class="ident">line_sep</span>,
                     }))
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">File</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">File</span>(<span class="ident">log_impl</span>::<span class="ident">File</span> {
-                        <span class="ident">stream</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">BufWriter</span>::<span class="ident">new</span>(<span class="ident">stream</span>)),
+                <span class="ident">OutputInner::File</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::File</span>(<span class="ident">log_impl::File</span> {
+                        <span class="ident">stream</span>: <span class="ident">Mutex::new</span>(<span class="ident">io::BufWriter::new</span>(<span class="ident">stream</span>)),
                         <span class="ident">line_sep</span>,
                     }))
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">Writer</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Writer</span>(<span class="ident">log_impl</span>::<span class="ident">Writer</span> {
-                        <span class="ident">stream</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">stream</span>),
+                <span class="ident">OutputInner::Writer</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Writer</span>(<span class="ident">log_impl::Writer</span> {
+                        <span class="ident">stream</span>: <span class="ident">Mutex::new</span>(<span class="ident">stream</span>),
                         <span class="ident">line_sep</span>,
                     }))
                 }
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;reopen-03&quot;</span>))]</span>
-                <span class="ident">OutputInner</span>::<span class="ident">Reopen</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Reopen</span>(<span class="ident">log_impl</span>::<span class="ident">Reopen</span> {
-                        <span class="ident">stream</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">stream</span>),
+                <span class="ident">OutputInner::Reopen</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Reopen</span>(<span class="ident">log_impl::Reopen</span> {
+                        <span class="ident">stream</span>: <span class="ident">Mutex::new</span>(<span class="ident">stream</span>),
                         <span class="ident">line_sep</span>,
                     }))
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">Sender</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Sender</span>(<span class="ident">log_impl</span>::<span class="ident">Sender</span> {
-                        <span class="ident">stream</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">stream</span>),
+                <span class="ident">OutputInner::Sender</span> { <span class="ident">stream</span>, <span class="ident">line_sep</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Sender</span>(<span class="ident">log_impl::Sender</span> {
+                        <span class="ident">stream</span>: <span class="ident">Mutex::new</span>(<span class="ident">stream</span>),
                         <span class="ident">line_sep</span>,
                     }))
                 }
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-3&quot;</span>))]</span>
-                <span class="ident">OutputInner</span>::<span class="ident">Syslog3</span>(<span class="ident">log</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Syslog3</span>(<span class="ident">log_impl</span>::<span class="ident">Syslog3</span> { <span class="ident">inner</span>: <span class="ident">log</span> }))
+                <span class="ident">OutputInner::Syslog3</span>(<span class="ident">log</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Syslog3</span>(<span class="ident">log_impl::Syslog3</span> { <span class="ident">inner</span>: <span class="ident">log</span> }))
                 }
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
-                <span class="ident">OutputInner</span>::<span class="ident">Syslog4Rfc3164</span>(<span class="ident">logger</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Syslog4Rfc3164</span>(<span class="ident">log_impl</span>::<span class="ident">Syslog4Rfc3164</span> {
-                        <span class="ident">inner</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">logger</span>),
+                <span class="ident">OutputInner::Syslog4Rfc3164</span>(<span class="ident">logger</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Syslog4Rfc3164</span>(<span class="ident">log_impl::Syslog4Rfc3164</span> {
+                        <span class="ident">inner</span>: <span class="ident">Mutex::new</span>(<span class="ident">logger</span>),
                     }))
                 }
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
-                <span class="ident">OutputInner</span>::<span class="ident">Syslog4Rfc5424</span> { <span class="ident">logger</span>, <span class="ident">transform</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Syslog4Rfc5424</span>(<span class="ident">log_impl</span>::<span class="ident">Syslog4Rfc5424</span> {
-                        <span class="ident">inner</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">logger</span>),
+                <span class="ident">OutputInner::Syslog4Rfc5424</span> { <span class="ident">logger</span>, <span class="ident">transform</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Syslog4Rfc5424</span>(<span class="ident">log_impl::Syslog4Rfc5424</span> {
+                        <span class="ident">inner</span>: <span class="ident">Mutex::new</span>(<span class="ident">logger</span>),
                         <span class="ident">transform</span>,
                     }))
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">Panic</span> <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Panic</span>(<span class="ident">log_impl</span>::<span class="ident">Panic</span>))
+                <span class="ident">OutputInner::Panic</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Panic</span>(<span class="ident">log_impl::Panic</span>))
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">Dispatch</span>(<span class="ident">child_dispatch</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">OutputInner::Dispatch</span>(<span class="ident">child_dispatch</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> (<span class="ident">child_level</span>, <span class="ident">child</span>) <span class="op">=</span> <span class="ident">child_dispatch</span>.<span class="ident">into_dispatch</span>();
-                    <span class="kw">if</span> <span class="ident">child_level</span> <span class="op">&gt;</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Off</span> {
-                        <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">max</span>(<span class="ident">max_child_level</span>, <span class="ident">child_level</span>);
-                        <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">Dispatch</span>(<span class="ident">child</span>))
+                    <span class="kw">if</span> <span class="ident">child_level</span> <span class="op">&gt;</span> <span class="ident">log::LevelFilter::Off</span> {
+                        <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">cmp::max</span>(<span class="ident">max_child_level</span>, <span class="ident">child_level</span>);
+                        <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::Dispatch</span>(<span class="ident">child</span>))
                     } <span class="kw">else</span> {
                         <span class="prelude-val">None</span>
                     }
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">SharedDispatch</span>(<span class="ident">child_dispatch</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">OutputInner::SharedDispatch</span>(<span class="ident">child_dispatch</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">SharedDispatch</span> {
                         <span class="ident">inner</span>: <span class="ident">child</span>,
                         <span class="ident">min_level</span>: <span class="ident">child_level</span>,
                     } <span class="op">=</span> <span class="ident">child_dispatch</span>;
 
-                    <span class="kw">if</span> <span class="ident">child_level</span> <span class="op">&gt;</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Off</span> {
-                        <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">max</span>(<span class="ident">max_child_level</span>, <span class="ident">child_level</span>);
-                        <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">SharedDispatch</span>(<span class="ident">child</span>))
+                    <span class="kw">if</span> <span class="ident">child_level</span> <span class="op">&gt;</span> <span class="ident">log::LevelFilter::Off</span> {
+                        <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">cmp::max</span>(<span class="ident">max_child_level</span>, <span class="ident">child_level</span>);
+                        <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::SharedDispatch</span>(<span class="ident">child</span>))
                     } <span class="kw">else</span> {
                         <span class="prelude-val">None</span>
                     }
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">OtherBoxed</span>(<span class="ident">child_log</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">OtherBoxed</span>(<span class="ident">child_log</span>))
+                <span class="ident">OutputInner::OtherBoxed</span>(<span class="ident">child_log</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::OtherBoxed</span>(<span class="ident">child_log</span>))
                 }
-                <span class="ident">OutputInner</span>::<span class="ident">OtherStatic</span>(<span class="ident">child_log</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">OtherStatic</span>(<span class="ident">child_log</span>))
+                <span class="ident">OutputInner::OtherStatic</span>(<span class="ident">child_log</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::OtherStatic</span>(<span class="ident">child_log</span>))
                 }
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
-                <span class="ident">OutputInner</span>::<span class="ident">DateBased</span> { <span class="ident">config</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Trace</span>;
+                <span class="ident">OutputInner::DateBased</span> { <span class="ident">config</span> } <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">max_child_level</span> <span class="op">=</span> <span class="ident">log::LevelFilter::Trace</span>;
 
-                    <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">log_impl</span>::<span class="ident">DateBasedConfig</span>::<span class="ident">new</span>(
+                    <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">log_impl::DateBasedConfig::new</span>(
                         <span class="ident">config</span>.<span class="ident">line_sep</span>,
                         <span class="ident">config</span>.<span class="ident">file_prefix</span>,
                         <span class="ident">config</span>.<span class="ident">file_suffix</span>,
                         <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">utc_time</span> {
-                            <span class="ident">log_impl</span>::<span class="ident">ConfiguredTimezone</span>::<span class="ident">Utc</span>
+                            <span class="ident">log_impl::ConfiguredTimezone::Utc</span>
                         } <span class="kw">else</span> {
-                            <span class="ident">log_impl</span>::<span class="ident">ConfiguredTimezone</span>::<span class="ident">Local</span>
+                            <span class="ident">log_impl::ConfiguredTimezone::Local</span>
                         },
                     );
 
@@ -1989,9 +1988,9 @@
                     <span class="comment">// ignore errors - we&#39;ll just retry later.</span>
                     <span class="kw">let</span> <span class="ident">initial_file</span> <span class="op">=</span> <span class="ident">config</span>.<span class="ident">open_current_log_file</span>(<span class="kw-2">&amp;</span><span class="ident">computed_suffix</span>).<span class="ident">ok</span>();
 
-                    <span class="prelude-val">Some</span>(<span class="ident">log_impl</span>::<span class="ident">Output</span>::<span class="ident">DateBased</span>(<span class="ident">log_impl</span>::<span class="ident">DateBased</span> {
+                    <span class="prelude-val">Some</span>(<span class="ident">log_impl::Output::DateBased</span>(<span class="ident">log_impl::DateBased</span> {
                         <span class="ident">config</span>,
-                        <span class="ident">state</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">DateBasedState</span>::<span class="ident">new</span>(<span class="ident">computed_suffix</span>, <span class="ident">initial_file</span>)),
+                        <span class="ident">state</span>: <span class="ident">Mutex::new</span>(<span class="ident">DateBasedState::new</span>(<span class="ident">computed_suffix</span>, <span class="ident">initial_file</span>)),
                     }))
                 }
             })
@@ -2001,12 +2000,12 @@
             .<span class="ident">iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="number">1</span>)
             .<span class="ident">max</span>()
-            .<span class="ident">map_or</span>(<span class="ident">default_level</span>, <span class="op">|</span><span class="ident">lvl</span><span class="op">|</span> <span class="ident">cmp</span>::<span class="ident">max</span>(<span class="ident">lvl</span>, <span class="ident">default_level</span>));
-        <span class="kw">let</span> <span class="ident">real_min</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">min_level</span>, <span class="ident">max_child_level</span>);
+            .<span class="ident">map_or</span>(<span class="ident">default_level</span>, <span class="op">|</span><span class="ident">lvl</span><span class="op">|</span> <span class="ident">cmp::max</span>(<span class="ident">lvl</span>, <span class="ident">default_level</span>));
+        <span class="kw">let</span> <span class="ident">real_min</span> <span class="op">=</span> <span class="ident">cmp::min</span>(<span class="ident">min_level</span>, <span class="ident">max_child_level</span>);
 
         <span class="ident">filters</span>.<span class="ident">shrink_to_fit</span>();
 
-        <span class="kw">let</span> <span class="ident">dispatch</span> <span class="op">=</span> <span class="ident">log_impl</span>::<span class="ident">Dispatch</span> {
+        <span class="kw">let</span> <span class="ident">dispatch</span> <span class="op">=</span> <span class="ident">log_impl::Dispatch</span> {
             <span class="ident">output</span>: <span class="ident">output</span>,
             <span class="ident">default_level</span>: <span class="ident">default_level</span>,
             <span class="ident">levels</span>: <span class="ident">levels</span>.<span class="ident">into</span>(),
@@ -2041,12 +2040,12 @@
     <span class="doccomment">/// assert_eq!(min_level, log::LevelFilter::Info);</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_log</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">log</span>::<span class="ident">LevelFilter</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">log</span>::<span class="ident">Log</span><span class="op">&gt;</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_log</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">log::LevelFilter</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">log::Log</span><span class="op">&gt;</span>) {
         <span class="kw">let</span> (<span class="ident">level</span>, <span class="ident">logger</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">into_dispatch</span>();
-        <span class="kw">if</span> <span class="ident">level</span> <span class="op">=</span><span class="op">=</span> <span class="ident">log</span>::<span class="ident">LevelFilter</span>::<span class="ident">Off</span> {
-            (<span class="ident">level</span>, <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">log_impl</span>::<span class="ident">Null</span>))
+        <span class="kw">if</span> <span class="ident">level</span> <span class="op">=</span><span class="op">=</span> <span class="ident">log::LevelFilter::Off</span> {
+            (<span class="ident">level</span>, <span class="ident">Box::new</span>(<span class="ident">log_impl::Null</span>))
         } <span class="kw">else</span> {
-            (<span class="ident">level</span>, <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">logger</span>))
+            (<span class="ident">level</span>, <span class="ident">Box::new</span>(<span class="ident">logger</span>))
         }
     }
 
@@ -2058,11 +2057,11 @@
     <span class="doccomment">/// set to a previous logger.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// [`log`]: https://github.com/rust-lang-nursery/log</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">apply</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">log</span>::<span class="ident">SetLoggerError</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">apply</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">log::SetLoggerError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">max_level</span>, <span class="ident">log</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">into_log</span>();
 
-        <span class="ident">log</span>::<span class="ident">set_boxed_logger</span>(<span class="ident">log</span>)<span class="question-mark">?</span>;
-        <span class="ident">log</span>::<span class="ident">set_max_level</span>(<span class="ident">max_level</span>);
+        <span class="ident">log::set_boxed_logger</span>(<span class="ident">log</span>)<span class="question-mark">?</span>;
+        <span class="ident">log::set_max_level</span>(<span class="ident">max_level</span>);
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -2072,17 +2071,17 @@
 <span class="kw">enum</span> <span class="ident">OutputInner</span> {
     <span class="doccomment">/// Prints all messages to stdout with `line_sep` separator.</span>
     <span class="ident">Stdout</span> {
-        <span class="ident">stream</span>: <span class="ident">io</span>::<span class="ident">Stdout</span>,
+        <span class="ident">stream</span>: <span class="ident">io::Stdout</span>,
         <span class="ident">line_sep</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
     },
     <span class="doccomment">/// Prints all messages to stderr with `line_sep` separator.</span>
     <span class="ident">Stderr</span> {
-        <span class="ident">stream</span>: <span class="ident">io</span>::<span class="ident">Stderr</span>,
+        <span class="ident">stream</span>: <span class="ident">io::Stderr</span>,
         <span class="ident">line_sep</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
     },
     <span class="doccomment">/// Writes all messages to file with `line_sep` separator.</span>
     <span class="ident">File</span> {
-        <span class="ident">stream</span>: <span class="ident">fs</span>::<span class="ident">File</span>,
+        <span class="ident">stream</span>: <span class="ident">fs::File</span>,
         <span class="ident">line_sep</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
     },
     <span class="doccomment">/// Writes all messages to the writer with `line_sep` separator.</span>
@@ -2094,7 +2093,7 @@
     <span class="doccomment">/// separator.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;reopen-03&quot;</span>))]</span>
     <span class="ident">Reopen</span> {
-        <span class="ident">stream</span>: <span class="ident">reopen</span>::<span class="ident">Reopen</span><span class="op">&lt;</span><span class="ident">fs</span>::<span class="ident">File</span><span class="op">&gt;</span>,
+        <span class="ident">stream</span>: <span class="ident">reopen::Reopen</span><span class="op">&lt;</span><span class="ident">fs::File</span><span class="op">&gt;</span>,
         <span class="ident">line_sep</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
     },
     <span class="doccomment">/// Writes all messages to mpst::Sender with `line_sep` separator.</span>
@@ -2112,7 +2111,7 @@
     <span class="ident">OtherStatic</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw">dyn</span> <span class="ident">Log</span>),
     <span class="doccomment">/// Passes all messages to the syslog.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-3&quot;</span>))]</span>
-    <span class="ident">Syslog3</span>(<span class="ident">syslog3</span>::<span class="ident">Logger</span>),
+    <span class="ident">Syslog3</span>(<span class="ident">syslog3::Logger</span>),
     <span class="doccomment">/// Passes all messages to the syslog.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
     <span class="ident">Syslog4Rfc3164</span>(<span class="ident">Syslog4Rfc3164Logger</span>),
@@ -2121,7 +2120,7 @@
     <span class="ident">Syslog4Rfc5424</span> {
         <span class="ident">logger</span>: <span class="ident">Syslog4Rfc5424Logger</span>,
         <span class="ident">transform</span>: <span class="ident">Box</span><span class="op">&lt;</span>
-            <span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">i32</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">String</span>)
+            <span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log::Record</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">i32</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">String</span>)
                 <span class="op">+</span> <span class="ident">Sync</span>
                 <span class="op">+</span> <span class="ident">Send</span>,
         <span class="op">&gt;</span>,
@@ -2182,38 +2181,38 @@
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Dispatch</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger forwarding all messages to the dispatch.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">Dispatch</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Dispatch</span>(<span class="ident">log</span>))
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Dispatch</span>(<span class="ident">log</span>))
     }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">SharedDispatch</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger forwarding all messages to the dispatch.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">SharedDispatch</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">SharedDispatch</span>(<span class="ident">log</span>))
+        <span class="ident">Output</span>(<span class="ident">OutputInner::SharedDispatch</span>(<span class="ident">log</span>))
     }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Log</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger forwarding all messages to the custom logger.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Log</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">OtherBoxed</span>(<span class="ident">log</span>))
+        <span class="ident">Output</span>(<span class="ident">OutputInner::OtherBoxed</span>(<span class="ident">log</span>))
     }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw">dyn</span> <span class="ident">Log</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger forwarding all messages to the custom logger.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw">dyn</span> <span class="ident">Log</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">OtherStatic</span>(<span class="ident">log</span>))
+        <span class="ident">Output</span>(<span class="ident">OutputInner::OtherStatic</span>(<span class="ident">log</span>))
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">fs</span>::<span class="ident">File</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">fs::File</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger which writes all messages to the file with</span>
     <span class="doccomment">/// `\n` as the separator.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// File writes are buffered and flushed once per log record.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">file</span>: <span class="ident">fs</span>::<span class="ident">File</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">File</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">file</span>: <span class="ident">fs::File</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::File</span> {
             <span class="ident">stream</span>: <span class="ident">file</span>,
             <span class="ident">line_sep</span>: <span class="string">&quot;\n&quot;</span>.<span class="ident">into</span>(),
         })
@@ -2228,7 +2227,7 @@
     <span class="doccomment">/// needed (eg. wrap it in `BufWriter`). However, flush is called after</span>
     <span class="doccomment">/// each log record.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">writer</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Write</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Writer</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Writer</span> {
             <span class="ident">stream</span>: <span class="ident">writer</span>,
             <span class="ident">line_sep</span>: <span class="string">&quot;\n&quot;</span>.<span class="ident">into</span>(),
         })
@@ -2236,33 +2235,33 @@
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;reopen-03&quot;</span>))]</span>
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">reopen</span>::<span class="ident">Reopen</span><span class="op">&lt;</span><span class="ident">fs</span>::<span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">reopen::Reopen</span><span class="op">&lt;</span><span class="ident">fs::File</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger which writes all messages to the file contained</span>
     <span class="doccomment">/// in the Reopen struct, using `\n` as the separator.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">reopen</span>: <span class="ident">reopen</span>::<span class="ident">Reopen</span><span class="op">&lt;</span><span class="ident">fs</span>::<span class="ident">File</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Reopen</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">reopen</span>: <span class="ident">reopen::Reopen</span><span class="op">&lt;</span><span class="ident">fs::File</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Reopen</span> {
             <span class="ident">stream</span>: <span class="ident">reopen</span>,
             <span class="ident">line_sep</span>: <span class="string">&quot;\n&quot;</span>.<span class="ident">into</span>(),
         })
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Stdout</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io::Stdout</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger which writes all messages to stdout with the</span>
     <span class="doccomment">/// given handle and `\n` as the separator.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">stream</span>: <span class="ident">io</span>::<span class="ident">Stdout</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Stdout</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">stream</span>: <span class="ident">io::Stdout</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Stdout</span> {
             <span class="ident">stream</span>,
             <span class="ident">line_sep</span>: <span class="string">&quot;\n&quot;</span>.<span class="ident">into</span>(),
         })
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Stderr</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io::Stderr</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger which writes all messages to stderr with the</span>
     <span class="doccomment">/// given handle and `\n` as the separator.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">stream</span>: <span class="ident">io</span>::<span class="ident">Stderr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Stderr</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">stream</span>: <span class="ident">io::Stderr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Stderr</span> {
             <span class="ident">stream</span>,
             <span class="ident">line_sep</span>: <span class="string">&quot;\n&quot;</span>.<span class="ident">into</span>(),
         })
@@ -2275,7 +2274,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// All messages sent to the mpsc channel are suffixed with &#39;\n&#39;.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">stream</span>: <span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Sender</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Sender</span> {
             <span class="ident">stream</span>,
             <span class="ident">line_sep</span>: <span class="string">&quot;\n&quot;</span>.<span class="ident">into</span>(),
         })
@@ -2283,7 +2282,7 @@
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-3&quot;</span>))]</span>
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">syslog3</span>::<span class="ident">Logger</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">syslog3::Logger</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger which writes all messages to the given syslog</span>
     <span class="doccomment">/// output.</span>
     <span class="doccomment">///</span>
@@ -2291,13 +2290,13 @@
     <span class="doccomment">/// informational, warn =&gt; warning, and error =&gt; error.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This requires the `&quot;syslog-3&quot;` feature.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">syslog3</span>::<span class="ident">Logger</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Syslog3</span>(<span class="ident">log</span>))
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">syslog3::Logger</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Syslog3</span>(<span class="ident">log</span>))
     }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-3&quot;</span>))]</span>
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">syslog3</span>::<span class="ident">Logger</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">syslog3::Logger</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Output</span> {
     <span class="doccomment">/// Creates an output logger which writes all messages to the given syslog</span>
     <span class="doccomment">/// output.</span>
     <span class="doccomment">///</span>
@@ -2310,8 +2309,8 @@
     <span class="doccomment">/// identical to that created by passing a raw `syslog::Logger`.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This requires the `&quot;syslog-3&quot;` feature.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">syslog3</span>::<span class="ident">Logger</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Syslog3</span>(<span class="kw-2">*</span><span class="ident">log</span>))
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">syslog3::Logger</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Syslog3</span>(<span class="kw-2">*</span><span class="ident">log</span>))
     }
 }
 
@@ -2330,7 +2329,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This requires the `&quot;syslog-4&quot;` feature.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">log</span>: <span class="ident">Syslog4Rfc3164Logger</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Syslog4Rfc3164</span>(<span class="ident">log</span>))
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Syslog4Rfc3164</span>(<span class="ident">log</span>))
     }
 }
 
@@ -2338,7 +2337,7 @@
     <span class="doccomment">/// Creates an output logger which will panic with message text for all</span>
     <span class="doccomment">/// messages.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="kw">_</span>: <span class="ident">Panic</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Panic</span>)
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Panic</span>)
     }
 }
 
@@ -2383,8 +2382,8 @@
     <span class="doccomment">/// [`fs::File`]: https://doc.rust-lang.org/std/fs/struct.File.html</span>
     <span class="doccomment">/// [`Dispatch::chain`]: struct.Dispatch.html#method.chain</span>
     <span class="doccomment">/// [`fern::log_file`]: fn.log_file.html</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">file</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">file</span>: <span class="ident">fs</span>::<span class="ident">File</span>, <span class="ident">line_sep</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">File</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">file</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">file</span>: <span class="ident">fs::File</span>, <span class="ident">line_sep</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::File</span> {
             <span class="ident">stream</span>: <span class="ident">file</span>,
             <span class="ident">line_sep</span>: <span class="ident">line_sep</span>.<span class="ident">into</span>(),
         })
@@ -2426,7 +2425,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// [`Dispatch::chain`]: struct.Dispatch.html#method.chain</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">writer</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Write</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span>, <span class="ident">line_sep</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Writer</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Writer</span> {
             <span class="ident">stream</span>: <span class="ident">writer</span>,
             <span class="ident">line_sep</span>: <span class="ident">line_sep</span>.<span class="ident">into</span>(),
         })
@@ -2459,10 +2458,10 @@
     <span class="doccomment">/// [`Dispatch::chain`]: struct.Dispatch.html#method.chain</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;reopen-03&quot;</span>))]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reopen</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(
-        <span class="ident">reopen</span>: <span class="ident">reopen</span>::<span class="ident">Reopen</span><span class="op">&lt;</span><span class="ident">fs</span>::<span class="ident">File</span><span class="op">&gt;</span>,
+        <span class="ident">reopen</span>: <span class="ident">reopen::Reopen</span><span class="op">&lt;</span><span class="ident">fs::File</span><span class="op">&gt;</span>,
         <span class="ident">line_sep</span>: <span class="ident">T</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Reopen</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Reopen</span> {
             <span class="ident">stream</span>: <span class="ident">reopen</span>,
             <span class="ident">line_sep</span>: <span class="ident">line_sep</span>.<span class="ident">into</span>(),
         })
@@ -2488,8 +2487,8 @@
     <span class="doccomment">///     # .into_log();</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stdout</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">line_sep</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Stdout</span> {
-            <span class="ident">stream</span>: <span class="ident">io</span>::<span class="ident">stdout</span>(),
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Stdout</span> {
+            <span class="ident">stream</span>: <span class="ident">io::stdout</span>(),
             <span class="ident">line_sep</span>: <span class="ident">line_sep</span>.<span class="ident">into</span>(),
         })
     }
@@ -2511,8 +2510,8 @@
     <span class="doccomment">///     # .into_log();</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stderr</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">line_sep</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Stderr</span> {
-            <span class="ident">stream</span>: <span class="ident">io</span>::<span class="ident">stderr</span>(),
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Stderr</span> {
+            <span class="ident">stream</span>: <span class="ident">io::stderr</span>(),
             <span class="ident">line_sep</span>: <span class="ident">line_sep</span>.<span class="ident">into</span>(),
         })
     }
@@ -2534,7 +2533,7 @@
     <span class="doccomment">///     # .into_log();</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sender</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">sender</span>: <span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">line_sep</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Sender</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Sender</span> {
             <span class="ident">stream</span>: <span class="ident">sender</span>,
             <span class="ident">line_sep</span>: <span class="ident">line_sep</span>.<span class="ident">into</span>(),
         })
@@ -2557,14 +2556,14 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">syslog_5424</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">logger</span>: <span class="ident">Syslog4Rfc5424Logger</span>, <span class="ident">transform</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">i32</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">String</span>)
+        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log::Record</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">i32</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">String</span>)
             <span class="op">+</span> <span class="ident">Sync</span>
             <span class="op">+</span> <span class="ident">Send</span>
             <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">Syslog4Rfc5424</span> {
+        <span class="ident">Output</span>(<span class="ident">OutputInner::Syslog4Rfc5424</span> {
             <span class="ident">logger</span>,
-            <span class="ident">transform</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">transform</span>),
+            <span class="ident">transform</span>: <span class="ident">Box::new</span>(<span class="ident">transform</span>),
         })
     }
 
@@ -2584,23 +2583,23 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">func</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Record</span>) <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log::Record</span>) <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
         <span class="kw">struct</span> <span class="ident">CallShim</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">F</span>);
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">log</span>::<span class="ident">Log</span> <span class="kw">for</span> <span class="ident">CallShim</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">log::Log</span> <span class="kw">for</span> <span class="ident">CallShim</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
         <span class="kw">where</span>
-            <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Record</span>) <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+            <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">log::Record</span>) <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
         {
-            <span class="kw">fn</span> <span class="ident">enabled</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+            <span class="kw">fn</span> <span class="ident">enabled</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">log::Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
                 <span class="bool-val">true</span>
             }
-            <span class="kw">fn</span> <span class="ident">log</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">log</span>::<span class="ident">Record</span>) {
+            <span class="kw">fn</span> <span class="ident">log</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">log::Record</span>) {
                 (<span class="self">self</span>.<span class="number">0</span>)(<span class="ident">record</span>)
             }
             <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {}
         }
 
-        <span class="self">Self</span>::<span class="ident">from</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">CallShim</span>(<span class="ident">func</span>)) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">log</span>::<span class="ident">Log</span><span class="op">&gt;</span>)
+        <span class="self">Self</span><span class="ident">::from</span>(<span class="ident">Box::new</span>(<span class="ident">CallShim</span>(<span class="ident">func</span>)) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">log::Log</span><span class="op">&gt;</span>)
     }
 }
 
@@ -2611,23 +2610,23 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// [`Dispatch::new`]: #method.new</span>
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span>::<span class="ident">new</span>()
+        <span class="self">Self</span><span class="ident">::new</span>()
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Dispatch</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="kw">struct</span> <span class="ident">LevelsDebug</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">log</span>::<span class="ident">LevelFilter</span>)]);
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">LevelsDebug</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-            <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Dispatch</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+        <span class="kw">struct</span> <span class="ident">LevelsDebug</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">log::LevelFilter</span>)]);
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">LevelsDebug</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+            <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
                 <span class="ident">f</span>.<span class="ident">debug_map</span>()
                     .<span class="ident">entries</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> (<span class="ident">t</span>.<span class="number">0</span>.<span class="ident">as_ref</span>(), <span class="ident">t</span>.<span class="number">1</span>)))
                     .<span class="ident">finish</span>()
             }
         }
         <span class="kw">struct</span> <span class="ident">FiltersDebug</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Filter</span><span class="op">&gt;</span>]);
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">FiltersDebug</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-            <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">FiltersDebug</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+            <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
                 <span class="ident">f</span>.<span class="ident">debug_list</span>()
                     .<span class="ident">entries</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;&lt;filter closure&gt;&quot;</span>))
                     .<span class="ident">finish</span>()
@@ -2646,10 +2645,10 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">OutputInner</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">OutputInner</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">OutputInner</span>::<span class="ident">Stdout</span> {
+            <span class="ident">OutputInner::Stdout</span> {
                 <span class="kw-2">ref</span> <span class="ident">stream</span>,
                 <span class="kw-2">ref</span> <span class="ident">line_sep</span>,
             } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
@@ -2657,7 +2656,7 @@
                 .<span class="ident">field</span>(<span class="string">&quot;stream&quot;</span>, <span class="ident">stream</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;line_sep&quot;</span>, <span class="ident">line_sep</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">Stderr</span> {
+            <span class="ident">OutputInner::Stderr</span> {
                 <span class="kw-2">ref</span> <span class="ident">stream</span>,
                 <span class="kw-2">ref</span> <span class="ident">line_sep</span>,
             } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
@@ -2665,7 +2664,7 @@
                 .<span class="ident">field</span>(<span class="string">&quot;stream&quot;</span>, <span class="ident">stream</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;line_sep&quot;</span>, <span class="ident">line_sep</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">File</span> {
+            <span class="ident">OutputInner::File</span> {
                 <span class="kw-2">ref</span> <span class="ident">stream</span>,
                 <span class="kw-2">ref</span> <span class="ident">line_sep</span>,
             } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
@@ -2673,18 +2672,18 @@
                 .<span class="ident">field</span>(<span class="string">&quot;stream&quot;</span>, <span class="ident">stream</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;line_sep&quot;</span>, <span class="ident">line_sep</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">Writer</span> { <span class="kw-2">ref</span> <span class="ident">line_sep</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::Writer</span> { <span class="kw-2">ref</span> <span class="ident">line_sep</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_struct</span>(<span class="string">&quot;Output::Writer&quot;</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;stream&quot;</span>, <span class="kw-2">&amp;</span><span class="string">&quot;&lt;unknown writer&gt;&quot;</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;line_sep&quot;</span>, <span class="ident">line_sep</span>)
                 .<span class="ident">finish</span>(),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;reopen-03&quot;</span>))]</span>
-            <span class="ident">OutputInner</span>::<span class="ident">Reopen</span> { <span class="kw-2">ref</span> <span class="ident">line_sep</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::Reopen</span> { <span class="kw-2">ref</span> <span class="ident">line_sep</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_struct</span>(<span class="string">&quot;Output::Reopen&quot;</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;stream&quot;</span>, <span class="kw-2">&amp;</span><span class="string">&quot;&lt;unknown reopen file&gt;&quot;</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;line_sep&quot;</span>, <span class="ident">line_sep</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">Sender</span> {
+            <span class="ident">OutputInner::Sender</span> {
                 <span class="kw-2">ref</span> <span class="ident">stream</span>,
                 <span class="kw-2">ref</span> <span class="ident">line_sep</span>,
             } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
@@ -2693,38 +2692,38 @@
                 .<span class="ident">field</span>(<span class="string">&quot;line_sep&quot;</span>, <span class="ident">line_sep</span>)
                 .<span class="ident">finish</span>(),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-3&quot;</span>))]</span>
-            <span class="ident">OutputInner</span>::<span class="ident">Syslog3</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::Syslog3</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::Syslog3&quot;</span>)
                 .<span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="string">&quot;&lt;unprintable syslog::Logger&gt;&quot;</span>)
                 .<span class="ident">finish</span>(),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
-            <span class="ident">OutputInner</span>::<span class="ident">Syslog4Rfc3164</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::Syslog4Rfc3164</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::Syslog4Rfc3164&quot;</span>)
                 .<span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="string">&quot;&lt;unprintable syslog::Logger&gt;&quot;</span>)
                 .<span class="ident">finish</span>(),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;syslog-4&quot;</span>))]</span>
-            <span class="ident">OutputInner</span>::<span class="ident">Syslog4Rfc5424</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::Syslog4Rfc5424</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::Syslog4Rfc5424&quot;</span>)
                 .<span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="string">&quot;&lt;unprintable syslog::Logger&gt;&quot;</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">Dispatch</span>(<span class="kw-2">ref</span> <span class="ident">dispatch</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">OutputInner::Dispatch</span>(<span class="kw-2">ref</span> <span class="ident">dispatch</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">f</span>.<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::Dispatch&quot;</span>).<span class="ident">field</span>(<span class="ident">dispatch</span>).<span class="ident">finish</span>()
             }
-            <span class="ident">OutputInner</span>::<span class="ident">SharedDispatch</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::SharedDispatch</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::SharedDispatch&quot;</span>)
                 .<span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="string">&quot;&lt;built Dispatch logger&gt;&quot;</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">OtherBoxed</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::OtherBoxed</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::OtherBoxed&quot;</span>)
                 .<span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="string">&quot;&lt;boxed logger&gt;&quot;</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">OtherStatic</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::OtherStatic</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::OtherStatic&quot;</span>)
                 .<span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="string">&quot;&lt;boxed logger&gt;&quot;</span>)
                 .<span class="ident">finish</span>(),
-            <span class="ident">OutputInner</span>::<span class="ident">Panic</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>.<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::Panic&quot;</span>).<span class="ident">finish</span>(),
+            <span class="ident">OutputInner::Panic</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>.<span class="ident">debug_tuple</span>(<span class="string">&quot;Output::Panic&quot;</span>).<span class="ident">finish</span>(),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;date-based&quot;</span>)]</span>
-            <span class="ident">OutputInner</span>::<span class="ident">DateBased</span> { <span class="kw-2">ref</span> <span class="ident">config</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
+            <span class="ident">OutputInner::DateBased</span> { <span class="kw-2">ref</span> <span class="ident">config</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>
                 .<span class="ident">debug_struct</span>(<span class="string">&quot;Output::DateBased&quot;</span>)
                 .<span class="ident">field</span>(<span class="string">&quot;config&quot;</span>, <span class="ident">config</span>)
                 .<span class="ident">finish</span>(),
@@ -2732,8 +2731,8 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Output</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">fmt</span>(<span class="ident">f</span>)
     }
 }
@@ -2905,9 +2904,8 @@
     <span class="doccomment">/// Create an output logger which defers to the given date-based logger. Use</span>
     <span class="doccomment">/// configuration methods on [DateBased] to set line separator and filename.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">config</span>: <span class="ident">DateBased</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Output</span>(<span class="ident">OutputInner</span>::<span class="ident">DateBased</span> { <span class="ident">config</span> })
+        <span class="ident">Output</span>(<span class="ident">OutputInner::DateBased</span> { <span class="ident">config</span> })
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="fern"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="fern" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
