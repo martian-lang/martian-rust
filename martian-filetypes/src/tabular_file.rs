@@ -71,7 +71,7 @@ where
     D: TableConfig + Debug,
 {
     fn extension() -> String {
-        if F::extension().ends_with(&D::format()) || D::format() == "" {
+        if F::extension().ends_with(&D::format()) || D::format().is_empty() {
             F::extension()
         } else {
             format!("{}.{}", F::extension(), D::format())
@@ -395,7 +395,7 @@ mod tests {
     #[test]
     fn test_clone() {
         let t = TsvFile::from("test");
-        let _ = t.clone();
+        let _ = t;
     }
 
     #[test]

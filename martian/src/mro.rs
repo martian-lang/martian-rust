@@ -192,8 +192,8 @@ impl MartianBlanketType {
     fn inner(&self) -> MartianPrimaryType {
         match &*self {
             MartianBlanketType::Primary(ref primary) => primary.clone(),
-            MartianBlanketType::Array(ref blanket) => blanket.inner().clone(),
-            MartianBlanketType::TypedMap(ref blanket) => blanket.inner().clone(),
+            MartianBlanketType::Array(ref blanket) => blanket.inner(),
+            MartianBlanketType::TypedMap(ref blanket) => blanket.inner(),
         }
     }
 }
@@ -230,7 +230,7 @@ impl FromStr for MartianBlanketType {
             Ok(MartianBlanketType::Array(Box::new(
                 MartianBlanketType::from_str(t)?,
             )))
-        } else if s.starts_with("map<") && s.ends_with(">") {
+        } else if s.starts_with("map<") && s.ends_with('>') {
             // typed map
             let t = s.get(4..s.len() - 1).unwrap();
             Ok(MartianBlanketType::TypedMap(Box::new(
@@ -246,13 +246,13 @@ impl FromStr for MartianBlanketType {
 
 impl From<MartianPrimaryType> for MartianBlanketType {
     fn from(other: MartianPrimaryType) -> Self {
-        MartianBlanketType::Primary(other.clone())
+        MartianBlanketType::Primary(other)
     }
 }
 
 impl From<MartianPrimaryType> for Box<MartianBlanketType> {
     fn from(other: MartianPrimaryType) -> Self {
-        Box::new(MartianBlanketType::Primary(other.clone()))
+        Box::new(MartianBlanketType::Primary(other))
     }
 }
 
@@ -934,7 +934,7 @@ mod tests {
             "txt[]"
         );
         assert_eq!(
-            Primary(FileType("fastq.lz4".into()).into()).mro_string(None),
+            Primary(FileType("fastq.lz4".into())).mro_string(None),
             "fastq.lz4"
         );
     }
@@ -1027,11 +1027,11 @@ mod tests {
         let in_out = InAndOut {
             inputs: vec![
                 MroField::new("unsorted", Array(Float.into())),
-                MroField::new("reverse", Primary(Bool.into())),
+                MroField::new("reverse", Primary(Bool)),
             ],
             outputs: vec![
                 MroField::new("sorted", Array(Float.into())),
-                MroField::new("sum", Primary(Float.into())),
+                MroField::new("sum", Primary(Float)),
             ],
         };
         let expected = indoc!(
@@ -1067,11 +1067,11 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             },
             chunk_in_out: Some(InAndOut {
-                inputs: vec![MroField::new("value", Primary(Float.into()))],
-                outputs: vec![MroField::new("value", Primary(Float.into()))],
+                inputs: vec![MroField::new("value", Primary(Float))],
+                outputs: vec![MroField::new("value", Primary(Float))],
             }),
             using_attrs: MroUsing::default(),
         };
@@ -1098,7 +1098,7 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             },
             chunk_in_out: Some(InAndOut::default()),
             using_attrs: MroUsing::default(),
@@ -1125,7 +1125,7 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             },
             chunk_in_out: None,
             using_attrs: MroUsing::default(),
@@ -1155,7 +1155,7 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             },
             chunk_in_out: None,
             using_attrs: MroUsing {
@@ -1191,7 +1191,7 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::retained("sum", Primary(Float.into()))],
+                outputs: vec![MroField::retained("sum", Primary(Float))],
             },
             chunk_in_out: None,
             using_attrs: MroUsing {
@@ -1213,7 +1213,7 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
@@ -1237,7 +1237,7 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
@@ -1260,11 +1260,11 @@ mod tests {
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
                 inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
-                outputs: vec![MroField::new("sum", Primary(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
             }),
             using_attrs: MroUsing {
                 mem_gb: Some(1),
@@ -1300,10 +1300,7 @@ mod tests {
             FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
         );
         assert_eq!(
-            FiletypeHeader::from(&MroField::new(
-                "foo",
-                Primary(FileType("json".into()).into())
-            )),
+            FiletypeHeader::from(&MroField::new("foo", Primary(FileType("json".into())))),
             FiletypeHeader(vec!["json".to_string()].into_iter().collect())
         );
     }
@@ -1518,7 +1515,7 @@ mod tests {
                 ],
                 outputs: vec![
                     MroField::new("read_chunks", Array(Struct(rna_chunk).into())),
-                    MroField::new("chemistry_def", Primary(Struct(chemistry_def).into())),
+                    MroField::new("chemistry_def", Primary(Struct(chemistry_def))),
                 ],
             },
             chunk_in_out: None,

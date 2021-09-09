@@ -87,15 +87,15 @@ pub fn make_mro(
     let mem_gb_quote = parsed_attr
         .mem_gb
         .map(|x| quote![mem_gb: Some(#x),])
-        .unwrap_or(quote![]);
+        .unwrap_or_default();
     let vmem_gb_quote = parsed_attr
         .vmem_gb
         .map(|x| quote![vmem_gb: Some(#x),])
-        .unwrap_or(quote![]);
+        .unwrap_or_default();
     let threads_quote = parsed_attr
         .threads
         .map(|x| quote![threads: Some(#x),])
-        .unwrap_or(quote![]);
+        .unwrap_or_default();
     let volatile_quote = match parsed_attr.volatile {
         Some(k) => match k {
             Volatile::Strict => quote![volatile: Some(::martian::Volatile::Strict),],
@@ -121,7 +121,7 @@ pub fn make_mro(
     // anything else.
     // The way we achieve it is to try parsing the input TokenStrean as `ItemImpl`
     // and checking the parse result
-    let item_impl = match syn::parse::<ItemImpl>(item.clone()) {
+    let item_impl = match syn::parse::<ItemImpl>(item) {
         Ok(item_impl) => item_impl,
         Err(_) => {
             let span = proc_macro2::TokenStream::from(item_clone);
@@ -140,7 +140,7 @@ pub fn make_mro(
     // to trick the compiler to continue, but it should fail later if the trait
     // signature is different from the one defined in `martian` crate
     let trait_path = item_impl.trait_.unwrap().1;
-    let which_trait = match parse_which_trait(trait_path.clone()) {
+    let which_trait = match parse_which_trait(trait_path) {
         Ok(t) => t,
         Err(e) => return e.to_compile_error().into(),
     };

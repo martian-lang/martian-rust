@@ -362,7 +362,7 @@ mod tests {
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(&input).unwrap());
             prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input, false).unwrap());
 
-            let input = vec![vec![foo.clone(); 2]; 4];
+            let input = vec![vec![foo; 2]; 4];
             prop_assert!(crate::round_trip_check::<BincodeFile, _>(&input).unwrap());
             prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input, false).unwrap());
 

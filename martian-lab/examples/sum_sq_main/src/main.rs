@@ -5,7 +5,7 @@ use martian::prelude::*;
 use serde::Deserialize;
 mod sum_squares;
 
-const USAGE: &'static str = "
+const USAGE: &str = "
 Martian adapter for sum_sq_main executable
 
 Usage:

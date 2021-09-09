@@ -83,7 +83,7 @@ where
                 b.iter(|| {
                     let mut writer = file_lazy.lazy_writer().unwrap();
                     for d in &data_copy1 {
-                        writer.write_item(&d).unwrap();
+                        writer.write_item(d).unwrap();
                     }
                     writer.finish()
                 })
@@ -93,7 +93,7 @@ where
                 b.iter(|| {
                     let mut writer = file_lz4_lazy.lazy_writer().unwrap();
                     for d in &data_copy3 {
-                        writer.write_item(&d).unwrap();
+                        writer.write_item(d).unwrap();
                     }
                     writer.finish()
                 })

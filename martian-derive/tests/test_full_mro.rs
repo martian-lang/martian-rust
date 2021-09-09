@@ -1,5 +1,5 @@
 use martian::make_mro_string;
-use martian::mro::*;
+use martian::mro::{AsMartianBlanketType, MroMaker};
 use martian::prelude::*;
 use martian_derive::{make_mro, martian_filetype, MartianStruct, MartianType};
 use pretty_assertions::assert_eq;

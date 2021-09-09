@@ -12,7 +12,7 @@ use martian::prelude::*;
 
 // Bring the procedural macros in scope:
 // #[derive(MartianStruct)], #[derive(MartianType)], #[make_mro], martian_filetype!
-use martian_derive::*;
+use martian_derive::{make_mro, MartianStruct};
 
 // NOTE: The following two structs will serve as the associated type for the
 // trait. The struct fields need to be owned and are limited to

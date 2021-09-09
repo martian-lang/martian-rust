@@ -61,6 +61,5 @@ pub fn main() {
     if args.cmd_adapter {
         let adapter_name = args.arg_adaptername.unwrap();
         template::new_adapter(adapter_name);
-        return;
     }
 }

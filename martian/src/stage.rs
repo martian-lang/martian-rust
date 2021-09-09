@@ -600,7 +600,7 @@ where
         println!("{}", Self::stage_name());
         println!("{}", vec!["-"; 80].join(""));
         println!(" > [chunk] running");
-        let result = self.main(args.clone(), rover);
+        let result = self.main(args, rover);
         println!(" > [stage] complete");
         result
     }

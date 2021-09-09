@@ -299,8 +299,8 @@ pub fn make_mro_string(header_comment: &str, mro_registry: &[StageMro]) -> Strin
     let mut struct_header = StructHeader::default();
     let mut mro_string = String::new();
     for stage_mro in mro_registry {
-        filetype_header.add_stage(&stage_mro);
-        struct_header.add_stage(&stage_mro);
+        filetype_header.add_stage(stage_mro);
+        struct_header.add_stage(stage_mro);
         writeln!(&mut mro_string, "{}", stage_mro).unwrap();
     }
     mro_string.pop();
@@ -322,7 +322,7 @@ pub fn make_mro_string(header_comment: &str, mro_registry: &[StageMro]) -> Strin
             header_comment
                 .lines()
                 .into_iter()
-                .all(|line| line.trim_end().is_empty() || line.starts_with("#")),
+                .all(|line| line.trim_end().is_empty() || line.starts_with('#')),
             "All non-empty header lines must start with '#', but got\n{}",
             header_comment
         );

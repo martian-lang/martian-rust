@@ -1,4 +1,4 @@
-use heck::*;
+use heck::{CamelCase, SnakeCase};
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};

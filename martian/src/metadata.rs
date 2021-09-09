@@ -1,12 +1,12 @@
 use crate::write_errors;
 use chrono::{DateTime, Local};
 use failure::{Error, ResultExt};
-use rustc_version;
+
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::map::Map;
 use serde_json::{self, json, Value};
-use std;
+
 use std::any::type_name;
 use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
@@ -221,7 +221,7 @@ impl Metadata {
         let mut log_file = unsafe { File::from_raw_fd(3) };
 
         log_file
-            .write(&format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
+            .write(format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
             .and(log_file.flush())?;
 
         let _ = log_file.into_raw_fd();
@@ -295,7 +295,7 @@ mod tests {
     #[test]
     fn test_jobinfo() -> Result<()> {
         let raw_jobinfo: JsonDict = serde_json::from_reader(File::open("tests/jobinfo.json")?)?;
-        let jobinfo: JobInfo = serde_json::from_value(Value::Object(raw_jobinfo.clone()))?;
+        let jobinfo: JobInfo = serde_json::from_value(Value::Object(raw_jobinfo))?;
         assert_eq!(jobinfo.threads, 1);
         assert_eq!(jobinfo.mem_gb, 1);
         assert_eq!(jobinfo.vmem_gb, 4);

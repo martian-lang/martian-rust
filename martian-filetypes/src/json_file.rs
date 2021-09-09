@@ -189,16 +189,16 @@ where
         let mut stream = StreamDeserializer::<_, T>::new(io_read);
         match stream.next() {
             Some(Ok(t)) => Some(Ok(t)),
-            Some(Err(e)) => {
-                match self.reader.by_ref().bytes().find(|byte| {
+            Some(Err(e)) => self
+                .reader
+                .by_ref()
+                .bytes()
+                .find(|byte| {
                     byte.as_ref()
                         .map(|b| !b.is_ascii_whitespace())
                         .unwrap_or(true)
-                }) {
-                    Some(_) => Some(Err(e.into())), // The reader is not done, this is an error
-                    None => None, // The reader is done. The error is due to the final ]
-                }
-            }
+                })
+                .map(|_| Err(e.into())),
             None => None,
         }
     }
@@ -396,7 +396,7 @@ mod tests {
             prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input, true).unwrap());
             serde_lazy_roundtrip_check(&input).unwrap();
 
-            let input = vec![vec![foo.clone(); 2]; 4];
+            let input = vec![vec![foo; 2]; 4];
             prop_assert!(crate::round_trip_check::<JsonFile, _>(&input).unwrap());
             prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input, true).unwrap());
             serde_lazy_roundtrip_check(&input).unwrap();
