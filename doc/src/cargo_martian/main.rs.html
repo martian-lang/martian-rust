@@ -65,7 +65,6 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
-<span id="66">66</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">docopt::Docopt</span>;
 <span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
@@ -130,7 +129,6 @@ Options:
     <span class="kw">if</span> <span class="ident">args</span>.<span class="ident">cmd_adapter</span> {
         <span class="kw">let</span> <span class="ident">adapter_name</span> <span class="op">=</span> <span class="ident">args</span>.<span class="ident">arg_adaptername</span>.<span class="ident">unwrap</span>();
         <span class="ident">template::new_adapter</span>(<span class="ident">adapter_name</span>);
-        <span class="kw">return</span>;
     }
 }
 </pre></div>

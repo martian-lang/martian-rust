@@ -464,7 +464,7 @@
 <span class="doccomment">//! can be used to collect all the items in a `Vec&lt;T&gt;`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ## Simple read/write example</span>
-<span class="doccomment">//! `BincodeFile` implements `FileTypeIO&lt;T&gt;` for any type `T` which can be [de]serialized.</span>
+<span class="doccomment">//! `BincodeFile` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.</span>
 <span class="doccomment">//! ```rust</span>
 <span class="doccomment">//! use martian_filetypes::{FileTypeIO, bin_file::BincodeFile};</span>
 <span class="doccomment">//! use martian::Error;</span>
@@ -492,7 +492,7 @@
 <span class="doccomment">//! If the bincode file stores a list of items of type `T`, then the items can be read</span>
 <span class="doccomment">//! one at a time without reading the whole file into memory. A list of items</span>
 <span class="doccomment">//! of type `T` can also be incrementally written to a bincode file.</span>
-<span class="doccomment">//! `BincodeFile` implements `LazyFileTypeIO&lt;T&gt;` for any type `T` which can be [de]serialized.</span>
+<span class="doccomment">//! `BincodeFile` implements `LazyFileTypeIO&lt;T&gt;` for any serializable type `T`.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```rust</span>
 <span class="doccomment">//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};</span>
@@ -814,7 +814,7 @@
             <span class="macro">prop_assert!</span>(<span class="kw">crate</span><span class="ident">::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">unwrap</span>());
             <span class="macro">prop_assert!</span>(<span class="kw">crate</span><span class="ident">::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="bool-val">false</span>).<span class="ident">unwrap</span>());
 
-            <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="ident">foo</span>.<span class="ident">clone</span>(); <span class="number">2</span>]; <span class="number">4</span>];
+            <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="ident">foo</span>; <span class="number">2</span>]; <span class="number">4</span>];
             <span class="macro">prop_assert!</span>(<span class="kw">crate</span><span class="ident">::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">unwrap</span>());
             <span class="macro">prop_assert!</span>(<span class="kw">crate</span><span class="ident">::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="bool-val">false</span>).<span class="ident">unwrap</span>());
 

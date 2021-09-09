@@ -11,7 +11,7 @@ as <code>Vec&lt;T&gt;</code> using <code>FileTypeIO::read()</code>, instead you 
 to read items one at a time. The helper fn <code>LazyFileTypeIO::read_all()</code>
 can be used to collect all the items in a <code>Vec&lt;T&gt;</code></p>
 <h2 id="simple-readwrite-example" class="section-header"><a href="#simple-readwrite-example">Simple read/write example</a></h2>
-<p><code>BincodeFile</code> implements <code>FileTypeIO&lt;T&gt;</code> for any type <code>T</code> which can be [de]serialized.</p>
+<p><code>BincodeFile</code> implements <code>FileTypeIO&lt;T&gt;</code> for any serializable type <code>T</code>.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">martian_filetypes</span>::{<span class="ident">FileTypeIO</span>, <span class="ident">bin_file::BincodeFile</span>};
@@ -37,7 +37,7 @@ can be used to collect all the items in a <code>Vec&lt;T&gt;</code></p>
 <p>If the bincode file stores a list of items of type <code>T</code>, then the items can be read
 one at a time without reading the whole file into memory. A list of items
 of type <code>T</code> can also be incrementally written to a bincode file.
-<code>BincodeFile</code> implements <code>LazyFileTypeIO&lt;T&gt;</code> for any type <code>T</code> which can be [de]serialized.</p>
+<code>BincodeFile</code> implements <code>LazyFileTypeIO&lt;T&gt;</code> for any serializable type <code>T</code>.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">martian_filetypes</span>::{<span class="ident">FileTypeIO</span>, <span class="ident">LazyFileTypeIO</span>, <span class="ident">LazyWrite</span>};

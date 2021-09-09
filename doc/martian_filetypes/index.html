@@ -60,7 +60,7 @@ in the filetype <code>F</code>.</p>
 <p>If <code>F: FileTypeIO&lt;T&gt;</code>, then a concrete representation of type <code>T</code> can be written to [read from]
 disk. <code>MartianFiletype</code>s which implement this trait are called <code>Formats</code>. For example, we can
 define a <code>JsonFormat&lt;F&gt;</code>, which can write out any type <code>T</code> onto disk as json as long as T is
-[de]serializable and <code>F: FileStorage&lt;T&gt;</code>.</p>
+serializable and <code>F: FileStorage&lt;T&gt;</code>.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
