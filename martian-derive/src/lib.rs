@@ -661,13 +661,12 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
 /// use martian::MartianFileType;
 /// martian_filetype! { TxtFile, "txt" }
 /// martian_filetype! { BamIndexFile, "bam.bai" }
-/// fn main() {
-///     assert_eq!(TxtFile::extension(), "txt");
-///     assert_eq!(
-///         BamIndexFile::new("/path/to/folder", "filename").as_ref(),
-///         std::path::Path::new("/path/to/folder/filename.bam.bai")
-///     )
-/// }
+///
+/// assert_eq!(TxtFile::extension(), "txt");
+/// assert_eq!(
+///     BamIndexFile::new("/path/to/folder", "filename").as_ref(),
+///     std::path::Path::new("/path/to/folder/filename.bam.bai")
+/// )
 /// ```
 #[proc_macro]
 pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStream {

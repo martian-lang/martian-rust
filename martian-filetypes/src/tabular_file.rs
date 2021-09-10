@@ -18,13 +18,13 @@
 //! fn main() -> Result<(), Error> {
 //!     let csv_file = CsvFile::from("csv_example");
 //!     let summary = vec![
-//! 		BarcodeSummary { umis: 10, reads: 15},
-//! 		BarcodeSummary { umis: 200, reads: 1005},
-//! 	];
+//!         BarcodeSummary { umis: 10, reads: 15},
+//!         BarcodeSummary { umis: 200, reads: 1005},
+//!     ];
 //!     // The two function below are simple wrappers over csv crate
 //!     csv_file.write(&summary)?;
-//! 	assert_eq!(
-//! 		std::fs::read_to_string(&csv_file)?,
+//!     assert_eq!(
+//!         std::fs::read_to_string(&csv_file)?,
 //!         "umis,reads\n10,15\n200,1005\n"
 //!     );
 //!     let decoded: Vec<BarcodeSummary> = csv_file.read()?;

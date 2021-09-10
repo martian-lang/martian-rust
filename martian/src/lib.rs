@@ -249,14 +249,14 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
 fn get_generator_name() -> String {
     std::env::var("CARGO_BIN_NAME")
-        .or(std::env::var("CARGO_CRATE_NAME"))
-        .or(std::env::var("CARGO_PKG_NAME"))
-        .unwrap_or(
+        .or_else(|_| std::env::var("CARGO_CRATE_NAME"))
+        .or_else(|_| std::env::var("CARGO_PKG_NAME"))
+        .unwrap_or_else(|_| {
             option_env!("CARGO_BIN_NAME")
                 .or(option_env!("CARGO_CRATE_NAME"))
                 .unwrap_or("martian-rust")
-                .into(),
-        )
+                .into()
+        })
 }
 
 pub fn martian_make_mro(
