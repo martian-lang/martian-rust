@@ -12,7 +12,6 @@ use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
 use std::io::Write;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
-use std::path::Path;
 use std::path::PathBuf;
 
 pub type JsonDict = Map<String, Value>;
@@ -181,27 +180,38 @@ impl Metadata {
         Self::_decode(self.make_path(name))
     }
 
-    fn _decode<T: Sized + DeserializeOwned>(file: impl AsRef<Path>) -> Result<T> {
+    fn _decode<T: Sized + DeserializeOwned>(file: PathBuf) -> Result<T> {
         let buf = std::fs::read_to_string(&file)
-            .with_context(|e| format!("Failed to read file {:?} due to: {}", file.as_ref(), e))?;
-        Ok(serde_json::from_str(&buf).with_context(|e| {
-            let buf_lines: Vec<_> = buf
-                .lines()
-                .enumerate()
-                .map(|(i, line)| format!("{:>4}: {}", i + 1, line))
-                .collect();
-            format!(
-                "The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
-                following error:\n\n{}\n\nThis typically happens when one or more fields in the \
-                struct {} cannot be built from the JSON. The contents of the JSON are shown below: \
-                \n{}",
-                file.as_ref().file_name().unwrap(),
-                type_name::<T>(),
-                e,
-                type_name::<T>(),
-                buf_lines.join("\n")
-            )
-        })?)
+            .with_context(|e| format!("Failed to read file {:?} due to: {}", file, e))?;
+        Ok(serde_json::from_str(&buf)
+            .with_context(|e| Self::_format_buf_err(buf, e, file, type_name::<T>()))?)
+    }
+
+    fn _format_buf_err(
+        buf: String,
+        e: &serde_json::Error,
+        file: PathBuf,
+        tname: &'static str,
+    ) -> String {
+        // Non-generic so that we don't generate copy of this code for every
+        // type we `_decode` into.  This is a slight hack to improve compile
+        // times.
+        let buf_lines: Vec<_> = buf
+            .lines()
+            .enumerate()
+            .map(|(i, line)| format!("{:>4}: {}", i + 1, line))
+            .collect();
+        format!(
+            "The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
+            following error:\n\n{}\n\nThis typically happens when one or more fields in the \
+            struct {} cannot be built from the JSON. The contents of the JSON are shown below: \
+            \n{}",
+            file.file_name().unwrap(),
+            tname,
+            e,
+            tname,
+            buf_lines.join("\n")
+        )
     }
 
     fn _append(&mut self, name: &str, message: &str) -> Result<()> {
@@ -314,7 +324,7 @@ mod tests {
             val: i32,
         }
 
-        let e: Result<Foo> = Metadata::_decode("tests/invalid_args.json");
+        let e: Result<Foo> = Metadata::_decode(PathBuf::from("tests/invalid_args.json"));
         insta::assert_display_snapshot!(e.unwrap_err());
     }
 }
