@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
 // - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
-//                Error (from failure crate), LevelFilter (from log crate)
+//                Error (from anyhow crate), LevelFilter (from log crate)
 // - Macros: martian_stages!
 // - Functions: martian_main, martian_main_with_log_level, martian_make_mro
 use martian::prelude::*;
@@ -89,7 +89,7 @@ impl MartianStage for SumSquares {
             // let the other chunks finish
             let dur = std::time::Duration::new(3, 0);
             std::thread::sleep(dur);
-            return Err(failure::format_err!("hit special failure value"));
+            return Err(anyhow::anyhow!("hit special failure value"));
         }
 
         Ok(SumSquaresChunkOutputs {

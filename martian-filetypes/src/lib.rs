@@ -34,7 +34,7 @@
 //! In extreme circumstances, attempting to deserialize to a wrong type could succeed, which could
 //! potentially lead to bugs that are hard to track. The following example illustrates this:
 //! ```
-//! # use failure::Error;
+//! # use anyhow::Error;
 //! # use serde::{Deserialize, Serialize};
 //! # use serde_json;
 //! #[derive(Debug, Serialize, Deserialize)]
@@ -73,7 +73,7 @@
 //! serializable and `F: FileStorage<T>`.
 //!
 //! ```
-//! # use failure::Error;
+//! # use anyhow ::Error;
 //! # use martian_derive::martian_filetype;
 //! # use martian_filetypes::json_file::JsonFormat;
 //! # use martian_filetypes::{FileStorage, FileTypeIO};
@@ -140,14 +140,12 @@
 //! - BamFile
 //! - BamIndexFile
 
-use failure::ResultExt;
 use martian::{Error, MartianFileType};
 
 use std::fmt;
 use std::fs::File;
 use std::io;
 use std::path::PathBuf;
-use std::string::ToString;
 
 pub mod bin_file;
 pub mod gzip_file;
@@ -211,8 +209,10 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
     /// **not** to implement this for a custom filetype in general, instead implement
     /// `read_from()`
     fn read(&self) -> Result<T, Error> {
-        Ok(<Self as FileTypeIO<T>>::read_from(self.buf_reader()?)
-            .with_context(|e| ErrorContext::ReadContext(self.as_ref().into(), e.to_string()))?)
+        <Self as FileTypeIO<T>>::read_from(self.buf_reader()?).map_err(|e| {
+            let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
+            e.context(context)
+        })
     }
 
     #[doc(hidden)]
@@ -231,11 +231,10 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
     /// **not** to implement this for a custom filetype in general, instead implement
     /// `write_into()`.
     fn write(&self, item: &T) -> Result<(), Error> {
-        Ok(
-            <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item).with_context(|e| {
-                ErrorContext::WriteContext(self.as_ref().into(), e.to_string())
-            })?,
-        )
+        <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item).map_err(|e| {
+            let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
+            e.context(context)
+        })
     }
 
     #[doc(hidden)]

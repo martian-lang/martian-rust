@@ -27,6 +27,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61604a8f862e1d5c3229fdd78f8b02c68dcf73a4c4b05fd636d12240aaa242c1"
+dependencies = [
+ "backtrace",
+]
+
+[[package]]
 name = "atty"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -339,28 +348,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 
 [[package]]
-name = "failure"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d32e9bd16cc02eae7db7ef620b392808b89f6a5e16bb3497d159c6b92a0f4f86"
-dependencies = [
- "backtrace",
- "failure_derive",
-]
-
-[[package]]
-name = "failure_derive"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa4da3c766cd7a0db8242e326e9e4e081edd567072893ed320008189715366a4"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
- "synstructure",
-]
-
-[[package]]
 name = "fern"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -531,12 +518,11 @@ dependencies = [
 
 [[package]]
 name = "martian"
-version = "0.24.0"
+version = "0.25.0"
 dependencies = [
+ "anyhow",
  "backtrace",
  "chrono",
- "failure",
- "failure_derive",
  "fern",
  "heck",
  "indoc",
@@ -553,7 +539,7 @@ dependencies = [
 
 [[package]]
 name = "martian-derive"
-version = "0.24.0"
+version = "0.25.0"
 dependencies = [
  "martian",
  "pretty_assertions",
@@ -566,12 +552,12 @@ dependencies = [
 
 [[package]]
 name = "martian-filetypes"
-version = "0.23.0"
+version = "0.25.0"
 dependencies = [
+ "anyhow",
  "bincode",
  "criterion",
  "csv",
- "failure",
  "flate2",
  "lz4",
  "martian",
@@ -587,8 +573,8 @@ dependencies = [
 name = "martian-lab"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "docopt",
- "failure",
  "martian",
  "martian-derive",
  "serde",
@@ -1038,18 +1024,6 @@ checksum = "c6f107db402c2c2055242dbf4d2af0e69197202e9faacbef9571bbe47f5a1b84"
 dependencies = [
  "proc-macro2",
  "quote",
- "unicode-xid",
-]
-
-[[package]]
-name = "synstructure"
-version = "0.12.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b834f2d66f734cb897113e34aaff2f1ab4719ca946f9a7358dba8f8064148701"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
  "unicode-xid",
 ]
 

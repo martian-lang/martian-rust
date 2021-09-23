@@ -2,8 +2,7 @@
 //!
 //! All the functions are simple wrappers around functions from
 //! other crates.
-use crate::{Json, JsonDict};
-use failure::Error;
+use crate::{Error, Json, JsonDict};
 use serde::Serialize;
 use std::path::Path;
 use std::path::PathBuf;

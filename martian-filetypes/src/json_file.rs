@@ -78,7 +78,7 @@
 //! ```
 
 use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
-use failure::format_err;
+use anyhow::format_err;
 use martian::Error;
 use martian::MartianFileType;
 use martian_derive::martian_filetype;

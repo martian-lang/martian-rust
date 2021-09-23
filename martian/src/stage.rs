@@ -2,7 +2,7 @@ use crate::metadata::Metadata;
 use crate::metadata::Version;
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
-use failure::{Error, ResultExt};
+use crate::Error;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
 use serde::de::DeserializeOwned;
@@ -21,33 +21,33 @@ pub struct MartianVoid {
     __null__: Option<bool>,
 }
 
-/// A `MatianFiletype` is associated with a file of know non-empty
+/// A `MartianFiletype` is associated with a file of know non-empty
 /// extension. This encodes the concept of a `filepath` in martian.
 pub trait MartianFileType: AsRef<Path> {
     fn extension() -> String;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
     /// This function will create a file if it does not exist, and will truncate it if it does.
     fn buf_writer(&self) -> Result<BufWriter<File>, Error> {
-        Ok(BufWriter::new(File::create(self.as_ref()).with_context(
+        Ok(BufWriter::new(File::create(self.as_ref()).map_err(
             |e| {
-                format!(
+                let context = format!(
                     "Failed to create file '{}' from within MartianType::buf_writer() due to {:?}",
                     self.as_ref().display(),
                     e
-                )
+                );
+                Error::new(e).context(context)
             },
         )?))
     }
     fn buf_reader(&self) -> Result<BufReader<File>, Error> {
-        Ok(BufReader::new(File::open(self.as_ref()).with_context(
-            |e| {
-                format!(
-                    "Failed to open file '{}' from within MartianType::buf_reader() due to {:?}",
-                    self.as_ref().display(),
-                    e
-                )
-            },
-        )?))
+        Ok(BufReader::new(File::open(self.as_ref()).map_err(|e| {
+            let context = format!(
+                "Failed to open file '{}' from within MartianType::buf_reader() due to {:?}",
+                self.as_ref().display(),
+                e
+            );
+            Error::new(e).context(context)
+        })?))
     }
 }
 

@@ -1,6 +1,5 @@
-use crate::write_errors;
+use crate::{write_errors, Error};
 use chrono::{DateTime, Local};
-use failure::{Error, ResultExt};
 
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -181,10 +180,14 @@ impl Metadata {
     }
 
     fn _decode<T: Sized + DeserializeOwned>(file: PathBuf) -> Result<T> {
-        let buf = std::fs::read_to_string(&file)
-            .with_context(|e| format!("Failed to read file {:?} due to: {}", file, e))?;
-        Ok(serde_json::from_str(&buf)
-            .with_context(|e| Self::_format_buf_err(buf, e, file, type_name::<T>()))?)
+        let buf = std::fs::read_to_string(&file).map_err(|e| {
+            let context = format!("Failed to read file {:?} due to {}:", file, e);
+            Error::new(e).context(context)
+        })?;
+        serde_json::from_str(&buf).map_err(|e| {
+            let context = Self::_format_buf_err(buf, &e, file, type_name::<T>());
+            Error::new(e).context(context)
+        })
     }
 
     fn _format_buf_err(
