@@ -23,7 +23,7 @@ rayon = { version = ">=1.0", optional = true }
 
 [dev-dependencies]
 indoc = "1.0.3"
-pretty_assertions = "0.7.2"
+pretty_assertions = "1.0.0"
 insta = "1.8"
 
 [features]
