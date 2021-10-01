@@ -1,33 +1,31 @@
-   0: failure::backtrace::internal::InternalBacktrace::new
-             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/backtrace/internal.rs:46
-   1: failure::backtrace::Backtrace::new
-             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/backtrace/mod.rs:121
-   2: <failure::error::error_impl::ErrorImpl as core::convert::From<F>>::from
-             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/error/error_impl.rs:19
-   3: <failure::error::Error as core::convert::From<F>>::from
-             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/error/mod.rs:36
-   4: failure::error_message::err_msg
-             at /mnt/bazelbuild/user/sreenath.krishnan/cargo/registry/src/github.com-1ecc6299db9ec823/failure-0.1.8/src/error_message.rs:12
-   5: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
+   0: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:94
-   6: <T as martian::stage::RawMartianStage>::main
+   1: <T as martian::stage::RawMartianStage>::main
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/stage.rs:644
-   7: martian::martian_entry_point
+   2: martian::martian_entry_point
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:225
-   8: martian::MartianAdapter<S>::run_get_error
+   3: martian::MartianAdapter<S>::run_get_error
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:131
-   9: martian::MartianAdapter<S>::run
+   4: martian::MartianAdapter<S>::run
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:124
-  10: sum_sq::main
+   5: sum_sq::main
              at /mnt/home/sreenath.krishnan/codes/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48
-  11: core::ops::function::FnOnce::call_once
+   6: core::ops::function::FnOnce::call_once
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/core/src/ops/function.rs:227
-  12: std::sys_common::backtrace::__rust_begin_short_backtrace
+   7: std::sys_common::backtrace::__rust_begin_short_backtrace
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/sys_common/backtrace.rs:137
-  13: std::rt::lang_start::{{closure}}
+   8: std::rt::lang_start::{{closure}}
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:66
-  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+   9: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/core/src/ops/function.rs:259
+      std::panicking::try::do_call
+             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panicking.rs:373
+      std::panicking::try
+             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panicking.rs:337
+      std::panic::catch_unwind
+             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panic.rs:379
+      std::rt::lang_start_internal::{{closure}}
+             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:51
       std::panicking::try::do_call
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panicking.rs:373
       std::panicking::try
@@ -36,8 +34,8 @@
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panic.rs:379
       std::rt::lang_start_internal
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:51
-  15: std::rt::lang_start
+  10: std::rt::lang_start
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:65
-  16: main
-  17: __libc_start_main
-  18: <unknown>
+  11: main
+  12: __libc_start_main
+  13: <unknown>
