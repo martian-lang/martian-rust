@@ -30,7 +30,6 @@
 //! }
 //! ```
 use crate::{ErrorContext, FileStorage, FileTypeIO};
-use failure::ResultExt;
 use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use flate2::Compression;
@@ -67,8 +66,10 @@ where
 {
     fn read(&self) -> Result<T, Error> {
         let decoder = GzDecoder::new(self.buf_reader()?);
-        Ok(<Self as FileTypeIO<T>>::read_from(decoder)
-            .with_context(|e| ErrorContext::ReadContext(self.as_ref().into(), e.to_string()))?)
+        <Self as FileTypeIO<T>>::read_from(decoder).map_err(|e| {
+            let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
+            e.context(context)
+        })
     }
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
         <F as FileTypeIO<T>>::read_from(reader)
@@ -76,8 +77,10 @@ where
     fn write(&self, item: &T) -> Result<(), Error> {
         // Default compression level and configuration
         let mut encoder = GzEncoder::new(self.buf_writer()?, Compression::default());
-        <Self as FileTypeIO<T>>::write_into(&mut encoder, item)
-            .with_context(|e| ErrorContext::WriteContext(self.as_ref().into(), e.to_string()))?;
+        <Self as FileTypeIO<T>>::write_into(&mut encoder, item).map_err(|e| {
+            let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
+            e.context(context)
+        })?;
         encoder.try_finish()?;
         Ok(())
     }

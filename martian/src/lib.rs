@@ -18,7 +18,8 @@ use backtrace::Backtrace;
 use chrono::Local;
 use log::{error, info};
 
-pub use failure::{format_err, Error, ResultExt};
+pub use anyhow::Error;
+use anyhow::{format_err, Context};
 
 mod metadata;
 pub use metadata::*;
@@ -156,7 +157,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         Ok(m) => m,
         Err(e) => {
             let _ = write_errors(&format!("{:?}", e), false);
-            return (1, Some(e.into()));
+            return (1, Some(e));
         }
     };
 
@@ -236,9 +237,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         // write message and stack trace, exit code = 1;
         Err(e) => {
             let bt = e.backtrace();
-            if !bt.is_empty() {
-                let _ = md.stackvars(&bt.to_string());
-            }
+            let _ = md.stackvars(&bt.to_string());
             let _ = write_errors(&format!("{}", e), is_error_assert(&e));
             (1, Some(e))
         }

@@ -92,7 +92,6 @@
 
 use crate::martian_filetype_inner;
 use crate::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
-use failure::ResultExt;
 use martian::{Error, MartianFileType};
 
 use serde::{Deserialize, Serialize};
@@ -130,8 +129,10 @@ where
 {
     fn read(&self) -> Result<T, Error> {
         let decoder = lz4::Decoder::new(self.buf_reader()?)?;
-        Ok(<Self as FileTypeIO<T>>::read_from(decoder)
-            .with_context(|e| ErrorContext::ReadContext(self.as_ref().into(), e.to_string()))?)
+        <Self as FileTypeIO<T>>::read_from(decoder).map_err(|e| {
+            let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
+            e.context(context)
+        })
     }
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
         <F as FileTypeIO<T>>::read_from(reader)
@@ -139,8 +140,10 @@ where
     fn write(&self, item: &T) -> Result<(), Error> {
         // Default compression level and configuration
         let mut encoder = lz4::EncoderBuilder::new().build(self.buf_writer()?)?;
-        <Self as FileTypeIO<T>>::write_into(&mut encoder, item)
-            .with_context(|e| ErrorContext::WriteContext(self.as_ref().into(), e.to_string()))?;
+        <Self as FileTypeIO<T>>::write_into(&mut encoder, item).map_err(|e| {
+            let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
+            e.context(context)
+        })?;
         let (_, result) = encoder.finish();
         Ok(result?)
     }

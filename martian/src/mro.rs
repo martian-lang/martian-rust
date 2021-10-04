@@ -10,8 +10,8 @@
 //! - Attributes (mem_gb, vmem_gb, threads, volatile etc.)
 //!
 
-use crate::MartianVoid;
-use failure::{format_err, Error};
+use crate::{Error, MartianVoid};
+use anyhow::format_err;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::collections::{HashMap, HashSet};

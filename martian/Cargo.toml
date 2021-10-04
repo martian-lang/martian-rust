@@ -1,6 +1,6 @@
 [package]
 name = "martian"
-version = "0.24.0"
+version = "0.25.0"
 authors = ["Patrick Marks <patrick@10xgenomics.com>", "Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>"]
 edition = "2018"
 include = ["src/*.rs", "README.md"]
@@ -14,8 +14,7 @@ chrono = { version = "*", default-features = false, features = ["std", "clock"] 
 serde = { version = "1.0", features = ['derive'] }
 serde_json = "1.0"
 backtrace = "*"
-failure = "*"
-failure_derive = "*"
+anyhow = { version = "1", features = ["backtrace"] }
 heck = "*"
 tempfile = "3"
 rustc_version = ">=0.3, <0.5"

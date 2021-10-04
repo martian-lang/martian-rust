@@ -80,7 +80,7 @@
 //! ```
 
 use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
-use failure::format_err;
+use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;

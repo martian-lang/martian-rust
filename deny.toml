@@ -26,10 +26,7 @@ yanked = "warn"
 notice = "warn"
 # A list of advisory IDs to ignore. Note that ignored advisories will still
 # output a note when they are encountered.
-ignore = [
-    "RUSTSEC-2019-0036",  # TODO: get off of `failure`
-    "RUSTSEC-2020-0036",  # TODO: get off of `failure`
-]
+ignore = []
 
 # This section is considered when running `cargo deny check licenses`
 # More documentation for the licenses section can be found here:
