@@ -24,7 +24,7 @@
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panicking.rs:337
       std::panic::catch_unwind
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panic.rs:379
-      std::rt::lang_start_internal
+      std::rt::lang_start_internal::{{closure}}
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:51
   10: std::rt::lang_start
              at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:65
