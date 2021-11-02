@@ -30,9 +30,7 @@ macro_rules! martian_filetype_inner {
             }
 
             fn new(file_path: impl AsRef<std::path::Path>, file_name: impl AsRef<std::path::Path>) -> Self {
-                let mut path = std::path::PathBuf::from(file_path.as_ref());
-                path.push(file_name);
-                let path = ::martian::utils::set_extension(path, Self::extension());
+				let path = ::martian::utils::make_path(file_path.as_ref(), file_name.as_ref(), Self::extension());
                 $name {
 		            inner: ::std::marker::PhantomData,
 		            path,

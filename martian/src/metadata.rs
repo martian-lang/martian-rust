@@ -180,12 +180,16 @@ impl Metadata {
     }
 
     fn _decode<T: Sized + DeserializeOwned>(file: PathBuf) -> Result<T> {
-        let buf = std::fs::read_to_string(&file).map_err(|e| {
-            let context = format!("Failed to read file {:?} due to {}:", file, e);
-            Error::new(e).context(context)
-        })?;
+        let buf = Self::_read_buf_err(&file)?;
         serde_json::from_str(&buf).map_err(|e| {
             let context = Self::_format_buf_err(buf, &e, file, type_name::<T>());
+            Error::new(e).context(context)
+        })
+    }
+
+    fn _read_buf_err(file: &PathBuf) -> Result<String> {
+        std::fs::read_to_string(&file).map_err(|e| {
+            let context = format!("Failed to read file {:?} due to {}:", file, e);
             Error::new(e).context(context)
         })
     }
