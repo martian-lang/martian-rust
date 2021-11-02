@@ -45,6 +45,7 @@ pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
     Ok(md)
 }
 
+#[cold]
 fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
     let mut err_file: File = unsafe { File::from_raw_fd(4) };
 
