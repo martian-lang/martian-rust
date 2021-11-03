@@ -235,7 +235,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         panic!("Unrecognized stage type");
     };
 
-    let res = match result {
+    match result {
         // exit code = 0
         Ok(()) => (0, None),
 
@@ -244,9 +244,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
             report_error(&mut md, &e, is_error_assert(&e));
             (1, Some(e))
         }
-    };
-
-    res
+    }
 }
 
 #[cold]

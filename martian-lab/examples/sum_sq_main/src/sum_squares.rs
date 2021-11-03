@@ -58,6 +58,8 @@ impl MartianMain for SumSquares {
 
 #[cfg(test)]
 mod tests {
+    // Float comparisons are bad in general, but we expect this to be exact.
+    #![allow(clippy::float_cmp)]
     use super::*;
     #[test]
     fn run_stage() {

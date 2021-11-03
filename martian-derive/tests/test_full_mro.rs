@@ -499,6 +499,7 @@ fn test_typed_map() {
         map_of_lists: HashMap<String, Vec<usize>>,
         map_of_matrices: HashMap<String, Vec<Vec<usize>>>,
         vec_of_maps: Vec<HashMap<String, FastqFile>>,
+        #[allow(clippy::type_complexity)]
         ludicrous_map: Option<Vec<Vec<HashMap<String, Vec<Vec<FastqFile>>>>>>,
     }
 
