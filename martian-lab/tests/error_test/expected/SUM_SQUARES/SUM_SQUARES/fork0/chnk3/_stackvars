@@ -1,33 +1,41 @@
    0: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
-             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:94
+             at /github.com/martian-lang/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:94:24
    1: <T as martian::stage::RawMartianStage>::main
-             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/stage.rs:644
+             at /github.com/martian-lang/martian-rust/martian/src/stage.rs:642:20
    2: martian::martian_entry_point
-             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:225
+             at /github.com/martian-lang/martian-rust/martian/src/lib.rs:231:9
    3: martian::MartianAdapter<S>::run_get_error
-             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:131
+             at /github.com/martian-lang/martian-rust/martian/src/lib.rs:133:9
    4: martian::MartianAdapter<S>::run
-             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian/src/lib.rs:124
+             at /github.com/martian-lang/martian-rust/martian/src/lib.rs:126:9
    5: sum_sq::main
-             at /mnt/home/sreenath.krishnan/codes/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48
+             at /github.com/martian-lang/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48:23
    6: core::ops::function::FnOnce::call_once
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/core/src/ops/function.rs:227
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:227:5
    7: std::sys_common::backtrace::__rust_begin_short_backtrace
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/sys_common/backtrace.rs:137
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/sys_common/backtrace.rs:125:18
    8: std::rt::lang_start::{{closure}}
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:66
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:63:18
    9: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/core/src/ops/function.rs:259
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:259:13
       std::panicking::try::do_call
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panicking.rs:373
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:401:40
       std::panicking::try
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panicking.rs:337
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:365:19
       std::panic::catch_unwind
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/panic.rs:379
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panic.rs:434:14
       std::rt::lang_start_internal::{{closure}}
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:51
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:45:48
+      std::panicking::try::do_call
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:401:40
+      std::panicking::try
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:365:19
+      std::panic::catch_unwind
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panic.rs:434:14
+      std::rt::lang_start_internal
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:45:20
   10: std::rt::lang_start
-             at /rustc/18bf6b4f01a6feaf7259ba7cdae58031af1b7b39/library/std/src/rt.rs:65
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:62:5
   11: main
   12: __libc_start_main
-  13: <unknown>
+  13: _start
