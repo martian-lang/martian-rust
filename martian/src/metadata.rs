@@ -11,7 +11,7 @@ use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
 use std::io::Write;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
@@ -190,7 +190,7 @@ impl Metadata {
         )
     }
 
-    fn _read_buf_err(file: &PathBuf) -> Result<String> {
+    fn _read_buf_err(file: &Path) -> Result<String> {
         std::fs::read_to_string(&file).map_err(
             #[cold]
             |e| {

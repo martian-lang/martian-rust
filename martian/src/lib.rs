@@ -163,9 +163,10 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     };
 
     // Get the stage implementation
-    let _stage = stage_map
-        .get(&md.stage_name)
-        .ok_or_else(|| format_err!("Couldn't find requested Martian stage: {}", md.stage_name));
+    let _stage = stage_map.get(&md.stage_name).ok_or_else(
+        #[cold]
+        || format_err!("Couldn't find requested Martian stage: {}", md.stage_name),
+    );
 
     // special handler for non-existent stage
     let stage = match _stage {
@@ -182,44 +183,47 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
     // Setup panic hook. If a stage panics, we'll shutdown cleanly to martian
     let p = panic::take_hook();
-    panic::set_hook(Box::new(move |info| {
-        let backtrace = Backtrace::new();
+    panic::set_hook(Box::new(
+        #[cold]
+        move |info| {
+            let backtrace = Backtrace::new();
 
-        let msg = match info.payload().downcast_ref::<&'static str>() {
-            Some(s) => *s,
-            None => match info.payload().downcast_ref::<String>() {
-                Some(s) => &**s,
-                None => "Box<Any>",
-            },
-        };
+            let msg = match info.payload().downcast_ref::<&'static str>() {
+                Some(s) => *s,
+                None => match info.payload().downcast_ref::<String>() {
+                    Some(s) => &**s,
+                    None => "Box<Any>",
+                },
+            };
 
-        let msg = match info.location() {
-            Some(location) => format!(
-                "stage failed unexpectedly: '{}' {}:{}:\n{:?}",
-                msg,
-                location.file(),
-                location.line(),
-                backtrace
-            ),
-            None => format!("stage failed unexpectedly: '{}':\n{:?}", msg, backtrace),
-        };
+            let msg = match info.location() {
+                Some(location) => format!(
+                    "stage failed unexpectedly: '{}' {}:{}:\n{:?}",
+                    msg,
+                    location.file(),
+                    location.line(),
+                    backtrace
+                ),
+                None => format!("stage failed unexpectedly: '{}':\n{:?}", msg, backtrace),
+            };
 
-        // write to _log
-        error!("{}", msg);
+            // write to _log
+            error!("{}", msg);
 
-        // write stack trace to to _stackvars.
-        // this will just give up if any errors are encountere
-        let bt_string = format!("{:?}", backtrace);
-        let _ = File::create(&stackvars_path).map(|mut f| {
-            let _ = f.write_all(bt_string.as_bytes());
-        });
+            // write stack trace to to _stackvars.
+            // this will just give up if any errors are encountere
+            let bt_string = format!("{:?}", backtrace);
+            let _ = File::create(&stackvars_path).map(|mut f| {
+                let _ = f.write_all(bt_string.as_bytes());
+            });
 
-        // write to _errors
-        let _ = write_errors(&msg, false);
+            // write to _errors
+            let _ = write_errors(&msg, false);
 
-        // call default panic handler (not sure if this is a good idea or not)
-        p(info);
-    }));
+            // call default panic handler (not sure if this is a good idea or not)
+            p(info);
+        },
+    ));
 
     let result = if md.stage_type == "split" {
         stage.split(&mut md)
@@ -237,14 +241,19 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
         // write message and stack trace, exit code = 1;
         Err(e) => {
-            let bt = e.backtrace();
-            let _ = md.stackvars(&bt.to_string());
-            let _ = write_errors(&format!("{}", e), is_error_assert(&e));
+            report_error(&mut md, &e, is_error_assert(&e));
             (1, Some(e))
         }
     };
 
     res
+}
+
+#[cold]
+fn report_error(md: &mut Metadata, e: &Error, is_assert: bool) {
+    let bt = e.backtrace();
+    let _ = md.stackvars(&bt.to_string());
+    let _ = write_errors(&format!("{}", e), is_assert);
 }
 
 fn get_generator_name() -> String {
