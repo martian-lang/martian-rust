@@ -76,9 +76,13 @@ pub fn current_executable() -> String {
 /// );
 /// ```
 pub fn set_extension(file_path: impl AsRef<Path>, extension: impl ToString) -> PathBuf {
-    let extension = extension.to_string();
-    let mut result = PathBuf::from(file_path.as_ref());
+    _set_extension(PathBuf::from(file_path.as_ref()), extension.to_string())
+}
 
+// This is seperate from the public set_extension to avoid generating multiple
+// monomorphized versions of the function, and to improve efficiency for
+// make_path which is already handing over a PathBuf.
+fn _set_extension(mut result: PathBuf, extension: String) -> PathBuf {
     assert!(
         !result
             .display()
@@ -118,6 +122,18 @@ pub fn set_extension(file_path: impl AsRef<Path>, extension: impl ToString) -> P
     let required_name = format!("{}{}", current_name, extension_addition);
     result.set_file_name(required_name);
     result
+}
+
+/// Given a path, file name, and extension, produce a file name with that
+/// extension.
+///
+/// This is intended primarily for use by the filetype macros, to avoid
+/// generating large amounts of duplicate code, and should generally not be
+/// used directly.
+pub fn make_path(file_path: &Path, file_name: &Path, extension: String) -> PathBuf {
+    let mut path = PathBuf::from(file_path);
+    path.push(file_name);
+    _set_extension(path, extension)
 }
 
 #[cfg(test)]

@@ -85,6 +85,8 @@ impl MartianStage for SumSquares {
         chunk_args: Self::ChunkInputs,
         _rover: MartianRover,
     ) -> Result<Self::ChunkOutputs, Error> {
+        // This is a special sentinel value, so the comparison should be exact.
+        #[allow(clippy::float_cmp)]
         if chunk_args.value == 123456789.0 {
             // let the other chunks finish
             let dur = std::time::Duration::new(3, 0);
@@ -112,6 +114,8 @@ impl MartianStage for SumSquares {
 
 #[cfg(test)]
 mod tests {
+    // Float comparisons are bad in general, but we expect this to be exact.
+    #![allow(clippy::float_cmp)]
     use super::*;
     #[test]
     fn run_stage() {

@@ -11,12 +11,16 @@ error[E0425]: cannot find value `int` in this scope
   |                ^^^ not found in this scope
 
 error[E0277]: the trait bound `Foo: MartianFileType` is not satisfied
- --> $DIR/test_invalid_mro_type_val.rs:5:10
-  |
-5 | #[derive(MartianStruct)]
-  |          ^^^^^^^^^^^^^ the trait `MartianFileType` is not implemented for `Foo`
-  |
-  = note: required because of the requirements on the impl of `AsMartianPrimaryType` for `Foo`
-  = note: required because of the requirements on the impl of `AsMartianBlanketType` for `Foo`
-  = note: required by `as_martian_blanket_type`
-  = note: this error originates in the derive macro `MartianStruct` (in Nightly builds, run with -Z macro-backtrace for more info)
+   --> $DIR/test_invalid_mro_type_val.rs:5:10
+    |
+5   | #[derive(MartianStruct)]
+    |          ^^^^^^^^^^^^^ the trait `MartianFileType` is not implemented for `Foo`
+    |
+    = note: required because of the requirements on the impl of `AsMartianPrimaryType` for `Foo`
+    = note: required because of the requirements on the impl of `AsMartianBlanketType` for `Foo`
+note: required by `as_martian_blanket_type`
+   --> $DIR/mro.rs:275:5
+    |
+275 |     fn as_martian_blanket_type() -> MartianBlanketType;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: this error originates in the derive macro `MartianStruct` (in Nightly builds, run with -Z macro-backtrace for more info)

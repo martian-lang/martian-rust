@@ -1,4 +1,4 @@
-use criterion::{criterion_group, criterion_main, Benchmark, Criterion, Throughput};
+use criterion::{criterion_group, criterion_main, Criterion, Throughput};
 use martian::MartianFileType;
 use martian_filetypes::bin_file::BincodeFile;
 use martian_filetypes::json_file::JsonFile;
@@ -29,35 +29,34 @@ where
     file_lz4.write(&data).unwrap();
     file_lz4_lazy.write(&data).unwrap();
 
-    c.bench(
-        key,
-        Benchmark::new("full-read", move |b| {
-            b.iter(|| {
-                let decoded: Vec<T> = file_full.read().unwrap();
-                decoded
-            })
+    let mut group = c.benchmark_group(key);
+    group.throughput(Throughput::Elements(data.len() as u64));
+    group.sample_size(10);
+    group.bench_function("full-read", |b| {
+        b.iter(|| {
+            let decoded: Vec<T> = file_full.read().unwrap();
+            decoded
         })
-        .with_function("lazy-read", move |b| {
-            b.iter(|| {
-                let decoded: Vec<T> = file_lazy.read_all().unwrap();
-                decoded
-            })
+    });
+    group.bench_function("lazy-read", |b| {
+        b.iter(|| {
+            let decoded: Vec<T> = file_lazy.read_all().unwrap();
+            decoded
         })
-        .with_function("lz4-read", move |b| {
-            b.iter(|| {
-                let decoded: Vec<T> = file_lz4.read().unwrap();
-                decoded
-            })
+    });
+    group.bench_function("lz4-read", |b| {
+        b.iter(|| {
+            let decoded: Vec<T> = file_lz4.read().unwrap();
+            decoded
         })
-        .with_function("lz4-lazy-read", move |b| {
-            b.iter(|| {
-                let decoded: Vec<T> = file_lz4_lazy.read_all().unwrap();
-                decoded
-            })
+    });
+    group.bench_function("lz4-lazy-read", |b| {
+        b.iter(|| {
+            let decoded: Vec<T> = file_lz4_lazy.read_all().unwrap();
+            decoded
         })
-        .sample_size(10)
-        .throughput(Throughput::Elements(data.len() as u64)),
-    );
+    });
+    group.finish();
 }
 
 fn lazy_write_bench<F, T>(c: &mut Criterion, data: Vec<T>, key: &'static str)
@@ -76,31 +75,30 @@ where
     let data_copy3 = data.clone();
     let elements = data.len() as u32;
 
-    c.bench(
-        key,
-        Benchmark::new("full-write", move |b| b.iter(|| file_full.write(&data)))
-            .with_function("lazy-write", move |b| {
-                b.iter(|| {
-                    let mut writer = file_lazy.lazy_writer().unwrap();
-                    for d in &data_copy1 {
-                        writer.write_item(d).unwrap();
-                    }
-                    writer.finish()
-                })
-            })
-            .with_function("lz4-write", move |b| b.iter(|| file_lz4.write(&data_copy2)))
-            .with_function("lz4-lazy-write", move |b| {
-                b.iter(|| {
-                    let mut writer = file_lz4_lazy.lazy_writer().unwrap();
-                    for d in &data_copy3 {
-                        writer.write_item(d).unwrap();
-                    }
-                    writer.finish()
-                })
-            })
-            .sample_size(10)
-            .throughput(Throughput::Elements(elements.into())),
-    );
+    let mut group = c.benchmark_group(key);
+    group.throughput(Throughput::Elements(elements.into()));
+    group.sample_size(10);
+    group.bench_function("full-write", move |b| b.iter(|| file_full.write(&data)));
+    group.bench_function("lazy-write", move |b| {
+        b.iter(|| {
+            let mut writer = file_lazy.lazy_writer().unwrap();
+            for d in &data_copy1 {
+                writer.write_item(d).unwrap();
+            }
+            writer.finish()
+        })
+    });
+    group.bench_function("lz4-write", move |b| b.iter(|| file_lz4.write(&data_copy2)));
+    group.bench_function("lz4-lazy-write", move |b| {
+        b.iter(|| {
+            let mut writer = file_lz4_lazy.lazy_writer().unwrap();
+            for d in &data_copy3 {
+                writer.write_item(d).unwrap();
+            }
+            writer.finish()
+        })
+    });
+    group.finish();
 }
 
 fn json_lazy_read_bench(c: &mut Criterion) {

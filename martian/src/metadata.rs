@@ -11,7 +11,7 @@ use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
 use std::io::Write;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
@@ -180,16 +180,27 @@ impl Metadata {
     }
 
     fn _decode<T: Sized + DeserializeOwned>(file: PathBuf) -> Result<T> {
-        let buf = std::fs::read_to_string(&file).map_err(|e| {
-            let context = format!("Failed to read file {:?} due to {}:", file, e);
-            Error::new(e).context(context)
-        })?;
-        serde_json::from_str(&buf).map_err(|e| {
-            let context = Self::_format_buf_err(buf, &e, file, type_name::<T>());
-            Error::new(e).context(context)
-        })
+        let buf = Self::_read_buf_err(&file)?;
+        serde_json::from_str(&buf).map_err(
+            #[cold]
+            |e| {
+                let context = Self::_format_buf_err(buf, &e, file, type_name::<T>());
+                Error::new(e).context(context)
+            },
+        )
     }
 
+    fn _read_buf_err(file: &Path) -> Result<String> {
+        std::fs::read_to_string(&file).map_err(
+            #[cold]
+            |e| {
+                let context = format!("Failed to read file {:?} due to {}:", file, e);
+                Error::new(e).context(context)
+            },
+        )
+    }
+
+    #[cold]
     fn _format_buf_err(
         buf: String,
         e: &serde_json::Error,
@@ -249,10 +260,12 @@ impl Metadata {
         self._append("alarm", &format!("{} {}", make_timestamp_now(), message))
     }
 
+    #[cold]
     pub fn assert(&mut self, message: &str) -> Result<()> {
         write_errors(message, true)
     }
 
+    #[cold]
     pub fn stackvars(&mut self, message: &str) -> Result<()> {
         self.write_raw("stackvars", message)
     }
