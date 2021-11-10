@@ -392,13 +392,16 @@ impl MroField {
     /// Create a new `MroField` with the given name and type.
     /// The field has a default `retain = false`.
     pub fn new(name: impl ToString, ty: MartianBlanketType) -> Self {
-        let field = MroField {
-            name: name.to_string(),
-            ty,
-            retain: false,
-        };
-        field.verify(); // No use case to resultify this so far
-        field
+        fn _new_field(name: String, ty: MartianBlanketType) -> MroField {
+            let field = MroField {
+                name,
+                ty,
+                retain: false,
+            };
+            field.verify(); // No use case to resultify this so far
+            field
+        }
+        _new_field(name.to_string(), ty)
     }
     /// Create a new `MroField` with the given name and type, with the
     /// `retain` field set to true
@@ -839,11 +842,9 @@ mro_display_to_display! {StageMro, TAB_WIDTH_FOR_MRO}
 
 impl StageMro {
     fn iter_mro_fields(&self) -> impl Iterator<Item = &MroField> {
-        self.stage_in_out.iter_mro_fields().chain(
-            self.chunk_in_out
-                .iter()
-                .flat_map(|in_out| in_out.iter_mro_fields()),
-        )
+        self.stage_in_out
+            .iter_mro_fields()
+            .chain(self.chunk_in_out.iter().flat_map(InAndOut::iter_mro_fields))
     }
     fn minified_chunk_in_outs(&self) -> Option<InAndOut> {
         match self.chunk_in_out {
@@ -914,8 +915,8 @@ mod tests {
     use super::*;
     use indoc::indoc;
     use pretty_assertions::assert_eq;
-    use MartianBlanketType::*;
-    use MartianPrimaryType::*;
+    use MartianBlanketType::{Array, Primary};
+    use MartianPrimaryType::{Bool, FileType, Float, Int, Path, Str, Struct};
 
     #[test]
     fn test_martian_primary_type_display() {
@@ -1340,14 +1341,20 @@ mod tests {
     fn test_filetype_header_display() {
         assert_eq!(FiletypeHeader(HashSet::new()).to_string(), "");
         assert_eq!(
-            FiletypeHeader(vec!["txt"].into_iter().map(|x| x.to_string()).collect()).to_string(),
+            FiletypeHeader(
+                vec!["txt"]
+                    .into_iter()
+                    .map(std::string::ToString::to_string)
+                    .collect()
+            )
+            .to_string(),
             "filetype txt;\n\n"
         );
         assert_eq!(
             FiletypeHeader(
                 vec!["txt", "json", "bam"]
                     .into_iter()
-                    .map(|x| x.to_string())
+                    .map(std::string::ToString::to_string)
                     .collect()
             )
             .to_string(),
@@ -1364,7 +1371,7 @@ mod tests {
 
     #[test]
     fn test_martian_primary_type_parse() {
-        use MartianPrimaryType::*;
+        use MartianPrimaryType::{Bool, File, FileType, Float, Int, Map, Path, Str};
         let roundtrip_assert = |t: MartianPrimaryType| {
             assert_eq!(t, t.to_string().parse::<MartianPrimaryType>().unwrap());
         };
@@ -1384,8 +1391,8 @@ mod tests {
 
     #[test]
     fn test_martian_blanket_type_parse() {
-        use MartianBlanketType::*;
-        use MartianPrimaryType::*;
+        use MartianBlanketType::{Array, Primary};
+        use MartianPrimaryType::{Bool, File, FileType, Float, Int, Map, Path, Str};
         let roundtrip_blanket_assert = |t: MartianPrimaryType| {
             let p = Primary(t.clone());
             assert_eq!(p, p.to_string().parse::<MartianBlanketType>().unwrap());

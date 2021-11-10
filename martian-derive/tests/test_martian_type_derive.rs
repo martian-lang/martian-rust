@@ -1,6 +1,6 @@
 use martian::AsMartianBlanketType;
-use martian::MartianBlanketType::*;
-use martian::MartianPrimaryType::*;
+use martian::MartianBlanketType::Primary;
+use martian::MartianPrimaryType::{Map, Str};
 use martian_derive::MartianType;
 
 #[test]

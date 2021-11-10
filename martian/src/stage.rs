@@ -28,26 +28,30 @@ pub trait MartianFileType: AsRef<Path> {
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
     /// This function will create a file if it does not exist, and will truncate it if it does.
     fn buf_writer(&self) -> Result<BufWriter<File>, Error> {
-        Ok(BufWriter::new(File::create(self.as_ref()).map_err(
-            |e| {
+        fn _buf_writer(ty: &Path) -> Result<BufWriter<File>, Error> {
+            Ok(BufWriter::new(File::create(ty).map_err(|e| {
                 let context = format!(
                     "Failed to create file '{}' from within MartianType::buf_writer() due to {:?}",
-                    self.as_ref().display(),
+                    ty.display(),
                     e
                 );
                 Error::new(e).context(context)
-            },
-        )?))
+            })?))
+        }
+        _buf_writer(self.as_ref())
     }
     fn buf_reader(&self) -> Result<BufReader<File>, Error> {
-        Ok(BufReader::new(File::open(self.as_ref()).map_err(|e| {
-            let context = format!(
-                "Failed to open file '{}' from within MartianType::buf_reader() due to {:?}",
-                self.as_ref().display(),
-                e
-            );
-            Error::new(e).context(context)
-        })?))
+        fn _buf_reader(ty: &Path) -> Result<BufReader<File>, Error> {
+            Ok(BufReader::new(File::open(ty).map_err(|e| {
+                let context = format!(
+                    "Failed to open file '{}' from within MartianType::buf_reader() due to {:?}",
+                    ty.display(),
+                    e
+                );
+                Error::new(e).context(context)
+            })?))
+        }
+        _buf_reader(self.as_ref())
     }
 }
 
@@ -67,20 +71,25 @@ pub trait MartianMakePath {
     fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
 }
 
+fn _make_path_buf(directory: &Path, file_name: &Path) -> PathBuf {
+    directory.join(file_name)
+}
+
 impl MartianMakePath for PathBuf {
     fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
-        let mut path = PathBuf::from(directory.as_ref());
-        path.push(file_name.as_ref());
-        path
+        _make_path_buf(directory.as_ref(), file_name.as_ref())
     }
 }
 
 impl MartianMakePath for String {
     fn make_path(directory: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
-        <PathBuf as MartianMakePath>::make_path(directory, file_name)
-            .to_str()
-            .unwrap()
-            .to_string()
+        fn _make_path(directory: &Path, file_name: &Path) -> String {
+            _make_path_buf(directory, file_name)
+                .to_str()
+                .unwrap()
+                .to_string()
+        }
+        _make_path(directory.as_ref(), file_name.as_ref())
     }
 }
 
@@ -620,12 +629,15 @@ where
     }
 }
 
+const ARGS_FN: &str = "args";
+const OUTS_FN: &str = "outs";
+
 impl<T> RawMartianStage for T
 where
     T: MartianStage,
 {
     fn split(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode("args")?;
+        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
         let rover: MartianRover = MartianRover::from(&*md);
         let stage_defs = MartianStage::split(self, args, rover)?;
         let stage_def_obj = obj_encode(&stage_defs)?;
@@ -635,26 +647,26 @@ where
     }
 
     fn main(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode("args")?;
-        let chunk_args: <T as MartianStage>::ChunkInputs = md.decode("args")?;
+        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
+        let chunk_args: <T as MartianStage>::ChunkInputs = md.decode(ARGS_FN)?;
         let rover = MartianRover::from(&*md);
         // let outs = md.read_json_obj("outs")?;
         let outs = MartianStage::main(self, args, chunk_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
-        md.write_json_obj("outs", &outs_obj)?;
+        md.write_json_obj(OUTS_FN, &outs_obj)?;
         md.complete();
         Ok(())
     }
 
     fn join(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode("args")?;
+        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
         let rover = MartianRover::from(&*md);
         // let outs = md.read_json_obj("outs")?;
         let chunk_defs: Vec<<T as MartianStage>::ChunkInputs> = md.decode("chunk_defs")?;
         let chunk_outs: Vec<<T as MartianStage>::ChunkOutputs> = md.decode("chunk_outs")?;
         let outs = MartianStage::join(self, args, chunk_defs, chunk_outs, rover)?;
         let outs_obj = obj_encode(&outs)?;
-        md.write_json_obj("outs", &outs_obj)?;
+        md.write_json_obj(OUTS_FN, &outs_obj)?;
         md.complete();
         Ok(())
     }

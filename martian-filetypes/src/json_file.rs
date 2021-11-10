@@ -415,7 +415,7 @@ mod tests {
         Ok(())
     }
 
-    fn serde_lazy_roundtrip_check<T>(input: &Vec<T>) -> Result<(), Error>
+    fn serde_lazy_roundtrip_check<T>(input: &[T]) -> Result<(), Error>
     where
         T: Serialize + DeserializeOwned + PartialEq,
     {
@@ -423,14 +423,20 @@ mod tests {
         let dir = tempfile::tempdir()?;
         let json_file = JsonFile::new(dir.path(), "serde");
         serde_json::to_writer(json_file.buf_writer()?, input)?;
-        let decoded: Vec<T> = json_file.lazy_reader()?.map(|x| x.unwrap()).collect();
-        assert!(input == &decoded);
+        let decoded: Vec<T> = json_file
+            .lazy_reader()?
+            .map(std::result::Result::unwrap)
+            .collect();
+        assert!(input == decoded);
 
         // Serde write pretty + lazy read
         let json_file = JsonFile::new(dir.path(), "serde_pretty");
         serde_json::to_writer_pretty(json_file.buf_writer()?, input)?;
-        let decoded: Vec<T> = json_file.lazy_reader()?.map(|x| x.unwrap()).collect();
-        assert!(input == &decoded);
+        let decoded: Vec<T> = json_file
+            .lazy_reader()?
+            .map(std::result::Result::unwrap)
+            .collect();
+        assert!(input == decoded);
 
         Ok(())
     }
@@ -442,13 +448,19 @@ mod tests {
         {
             let input = vec![0, 1, 2, 3];
             serde_json::to_writer(json_file.buf_writer()?, &input)?;
-            let decoded: Vec<i32> = json_file.lazy_reader()?.map(|x| x.unwrap()).collect();
+            let decoded: Vec<i32> = json_file
+                .lazy_reader()?
+                .map(std::result::Result::unwrap)
+                .collect();
             assert_eq!(input, decoded);
         }
         {
             let input = vec![0, 1, 2, 5, 3];
             serde_json::to_writer_pretty(json_file.buf_writer()?, &input)?;
-            let decoded: Vec<i32> = json_file.lazy_reader()?.map(|x| x.unwrap()).collect();
+            let decoded: Vec<i32> = json_file
+                .lazy_reader()?
+                .map(std::result::Result::unwrap)
+                .collect();
             assert_eq!(input, decoded);
         }
 
