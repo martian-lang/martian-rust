@@ -344,7 +344,7 @@ macro_rules! attr_parse {
                 }
                 $(let mut $property = None;)*
                 for using_spec in s.split(',') {
-                    let parts: Vec<_> = using_spec.trim().split("=").map(|part| part.trim()).collect();
+                    let parts: Vec<_> = using_spec.trim().split("=").map(str::trim).collect();
                     if parts.len() != 2 {
                         return Err(format!("Expecting a comma separated `key=value` like tokens here. The allowed keys are: [{}]", stringify!($($property),*)));
                     }
@@ -428,8 +428,8 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     // Make sure that none of the field names are martian keywords.
     // Parse the #[mro_retian] attributes attached to the field, and make sure
     // that no serde field attributes are used
-    let mut vec_inner = Vec::new();
-    let blacklist: HashSet<String> = MARTIAN_TOKENS.iter().map(|x| x.to_string()).collect();
+    let mut vec_inner = Vec::with_capacity(fields.len());
+    let blacklist: HashSet<&str> = MARTIAN_TOKENS.iter().copied().collect();
     for field in fields {
         let name = field.ident.clone().unwrap().to_string();
         let mut retain = false;
@@ -485,7 +485,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                 }
             }
         }
-        if blacklist.contains(&name) {
+        if blacklist.contains(name.as_str()) {
             return syn::Error::new(
                 field.ident.unwrap().span(),
                 format!(
@@ -795,9 +795,11 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
                 file_path: impl ::std::convert::AsRef<::std::path::Path>,
                 file_name: impl ::std::convert::AsRef<::std::path::Path>,
             ) -> Self {
-                let mut path = ::std::path::PathBuf::from(file_path.as_ref());
-                path.push(file_name);
-                let path = ::martian::utils::set_extension(path, Self::extension());
+                let path = ::martian::utils::make_path(
+                    file_path.as_ref(),
+                    file_name.as_ref(),
+                    Self::extension(),
+                );
                 #struct_ident(path)
             }
         }

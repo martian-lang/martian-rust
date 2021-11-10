@@ -273,7 +273,10 @@ where
         .has_headers(true)
         .from_reader(buffer.as_slice());
     let headers = rdr.headers()?;
-    Ok(headers.iter().map(|h| h.to_string()).collect())
+    Ok(headers
+        .iter()
+        .map(std::string::ToString::to_string)
+        .collect())
 }
 
 impl<F, D, T, W> LazyTabularWriter<F, D, T, W>

@@ -5,8 +5,8 @@ use martian_derive::{martian_filetype, MartianStruct};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
-use MartianBlanketType::*;
-use MartianPrimaryType::*;
+use MartianBlanketType::{Array, Primary, TypedMap};
+use MartianPrimaryType::{Bool, FileType, Float, Int, Map, Path, Str};
 
 #[test]
 fn test_simple_vec() {

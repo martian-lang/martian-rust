@@ -183,10 +183,7 @@ impl Metadata {
         let buf = Self::_read_buf_err(&file)?;
         serde_json::from_str(&buf).map_err(
             #[cold]
-            |e| {
-                let context = Self::_format_buf_err(buf, &e, file, type_name::<T>());
-                Error::new(e).context(context)
-            },
+            |e| Self::_format_buf_err(buf, e, file, type_name::<T>()),
         )
     }
 
@@ -203,10 +200,10 @@ impl Metadata {
     #[cold]
     fn _format_buf_err(
         buf: String,
-        e: &serde_json::Error,
+        e: serde_json::Error,
         file: PathBuf,
         tname: &'static str,
-    ) -> String {
+    ) -> Error {
         // Non-generic so that we don't generate copy of this code for every
         // type we `_decode` into.  This is a slight hack to improve compile
         // times.
@@ -215,7 +212,7 @@ impl Metadata {
             .enumerate()
             .map(|(i, line)| format!("{:>4}: {}", i + 1, line))
             .collect();
-        format!(
+        let context = format!(
             "The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
             following error:\n\n{}\n\nThis typically happens when one or more fields in the \
             struct {} cannot be built from the JSON. The contents of the JSON are shown below: \
@@ -225,7 +222,8 @@ impl Metadata {
             e,
             tname,
             buf_lines.join("\n")
-        )
+        );
+        Error::new(e).context(context)
     }
 
     fn _append(&mut self, name: &str, message: &str) -> Result<()> {

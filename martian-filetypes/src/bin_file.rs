@@ -423,7 +423,10 @@ mod tests {
             assert_eq!(i as u16, v);
         }
 
-        let max_val = bin_file.lazy_reader()?.map(|x| x.unwrap()).max();
+        let max_val = bin_file
+            .lazy_reader()?
+            .map(std::result::Result::unwrap)
+            .max();
         assert_eq!(max_val, Some(99u16));
 
         // Invalid Type

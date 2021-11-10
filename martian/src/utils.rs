@@ -2,19 +2,18 @@
 //!
 //! All the functions are simple wrappers around functions from
 //! other crates.
-use crate::{Error, Json, JsonDict};
+use crate::{Error, JsonDict};
 use serde::Serialize;
+use serde_json::Value;
 use std::path::Path;
 use std::path::PathBuf;
 
 /// Shortcut function to encode an object as a Json dictionary
 pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {
-    Ok(json_encode(v)?.as_object().unwrap().clone())
-}
-
-/// Shortcut function to encode an object as a json value
-fn json_encode<T: Serialize>(v: &T) -> Result<Json, Error> {
-    Ok(serde_json::to_value(v)?)
+    fn objify(v: Value) -> JsonDict {
+        v.as_object().unwrap().to_owned()
+    }
+    Ok(objify(serde_json::to_value(v)?))
 }
 
 /// Given a path to the struct which may be fully qualified,

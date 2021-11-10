@@ -209,10 +209,12 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
     /// **not** to implement this for a custom filetype in general, instead implement
     /// `read_from()`
     fn read(&self) -> Result<T, Error> {
-        <Self as FileTypeIO<T>>::read_from(self.buf_reader()?).map_err(|e| {
-            let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
+        fn _fmt_err(e: Error, p: PathBuf) -> Error {
+            let context = ErrorContext::ReadContext(p, e.to_string());
             e.context(context)
-        })
+        }
+        <Self as FileTypeIO<T>>::read_from(self.buf_reader()?)
+            .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
     #[doc(hidden)]
@@ -231,10 +233,12 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
     /// **not** to implement this for a custom filetype in general, instead implement
     /// `write_into()`.
     fn write(&self, item: &T) -> Result<(), Error> {
-        <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item).map_err(|e| {
-            let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
+        fn _fmt_err(e: Error, p: PathBuf) -> Error {
+            let context = ErrorContext::WriteContext(p, e.to_string());
             e.context(context)
-        })
+        }
+        <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item)
+            .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
     #[doc(hidden)]
