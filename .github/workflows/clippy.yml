@@ -8,4 +8,15 @@ jobs:
     - uses: actions-rs/clippy-check@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        args: --all-features --all-targets -- -W clippy::wildcard_imports
+        args: |
+          --all-features --all-targets --
+          -W clippy::wildcard_imports
+          -W clippy::redundant_closure_for_method_calls
+          -W clippy::enum_glob_use
+          -D clippy::unused_io_amount
+          -W future_incompatible
+          -W nonstandard_style
+          -D rust_2018_compatibility
+          -D rust_2021_compatibility
+          -D unused
+          -D clippy::unnecessary_mut_passed
