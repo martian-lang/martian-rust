@@ -21,11 +21,25 @@ pub struct MartianVoid {
     __null__: Option<bool>,
 }
 
+fn split_file_name(p: &Path) -> (&Path, &Path) {
+    let file_name = p.file_name().unwrap();
+    match p.parent() {
+        Some(path) => (path, file_name.as_ref()),
+        None => ("".as_ref(), file_name.as_ref()),
+    }
+}
+
 /// A `MartianFiletype` is associated with a file of know non-empty
 /// extension. This encodes the concept of a `filepath` in martian.
-pub trait MartianFileType: AsRef<Path> {
+pub trait MartianFileType: AsRef<Path> + From<PathBuf> {
     fn extension() -> String;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
+    /// This function is equivalent to calling `new(p.parent(), p.file_name())`
+    /// except that it handles the case of the path lacking one or the other.
+    fn from_path(p: &Path) -> Self {
+        let (path, file_name) = split_file_name(p);
+        Self::new(path, file_name)
+    }
     /// This function will create a file if it does not exist, and will truncate it if it does.
     fn buf_writer(&self) -> Result<BufWriter<File>, Error> {
         fn _buf_writer(ty: &Path) -> Result<BufWriter<File>, Error> {
@@ -383,7 +397,7 @@ impl MartianRover {
     where
         T: MartianMakePath,
     {
-        <T as MartianMakePath>::make_path(&self.files_path, filename)
+        <T as MartianMakePath>::make_path(self.files_path.as_path(), filename.as_ref())
     }
     pub fn get_mem_gb(&self) -> usize {
         self.mem_gb
@@ -424,7 +438,7 @@ pub enum StageKind {
 ///
 /// For a toy example, see: [https://martian-lang.github.io/martian-rust/#/content/quick_start](https://martian-lang.github.io/martian-rust/#/content/quick_start)
 pub trait MartianMain: MroMaker {
-    type StageInputs: Serialize + DeserializeOwned + MartianStruct;
+    type StageInputs: DeserializeOwned + MartianStruct;
     type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
 
     fn main(
@@ -438,8 +452,8 @@ pub trait MartianMain: MroMaker {
 ///
 /// For a toy example, see [https://martian-lang.github.io/martian-rust/#/content/quick_start_split](https://martian-lang.github.io/martian-rust/#/content/quick_start_split)
 pub trait MartianStage: MroMaker {
-    type StageInputs: Serialize + DeserializeOwned + MartianStruct;
-    type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
+    type StageInputs: DeserializeOwned + MartianStruct;
+    type StageOutputs: Serialize + MartianStruct;
     type ChunkInputs: Serialize + DeserializeOwned + MartianStruct;
     type ChunkOutputs: Serialize + DeserializeOwned + MartianStruct;
 
@@ -482,9 +496,9 @@ pub trait MartianStage: MroMaker {
         let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
         let split_path = prep_path(run_directory.as_ref(), "split")?;
         let rover = MartianRover::new(split_path, default_resource);
-        println!("{}", vec!["-"; 80].join(""));
+        println!("{}", ["-"; 80].join(""));
         println!("{}", Self::stage_name());
-        println!("{}", vec!["-"; 80].join(""));
+        println!("{}", ["-"; 80].join(""));
         println!(" > [split ] running");
         let stage_defs = self.split(args.clone(), rover)?;
         println!(" > [split ] complete");
@@ -596,18 +610,14 @@ where
         &self,
         run_directory: impl AsRef<Path>,
         args: Self::StageInputs,
-    ) -> Result<Self::StageOutputs, Error>
-    where
-        Self::ChunkInputs: Clone,
-        Self::StageInputs: Clone,
-    {
+    ) -> Result<Self::StageOutputs, Error> {
         // Use default resource for main
         let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
         let main_path = prep_path(run_directory.as_ref(), "main")?;
         let rover = MartianRover::new(main_path, default_resource);
-        println!("{}", vec!["-"; 80].join(""));
+        println!("{}", ["-"; 80].join(""));
         println!("{}", Self::stage_name());
-        println!("{}", vec!["-"; 80].join(""));
+        println!("{}", ["-"; 80].join(""));
         println!(" > [chunk] running");
         let result = self.main(args, rover);
         println!(" > [stage] complete");
@@ -650,7 +660,6 @@ where
         let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
         let chunk_args: <T as MartianStage>::ChunkInputs = md.decode(ARGS_FN)?;
         let rover = MartianRover::from(&*md);
-        // let outs = md.read_json_obj("outs")?;
         let outs = MartianStage::main(self, args, chunk_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
         md.write_json_obj(OUTS_FN, &outs_obj)?;

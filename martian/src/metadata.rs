@@ -126,9 +126,7 @@ impl Metadata {
 
     /// Path within chunk
     pub fn make_path(&self, name: &str) -> PathBuf {
-        let mut pb = PathBuf::from(self.metadata_path.clone());
-        pb.push(METADATA_PREFIX.to_string() + name);
-        pb
+        Path::new(name).join(METADATA_PREFIX.to_string() + name)
     }
 
     /// Write to a file inside the chunk
@@ -338,7 +336,7 @@ mod tests {
             val: i32,
         }
 
-        let e: Result<Foo> = Metadata::_decode(PathBuf::from("tests/invalid_args.json"));
+        let e: Result<Foo> = Metadata::_decode("tests/invalid_args.json".into());
         insta::assert_display_snapshot!(e.unwrap_err());
     }
 }

@@ -815,12 +815,7 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
             ::std::path::PathBuf: ::std::convert::From<T>,
         {
             fn from(source: T) -> Self {
-                let path_buf = ::std::path::PathBuf::from(source);
-                let file_name = path_buf.file_name().unwrap();
-                match path_buf.parent() {
-                    Some(path) => ::martian::MartianFileType::new(path, file_name),
-                    None => ::martian::MartianFileType::new("", file_name),
-                }
+                ::martian::MartianFileType::from_path(::std::path::PathBuf::from(source).as_ref())
             }
         }
     ]
