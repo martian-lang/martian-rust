@@ -320,6 +320,14 @@ where
     }
 }
 
+pub(crate) fn maybe_add_format(extension: String, format: &str) -> String {
+    if extension.ends_with(format) || format.is_empty() {
+        extension
+    } else {
+        format!("{}.{}", extension, format)
+    }
+}
+
 #[cfg(test)]
 pub fn round_trip_check<F, T>(input: &T) -> Result<bool, Error>
 where

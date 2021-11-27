@@ -760,7 +760,7 @@ pub trait MroMaker {
             stage_mro.to_string()
         )
     }
-    fn stage_name() -> String;
+    fn stage_name() -> &'static str;
     fn stage_in_and_out() -> InAndOut;
     fn chunk_in_and_out() -> Option<InAndOut>;
     fn using_attributes() -> MroUsing;
@@ -769,7 +769,7 @@ pub trait MroMaker {
 /// All the data needed to create a stage definition mro.
 #[derive(Debug)]
 pub struct StageMro {
-    stage_name: String,     // e.g CORRECT_BARCODES in `stage CORRECT_BARCODES(..)`
+    stage_name: &'static str, // e.g CORRECT_BARCODES in `stage CORRECT_BARCODES(..)`
     adapter_name: String, // Martian adapter e.g `cr_slfe` in `src comp "cr_slfe martian correct_barcodes"
     stage_key: String, // Key used in the hashmap containing all stages e.g `correct_barcodes` in `src comp "cr_slfe martian correct_barcodes"
     stage_in_out: InAndOut, // Inputs and outputs of the stage
@@ -1063,7 +1063,7 @@ mod tests {
         );
 
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1094,7 +1094,7 @@ mod tests {
         );
 
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1121,7 +1121,7 @@ mod tests {
         );
 
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1151,7 +1151,7 @@ mod tests {
         );
 
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1187,7 +1187,7 @@ mod tests {
         );
 
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1209,7 +1209,7 @@ mod tests {
     #[should_panic]
     fn test_stage_mro_display_duplicate_inputs() {
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1233,7 +1233,7 @@ mod tests {
     #[should_panic]
     fn test_stage_mro_display_duplicate_outputs() {
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1256,7 +1256,7 @@ mod tests {
     #[test]
     fn test_stage_mro_display_duplicate_outputs_same_type() {
         let stage_mro = StageMro {
-            stage_name: "SUM_SQUARES".into(),
+            stage_name: "SUM_SQUARES",
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
@@ -1509,7 +1509,7 @@ mod tests {
         };
 
         let stage_mro = StageMro {
-            stage_name: "SETUP_CHUNKS".into(),
+            stage_name: "SETUP_CHUNKS",
             adapter_name: "my_adapter".into(),
             stage_key: "setup_chunks".into(),
             stage_in_out: InAndOut {

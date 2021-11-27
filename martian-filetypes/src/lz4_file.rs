@@ -383,7 +383,7 @@ mod tests {
 
     #[test]
     fn test_lz4_extension() {
-        assert_eq!(Lz4::<JsonFile>::extension(), String::from("json.lz4"));
+        assert_eq!(Lz4::<JsonFile>::extension(), "json.lz4");
     }
 
     #[test]
