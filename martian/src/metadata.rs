@@ -142,6 +142,10 @@ impl Metadata {
     pub fn write_raw(&mut self, name: &str, text: &str) -> Result<()> {
         let mut f = File::create(self.make_path(name))?;
         f.write_all(text.as_bytes())?;
+        // Ensure the file is closed before we write the journal, to reduce
+        // the changes that `mrp` sees the journal entry before the file content
+        // has be sync'ed.  This can be an issue on nfs systems.
+        drop(f);
         self.update_journal(name)?;
         Ok(())
     }
@@ -240,7 +244,11 @@ impl Metadata {
             .append(true)
             .open(filename)?;
         file.write_all(message.as_bytes())?;
-        file.write_all("\n".as_bytes())?;
+        file.write_all(b"\n")?;
+        // Ensure the file is closed before we write the journal, to reduce
+        // the changes that `mrp` sees the journal entry before the file content
+        // has be sync'ed.  This can be an issue on nfs systems.
+        drop(file);
         self.update_journal(name)?;
         Ok(())
     }
