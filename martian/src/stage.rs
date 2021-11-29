@@ -461,9 +461,9 @@ fn split_prelude(
     let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
     let split_path = prep_path(run_directory, subdir)?;
     let rover = MartianRover::new(split_path.as_path(), default_resource);
-    println!("{}", ["-"; 80].join(""));
+    println!("{}", ["-"; 80].concat());
     println!("{}", stage_name);
-    println!("{}", ["-"; 80].join(""));
+    println!("{}", ["-"; 80].concat());
     Ok(rover)
 }
 
