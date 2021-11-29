@@ -151,7 +151,7 @@ impl Metadata {
         let mut f = File::create(self.make_path(name))?;
         f.write_all(text.as_bytes())?;
         // Ensure the file is closed before we write the journal, to reduce
-        // the changes that `mrp` sees the journal entry before the file content
+        // the chances that `mrp` sees the journal entry before the file content
         // has be sync'ed.  This can be an issue on nfs systems.
         drop(f);
         self.update_journal(name)?;
@@ -254,7 +254,7 @@ impl Metadata {
         file.write_all(message.as_bytes())?;
         file.write_all(b"\n")?;
         // Ensure the file is closed before we write the journal, to reduce
-        // the changes that `mrp` sees the journal entry before the file content
+        // the chances that `mrp` sees the journal entry before the file content
         // has be sync'ed.  This can be an issue on nfs systems.
         drop(file);
         self.update_journal(name)?;
@@ -312,7 +312,7 @@ impl Metadata {
         }
     }
 
-    /// Equivalentt to write_json_obj() followed by complete()
+    /// Equivalent to write_json_obj() followed by complete()
     pub(crate) fn complete_with(&mut self, out_filename: &str, out_data: &JsonDict) -> Result<()> {
         self.write_json_obj(out_filename, out_data)?;
         self.complete();
