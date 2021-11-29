@@ -15,8 +15,13 @@ use std::panic;
 use std::path::Path;
 
 use backtrace::Backtrace;
-use chrono::Local;
 use log::{error, info};
+use time::format_description::{
+    modifier::{Day, Hour, Minute, Month, Second, Year},
+    Component, FormatItem,
+    FormatItem::Literal,
+};
+use time::OffsetDateTime;
 
 pub use anyhow::Error;
 use anyhow::{format_err, Context};
@@ -62,12 +67,38 @@ fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
     Ok(())
 }
 
+// e.g. 2006-01-02 15:04:05.  Note that this is only crate-public, not fully
+// public, because this is a bad date format that is used only to retain
+// backwards compatibility.  For use cases where that is not a concern, use
+// Rfc3339, which looks similar but won't cause strange bugs if not every
+// compute node in your cluster is using the same time zone.
+//
+// We could use the proc macro, but then we'd need
+// to compile the proc macro crate, which would slow down build times
+// significantly for very little benefit in readability.
+pub(crate) const DATE_FORMAT: &[FormatItem] = &[
+    FormatItem::Component(Component::Year(Year::default())),
+    Literal(b"-"),
+    FormatItem::Component(Component::Month(Month::default())),
+    Literal(b"-"),
+    FormatItem::Component(Component::Day(Day::default())),
+    Literal(b" "),
+    FormatItem::Component(Component::Hour(Hour::default())),
+    Literal(b":"),
+    FormatItem::Component(Component::Minute(Minute::default())),
+    Literal(b":"),
+    FormatItem::Component(Component::Second(Second::default())),
+];
+
 fn setup_logging(log_file: File, level: LevelFilter) {
     let base_config = fern::Dispatch::new().level(level);
 
     let logger_config = fern::Dispatch::new()
         .format(|out, msg, record| {
-            let time_str = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+            let time_str = OffsetDateTime::now_local()
+                .unwrap()
+                .format(DATE_FORMAT)
+                .unwrap();
             out.finish(format_args!("{} [{}] {}", time_str, record.target(), msg))
         })
         .chain(log_file)

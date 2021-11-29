@@ -1,5 +1,6 @@
+use crate::DATE_FORMAT;
 use crate::{write_errors, Error};
-use chrono::{DateTime, Local};
+use time::{OffsetDateTime, UtcOffset};
 
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -12,6 +13,7 @@ use std::fs::{rename, File, OpenOptions};
 use std::io::Write;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::{Path, PathBuf};
+use std::time::SystemTime;
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
@@ -100,12 +102,18 @@ impl RustAdapterInfo {
     }
 }
 
-pub fn make_timestamp(datetime: DateTime<Local>) -> String {
-    datetime.format("%Y-%m-%d %H:%M:%S").to_string()
+pub fn make_timestamp(datetime: impl Into<OffsetDateTime>) -> String {
+    _make_timestamp(datetime.into())
+}
+
+fn _make_timestamp(datetime: OffsetDateTime) -> String {
+    // Convert to local time (if necessary)
+    let datetime = datetime.to_offset(UtcOffset::local_offset_at(datetime).unwrap());
+    datetime.format(DATE_FORMAT).unwrap()
 }
 
 pub fn make_timestamp_now() -> String {
-    make_timestamp(Local::now())
+    make_timestamp(SystemTime::now())
 }
 
 impl Metadata {
