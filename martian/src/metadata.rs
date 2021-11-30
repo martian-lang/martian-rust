@@ -107,8 +107,12 @@ pub fn make_timestamp(datetime: impl Into<OffsetDateTime>) -> String {
 }
 
 fn _make_timestamp(datetime: OffsetDateTime) -> String {
-    // Convert to local time (if necessary)
-    let datetime = datetime.to_offset(UtcOffset::local_offset_at(datetime).unwrap());
+    // Convert to local time (if necessary, and possible)
+    let datetime = if let Ok(offset) = UtcOffset::local_offset_at(datetime) {
+        datetime.to_offset(offset)
+    } else {
+        datetime
+    };
     datetime.format(DATE_FORMAT).unwrap()
 }
 

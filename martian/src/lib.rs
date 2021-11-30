@@ -54,13 +54,17 @@ pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
 fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
     let mut err_file: File = unsafe { File::from_raw_fd(4) };
 
+    // We want to aggressively avoid allocations here if we can, since one
+    // common source of errors is running out of memory.
+    let msg_alloc: String;
     let msg = if is_assert {
-        format!("ASSERT:{}", msg)
+        msg_alloc = ["ASSERT:", msg].concat();
+        msg_alloc.as_str()
     } else {
-        msg.to_string()
+        msg
     };
 
-    let _ = err_file.write(msg.as_bytes());
+    let _ = err_file.write_all(msg.as_bytes());
 
     // Avoid closing err_file
     let _ = err_file.into_raw_fd();
@@ -96,7 +100,7 @@ fn setup_logging(log_file: File, level: LevelFilter) {
     let logger_config = fern::Dispatch::new()
         .format(|out, msg, record| {
             let time_str = OffsetDateTime::now_local()
-                .unwrap()
+                .unwrap_or_else(|_| OffsetDateTime::now_utc())
                 .format(DATE_FORMAT)
                 .unwrap();
             out.finish(format_args!("{} [{}] {}", time_str, record.target(), msg))
@@ -220,9 +224,9 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
             let backtrace = Backtrace::new();
 
             let msg = match info.payload().downcast_ref::<&'static str>() {
-                Some(s) => *s,
+                Some(&s) => s,
                 None => match info.payload().downcast_ref::<String>() {
-                    Some(s) => &**s,
+                    Some(s) => (*s).as_str(),
                     None => "Box<Any>",
                 },
             };
@@ -244,7 +248,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
             // write stack trace to to _stackvars.
             // this will just give up if any errors are encountere
             let bt_string = format!("{:?}", backtrace);
-            let _ = File::create(&stackvars_path).map(|mut f| {
+            let _ = File::create(&stackvars_path).map(move |mut f| {
                 let _ = f.write_all(bt_string.as_bytes());
             });
 
@@ -282,7 +286,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 fn report_error(md: &mut Metadata, e: &Error, is_assert: bool) {
     let bt = e.backtrace();
     let _ = md.stackvars(&bt.to_string());
-    let _ = write_errors(&format!("{}", e), is_assert);
+    let _ = write_errors(&e.to_string(), is_assert);
 }
 
 fn get_generator_name() -> String {
