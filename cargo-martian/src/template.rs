@@ -31,12 +31,12 @@ use martian_derive::*;
 // If you want to declare a new filetype use the `martian_filetype!` macro:
 // martian_filetype!(Lz4File, "lz4");
 
-#[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
+#[derive(Debug, Clone, Deserialize, MartianStruct)]
 pub struct {stage}StageInputs {open}
     // TODO: Add fields here. This cannot be an empty struct or a tuple struct
 {close}
 
-#[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
+#[derive(Debug, Clone, Serialize, MartianStruct)]
 pub struct {stage}StageOutputs {open}
     // TODO: Add fields here. If there are no stage outputs, use `MartianVoid`
 {close}
@@ -122,12 +122,12 @@ use martian_derive::*;
 // If you want to declare a new filetype use the `martian_filetype!` macro:
 // martian_filetype!(Lz4File, "lz4");
 
-#[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
+#[derive(Debug, Clone, Deserialize, MartianStruct)]
 pub struct {stage}StageInputs {open}
     // TODO: Add fields here. This cannot be an empty struct or a tuple struct
 {close}
 
-#[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
+#[derive(Debug, Clone, Serialize, MartianStruct)]
 pub struct {stage}StageOutputs {open}
     // TODO: Add fields here. If there are no stage outputs, use `MartianVoid`
     // as the associated type

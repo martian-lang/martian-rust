@@ -71,8 +71,8 @@ impl ::martian::MroMaker for SumSquares {
     fn chunk_in_and_out() -> Option<::martian::InAndOut> {
         None
     }
-    fn stage_name() -> String {
-        String::from("SUM_SQUARES")
+    fn stage_name() -> &'static str {
+        "SUM_SQUARES"
     }
     fn using_attributes() -> ::martian::MroUsing {
         ::martian::MroUsing {
@@ -114,8 +114,8 @@ impl ::martian::AsMartianPrimaryType for Chemistry {
 
 ```rust
 impl ::martian::MartianFileType for TxtFile {
-    fn extension() -> &'static str {
-        "txt"
+    fn extension() -> String {
+        "txt".into()
     }
     fn new(
         file_path: impl ::std::convert::AsRef<::std::path::Path>,

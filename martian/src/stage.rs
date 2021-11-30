@@ -21,11 +21,25 @@ pub struct MartianVoid {
     __null__: Option<bool>,
 }
 
+fn split_file_name(p: &Path) -> (&Path, &Path) {
+    let file_name = p.file_name().unwrap();
+    match p.parent() {
+        Some(path) => (path, file_name.as_ref()),
+        None => ("".as_ref(), file_name.as_ref()),
+    }
+}
+
 /// A `MartianFiletype` is associated with a file of know non-empty
 /// extension. This encodes the concept of a `filepath` in martian.
-pub trait MartianFileType: AsRef<Path> {
+pub trait MartianFileType: AsRef<Path> + From<PathBuf> {
     fn extension() -> String;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
+    /// This function is equivalent to calling `new(p.parent(), p.file_name())`
+    /// except that it handles the case of the path lacking one or the other.
+    fn from_path(p: &Path) -> Self {
+        let (path, file_name) = split_file_name(p);
+        Self::new(path, file_name)
+    }
     /// This function will create a file if it does not exist, and will truncate it if it does.
     fn buf_writer(&self) -> Result<BufWriter<File>, Error> {
         fn _buf_writer(ty: &Path) -> Result<BufWriter<File>, Error> {
@@ -344,6 +358,10 @@ impl MartianRover {
     /// Rover needs to know the resources explicitly, so none of the
     /// resource fields shoulbd be empty when invoking this function.
     pub fn new(files_path: impl AsRef<Path>, resource: Resource) -> Self {
+        MartianRover::_new(files_path.as_ref(), resource)
+    }
+
+    fn _new(files_path: &Path, resource: Resource) -> Self {
         // Resource should both be full populated before creating a rover
         assert!(resource.mem_gb.is_some());
         assert!(resource.mem_gb.unwrap() >= 0);
@@ -352,7 +370,7 @@ impl MartianRover {
         assert!(resource.vmem_gb.is_some());
         assert!(resource.vmem_gb.unwrap() >= 0);
         MartianRover {
-            files_path: PathBuf::from(files_path.as_ref()),
+            files_path: PathBuf::from(files_path),
             mem_gb: resource.mem_gb.unwrap() as usize,
             threads: resource.threads.unwrap() as usize,
             vmem_gb: resource.vmem_gb.unwrap() as usize,
@@ -383,7 +401,7 @@ impl MartianRover {
     where
         T: MartianMakePath,
     {
-        <T as MartianMakePath>::make_path(&self.files_path, filename)
+        <T as MartianMakePath>::make_path(self.files_path.as_path(), filename.as_ref())
     }
     pub fn get_mem_gb(&self) -> usize {
         self.mem_gb
@@ -424,7 +442,7 @@ pub enum StageKind {
 ///
 /// For a toy example, see: [https://martian-lang.github.io/martian-rust/#/content/quick_start](https://martian-lang.github.io/martian-rust/#/content/quick_start)
 pub trait MartianMain: MroMaker {
-    type StageInputs: Serialize + DeserializeOwned + MartianStruct;
+    type StageInputs: DeserializeOwned + MartianStruct;
     type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
 
     fn main(
@@ -434,12 +452,27 @@ pub trait MartianMain: MroMaker {
     ) -> Result<Self::StageOutputs, Error>;
 }
 
+fn split_prelude(
+    run_directory: &Path,
+    stage_name: &str,
+    subdir: &str,
+) -> Result<MartianRover, Error> {
+    // Use default resource for split
+    let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
+    let split_path = prep_path(run_directory, subdir)?;
+    let rover = MartianRover::new(split_path.as_path(), default_resource);
+    println!("{}", ["-"; 80].concat());
+    println!("{}", stage_name);
+    println!("{}", ["-"; 80].concat());
+    Ok(rover)
+}
+
 /// A stage in martian which has `split`, `main` and `join`
 ///
 /// For a toy example, see [https://martian-lang.github.io/martian-rust/#/content/quick_start_split](https://martian-lang.github.io/martian-rust/#/content/quick_start_split)
 pub trait MartianStage: MroMaker {
-    type StageInputs: Serialize + DeserializeOwned + MartianStruct;
-    type StageOutputs: Serialize + DeserializeOwned + MartianStruct;
+    type StageInputs: DeserializeOwned + MartianStruct;
+    type StageOutputs: Serialize + MartianStruct;
     type ChunkInputs: Serialize + DeserializeOwned + MartianStruct;
     type ChunkOutputs: Serialize + DeserializeOwned + MartianStruct;
 
@@ -478,13 +511,9 @@ pub trait MartianStage: MroMaker {
         Self::StageInputs: Clone + Send + Sync,
         Self::ChunkOutputs: Send + Sync,
     {
-        // Use default resource for split
-        let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
-        let split_path = prep_path(run_directory.as_ref(), "split")?;
-        let rover = MartianRover::new(split_path, default_resource);
-        println!("{}", vec!["-"; 80].join(""));
-        println!("{}", Self::stage_name());
-        println!("{}", vec!["-"; 80].join(""));
+        let run_directory = run_directory.as_ref();
+
+        let rover = split_prelude(run_directory, Self::stage_name(), "split")?;
         println!(" > [split ] running");
         let stage_defs = self.split(args.clone(), rover)?;
         println!(" > [split ] complete");
@@ -492,12 +521,22 @@ pub trait MartianStage: MroMaker {
         let run_chunk = |chunk: &ChunkDef<Self::ChunkInputs>,
                          chunk_idx: usize|
          -> Result<Self::ChunkOutputs, Error> {
-            #[cfg(not(feature = "rayon"))]
-            println!(" > [chunk ] running {}", chunk_idx,);
-            #[cfg(feature = "rayon")]
-            println!(" > [chunk ] running with rayon {}", chunk_idx,);
-            let chunk_path = prep_path(run_directory.as_ref(), &format!("chnk{}", chunk_idx))?;
-            let rover = MartianRover::new(chunk_path, fill_defaults(chunk.resource));
+            fn _chunk_prelude(
+                chunk_idx: usize,
+                run_directory: &Path,
+                resource: Resource,
+            ) -> Result<MartianRover, Error> {
+                #[cfg(not(feature = "rayon"))]
+                println!(" > [chunk ] running {}", chunk_idx,);
+                #[cfg(feature = "rayon")]
+                println!(" > [chunk ] running with rayon {}", chunk_idx,);
+                let chunk_path = prep_path(run_directory, &format!("chnk{}", chunk_idx))?;
+                Ok(MartianRover::new(
+                    chunk_path.as_path(),
+                    fill_defaults(resource),
+                ))
+            }
+            let rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource)?;
             self.main(args.clone(), chunk.inputs.clone(), rover)
         };
 
@@ -521,8 +560,8 @@ pub trait MartianStage: MroMaker {
 
         println!(" > [chunks] complete");
 
-        let join_path = prep_path(run_directory.as_ref(), "join")?;
-        let rover = MartianRover::new(join_path, fill_defaults(stage_defs.join_resource));
+        let join_path = prep_path(run_directory, "join")?;
+        let rover = MartianRover::new(join_path.as_path(), fill_defaults(stage_defs.join_resource));
 
         let mut chunk_defs = Vec::new();
         for c in stage_defs.chunks {
@@ -596,18 +635,9 @@ where
         &self,
         run_directory: impl AsRef<Path>,
         args: Self::StageInputs,
-    ) -> Result<Self::StageOutputs, Error>
-    where
-        Self::ChunkInputs: Clone,
-        Self::StageInputs: Clone,
-    {
+    ) -> Result<Self::StageOutputs, Error> {
         // Use default resource for main
-        let default_resource = Resource::new().mem_gb(1).vmem_gb(2).threads(1);
-        let main_path = prep_path(run_directory.as_ref(), "main")?;
-        let rover = MartianRover::new(main_path, default_resource);
-        println!("{}", vec!["-"; 80].join(""));
-        println!("{}", Self::stage_name());
-        println!("{}", vec!["-"; 80].join(""));
+        let rover = split_prelude(run_directory.as_ref(), Self::stage_name(), "main")?;
         println!(" > [chunk] running");
         let result = self.main(args, rover);
         println!(" > [stage] complete");
@@ -641,21 +671,16 @@ where
         let rover: MartianRover = MartianRover::from(&*md);
         let stage_defs = MartianStage::split(self, args, rover)?;
         let stage_def_obj = obj_encode(&stage_defs)?;
-        md.write_json_obj("stage_defs", &stage_def_obj)?;
-        md.complete();
-        Ok(())
+        md.complete_with("stage_defs", &stage_def_obj)
     }
 
     fn main(&self, md: &mut Metadata) -> Result<(), Error> {
         let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
         let chunk_args: <T as MartianStage>::ChunkInputs = md.decode(ARGS_FN)?;
         let rover = MartianRover::from(&*md);
-        // let outs = md.read_json_obj("outs")?;
         let outs = MartianStage::main(self, args, chunk_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
-        md.write_json_obj(OUTS_FN, &outs_obj)?;
-        md.complete();
-        Ok(())
+        md.complete_with(OUTS_FN, &outs_obj)
     }
 
     fn join(&self, md: &mut Metadata) -> Result<(), Error> {
@@ -666,16 +691,17 @@ where
         let chunk_outs: Vec<<T as MartianStage>::ChunkOutputs> = md.decode("chunk_outs")?;
         let outs = MartianStage::join(self, args, chunk_defs, chunk_outs, rover)?;
         let outs_obj = obj_encode(&outs)?;
-        md.write_json_obj(OUTS_FN, &outs_obj)?;
-        md.complete();
-        Ok(())
+        md.complete_with(OUTS_FN, &outs_obj)
     }
 }
 
 // Prep a path for a test run of a stage.
 fn prep_path(path: impl AsRef<Path>, subdir: &str) -> Result<PathBuf, Error> {
-    let mut sub_path = PathBuf::from(path.as_ref());
-    sub_path.push(subdir);
+    _prep_path(path.as_ref(), subdir)
+}
+
+fn _prep_path(path: &Path, subdir: &str) -> Result<PathBuf, Error> {
+    let sub_path = path.join(subdir);
 
     std::fs::create_dir(&sub_path)?;
     Ok(sub_path)

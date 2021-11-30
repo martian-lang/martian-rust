@@ -22,11 +22,7 @@ macro_rules! martian_filetype_inner {
             F: ::martian::MartianFileType,
         {
             fn extension() -> String {
-                if F::extension().ends_with($extension) || $extension == "" {
-                    F::extension()
-                } else {
-                    format!("{}.{}", F::extension(), $extension)
-                }
+                crate::maybe_add_format(F::extension(), $extension)
             }
 
             fn new(file_path: impl AsRef<std::path::Path>, file_name: impl AsRef<std::path::Path>) -> Self {
@@ -53,11 +49,7 @@ macro_rules! martian_filetype_inner {
         {
             fn from(source: P) -> Self {
                 let path_buf = ::std::path::PathBuf::from(source);
-                let file_name = path_buf.file_name().unwrap();
-                match path_buf.parent() {
-                    Some(path) => ::martian::MartianFileType::new(path, file_name),
-                    None => ::martian::MartianFileType::new("", file_name),
-                }
+                Self::from_path(path_buf.as_path())
             }
         }
     )

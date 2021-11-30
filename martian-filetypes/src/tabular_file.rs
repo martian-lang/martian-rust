@@ -47,7 +47,7 @@ use std::path::{Path, PathBuf};
 
 pub trait TableConfig {
     fn delimiter() -> u8;
-    fn format() -> String;
+    fn format() -> &'static str;
     fn header() -> bool {
         true
     }
@@ -71,17 +71,12 @@ where
     D: TableConfig + Debug,
 {
     fn extension() -> String {
-        if F::extension().ends_with(&D::format()) || D::format().is_empty() {
-            F::extension()
-        } else {
-            format!("{}.{}", F::extension(), D::format())
-        }
+        crate::maybe_add_format(F::extension(), D::format())
     }
 
     fn new(file_path: impl AsRef<std::path::Path>, file_name: impl AsRef<std::path::Path>) -> Self {
-        let mut path = std::path::PathBuf::from(file_path.as_ref());
-        path.push(file_name);
-        let path = ::martian::utils::set_extension(path, Self::extension());
+        let path =
+            ::martian::utils::make_path(file_path.as_ref(), file_name.as_ref(), Self::extension());
         DelimitedFormat {
             phantom: ::std::marker::PhantomData,
             path,
@@ -107,11 +102,7 @@ where
 {
     fn from(source: P) -> Self {
         let path_buf = PathBuf::from(source);
-        let file_name = path_buf.file_name().unwrap();
-        match path_buf.parent() {
-            Some(path) => DelimitedFormat::new(path, file_name),
-            None => DelimitedFormat::new("", file_name),
-        }
+        DelimitedFormat::from_path(path_buf.as_path())
     }
 }
 
@@ -130,8 +121,8 @@ macro_rules! table_config {
             fn delimiter() -> u8 {
                 $delim
             }
-            fn format() -> String {
-                $format.into()
+            fn format() -> &'static str {
+                $format
             }
             fn header() -> bool {
                 $header

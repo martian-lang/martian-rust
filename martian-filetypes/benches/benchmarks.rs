@@ -70,29 +70,26 @@ where
     let file_lazy = F::new(dir.path(), "benchmark_lazy");
     let file_lz4 = Lz4::<F>::new(dir.path(), "benchmark_lz4");
     let file_lz4_lazy = Lz4::<F>::new(dir.path(), "benchmark_lz4_lazy");
-    let data_copy1 = data.clone();
-    let data_copy2 = data.clone();
-    let data_copy3 = data.clone();
     let elements = data.len() as u32;
 
     let mut group = c.benchmark_group(key);
     group.throughput(Throughput::Elements(elements.into()));
     group.sample_size(10);
-    group.bench_function("full-write", move |b| b.iter(|| file_full.write(&data)));
-    group.bench_function("lazy-write", move |b| {
+    group.bench_function("full-write", |b| b.iter(|| file_full.write(&data)));
+    group.bench_function("lazy-write", |b| {
         b.iter(|| {
             let mut writer = file_lazy.lazy_writer().unwrap();
-            for d in &data_copy1 {
+            for d in &data {
                 writer.write_item(d).unwrap();
             }
             writer.finish()
         })
     });
-    group.bench_function("lz4-write", move |b| b.iter(|| file_lz4.write(&data_copy2)));
-    group.bench_function("lz4-lazy-write", move |b| {
+    group.bench_function("lz4-write", |b| b.iter(|| file_lz4.write(&data)));
+    group.bench_function("lz4-lazy-write", |b| {
         b.iter(|| {
             let mut writer = file_lz4_lazy.lazy_writer().unwrap();
-            for d in &data_copy3 {
+            for d in &data {
                 writer.write_item(d).unwrap();
             }
             writer.finish()

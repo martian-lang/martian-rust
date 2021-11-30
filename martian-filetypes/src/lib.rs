@@ -145,6 +145,7 @@ use martian::{Error, MartianFileType};
 use std::fmt;
 use std::fs::File;
 use std::io;
+use std::iter::FromIterator;
 use std::path::PathBuf;
 
 pub mod bin_file;
@@ -267,13 +268,12 @@ pub trait LazyFileTypeIO<T>: MartianFileType + Sized + FileStorage<Vec<T>> {
     fn lazy_reader(&self) -> Result<Self::LazyReader, Error>;
 
     /// Consume the reader and read all the items
-    fn read_all(&self) -> Result<Vec<T>, Error> {
+    fn read_all<V>(&self) -> Result<V, Error>
+    where
+        V: FromIterator<T>,
+    {
         let reader = self.lazy_reader()?;
-        let mut items = Vec::new();
-        for item in reader {
-            items.push(item?);
-        }
-        Ok(items)
+        reader.into_iter().collect()
     }
     /// Get a lazy writer for this `MartianFileType`
     fn lazy_writer(&self) -> Result<Self::LazyWriter, Error>;
@@ -317,6 +317,14 @@ where
     }
     fn lazy_writer(&self) -> Result<Self::LazyWriter, Error> {
         LazyWrite::with_writer(self.buf_writer()?)
+    }
+}
+
+pub(crate) fn maybe_add_format(extension: String, format: &str) -> String {
+    if extension.ends_with(format) || format.is_empty() {
+        extension
+    } else {
+        format!("{}.{}", extension, format)
     }
 }
 
@@ -390,7 +398,7 @@ where
             lazy_writer.write_item(item)?;
         }
         lazy_writer.finish()?;
-        let decoded: Vec<T> = file.read()?;
+        let decoded = file.read()?;
         input == &decoded
     } else {
         true
@@ -405,7 +413,7 @@ where
             lazy_writer.write_item(item)?;
         }
         lazy_writer.finish()?;
-        let decoded: Vec<T> = file.read()?;
+        let decoded = file.read()?;
         input == &decoded
     } else {
         true

@@ -130,9 +130,7 @@ fn _set_extension(mut result: PathBuf, extension: String) -> PathBuf {
 /// generating large amounts of duplicate code, and should generally not be
 /// used directly.
 pub fn make_path(file_path: &Path, file_name: &Path, extension: String) -> PathBuf {
-    let mut path = PathBuf::from(file_path);
-    path.push(file_name);
-    _set_extension(path, extension)
+    _set_extension(file_path.join(file_name), extension)
 }
 
 #[cfg(test)]

@@ -172,8 +172,8 @@ pub fn make_mro(
     let stage_name =
         utils::to_shouty_snake_case(&parsed_attr.stage_name.unwrap_or(stage_struct_name));
     let stage_name_fn = quote![
-        fn stage_name() -> String {
-            String::from(#stage_name)
+        fn stage_name() -> &'static str {
+            #stage_name
         }
     ];
 
@@ -344,9 +344,11 @@ macro_rules! attr_parse {
                 }
                 $(let mut $property = None;)*
                 for using_spec in s.split(',') {
-                    let parts: Vec<_> = using_spec.trim().split("=").map(str::trim).collect();
+                    let parts: Vec<_> = using_spec.trim().splitn(3, '=').map(str::trim).collect();
                     if parts.len() != 2 {
-                        return Err(format!("Expecting a comma separated `key=value` like tokens here. The allowed keys are: [{}]", stringify!($($property),*)));
+                        return Err(format!(
+                            "Expecting a comma separated `key=value` like tokens here. The allowed keys are: [{}]",
+                            stringify!($($property),*)));
                     }
                     match parts[0] {
                         $(stringify!($property) => {
@@ -356,10 +358,14 @@ macro_rules! attr_parse {
                             }
                             $property = match parts[1].parse::<$type>() {
                                 Ok(parsed) => Some(parsed),
-                                Err(_) => return Err(format!("Unable to parse {0} as {1} from `{0}={2}`", parts[0], stringify!($type), parts[1]))
+                                Err(_) => return Err(format!(
+                                    "Unable to parse {0} as {1} from `{0}={2}`",
+                                    parts[0], stringify!($type), parts[1]))
                             };
                         },)*
-                        _ => return Err(format!("Expecting a comma separated `key=value` like tokens here. The allowed keys are: [{}]. Found an invalid key {}", stringify!($($property),*), parts[0]))
+                        _ => return Err(format!(
+                            "Expecting a comma separated `key=value` like tokens here. The allowed keys are: [{}]. Found an invalid key {}",
+                            stringify!($($property),*), parts[0]))
                     }
                 }
                 Ok(MakeMroAttr {
@@ -815,12 +821,7 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
             ::std::path::PathBuf: ::std::convert::From<T>,
         {
             fn from(source: T) -> Self {
-                let path_buf = ::std::path::PathBuf::from(source);
-                let file_name = path_buf.file_name().unwrap();
-                match path_buf.parent() {
-                    Some(path) => ::martian::MartianFileType::new(path, file_name),
-                    None => ::martian::MartianFileType::new("", file_name),
-                }
+                ::martian::MartianFileType::from_path(::std::path::PathBuf::from(source).as_ref())
             }
         }
     ]

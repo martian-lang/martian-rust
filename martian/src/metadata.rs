@@ -1,5 +1,6 @@
+use crate::DATE_FORMAT;
 use crate::{write_errors, Error};
-use chrono::{DateTime, Local};
+use time::{OffsetDateTime, UtcOffset};
 
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -12,6 +13,7 @@ use std::fs::{rename, File, OpenOptions};
 use std::io::Write;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::{Path, PathBuf};
+use std::time::SystemTime;
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
@@ -100,24 +102,38 @@ impl RustAdapterInfo {
     }
 }
 
-pub fn make_timestamp(datetime: DateTime<Local>) -> String {
-    datetime.format("%Y-%m-%d %H:%M:%S").to_string()
+pub fn make_timestamp(datetime: impl Into<OffsetDateTime>) -> String {
+    _make_timestamp(datetime.into())
+}
+
+fn _make_timestamp(datetime: OffsetDateTime) -> String {
+    // Convert to local time (if necessary)
+    let datetime = datetime.to_offset(UtcOffset::local_offset_at(datetime).unwrap());
+    datetime.format(DATE_FORMAT).unwrap()
 }
 
 pub fn make_timestamp_now() -> String {
-    make_timestamp(Local::now())
+    make_timestamp(SystemTime::now())
 }
 
 impl Metadata {
-    pub fn new(args: Vec<String>) -> Metadata {
+    pub fn new(mut args: Vec<String>) -> Metadata {
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
+        args.truncate(5);
+        assert_eq!(args.len(), 5, "expected 5 arguments, got {}", args.len());
+        let run_file = args.pop().unwrap();
+        let files_path = args.pop().unwrap();
+        let metadata_path = args.pop().unwrap();
+        let stage_type = args.pop().unwrap();
+        let stage_name = args.pop().unwrap();
+
         Metadata {
-            stage_name: args[0].clone(),
-            stage_type: args[1].clone(),
-            metadata_path: args[2].clone(),
-            files_path: args[3].clone(),
-            run_file: args[4].clone(),
+            stage_name,
+            stage_type,
+            metadata_path,
+            files_path,
+            run_file,
             cache: HashSet::new(),
             raw_jobinfo: Map::new(),
             jobinfo: JobInfo::default(),
@@ -126,15 +142,18 @@ impl Metadata {
 
     /// Path within chunk
     pub fn make_path(&self, name: &str) -> PathBuf {
-        let mut pb = PathBuf::from(self.metadata_path.clone());
-        pb.push(METADATA_PREFIX.to_string() + name);
-        pb
+        let md: &Path = self.metadata_path.as_ref();
+        md.join([METADATA_PREFIX, name].concat())
     }
 
     /// Write to a file inside the chunk
     pub fn write_raw(&mut self, name: &str, text: &str) -> Result<()> {
         let mut f = File::create(self.make_path(name))?;
         f.write_all(text.as_bytes())?;
+        // Ensure the file is closed before we write the journal, to reduce
+        // the chances that `mrp` sees the journal entry before the file content
+        // has be sync'ed.  This can be an issue on nfs systems.
+        drop(f);
         self.update_journal(name)?;
         Ok(())
     }
@@ -233,7 +252,11 @@ impl Metadata {
             .append(true)
             .open(filename)?;
         file.write_all(message.as_bytes())?;
-        file.write_all("\n".as_bytes())?;
+        file.write_all(b"\n")?;
+        // Ensure the file is closed before we write the journal, to reduce
+        // the chances that `mrp` sees the journal entry before the file content
+        // has be sync'ed.  This can be an issue on nfs systems.
+        drop(file);
         self.update_journal(name)?;
         Ok(())
     }
@@ -289,6 +312,13 @@ impl Metadata {
         }
     }
 
+    /// Equivalent to write_json_obj() followed by complete()
+    pub(crate) fn complete_with(&mut self, out_filename: &str, out_data: &JsonDict) -> Result<()> {
+        self.write_json_obj(out_filename, out_data)?;
+        self.complete();
+        Ok(())
+    }
+
     /// Get the amount of memory in GB allocated to this job by the runtime.
     pub fn get_memory_allocation(&self) -> usize {
         self.jobinfo.mem_gb
@@ -304,12 +334,12 @@ impl Metadata {
         self.jobinfo.vmem_gb
     }
 
-    pub fn get_pipelines_version(&self) -> String {
-        self.jobinfo.version.pipelines.clone()
+    pub fn get_pipelines_version(&self) -> &str {
+        self.jobinfo.version.pipelines.as_str()
     }
 
-    pub fn get_martian_version(&self) -> String {
-        self.jobinfo.version.martian.clone()
+    pub fn get_martian_version(&self) -> &str {
+        self.jobinfo.version.martian.as_str()
     }
 }
 
@@ -338,7 +368,7 @@ mod tests {
             val: i32,
         }
 
-        let e: Result<Foo> = Metadata::_decode(PathBuf::from("tests/invalid_args.json"));
+        let e: Result<Foo> = Metadata::_decode("tests/invalid_args.json".into());
         insta::assert_display_snapshot!(e.unwrap_err());
     }
 }

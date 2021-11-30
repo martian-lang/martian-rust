@@ -111,22 +111,32 @@ where
     F: FileStorage<T> + Debug,
 {
     fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
-        let actual_type: String = bincode::deserialize_from(&mut reader)?;
-
-        if actual_type == type_name::<T>() {
-            Ok(bincode::deserialize_from(&mut reader)?)
-        } else if actual_type == type_name::<LazyMarker<T>>() {
-            Err(format_err!(
-                "Lazily written bincode files cannot be read using FileTypeIO::read(). Use LazyFileTypeIO::read_all() instead."
-            ))
-        } else {
-            Err(format_err!(
-                "Data type {} does not match expected type {} or {}",
-                actual_type,
-                type_name::<T>(),
-                type_name::<LazyMarker<T>>()
-            ))
+        fn check_type(
+            actual_type: String,
+            expect_type: &'static str,
+            marker_type: &'static str,
+        ) -> Result<(), Error> {
+            if actual_type == expect_type {
+                Ok(())
+            } else if actual_type == marker_type {
+                Err(format_err!(
+                    "Lazily written bincode files cannot be read using FileTypeIO::read(). Use LazyFileTypeIO::read_all() instead."
+                ))
+            } else {
+                Err(format_err!(
+                    "Data type {} does not match expected type {} or {}",
+                    actual_type,
+                    expect_type,
+                    marker_type
+                ))
+            }
         }
+        check_type(
+            bincode::deserialize_from(&mut reader)?,
+            type_name::<T>(),
+            type_name::<LazyMarker<T>>(),
+        )?;
+        Ok(bincode::deserialize_from(&mut reader)?)
     }
 
     fn write_into<W: Write>(mut writer: W, input: &T) -> Result<(), Error> {
@@ -165,20 +175,31 @@ where
 {
     type FileType = BinaryFormat<F>;
     fn with_reader(mut reader: R) -> Result<Self, Error> {
-        let actual_type: String = bincode::deserialize_from(&mut reader)?;
-        let mode = if actual_type == type_name::<Vec<T>>() {
-            let total_items: usize = bincode::deserialize_from(&mut reader)?;
-            FileMode::Vec(total_items)
-        } else if actual_type == type_name::<LazyMarker<Vec<T>>>() {
-            FileMode::Lazy
-        } else {
-            return Err(format_err!(
-                "Data type {} does not match expected type {} or {}",
-                actual_type,
-                type_name::<Vec<T>>(),
-                type_name::<LazyMarker<Vec<T>>>()
-            ));
-        };
+        fn check_type(
+            mut reader: impl Read,
+            vec_type: &'static str,
+            lazy_type: &'static str,
+        ) -> Result<FileMode, Error> {
+            let actual_type: String = bincode::deserialize_from(&mut reader)?;
+            if actual_type == vec_type {
+                let total_items: usize = bincode::deserialize_from(&mut reader)?;
+                Ok(FileMode::Vec(total_items))
+            } else if actual_type == lazy_type {
+                Ok(FileMode::Lazy)
+            } else {
+                Err(format_err!(
+                    "Data type {} does not match expected type {} or {}",
+                    actual_type,
+                    vec_type,
+                    lazy_type
+                ))
+            }
+        }
+        let mode = check_type(
+            &mut reader,
+            type_name::<Vec<T>>(),
+            type_name::<LazyMarker<Vec<T>>>(),
+        )?;
 
         Ok(LazyBincodeReader {
             reader,
