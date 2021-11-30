@@ -1,22 +1,24 @@
-   0: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
-             at /github.com/martian-lang/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:94:24
-   1: <T as martian::stage::RawMartianStage>::main
-             at /github.com/martian-lang/martian-rust/martian/src/stage.rs:642:20
-   2: martian::martian_entry_point
-             at /github.com/martian-lang/martian-rust/martian/src/lib.rs:231:9
-   3: martian::MartianAdapter<S>::run_get_error
-             at /github.com/martian-lang/martian-rust/martian/src/lib.rs:133:9
-   4: martian::MartianAdapter<S>::run
-             at /github.com/martian-lang/martian-rust/martian/src/lib.rs:126:9
-   5: sum_sq::main
-             at /github.com/martian-lang/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48:23
-   6: core::ops::function::FnOnce::call_once
+   0: anyhow::private::format_err
+             at ./cargo/registry/src/github.com-1ecc6299db9ec823/anyhow-1.0.51/src/lib.rs:659:13
+   1: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
+             at ./martian-lab/examples/sum_sq/src/sum_squares.rs:94:24
+   2: <T as martian::stage::RawMartianStage>::main
+             at ./martian/src/stage.rs:681:20
+   3: martian::martian_entry_point
+             at ./martian/src/lib.rs:262:9
+   4: martian::MartianAdapter<S>::run_get_error
+             at ./martian/src/lib.rs:164:9
+   5: martian::MartianAdapter<S>::run
+             at ./martian/src/lib.rs:157:9
+   6: sum_sq::main
+             at ./martian-lab/examples/sum_sq/src/main.rs:48:23
+   7: core::ops::function::FnOnce::call_once
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:227:5
-   7: std::sys_common::backtrace::__rust_begin_short_backtrace
+   8: std::sys_common::backtrace::__rust_begin_short_backtrace
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/sys_common/backtrace.rs:125:18
-   8: std::rt::lang_start::{{closure}}
+   9: std::rt::lang_start::{{closure}}
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:63:18
-   9: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+  10: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:259:13
       std::panicking::try::do_call
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:401:40
@@ -34,8 +36,9 @@
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panic.rs:434:14
       std::rt::lang_start_internal
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:45:20
-  10: std::rt::lang_start
+  11: std::rt::lang_start
              at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:62:5
-  11: main
-  12: __libc_start_main
-  13: _start
+  12: main
+  13: __libc_start_main
+  14: <unknown>
+             at /sysdeps/x86_64/elf/start.S:103
