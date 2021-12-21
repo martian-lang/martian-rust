@@ -70,6 +70,7 @@ pub enum ProfileMode {
     Line,
     Mem,
     Perf,
+    Pyspy,
 }
 
 impl Default for ProfileMode {

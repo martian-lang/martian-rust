@@ -28,6 +28,7 @@ Options:
 struct Args {
     flag_pkg: Option<String>,
     flag_version: bool,
+    #[allow(dead_code)]
     cmd_martian: bool,
     cmd_stage: bool,
     cmd_adapter: bool,
