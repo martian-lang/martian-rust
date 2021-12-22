@@ -108,7 +108,7 @@ impl MroDisplay for StructDef {
         let ty_width = self
             .fields
             .iter()
-            .map(|field| field.min_width())
+            .map(MroDisplay::min_width)
             .max()
             .unwrap_or(0);
 
@@ -558,7 +558,7 @@ impl InAndOut {
 impl MroDisplay for InAndOut {
     fn min_width(&self) -> usize {
         self.iter_mro_fields()
-            .map(|field| field.min_width())
+            .map(MroDisplay::min_width)
             .max()
             .unwrap_or(0)
     }
@@ -792,7 +792,7 @@ impl MroDisplay for StageMro {
             self.stage_in_out.min_width(),
             self.chunk_in_out
                 .as_ref()
-                .map(|chunk| chunk.min_width())
+                .map(MroDisplay::min_width)
                 .unwrap_or(0),
         );
         let indent = format!("{blank:indent$}", blank = "", indent = field_width);
@@ -1003,24 +1003,18 @@ mod tests {
 
     #[test]
     fn test_mro_using_need_using() {
-        assert_eq!(MroUsing::default().need_using(), false);
-        assert_eq!(
-            MroUsing {
-                mem_gb: Some(1),
-                ..Default::default()
-            }
-            .need_using(),
-            true
-        );
-        assert_eq!(
-            MroUsing {
-                mem_gb: Some(1),
-                threads: Some(3),
-                ..Default::default()
-            }
-            .need_using(),
-            true
-        );
+        assert!(!MroUsing::default().need_using());
+        assert!(MroUsing {
+            mem_gb: Some(1),
+            ..Default::default()
+        }
+        .need_using());
+        assert!(MroUsing {
+            mem_gb: Some(1),
+            threads: Some(3),
+            ..Default::default()
+        }
+        .need_using());
     }
 
     #[test]
