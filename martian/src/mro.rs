@@ -213,7 +213,7 @@ impl MroDisplay for MartianBlanketType {
                 match **blanket {
                     MartianBlanketType::TypedMap(_)
                     | MartianBlanketType::Primary(MartianPrimaryType::Map) => "map".to_string(),
-                    _ => format!("map<{}>", blanket.to_string()),
+                    _ => format!("map<{}>", blanket),
                 }
             }
         }
@@ -371,7 +371,7 @@ pub struct MroField {
 /// `field_width` will decide the length of the type column
 impl MroDisplay for MroField {
     fn mro_string_no_width(&self) -> String {
-        format!("{ty} {name}", ty = self.ty.to_string(), name = &self.name)
+        format!("{ty} {name}", ty = self.ty, name = &self.name)
     }
     fn min_width(&self) -> usize {
         self.ty.min_width()
@@ -753,12 +753,7 @@ pub trait MroMaker {
         let stage_mro = Self::stage_mro(adapter_name, stage_key);
         let filetype = FiletypeHeader::from(&stage_mro);
         let struct_header = StructHeader::from(&stage_mro);
-        format!(
-            "{}{}{}",
-            filetype.to_string(),
-            struct_header.to_string(),
-            stage_mro.to_string()
-        )
+        format!("{}{}{}", filetype, struct_header, stage_mro)
     }
     fn stage_name() -> &'static str;
     fn stage_in_and_out() -> InAndOut;

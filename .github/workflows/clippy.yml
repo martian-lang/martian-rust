@@ -4,6 +4,11 @@ jobs:
   clippy_check:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: 1.58.1
+        components: clippy
+        default: true
     - uses: actions/checkout@v1
     - uses: actions-rs/clippy-check@v1
       with:

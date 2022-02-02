@@ -643,7 +643,7 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                         input,
                         format!(
                             "Deriving MartianType on enum {} failed because some of the variants in this enum map to MartianPrimaryType::Map while other variants map to MartianPrimaryType::Str.\n    1) MartianPrimaryType::Map -> [{}]\n    2) MartianPrimaryType::Str -> {}\nThe reason this happens is because serde will deserialize different variants of an enum differently. As a result, we cannot assign a unique martian type for this enum. Consider redesigning your enum to account for this.",
-                            ident.to_string(),
+                            ident,
                             map_fields,
                             str_fields
                         )
