@@ -1,11 +1,15 @@
-error[E0308]: try expression alternatives have incompatible types
+error[E0308]: `?` operator has incompatible types
   --> $DIR/invalid_type_read.rs:28:37
    |
 28 |         let new_feature: Creature = feat_file.read()?; // Compiler error
    |                                     ^^^^^^^^^^^^^^^^^ expected struct `Creature`, found struct `Feature`
+   |
+   = note: `?` operator cannot convert from `Feature` to `Creature`
 
-error[E0308]: try expression alternatives have incompatible types
+error[E0308]: `?` operator has incompatible types
   --> $DIR/invalid_type_read.rs:35:37
    |
 35 |         let new_feature: Creature = feat_file.read()?; // Compiler error
    |                                     ^^^^^^^^^^^^^^^^^ expected struct `Creature`, found struct `Feature`
+   |
+   = note: `?` operator cannot convert from `Feature` to `Creature`
