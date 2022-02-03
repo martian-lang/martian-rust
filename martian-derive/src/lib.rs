@@ -642,8 +642,8 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                     syn::Error::new_spanned(
                         input,
                         format!(
-                            "Deriving MartianType on enum {} failed because some of the variants in this enum map to MartianPrimaryType::Map while other variants map to MartianPrimaryType::Str.\n    1) MartianPrimaryType::Map -> [{}]\n    2) MartianPrimaryType::Str -> {}\nThe reason this happens is because serde will deserialize different variants of an enum differently. As a result, we cannot assign a unique martian type for this enum. Consider redesigning your enum to account for this.",
-                            ident.to_string(),
+                            "Deriving MartianType on enum {} failed because some of the variants in this enum map to MartianPrimaryType::Map while other variants map to MartianPrimaryType::Str.\n  1) MartianPrimaryType::Map -> [{}]\n  2) MartianPrimaryType::Str -> {}\nThe reason this happens is because serde will deserialize different variants of an enum differently. As a result, we cannot assign a unique martian type for this enum. Consider redesigning your enum to account for this.",
+                            ident,
                             map_fields,
                             str_fields
                         )
@@ -697,9 +697,9 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
         return syn::Error::new_spanned(
             item2,
             "The input to the martian_filetype! macro needs to be two items separated by a comma.
-\tThe first item is the struct name that will be generated and the second item is
-\tthe filetype extension within double quotes.
-\tFor example, martian_filetype! {TxtFile, \"txt\"}",
+The first item is the struct name that will be generated and the second item is
+the filetype extension within double quotes.
+For example, martian_filetype! {TxtFile, \"txt\"}",
         )
         .to_compile_error()
         .into();
@@ -778,7 +778,7 @@ pub fn martian_filetype(item: proc_macro::TokenStream) -> proc_macro::TokenStrea
         if !((i > 0 && (c.is_ascii_alphanumeric() || *c == '.')) || c.is_ascii_alphabetic()) {
             return syn::Error::new_spanned(
                     item2,
-                    format!("The extension `{}` in the martian_filetype! macro should be alphanumeric (internal dots(.) are okay) starting with an alphabet.\n\tFound invalid character `{}` at position {}", extension, c, i))
+                    format!("The extension `{}` in the martian_filetype! macro should be alphanumeric (internal dots(.) are okay) starting with an alphabet.\nFound invalid character `{}` at position {}", extension, c, i))
                 .to_compile_error()
                 .into();
         }

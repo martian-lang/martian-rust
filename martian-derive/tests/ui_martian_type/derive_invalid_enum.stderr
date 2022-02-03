@@ -1,7 +1,7 @@
 error: Deriving MartianType on enum Invalid failed because some of the variants in this enum map to MartianPrimaryType::Map while other variants map to MartianPrimaryType::Str.
-    1) MartianPrimaryType::Map -> [MapVariant, AnotherVariant]
-    2) MartianPrimaryType::Str -> StrVariant
-The reason this happens is because serde will deserialize different variants of an enum differently. As a result, we cannot assign a unique martian type for this enum. Consider redesigning your enum to account for this.
+         1) MartianPrimaryType::Map -> [MapVariant, AnotherVariant]
+         2) MartianPrimaryType::Str -> StrVariant
+       The reason this happens is because serde will deserialize different variants of an enum differently. As a result, we cannot assign a unique martian type for this enum. Consider redesigning your enum to account for this.
  --> $DIR/derive_invalid_enum.rs:4:1
   |
 4 | / enum Invalid {

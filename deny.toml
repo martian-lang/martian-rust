@@ -43,7 +43,7 @@ allow = [
     "MIT",
 ]
 # Lint level for licenses considered copyleft
-copyleft = "warn"
+copyleft = "deny"
 # Blanket approval or denial for OSI-approved or FSF Free/Libre licenses
 # * both - The license will be approved if it is both OSI-approved *AND* FSF
 # * either - The license will be approved if it is either OSI-approved *OR* FSF
@@ -105,8 +105,6 @@ skip = [
 # dependencies starting at the specified crate, up to a certain depth, which is
 # by default infinite
 skip-tree = [
-     # Requires a lot of changes to dedup
-    { name = "rustc_version" },
 ]
 
 # This section is considered when running `cargo deny check sources`.
