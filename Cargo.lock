@@ -1076,9 +1076,9 @@ dependencies = [
 
 [[package]]
 name = "trybuild"
-version = "1.0.55"
+version = "1.0.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "099a24e67e2b4083a6d0beb5a98e274c3160edfb879d71cd2cd14da93786a93b"
+checksum = "2d60539445867cdd9680b2bfe2d0428f1814b7d5c9652f09d8d3eae9d19308db"
 dependencies = [
  "glob",
  "once_cell",
