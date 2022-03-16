@@ -881,7 +881,7 @@ impl StageMro {
         for f_chunk in chunk_in_out.inputs.iter() {
             for f_stage in self.stage_in_out.inputs.iter() {
                 assert!(
-                    !(f_chunk.name == f_stage.name),
+                    f_chunk.name != f_stage.name,
                     "ERROR: Found identical field {} in stage and chunk inputs, which is not allowed",
                     f_chunk.name
                 )

@@ -223,32 +223,32 @@ impl AssociatedTypeBuilder {
         match associated_type_key.to_string().as_ref() {
             STAGE_INPUT_IDENT => {
                 if self.stage_inputs.is_some() {
-                    unreachable!(format!("Found multiple assignments for associated type {}. I am not sure how to proceed.", STAGE_INPUT_IDENT))
+                    unreachable!("Found multiple assignments for associated type {}. I am not sure how to proceed.", STAGE_INPUT_IDENT)
                 }
                 self.stage_inputs = Some(associated_type_val);
             }
             STAGE_OUTPUT_IDENT => {
                 if self.stage_outputs.is_some() {
-                    unreachable!(format!("Found multiple assignments for associated type {}. I am not sure how to proceed.", STAGE_OUTPUT_IDENT))
+                    unreachable!("Found multiple assignments for associated type {}. I am not sure how to proceed.", STAGE_OUTPUT_IDENT)
                 }
                 self.stage_outputs = Some(associated_type_val);
             }
             CHUNK_INPUT_IDENT => {
                 if self.chunk_inputs.is_some() {
-                    unreachable!(format!("Found multiple assignments for associated type {}. I am not sure how to proceed.", CHUNK_INPUT_IDENT))
+                    unreachable!("Found multiple assignments for associated type {}. I am not sure how to proceed.", CHUNK_INPUT_IDENT)
                 }
                 self.chunk_inputs = Some(associated_type_val);
             }
             CHUNK_OUTPUT_IDENT => {
                 if self.chunk_outputs.is_some() {
-                    unreachable!(format!("Found multiple assignments for associated type {}. I am not sure how to proceed.", CHUNK_INPUT_IDENT))
+                    unreachable!("Found multiple assignments for associated type {}. I am not sure how to proceed.", CHUNK_INPUT_IDENT)
                 }
                 self.chunk_outputs = Some(associated_type_val);
             }
-            s => unreachable!(format!(
+            s => unreachable!(
                 "Got an unexpected associated type {}. I am not sure how to proceed",
                 s
-            )),
+            ),
         }
     }
     fn to_quote(&self, which: StageKind) -> proc_macro2::TokenStream {
