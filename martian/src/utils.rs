@@ -3,6 +3,7 @@
 //! All the functions are simple wrappers around functions from
 //! other crates.
 use crate::{Error, JsonDict};
+use heck::ToUpperCamelCase;
 use serde::Serialize;
 use serde_json::Value;
 use std::path::Path;
@@ -33,20 +34,19 @@ pub fn to_stage_key(struct_name: &str) -> String {
 
 /// Convert the input to `SHOUTY_SNAKE_CASE`
 pub fn to_shouty_snake_case(struct_name: &str) -> String {
-    use heck::ShoutySnakeCase;
+    use heck::ToShoutySnakeCase;
     struct_name.to_shouty_snake_case()
 }
 
 /// Convert the input to `snake_case`
 pub fn to_snake_case(struct_name: &str) -> String {
-    use heck::SnakeCase;
+    use heck::ToSnakeCase;
     struct_name.to_snake_case()
 }
 
 /// Convert the input to `CamelCase`
 pub fn to_camel_case(stage_name: &str) -> String {
-    use heck::CamelCase;
-    stage_name.to_camel_case()
+    stage_name.to_upper_camel_case()
 }
 
 /// Parse the `env::args()` and return the name of the
