@@ -1,4 +1,4 @@
-use heck::{ToSnakeCase, ToUpperCamelCase};
+use heck::{CamelCase, SnakeCase};
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
@@ -175,7 +175,7 @@ pub fn new_stage(
     assert!(!path.exists(), "File {:?} already exists", path);
 
     let mut vars = HashMap::new();
-    vars.insert("stage".into(), stage_name.to_upper_camel_case());
+    vars.insert("stage".into(), stage_name.to_camel_case());
     vars.insert("open".into(), "{".into());
     vars.insert("close".into(), "}".into());
 
