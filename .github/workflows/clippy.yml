@@ -1,12 +1,17 @@
 on: pull_request
 name: Clippy check
+
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   clippy_check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions-rs/toolchain@v1
       with:
-        toolchain: 1.60.0
+        toolchain: 1.62.0
         components: clippy
         default: true
     - uses: actions/checkout@v3
