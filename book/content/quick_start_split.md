@@ -178,7 +178,7 @@ mod tests {
     #[test]
     fn run_stage() {
         let args = SumSquaresStageInputs {
-            input: vec![1.0, 2.0, 3.0, 4.0],
+            values: vec![1.0, 2.0, 3.0, 4.0],
         };
         let stage = SumSquares;
         let res = stage.test_run_tmpdir(args).unwrap();
@@ -191,7 +191,7 @@ mod tests {
 
 ## Step 4: mrp invocation
 
-- Compile the stage code in release mode: `cargo b —release`
+- Compile the stage code in release mode: `cargo b --release`
 - The adapter executable needs to be in your `$PATH` for martian to execute it. So either add `target/release` to your `PATH` or copy `target/release/sum_sq` to a folder that's in your `PATH`. Make sure `which sum_sq` returns the expected path and you are able to run `sum_sq mro`.
 - Create the `invoker.mro`
 
