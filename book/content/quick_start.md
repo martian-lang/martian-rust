@@ -121,6 +121,7 @@ stage SUM_SQUARES(
 
 * You can optionally write it to a file using the `-—file=<filename>`. Take a look at the docopt usage string for all the flags available.
 * Create the mro file: `cargo r -- mro --file=stage.mro`
+* If you want to overwrite a `stage.mro` that exists, use: `cargo r -- mro --file=stage.mro --rewrite`
 
 ## Step 3: Unit test
 
