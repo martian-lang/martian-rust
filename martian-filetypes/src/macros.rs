@@ -22,7 +22,7 @@ macro_rules! martian_filetype_inner {
             F: ::martian::MartianFileType,
         {
             fn extension() -> String {
-                crate::maybe_add_format(F::extension(), $extension)
+                $crate::maybe_add_format(F::extension(), $extension)
             }
 
             fn new(file_path: impl AsRef<std::path::Path>, file_name: impl AsRef<std::path::Path>) -> Self {
