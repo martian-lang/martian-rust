@@ -53,7 +53,7 @@ pub trait TableConfig {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(transparent)]
 pub struct DelimitedFormat<F, D>
 where

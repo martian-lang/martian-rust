@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions-rs/toolchain@v1
       with:
-        toolchain: 1.62.0
+        toolchain: 1.63.0
         components: clippy
         default: true
     - uses: actions/checkout@v3
@@ -20,6 +20,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: |
           --all-features --all-targets --
+          -D clippy::perf
           -W clippy::wildcard_imports
           -W clippy::redundant_closure_for_method_calls
           -W clippy::enum_glob_use

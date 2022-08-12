@@ -22,7 +22,7 @@ pub struct Target {
     pub src_path: PathBuf,
 }
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Kind {
     #[serde(rename = "bin")]
     Bin,

@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions-rs/toolchain@v1
       with:
-        toolchain: 1.60.0
+        toolchain: 1.63.0
         components: rustfmt
         default: true
     - name: Print cargo version
