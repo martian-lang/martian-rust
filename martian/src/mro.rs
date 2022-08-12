@@ -190,7 +190,7 @@ pub enum MartianBlanketType {
 
 impl MartianBlanketType {
     fn inner(&self) -> MartianPrimaryType {
-        match &*self {
+        match self {
             MartianBlanketType::Primary(ref primary) => primary.clone(),
             MartianBlanketType::Array(ref blanket) => blanket.inner(),
             MartianBlanketType::TypedMap(ref blanket) => blanket.inner(),
@@ -441,7 +441,7 @@ impl MartianStruct for MartianVoid {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Volatile {
     Strict,
 }
@@ -587,7 +587,7 @@ mro_display_to_display! {InAndOut}
 
 /// The list of filetypes we list at the top of the mro.
 /// This struct is a simple wrapper around a HashSet of all file extensions.
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Eq, Default)]
 pub struct FiletypeHeader(HashSet<String>);
 
 impl From<&MroField> for FiletypeHeader {

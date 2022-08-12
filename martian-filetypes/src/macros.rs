@@ -3,7 +3,7 @@
 macro_rules! martian_filetype_inner {
     ($(#[$attr:meta])* pub struct $name:ident, $extension:expr) => (
         $(#[$attr])*
-        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
         // The following attribute ensures that the struct will serialize into a
         // String like a PathBuf would.
         #[serde(transparent)]

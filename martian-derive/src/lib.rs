@@ -790,7 +790,7 @@ For example, martian_filetype! {TxtFile, \"txt\"}",
     // Now we are ready to actually generate the code.
     let extension: String = chars_within_quotes.iter().collect();
     quote![
-        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
         pub struct #struct_ident(::std::path::PathBuf);
         #[automatically_derived]
         impl ::martian::MartianFileType for #struct_ident {
