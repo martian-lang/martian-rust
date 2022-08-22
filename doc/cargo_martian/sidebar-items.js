@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["USAGE",""],["VERSION",""]],"fn":[["main",""]],"mod":[["metadata",""],["template",""]],"struct":[["Args",""]]});
+window.SIDEBAR_ITEMS = {"constant":[["USAGE",""],["VERSION",""]],"fn":[["main",""]],"mod":[["metadata",""],["template",""]],"struct":[["Args",""]]};

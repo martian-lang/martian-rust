@@ -1,104 +1,108 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/metadata.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>metadata.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../martian/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
-<span id="2">  2</span>
-<span id="3">  3</span>
-<span id="4">  4</span>
-<span id="5">  5</span>
-<span id="6">  6</span>
-<span id="7">  7</span>
-<span id="8">  8</span>
-<span id="9">  9</span>
-<span id="10"> 10</span>
-<span id="11"> 11</span>
-<span id="12"> 12</span>
-<span id="13"> 13</span>
-<span id="14"> 14</span>
-<span id="15"> 15</span>
-<span id="16"> 16</span>
-<span id="17"> 17</span>
-<span id="18"> 18</span>
-<span id="19"> 19</span>
-<span id="20"> 20</span>
-<span id="21"> 21</span>
-<span id="22"> 22</span>
-<span id="23"> 23</span>
-<span id="24"> 24</span>
-<span id="25"> 25</span>
-<span id="26"> 26</span>
-<span id="27"> 27</span>
-<span id="28"> 28</span>
-<span id="29"> 29</span>
-<span id="30"> 30</span>
-<span id="31"> 31</span>
-<span id="32"> 32</span>
-<span id="33"> 33</span>
-<span id="34"> 34</span>
-<span id="35"> 35</span>
-<span id="36"> 36</span>
-<span id="37"> 37</span>
-<span id="38"> 38</span>
-<span id="39"> 39</span>
-<span id="40"> 40</span>
-<span id="41"> 41</span>
-<span id="42"> 42</span>
-<span id="43"> 43</span>
-<span id="44"> 44</span>
-<span id="45"> 45</span>
-<span id="46"> 46</span>
-<span id="47"> 47</span>
-<span id="48"> 48</span>
-<span id="49"> 49</span>
-<span id="50"> 50</span>
-<span id="51"> 51</span>
-<span id="52"> 52</span>
-<span id="53"> 53</span>
-<span id="54"> 54</span>
-<span id="55"> 55</span>
-<span id="56"> 56</span>
-<span id="57"> 57</span>
-<span id="58"> 58</span>
-<span id="59"> 59</span>
-<span id="60"> 60</span>
-<span id="61"> 61</span>
-<span id="62"> 62</span>
-<span id="63"> 63</span>
-<span id="64"> 64</span>
-<span id="65"> 65</span>
-<span id="66"> 66</span>
-<span id="67"> 67</span>
-<span id="68"> 68</span>
-<span id="69"> 69</span>
-<span id="70"> 70</span>
-<span id="71"> 71</span>
-<span id="72"> 72</span>
-<span id="73"> 73</span>
-<span id="74"> 74</span>
-<span id="75"> 75</span>
-<span id="76"> 76</span>
-<span id="77"> 77</span>
-<span id="78"> 78</span>
-<span id="79"> 79</span>
-<span id="80"> 80</span>
-<span id="81"> 81</span>
-<span id="82"> 82</span>
-<span id="83"> 83</span>
-<span id="84"> 84</span>
-<span id="85"> 85</span>
-<span id="86"> 86</span>
-<span id="87"> 87</span>
-<span id="88"> 88</span>
-<span id="89"> 89</span>
-<span id="90"> 90</span>
-<span id="91"> 91</span>
-<span id="92"> 92</span>
-<span id="93"> 93</span>
-<span id="94"> 94</span>
-<span id="95"> 95</span>
-<span id="96"> 96</span>
-<span id="97"> 97</span>
-<span id="98"> 98</span>
-<span id="99"> 99</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/metadata.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>metadata.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
@@ -320,23 +324,109 @@
 <span id="318">318</span>
 <span id="319">319</span>
 <span id="320">320</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::write_errors</span>;
-<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Local</span>};
-<span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">Error</span>, <span class="ident">ResultExt</span>};
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::DATE_FORMAT</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">write_errors</span>, <span class="ident">Error</span>};
+<span class="kw">use</span> <span class="ident">time</span>::{<span class="ident">OffsetDateTime</span>, <span class="ident">UtcOffset</span>};
 
 <span class="kw">use</span> <span class="ident">serde::de::DeserializeOwned</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">serde_json::map::Map</span>;
-<span class="kw">use</span> <span class="ident">serde_json</span>::{<span class="self">self</span>, <span class="ident">json</span>, <span class="ident">Value</span>};
+<span class="kw">use</span> <span class="ident">serde_json</span>::{<span class="self">self</span>, <span class="ident">Value</span>};
 
 <span class="kw">use</span> <span class="ident">std::any::type_name</span>;
+<span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
 <span class="kw">use</span> <span class="ident">std::collections::HashSet</span>;
 <span class="kw">use</span> <span class="ident">std::fs</span>::{<span class="ident">rename</span>, <span class="ident">File</span>, <span class="ident">OpenOptions</span>};
+<span class="kw">use</span> <span class="ident">std::io::ErrorKind</span>;
 <span class="kw">use</span> <span class="ident">std::io::Write</span>;
 <span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>};
-<span class="kw">use</span> <span class="ident">std::path::Path</span>;
-<span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
+<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+<span class="kw">use</span> <span class="ident">std::time::SystemTime</span>;
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">JsonDict</span> <span class="op">=</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Json</span> <span class="op">=</span> <span class="ident">Value</span>;
@@ -376,7 +466,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Version</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
         <span class="ident">Version</span> {
             <span class="ident">martian</span>: <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
             <span class="ident">pipelines</span>: <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
@@ -393,10 +483,11 @@
     <span class="ident">Line</span>,
     <span class="ident">Mem</span>,
     <span class="ident">Perf</span>,
+    <span class="ident">Pyspy</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ProfileMode</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProfileMode</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="ident">ProfileMode</span> {
         <span class="ident">ProfileMode::Disable</span>
     }
 }
@@ -411,38 +502,77 @@
 }
 
 <span class="kw">impl</span> <span class="ident">RustAdapterInfo</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
         <span class="ident">RustAdapterInfo</span> {
             <span class="ident">binpath</span>: <span class="kw">match</span> <span class="ident">std::env::current_exe</span>() {
-                <span class="prelude-val">Ok</span>(<span class="ident">exe</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">exe</span>.<span class="ident">display</span>().<span class="ident">to_string</span>(),
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
+                <span class="prelude-val">Ok</span>(<span class="ident">exe</span>) =&gt; <span class="ident">exe</span>.<span class="ident">display</span>().<span class="ident">to_string</span>(),
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
             },
             <span class="ident">version</span>: <span class="kw">match</span> <span class="ident">rustc_version::version</span>() {
-                <span class="prelude-val">Ok</span>(<span class="ident">v</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">v</span>.<span class="ident">to_string</span>(),
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
+                <span class="prelude-val">Ok</span>(<span class="ident">v</span>) =&gt; <span class="ident">v</span>.<span class="ident">to_string</span>(),
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="string">&quot;unknown&quot;</span>.<span class="ident">into</span>(),
             },
         }
     }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp</span>(<span class="ident">datetime</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Local</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-    <span class="ident">datetime</span>.<span class="ident">format</span>(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>).<span class="ident">to_string</span>()
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp</span>(<span class="ident">datetime</span>: <span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">OffsetDateTime</span><span class="op">&gt;</span>) -&gt; <span class="ident">String</span> {
+    <span class="ident">_make_timestamp</span>(<span class="ident">datetime</span>.<span class="ident">into</span>())
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp_now</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-    <span class="ident">make_timestamp</span>(<span class="ident">Local::now</span>())
+<span class="kw">fn</span> <span class="ident">_make_timestamp</span>(<span class="ident">datetime</span>: <span class="ident">OffsetDateTime</span>) -&gt; <span class="ident">String</span> {
+    <span class="comment">// Convert to local time (if necessary, and possible)</span>
+    <span class="kw">let</span> <span class="ident">datetime</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">offset</span>) <span class="op">=</span> <span class="ident">UtcOffset::local_offset_at</span>(<span class="ident">datetime</span>) {
+        <span class="ident">datetime</span>.<span class="ident">to_offset</span>(<span class="ident">offset</span>)
+    } <span class="kw">else</span> {
+        <span class="ident">datetime</span>
+    };
+    <span class="ident">datetime</span>.<span class="ident">format</span>(<span class="ident">DATE_FORMAT</span>).<span class="ident">unwrap</span>()
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_timestamp_now</span>() -&gt; <span class="ident">String</span> {
+    <span class="ident">make_timestamp</span>(<span class="ident">SystemTime::now</span>())
+}
+
+<span class="kw">fn</span> <span class="ident">ignore_not_found</span>(<span class="ident">err</span>: <span class="ident">std::io::Error</span>) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">match</span> <span class="ident">err</span>.<span class="ident">kind</span>() {
+        <span class="ident">ErrorKind::NotFound</span> =&gt; {
+            <span class="comment">// Workaround for an issue on heavily loaded NFS servers.</span>
+            <span class="comment">// If a request is taking a long time, the client will</span>
+            <span class="comment">// re-send the request.  The server is supposed to note</span>
+            <span class="comment">// that the request is a duplicate and de-duplicate it,</span>
+            <span class="comment">// but if it&#39;s heavily loaded its duplicate request</span>
+            <span class="comment">// cache might have already been flushed, in which case</span>
+            <span class="comment">// the second request will see ENOENT and fail.</span>
+            <span class="comment">// There&#39;s no way to tell the difference between that</span>
+            <span class="comment">// not-actually-failure mode and something else deleting</span>
+            <span class="comment">// the file before rename, because after a successful</span>
+            <span class="comment">// rename it&#39;s expected that `mrp` may delete the file</span>
+            <span class="comment">// immediately.  So we have to just ignore this error.</span>
+            <span class="prelude-val">Ok</span>(())
+        }
+        <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">err</span>),
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">Metadata</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Metadata</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="kw-2">mut</span> <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) -&gt; <span class="ident">Metadata</span> {
         <span class="comment">// # Take options from command line.</span>
         <span class="comment">// shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv</span>
+        <span class="ident">args</span>.<span class="ident">truncate</span>(<span class="number">5</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">args</span>.<span class="ident">len</span>(), <span class="number">5</span>, <span class="string">&quot;expected 5 arguments, got {}&quot;</span>, <span class="ident">args</span>.<span class="ident">len</span>());
+        <span class="kw">let</span> <span class="ident">run_file</span> <span class="op">=</span> <span class="ident">args</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">files_path</span> <span class="op">=</span> <span class="ident">args</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">metadata_path</span> <span class="op">=</span> <span class="ident">args</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">stage_type</span> <span class="op">=</span> <span class="ident">args</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">stage_name</span> <span class="op">=</span> <span class="ident">args</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
+
         <span class="ident">Metadata</span> {
-            <span class="ident">stage_name</span>: <span class="ident">args</span>[<span class="number">0</span>].<span class="ident">clone</span>(),
-            <span class="ident">stage_type</span>: <span class="ident">args</span>[<span class="number">1</span>].<span class="ident">clone</span>(),
-            <span class="ident">metadata_path</span>: <span class="ident">args</span>[<span class="number">2</span>].<span class="ident">clone</span>(),
-            <span class="ident">files_path</span>: <span class="ident">args</span>[<span class="number">3</span>].<span class="ident">clone</span>(),
-            <span class="ident">run_file</span>: <span class="ident">args</span>[<span class="number">4</span>].<span class="ident">clone</span>(),
+            <span class="ident">stage_name</span>,
+            <span class="ident">stage_type</span>,
+            <span class="ident">metadata_path</span>,
+            <span class="ident">files_path</span>,
+            <span class="ident">run_file</span>,
             <span class="ident">cache</span>: <span class="ident">HashSet::new</span>(),
             <span class="ident">raw_jobinfo</span>: <span class="ident">Map::new</span>(),
             <span class="ident">jobinfo</span>: <span class="ident">JobInfo::default</span>(),
@@ -450,97 +580,131 @@
     }
 
     <span class="doccomment">/// Path within chunk</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PathBuf</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pb</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="self">self</span>.<span class="ident">metadata_path</span>.<span class="ident">clone</span>());
-        <span class="ident">pb</span>.<span class="ident">push</span>(<span class="ident">METADATA_PREFIX</span>.<span class="ident">to_string</span>() <span class="op">+</span> <span class="ident">name</span>);
-        <span class="ident">pb</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">PathBuf</span> {
+        <span class="kw">let</span> <span class="ident">md</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">metadata_path</span>.<span class="ident">as_ref</span>();
+        <span class="ident">md</span>.<span class="ident">join</span>([<span class="ident">METADATA_PREFIX</span>, <span class="ident">name</span>].<span class="ident">concat</span>())
     }
 
     <span class="doccomment">/// Write to a file inside the chunk</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_raw</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_raw</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">File::create</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))<span class="question-mark">?</span>;
         <span class="ident">f</span>.<span class="ident">write_all</span>(<span class="ident">text</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
+        <span class="comment">// Ensure the file is closed before we write the journal, to reduce</span>
+        <span class="comment">// the chances that `mrp` sees the journal entry before the file content</span>
+        <span class="comment">// has be sync&#39;ed.  This can be an issue on nfs systems.</span>
+        <span class="ident">drop</span>(<span class="ident">f</span>);
         <span class="self">self</span>.<span class="ident">update_journal</span>(<span class="ident">name</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Update the Martian journal -- so that Martian knows what we&#39;ve updated</span>
-    <span class="kw">fn</span> <span class="ident">update_journal_main</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">force</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">journal_name</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">stage_type</span> <span class="op">!</span><span class="op">=</span> <span class="string">&quot;main&quot;</span> {
-            <span class="macro">format!</span>(<span class="string">&quot;{}_{}&quot;</span>, <span class="self">self</span>.<span class="ident">stage_type</span>, <span class="ident">name</span>)
+    <span class="kw">fn</span> <span class="ident">update_journal_main</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">force</span>: <span class="ident">bool</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">journal_name</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">stage_type</span> <span class="op">!</span><span class="op">=</span> <span class="string">&quot;main&quot;</span> {
+            <span class="macro">format!</span>(<span class="string">&quot;{}_{}&quot;</span>, <span class="self">self</span>.<span class="ident">stage_type</span>, <span class="ident">name</span>).<span class="ident">into</span>()
         } <span class="kw">else</span> {
-            <span class="ident">name</span>.<span class="ident">to_string</span>()
+            <span class="ident">name</span>.<span class="ident">into</span>()
         };
 
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">cache</span>.<span class="ident">contains</span>(<span class="ident">name</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">force</span> {
-            <span class="kw">let</span> <span class="ident">run_file</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}.{}&quot;</span>, <span class="self">self</span>.<span class="ident">run_file</span>, <span class="ident">journal_name</span>);
-            <span class="kw">let</span> <span class="ident">tmp_run_file</span> <span class="op">=</span> <span class="ident">run_file</span>.<span class="ident">clone</span>() <span class="op">+</span> <span class="string">&quot;.tmp&quot;</span>;
+        <span class="kw">if</span> <span class="ident">force</span> <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">cache</span>.<span class="ident">contains</span>(<span class="ident">name</span>) {
+            <span class="kw">let</span> <span class="ident">tmp_run_file</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}.{}.tmp&quot;</span>, <span class="self">self</span>.<span class="ident">run_file</span>, <span class="ident">journal_name</span>);
+            <span class="kw">let</span> <span class="ident">run_file</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">tmp_run_file</span>[..<span class="ident">tmp_run_file</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">4</span>];
 
             {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">File::create</span>(<span class="kw-2">&amp;</span><span class="ident">tmp_run_file</span>)<span class="question-mark">?</span>;
-                <span class="ident">f</span>.<span class="ident">write_all</span>(<span class="ident">make_timestamp_now</span>().<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
-            };
-            <span class="ident">rename</span>(<span class="kw-2">&amp;</span><span class="ident">tmp_run_file</span>, <span class="kw-2">&amp;</span><span class="ident">run_file</span>)<span class="question-mark">?</span>;
-            <span class="self">self</span>.<span class="ident">cache</span>.<span class="ident">insert</span>(<span class="ident">journal_name</span>);
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span> <span class="ident">f</span>.<span class="ident">write_all</span>(<span class="ident">make_timestamp_now</span>().<span class="ident">as_bytes</span>()) {
+                    <span class="comment">// Pretty much ignore this error.  The only reason we need</span>
+                    <span class="comment">// any content at all in this file is because some</span>
+                    <span class="comment">// filesystems behave strangely with completely empty files.</span>
+                    <span class="macro">eprintln!</span>(<span class="string">&quot;Writing journal file {}: {}&quot;</span>, <span class="ident">tmp_run_file</span>, <span class="ident">err</span>);
+                }
+            }
+            <span class="ident">rename</span>(<span class="ident">tmp_run_file</span>.<span class="ident">as_str</span>(), <span class="ident">run_file</span>).<span class="ident">or_else</span>(<span class="ident">ignore_not_found</span>)<span class="question-mark">?</span>;
+            <span class="self">self</span>.<span class="ident">cache</span>.<span class="ident">insert</span>(<span class="ident">journal_name</span>.<span class="ident">into_owned</span>());
         }
 
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">update_journal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">update_journal</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">update_journal_main</span>(<span class="ident">name</span>, <span class="bool-val">false</span>)
     }
 
     <span class="doccomment">/// Write JSON to a chunk file</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">write_json_obj</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">object</span>: <span class="kw-2">&amp;</span><span class="ident">JsonDict</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="comment">// Serialize using `json::encode`</span>
-        <span class="kw">let</span> <span class="ident">obj</span> <span class="op">=</span> <span class="macro">json!</span>(<span class="ident">object</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">encoded</span> <span class="op">=</span> <span class="ident">serde_json::to_string_pretty</span>(<span class="kw-2">&amp;</span><span class="ident">obj</span>)<span class="question-mark">?</span>;
-        <span class="self">self</span>.<span class="ident">write_raw</span>(<span class="ident">name</span>, <span class="kw-2">&amp;</span><span class="ident">encoded</span>)<span class="question-mark">?</span>;
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">write_json_obj</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">object</span>: <span class="kw-2">&amp;</span><span class="ident">JsonDict</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="ident">serde_json::to_writer_pretty</span>(<span class="ident">File::create</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))<span class="question-mark">?</span>, <span class="ident">object</span>)<span class="question-mark">?</span>;
+        <span class="self">self</span>.<span class="ident">update_journal</span>(<span class="ident">name</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">decode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="self">Self</span><span class="ident">::_decode</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">decode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="ident"><span class="self">Self</span>::_decode</span>(<span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">_decode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="ident">file</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">std::fs::read_to_string</span>(<span class="kw-2">&amp;</span><span class="ident">file</span>)
-            .<span class="ident">with_context</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;Failed to read file {:?} due to: {}&quot;</span>, <span class="ident">file</span>.<span class="ident">as_ref</span>(), <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">serde_json::from_str</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>).<span class="ident">with_context</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">buf_lines</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">buf</span>
-                .<span class="ident">lines</span>()
-                .<span class="ident">enumerate</span>()
-                .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">line</span>)<span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;{:&gt;4}: {}&quot;</span>, <span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">line</span>))
-                .<span class="ident">collect</span>();
-            <span class="macro">format!</span>(
-                <span class="string">&quot;The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
-                following error:\n\n{}\n\nThis typically happens when one or more fields in the \
-                struct {} cannot be built from the JSON. The contents of the JSON are shown below: \
-                \n{}&quot;</span>,
-                <span class="ident">file</span>.<span class="ident">as_ref</span>().<span class="ident">file_name</span>().<span class="ident">unwrap</span>(),
-                <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(),
-                <span class="ident">e</span>,
-                <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(),
-                <span class="ident">buf_lines</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
-            )
-        })<span class="question-mark">?</span>)
+    <span class="kw">fn</span> <span class="ident">_decode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="ident">file</span>: <span class="ident">PathBuf</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::_read_buf_err</span>(<span class="kw-2">&amp;</span><span class="ident">file</span>)<span class="question-mark">?</span>;
+        <span class="ident">serde_json::from_str</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>).<span class="ident">map_err</span>(
+            <span class="attribute">#[<span class="ident">cold</span>]</span>
+            <span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident"><span class="self">Self</span>::_format_buf_err</span>(<span class="ident">buf</span>, <span class="ident">e</span>, <span class="ident">file</span>, <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()),
+        )
     }
 
-    <span class="kw">fn</span> <span class="ident">_append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">_read_buf_err</span>(<span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="ident">std::fs::read_to_string</span>(<span class="kw-2">&amp;</span><span class="ident">file</span>).<span class="ident">map_err</span>(
+            <span class="attribute">#[<span class="ident">cold</span>]</span>
+            <span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;Failed to read file {:?} due to {}:&quot;</span>, <span class="ident">file</span>, <span class="ident">e</span>);
+                <span class="ident">Error::new</span>(<span class="ident">e</span>).<span class="ident">context</span>(<span class="ident">context</span>)
+            },
+        )
+    }
+
+    <span class="attribute">#[<span class="ident">cold</span>]</span>
+    <span class="kw">fn</span> <span class="ident">_format_buf_err</span>(
+        <span class="ident">buf</span>: <span class="ident">String</span>,
+        <span class="ident">e</span>: <span class="ident">serde_json::Error</span>,
+        <span class="ident">file</span>: <span class="ident">PathBuf</span>,
+        <span class="ident">tname</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
+    ) -&gt; <span class="ident">Error</span> {
+        <span class="comment">// Non-generic so that we don&#39;t generate copy of this code for every</span>
+        <span class="comment">// type we `_decode` into.  This is a slight hack to improve compile</span>
+        <span class="comment">// times.</span>
+        <span class="kw">let</span> <span class="ident">buf_lines</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">buf</span>
+            .<span class="ident">lines</span>()
+            .<span class="ident">enumerate</span>()
+            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">line</span>)<span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;{:&gt;4}: {}&quot;</span>, <span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">line</span>))
+            .<span class="ident">collect</span>();
+        <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">format!</span>(
+            <span class="string">&quot;The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
+            following error:\n\n{}\n\nThis typically happens when one or more fields in the \
+            struct {} cannot be built from the JSON. The contents of the JSON are shown below: \
+            \n{}&quot;</span>,
+            <span class="ident">file</span>.<span class="ident">file_name</span>().<span class="ident">unwrap</span>(),
+            <span class="ident">tname</span>,
+            <span class="ident">e</span>,
+            <span class="ident">tname</span>,
+            <span class="ident">buf_lines</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
+        );
+        <span class="ident">Error::new</span>(<span class="ident">e</span>).<span class="ident">context</span>(<span class="ident">context</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">_append</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">filename</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">make_path</span>(<span class="ident">name</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">OpenOptions::new</span>()
             .<span class="ident">create</span>(<span class="bool-val">true</span>)
             .<span class="ident">append</span>(<span class="bool-val">true</span>)
             .<span class="ident">open</span>(<span class="ident">filename</span>)<span class="question-mark">?</span>;
         <span class="ident">file</span>.<span class="ident">write_all</span>(<span class="ident">message</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
-        <span class="ident">file</span>.<span class="ident">write_all</span>(<span class="string">&quot;\n&quot;</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
+        <span class="ident">file</span>.<span class="ident">write_all</span>(<span class="string">b&quot;\n&quot;</span>)<span class="question-mark">?</span>;
+        <span class="comment">// Ensure the file is closed before we write the journal, to reduce</span>
+        <span class="comment">// the chances that `mrp` sees the journal entry before the file content</span>
+        <span class="comment">// has be sync&#39;ed.  This can be an issue on nfs systems.</span>
+        <span class="ident">drop</span>(<span class="ident">file</span>);
         <span class="self">self</span>.<span class="ident">update_journal</span>(<span class="ident">name</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Write to _log</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">log_file</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">File::from_raw_fd</span>(<span class="number">3</span>) };
 
         <span class="ident">log_file</span>
@@ -551,24 +715,26 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log_time</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log_time</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">log</span>(<span class="string">&quot;time&quot;</span>, <span class="ident">message</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">alarm</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">alarm</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">_append</span>(<span class="string">&quot;alarm&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{} {}&quot;</span>, <span class="ident">make_timestamp_now</span>(), <span class="ident">message</span>))
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assert</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">cold</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assert</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="ident">write_errors</span>(<span class="ident">message</span>, <span class="bool-val">true</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stackvars</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">cold</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stackvars</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">write_raw</span>(<span class="string">&quot;stackvars&quot;</span>, <span class="ident">message</span>)
     }
 
     <span class="doccomment">/// Write finalized _jobinfo data</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_jobinfo</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_jobinfo</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw_jobinfo</span>: <span class="ident">JsonDict</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">decode</span>(<span class="string">&quot;jobinfo&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">jobinfo</span>: <span class="ident">JobInfo</span> <span class="op">=</span> <span class="ident">serde_json::from_value</span>(<span class="ident">Value::Object</span>(<span class="ident">raw_jobinfo</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
 
@@ -582,33 +748,40 @@
     }
 
     <span class="doccomment">/// Completed successfully</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">complete</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">complete</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">unsafe</span> {
             <span class="ident">File::from_raw_fd</span>(<span class="number">4</span>); <span class="comment">// Close the error file descriptor.</span>
         }
     }
 
+    <span class="doccomment">/// Equivalent to write_json_obj() followed by complete()</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">complete_with</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">out_filename</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">out_data</span>: <span class="kw-2">&amp;</span><span class="ident">JsonDict</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">write_json_obj</span>(<span class="ident">out_filename</span>, <span class="ident">out_data</span>)<span class="question-mark">?</span>;
+        <span class="self">self</span>.<span class="ident">complete</span>();
+        <span class="prelude-val">Ok</span>(())
+    }
+
     <span class="doccomment">/// Get the amount of memory in GB allocated to this job by the runtime.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">mem_gb</span>
     }
 
     <span class="doccomment">/// Get the number of threads allocated to this job by the runtime.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">threads</span>
     }
 
     <span class="doccomment">/// Get the amount of virtual memory in GB allocated to this job by the runtime.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_virtual_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_virtual_memory_allocation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">vmem_gb</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pipelines_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">pipelines</span>.<span class="ident">clone</span>()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pipelines_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
+        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">pipelines</span>.<span class="ident">as_str</span>()
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_martian_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">martian</span>.<span class="ident">clone</span>()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_martian_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
+        <span class="self">self</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">martian</span>.<span class="ident">as_str</span>()
     }
 }
 
@@ -616,7 +789,7 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_jobinfo</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_jobinfo</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">raw_jobinfo</span>: <span class="ident">JsonDict</span> <span class="op">=</span> <span class="ident">serde_json::from_reader</span>(<span class="ident">File::open</span>(<span class="string">&quot;tests/jobinfo.json&quot;</span>)<span class="question-mark">?</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">jobinfo</span>: <span class="ident">JobInfo</span> <span class="op">=</span> <span class="ident">serde_json::from_value</span>(<span class="ident">Value::Object</span>(<span class="ident">raw_jobinfo</span>))<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(<span class="ident">jobinfo</span>.<span class="ident">threads</span>, <span class="number">1</span>);
@@ -637,9 +810,10 @@
             <span class="ident">val</span>: <span class="ident">i32</span>,
         }
 
-        <span class="kw">let</span> <span class="ident">e</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Metadata::_decode</span>(<span class="string">&quot;tests/invalid_args.json&quot;</span>);
+        <span class="kw">let</span> <span class="ident">e</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Metadata::_decode</span>(<span class="string">&quot;tests/invalid_args.json&quot;</span>.<span class="ident">into</span>());
         <span class="macro">insta::assert_display_snapshot!</span>(<span class="ident">e</span>.<span class="ident">unwrap_err</span>());
     }
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
+</code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
+</body></html>
