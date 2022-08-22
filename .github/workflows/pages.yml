@@ -1,0 +1,37 @@
+name: Deploy to github pages
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.63.0
+          default: true
+
+      - name: Print cargo version
+        run: cargo --version
+
+      - name: Cargo doc
+        run: |
+          cargo doc --verbose --all
+          mv target/doc book/
+
+      - name: Deploy to gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4.4.0
+
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          folder: book
+          branch: gh-pages
