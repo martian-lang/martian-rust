@@ -15,7 +15,7 @@ serde = { version = "1.0", features = ['derive'] }
 serde_json = "1.0"
 backtrace = "*"
 anyhow = { version = "1", features = ["backtrace"] }
-heck = "0.3"
+heck = "0.4"
 tempfile = "3"
 rustc_version = ">=0.3, <0.5"
 rayon = { version = ">=1.0", optional = true }
