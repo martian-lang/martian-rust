@@ -381,12 +381,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eabb4a44450da02c90444cf74558da904edde8fb4e9035a9a6a4e15445af0bd7"
 
 [[package]]
-name = "hashbrown"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab5ef0d4909ef3724cc8cce6ccc8572c5c817592e9285f5464f8e86f8bd3726e"
-
-[[package]]
 name = "heck"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -402,16 +396,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "indexmap"
-version = "1.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "282a6247722caba404c065016bbfa522806e51714c34f5dfc3e4a3a46fcb4223"
-dependencies = [
- "autocfg",
- "hashbrown",
-]
-
-[[package]]
 name = "indoc"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -419,16 +403,15 @@ checksum = "adab1eaa3408fb7f0c777a73e7465fd5656136fc93b670eb6df3c88c2c1344e3"
 
 [[package]]
 name = "insta"
-version = "1.14.0"
+version = "1.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "689960f187c43c01650c805fb6bc6f55ab944499d86d4ffe9474ad78991d8e94"
+checksum = "58a931b01c76064c5be919faa2ef0dc570e9a889dcd1e5fef08a8ca6eb4d6c0b"
 dependencies = [
  "console",
+ "linked-hash-map",
  "once_cell",
- "serde",
- "serde_json",
- "serde_yaml",
  "similar",
+ "yaml-rust",
 ]
 
 [[package]]
@@ -939,18 +922,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "serde_yaml"
-version = "0.8.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4a521f2940385c165a24ee286aa8599633d162077a54bdcae2a6fd5a7bfa7a0"
-dependencies = [
- "indexmap",
- "ryu",
- "serde",
- "yaml-rust",
 ]
 
 [[package]]
