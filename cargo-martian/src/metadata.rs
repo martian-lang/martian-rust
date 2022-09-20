@@ -48,7 +48,7 @@ impl Metadata {
             .output()
             .expect("Failed to run cargo metadata");
         if !output.status.success() {
-            panic!("`cargo metadata` did not succed. Are you inside a cargo crate?");
+            panic!("`cargo metadata` did not succeed. Are you inside a cargo crate?");
         }
         let stdout = String::from_utf8(output.stdout).unwrap();
         let mut metadata: Metadata =

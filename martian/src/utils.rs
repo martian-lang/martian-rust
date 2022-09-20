@@ -78,7 +78,7 @@ pub fn set_extension(file_path: impl AsRef<Path>, extension: impl ToString) -> P
     _set_extension(PathBuf::from(file_path.as_ref()), extension.to_string())
 }
 
-// This is seperate from the public set_extension to avoid generating multiple
+// This is separate from the public set_extension to avoid generating multiple
 // monomorphized versions of the function, and to improve efficiency for
 // make_path which is already handing over a PathBuf.
 fn _set_extension(mut result: PathBuf, extension: String) -> PathBuf {

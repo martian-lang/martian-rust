@@ -1,6 +1,6 @@
 //!
 //! This module defines an `gzip` wrapper over other basic filetypes. Most basic
-//! filetypes automatically inherit this behavior through the trait heirarchy.
+//! filetypes automatically inherit this behavior through the trait hierarchy.
 //!
 //! ## Simple read/write example
 //! The example shown below creates an gzip compressed json file.

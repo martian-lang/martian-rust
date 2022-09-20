@@ -2,7 +2,7 @@
 
 ## MartianStage Trait
 
-Abstractly, a stage in martian has certian features
+Abstractly, a stage in martian has certain features
 * Inputs to the stage and outputs from the stage
 * Inputs to each chunk and outputs from each chunk
 * `split()`, `main()`  and `join()` functions
@@ -25,7 +25,7 @@ trait MartianStage {
 > Defining a martian stage in rust is equivalent to creating a `struct` which implements the `MartianStage` trait. The stage `struct` need to specify the 4 types and implement the 3 functions in the trait.
 
 
-You might be wondering how martian knows when to execute the functions in the trait and how it interacts with rust to acheive the same. If you want to know more, read the page on [language-specific adapters](https://martian-lang.org/writing-stages/) in the martian lang docs. Essentially it boils down to a rust executable which martian can call with specific command line arguments. We will call this executable an `adapter` (because it's a martian rust adapter). There is logic within the adapter to execute the right code based on the commad line inputs. In short, we need the following pieces to build a martian stage in rust:
+You might be wondering how martian knows when to execute the functions in the trait and how it interacts with rust to achieve the same. If you want to know more, read the page on [language-specific adapters](https://martian-lang.org/writing-stages/) in the martian lang docs. Essentially it boils down to a rust executable which martian can call with specific command line arguments. We will call this executable an `adapter` (because it's a martian rust adapter). There is logic within the adapter to execute the right code based on the command line inputs. In short, we need the following pieces to build a martian stage in rust:
 
 * `adapter`: a rust executable which can be called by martian
 * `MartianStage`: structs implementing this trait. 

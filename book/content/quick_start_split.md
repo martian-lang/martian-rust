@@ -119,7 +119,7 @@ impl MartianStage for SumSquares {
 }
 ```
 
-* Add the stage code to the adpater main in `src/main.rs`
+* Add the stage code to the adapter main in `src/main.rs`
 
 ```rust
 ...

@@ -427,7 +427,7 @@ impl MroField {
 /// The `MartianStage` and `MartianMain` traits already has independent associated
 /// types for stage/chunk inputs and outputs. If those associated types implement
 /// this trait, then we can readily generate all the mro variables with the appropriate
-/// type and put them at the right place (withing stage def or chunk def).
+/// type and put them at the right place (within stage def or chunk def).
 ///
 /// TODO : Auto derive for structs with named fields if all the fields implement `AsMartianBlanketType`
 pub trait MartianStruct {

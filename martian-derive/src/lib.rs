@@ -615,7 +615,7 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                     .to_compile_error()
                     .into()
                 },
-                1 => { // All variants mape to either Str or Map, we can generate the derive
+                1 => { // All variants map to either Str or Map, we can generate the derive
                     if variant_type_map.contains_key(&MartianPrimaryType::Str) {
                         quote![
                             #[automatically_derived]

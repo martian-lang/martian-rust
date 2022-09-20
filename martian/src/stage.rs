@@ -498,7 +498,7 @@ pub trait MartianStage: MroMaker {
     ) -> Result<Self::StageOutputs, Error>;
 
     /// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
-    /// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split
+    /// Executes stage with arguments `args` in directory `run_directory`. The default implementation executes split
     /// to get the stage definition (chunks), executes each chunk one after another and finally calls the join function.
     fn test_run(
         &self,

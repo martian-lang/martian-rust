@@ -58,7 +58,7 @@ use chemistry::LibraryType; // Let's say this is an enum from the external crate
 
 #[derive(Debug, Clone, Serialize, Deserialize, MartianStruct)]
 pub struct MyStageInputs {
-  	#[mro_type = "map[]"] // NOTE: You need to explicity say that it's a vector
+  	#[mro_type = "map[]"] // NOTE: You need to explicitly say that it's a vector
     reads: Vec<RnaRead>,
   	#[mro_type = "string"]
   	library_type: LibraryType,
@@ -66,4 +66,4 @@ pub struct MyStageInputs {
 
 ```
 
-> [!DANGER] `#[mro_type]` should be used as the last resort. There is no check done about it's correctness and it's upto you to ensure that the custom type will serialize to the annotated mro type. `MartianType` on the other hand guarantees this correctness.
+> [!DANGER] `#[mro_type]` should be used as the last resort. There is no check done about it's correctness and it's up to you to ensure that the custom type will serialize to the annotated mro type. `MartianType` on the other hand guarantees this correctness.

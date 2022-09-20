@@ -99,7 +99,7 @@
 //! feat_file.write(&feature)?;
 //! // feat_file.write(&creature)?; // This is a compiler error
 //! // let _: Creature = feat_file.read()?; // This is a compiler error
-//! let new_feature = feat_file.read()?; // Type infered automatically
+//! let new_feature = feat_file.read()?; // Type inferred automatically
 //! # std::fs::remove_file(feat_file)?;
 //! # Ok(())
 //! # }
@@ -115,7 +115,7 @@
 //! There are multiple criterion benchmarks in this crate to help you compare the performance
 //! of various read/write operations and their lazy variants. The easiest way to save an in-memory
 //! rust type to file is using serde. The following table is meant to be guide to help you choose
-//! the format. **The actual performance would depend on the details of the running enviroment and
+//! the format. **The actual performance would depend on the details of the running environment and
 //! the underlying filesystem. For more insights, run the benchmarks in your environment**
 //!
 //! The table shows the number of items that you can read/write per second from/into different filetypes
