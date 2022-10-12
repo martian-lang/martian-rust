@@ -21,7 +21,7 @@ flate2 = "1"
 
 [dev-dependencies]
 tempfile = "3"
-criterion = "0.3"
+criterion = "0.4"
 trybuild = "1.0"
 
 [[bench]]
