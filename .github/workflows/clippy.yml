@@ -9,13 +9,12 @@ jobs:
   clippy_check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions-rs/toolchain@v1
+    - uses: dtolnay/rust-toolchain@1.64.0
       with:
-        toolchain: 1.63.0
         components: clippy
-        default: true
     - uses: actions/checkout@v3
-    - uses: actions-rs/clippy-check@v1
+    - uses: Swatinem/rust-cache@v2
+    - uses: actions-rs-plus/clippy-check@43303e5bdba1efbf5961020e5743d530fb1de0c1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: |
