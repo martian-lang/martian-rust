@@ -174,7 +174,7 @@ pub fn new_stage(
     // Make sure the file does not exist already
     assert!(!path.exists(), "File {:?} already exists", path);
 
-    let mut vars = HashMap::new();
+    let mut vars: HashMap<String, String> = HashMap::new();
     vars.insert("stage".into(), stage_name.to_upper_camel_case());
     vars.insert("open".into(), "{".into());
     vars.insert("close".into(), "}".into());
@@ -278,7 +278,7 @@ pub fn new_adapter(adapter_name: impl AsRef<str>) {
     if exit_status.success() {
         {
             // Main file
-            let mut vars = HashMap::new();
+            let mut vars: HashMap<String, String> = HashMap::new();
             vars.insert("adapter".into(), adapter_name.to_snake_case());
             vars.insert("open".into(), "{".into());
             vars.insert("close".into(), "}".into());
