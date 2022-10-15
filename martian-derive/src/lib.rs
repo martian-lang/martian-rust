@@ -39,8 +39,6 @@ pub fn make_mro(
     attr: proc_macro::TokenStream,
     item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let item_clone = item.clone();
-
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 0
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -99,8 +97,9 @@ pub fn make_mro(
     let volatile_quote = match parsed_attr.volatile {
         Some(k) => match k {
             Volatile::Strict => quote![volatile: Some(::martian::Volatile::Strict),],
+            Volatile::False => quote![volatile: Some(::martian::Volatile::False),],
         },
-        None => quote![volatile: None,],
+        None => quote![volatile: Some(::martian::Volatile::default()),],
     };
     let using_attributes_fn = quote![
         fn using_attributes() -> ::martian::MroUsing {
@@ -121,10 +120,10 @@ pub fn make_mro(
     // anything else.
     // The way we achieve it is to try parsing the input TokenStrean as `ItemImpl`
     // and checking the parse result
-    let item_impl = match syn::parse::<ItemImpl>(item) {
+    let item_impl = match syn::parse::<ItemImpl>(item.clone()) {
         Ok(item_impl) => item_impl,
         Err(_) => {
-            let span = proc_macro2::TokenStream::from(item_clone);
+            let span = proc_macro2::TokenStream::from(item);
             return syn::Error::new_spanned(span, ATTR_NOT_ON_TRAIT_IMPL_ERROR)
                 .to_compile_error()
                 .into();
@@ -160,7 +159,7 @@ pub fn make_mro(
             segments.iter().last().unwrap().ident.to_string()
         }
         _ => {
-            let span = proc_macro2::TokenStream::from(item_clone);
+            let span = proc_macro2::TokenStream::from(item);
             return syn::Error::new_spanned(span, "Expecting the impl for a struct.")
                 .to_compile_error()
                 .into();
@@ -197,7 +196,7 @@ pub fn make_mro(
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // Stitch the quotes together
     let (impl_generics, _, where_clause) = item_impl.generics.split_for_impl();
-    let item_clone2 = proc_macro2::TokenStream::from(item_clone);
+    let item_clone2 = proc_macro2::TokenStream::from(item);
     quote![
         #item_clone2
         #[automatically_derived]
@@ -490,6 +489,14 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                     _ => {}
                 }
             }
+        }
+        if name.starts_with("__") {
+            return syn::Error::new(
+                field.ident.unwrap().span(),
+                "Identifiers are not allowed to start with __",
+            )
+            .to_compile_error()
+            .into();
         }
         if blacklist.contains(name.as_str()) {
             return syn::Error::new(
