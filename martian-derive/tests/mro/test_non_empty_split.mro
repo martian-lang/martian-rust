@@ -12,5 +12,6 @@ stage CHUNK_READS(
 ) split (
     in  map<int>   read_chunk,
 ) using (
-    mem_gb = 2,
+    mem_gb   = 2,
+    volatile = strict,
 )

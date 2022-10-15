@@ -30,4 +30,6 @@ stage STAGE_NAME(
     out ReadsStruct[]        multi_reads_struct,
     out ComplicatedStruct    complicated_struct2,
     src comp                 "my_adapter martian stage_name",
+) using (
+    volatile = strict,
 )

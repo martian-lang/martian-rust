@@ -15,7 +15,7 @@ use anyhow::format_err;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::collections::{HashMap, HashSet};
-use std::fmt::{Display, Write};
+use std::fmt::Display;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -25,11 +25,11 @@ use std::string::ToString;
 /// is disallowed.
 pub const MARTIAN_TOKENS: &[&str] = &[
     "in", "out", "stage", "volatile", "strict", "true", "split", "filetype", "src", "py", "comp",
-    "retain", "mro", "using", "int", "float", "string", "map", "bool", "path", "__null__",
+    "retain", "mro", "using", "int", "float", "string", "map", "bool", "path",
 ];
 
 /// Defines how an entity that denotes some part of the mro is displayed
-pub trait MroDisplay {
+pub trait MroDisplay: Display {
     fn mro_string(&self, field_width: Option<usize>) -> String {
         match field_width {
             Some(width) => {
@@ -46,38 +46,19 @@ pub trait MroDisplay {
         }
     }
     fn min_width(&self) -> usize;
-    fn mro_string_no_width(&self) -> String;
-    fn mro_string_with_width(&self, field_width: usize) -> String;
-}
-
-/// A generic display impl for MroDisplay does not work due
-/// to conflicting blanket impl. This is a simple macro to
-/// write out the Display trait for MroDisplay
-macro_rules! mro_display_to_display {
-    ($type:ty) => {
-        impl Display for $type {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                f.write_str(&self.mro_string_no_width())
-            }
-        }
-    };
-    ($type:ty, $width:ident) => {
-        impl Display for $type {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                f.write_str(&self.mro_string_with_width($width))
-            }
-        }
-    };
+    fn mro_string_no_width(&self) -> String {
+        self.to_string()
+    }
+    fn mro_string_with_width(&self, field_width: usize) -> String {
+        format!("{value:<width$}", value = self, width = field_width)
+    }
 }
 
 macro_rules! usize_field_len {
     () => {
         fn min_width(&self) -> usize {
-            self.mro_string_no_width().len()
-        }
-        fn mro_string_with_width(&self, field_width: usize) -> String {
-            let value = self.mro_string_no_width();
-            format!("{value:<width$}", value = value, width = field_width)
+            let s: &str = self.into();
+            s.len()
         }
     };
 }
@@ -98,12 +79,10 @@ impl MroDisplay for StructDef {
     fn min_width(&self) -> usize {
         0
     }
-    fn mro_string_no_width(&self) -> String {
-        self.mro_string_with_width(self.min_width())
-    }
+}
 
-    fn mro_string_with_width(&self, field_width: usize) -> String {
-        let mut result = String::new();
+impl Display for StructDef {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // Determing the field width for the type field
         let ty_width = self
             .fields
@@ -112,22 +91,21 @@ impl MroDisplay for StructDef {
             .max()
             .unwrap_or(0);
 
-        // The indent for the struct entries
-        let indent = format!("{blank:indent$}", blank = "", indent = field_width);
-        writeln!(&mut result, "struct {}(", self.name).unwrap();
+        writeln!(f, "struct {}(", self.name)?;
 
         for field in &self.fields {
-            let field_mro = field.mro_string(Some(ty_width));
-            writeln!(&mut result, "{}{},", indent, field_mro).unwrap();
+            writeln!(
+                f,
+                "{blank:indent$}{field:<ty_width$},",
+                blank = "",
+                indent = TAB_WIDTH_FOR_MRO,
+                field = field,
+                ty_width = ty_width
+            )?;
         }
-
-        writeln!(&mut result, ")").unwrap();
-
-        result
+        writeln!(f, ")")
     }
 }
-
-mro_display_to_display! {StructDef, TAB_WIDTH_FOR_MRO}
 
 /// Primary data types in Martian world
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
@@ -143,10 +121,21 @@ pub enum MartianPrimaryType {
     Struct(StructDef),
 }
 
-impl MroDisplay for MartianPrimaryType {
-    usize_field_len! {}
-    fn mro_string_no_width(&self) -> String {
-        let value = match *self {
+impl Display for MartianPrimaryType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let value: &str = self.into();
+        write!(
+            f,
+            "{value:<w$}",
+            value = value,
+            w = f.width().unwrap_or_default()
+        )
+    }
+}
+
+impl<'a> From<&'a MartianPrimaryType> for &'a str {
+    fn from(t: &'a MartianPrimaryType) -> Self {
+        match *t {
             MartianPrimaryType::Int => "int",
             MartianPrimaryType::Float => "float",
             MartianPrimaryType::Str => "string",
@@ -154,11 +143,14 @@ impl MroDisplay for MartianPrimaryType {
             MartianPrimaryType::Map => "map",
             MartianPrimaryType::Path => "path",
             MartianPrimaryType::File => "file",
-            MartianPrimaryType::FileType(ref ext) => ext,
-            MartianPrimaryType::Struct(ref def) => &def.name,
-        };
-        value.to_string()
+            MartianPrimaryType::FileType(ref ext) => ext.as_str(),
+            MartianPrimaryType::Struct(ref def) => def.name.as_str(),
+        }
     }
+}
+
+impl MroDisplay for MartianPrimaryType {
+    usize_field_len! {}
 }
 
 impl FromStr for MartianPrimaryType {
@@ -177,8 +169,6 @@ impl FromStr for MartianPrimaryType {
         Ok(prim_ty)
     }
 }
-
-mro_display_to_display! {MartianPrimaryType}
 
 /// Primary Data type in martian + Arrays (which are derived from primary types)
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
@@ -199,12 +189,42 @@ impl MartianBlanketType {
 }
 
 impl MroDisplay for MartianBlanketType {
-    usize_field_len! {}
-    fn mro_string_no_width(&self) -> String {
+    fn min_width(&self) -> usize {
         match *self {
-            MartianBlanketType::Primary(ref primary) => primary.to_string(),
+            MartianBlanketType::Primary(ref primary) => primary.min_width(),
+            MartianBlanketType::Array(ref blanket) => blanket.min_width() + 2,
+            MartianBlanketType::TypedMap(ref blanket) => {
+                // map of maps not allowed in Martian
+                // this is a little hacky, we allow TypedMap<map> to be passed around internally in Martian-rust
+                // but we just print it as "map"
+                match **blanket {
+                    MartianBlanketType::TypedMap(_)
+                    | MartianBlanketType::Primary(MartianPrimaryType::Map) => 3,
+                    // map<T>
+                    _ => blanket.min_width() + 5,
+                }
+            }
+        }
+    }
+}
+
+impl Display for MartianBlanketType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            MartianBlanketType::Primary(ref primary) => {
+                write!(f, "{v:<w$}", v = primary, w = f.width().unwrap_or_default())
+            }
             MartianBlanketType::Array(ref blanket) => {
-                format!("{}[]", blanket.mro_string_no_width())
+                write!(
+                    f,
+                    "{v}{a:<w$}",
+                    v = blanket,
+                    a = "[]",
+                    w = f
+                        .width()
+                        .unwrap_or_default()
+                        .saturating_sub(blanket.min_width())
+                )
             }
             MartianBlanketType::TypedMap(ref blanket) => {
                 // map of maps not allowed in Martian
@@ -212,14 +232,24 @@ impl MroDisplay for MartianBlanketType {
                 // but we just print it as "map"
                 match **blanket {
                     MartianBlanketType::TypedMap(_)
-                    | MartianBlanketType::Primary(MartianPrimaryType::Map) => "map".to_string(),
-                    _ => format!("map<{}>", blanket),
+                    | MartianBlanketType::Primary(MartianPrimaryType::Map) => {
+                        write!(f, "{v:<w$}", v = "map", w = f.width().unwrap_or_default())
+                    }
+                    _ => write!(
+                        f,
+                        "map<{v}{c:<w$}",
+                        v = blanket,
+                        c = ">",
+                        w = f
+                            .width()
+                            .unwrap_or_default()
+                            .saturating_sub(blanket.min_width() + 4)
+                    ),
                 }
             }
         }
     }
 }
-mro_display_to_display! {MartianBlanketType}
 
 impl FromStr for MartianBlanketType {
     type Err = Error;
@@ -269,7 +299,7 @@ pub trait AsMartianPrimaryType {
 /// - Unit Struct For example `struct Unit` or `PhantomData<T>`. It represents
 ///     a named value containing no data.
 /// Any type which implements `AsMartianPrimaryType` also implements `AsMartianBlanketType`
-/// It is stringly recommended not to extend any types with this trait, instead
+/// It is strongly recommended not to extend any types with this trait, instead
 /// use the `AsMartianPrimaryType` trait.
 pub trait AsMartianBlanketType {
     fn as_martian_blanket_type() -> MartianBlanketType;
@@ -368,25 +398,24 @@ pub struct MroField {
     retain: bool,
 }
 
-/// `field_width` will decide the length of the type column
-impl MroDisplay for MroField {
-    fn mro_string_no_width(&self) -> String {
-        format!("{ty} {name}", ty = self.ty, name = &self.name)
-    }
-    fn min_width(&self) -> usize {
-        self.ty.min_width()
-    }
-
-    fn mro_string_with_width(&self, field_width: usize) -> String {
-        format!(
-            "{ty} {name}",
-            ty = self.ty.mro_string_with_width(field_width),
-            name = &self.name
+impl Display for MroField {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{ty:<width$} {name}",
+            ty = self.ty,
+            width = f.width().unwrap_or_default(),
+            name = self.name.as_str()
         )
     }
 }
 
-mro_display_to_display! {MroField}
+/// `field_width` will decide the length of the type column
+impl MroDisplay for MroField {
+    fn min_width(&self) -> usize {
+        self.ty.min_width()
+    }
+}
 
 impl MroField {
     /// Create a new `MroField` with the given name and type.
@@ -412,7 +441,7 @@ impl MroField {
     }
     // Check that name does not match any martian token.
     fn verify(&self) {
-        for &token in MARTIAN_TOKENS.iter() {
+        for &token in MARTIAN_TOKENS {
             assert!(
                 self.name != token,
                 "Martian token {} cannot be used as field name",
@@ -444,6 +473,22 @@ impl MartianStruct for MartianVoid {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Volatile {
     Strict,
+    False,
+}
+
+impl Default for Volatile {
+    fn default() -> Self {
+        Volatile::Strict
+    }
+}
+
+impl From<&Volatile> for &'static str {
+    fn from(v: &Volatile) -> Self {
+        match v {
+            Volatile::Strict => "strict",
+            Volatile::False => "false",
+        }
+    }
 }
 
 impl FromStr for Volatile {
@@ -451,6 +496,7 @@ impl FromStr for Volatile {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "strict" => Ok(Volatile::Strict),
+            "false" => Ok(Volatile::False),
             _ => Err(format!("Expected strict for volatile, Found {}", s)),
         }
     }
@@ -459,14 +505,14 @@ impl FromStr for Volatile {
 // Maybe just need display?
 impl MroDisplay for Volatile {
     usize_field_len! {}
-    fn mro_string_no_width(&self) -> String {
-        match self {
-            Volatile::Strict => "strict".into(),
-        }
-    }
 }
 
-mro_display_to_display! {Volatile}
+impl Display for Volatile {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s: &str = self.into();
+        s.fmt(f)
+    }
+}
 
 const TAB_WIDTH_FOR_MRO: usize = 4;
 macro_rules! mro_using {
@@ -492,6 +538,30 @@ macro_rules! mro_using {
             }
         }
 
+        impl Display for MroUsing {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                let field_width = f.width().unwrap_or_else(|| self.min_width());
+                // If every field is None, return empty String
+                if !self.need_using() {
+                    return Ok(());
+                }
+                $(
+                    if let Some($property) = self.$property {
+                        writeln!(
+                            f,
+                            "{blank:indent$}{key:<width$} = {value},",
+                            blank="",
+                            indent = TAB_WIDTH_FOR_MRO,
+                            key=stringify!($property),
+                            width=field_width,
+                            value=$property
+                        )?;
+                    }
+                )*
+                Ok(())
+            }
+        }
+
         /// Using section
         /// ```md
         /// mem_gb = 1,
@@ -504,32 +574,7 @@ macro_rules! mro_using {
                 })*
                 w
             }
-
-            fn mro_string_no_width(&self) -> String {
-                self.mro_string_with_width(self.min_width())
-            }
-
-            fn mro_string_with_width(&self, field_width: usize) -> String {
-                let mut result = String::new();
-                // If every field is None, return empty String
-                if !self.need_using() {
-                    return result;
-                }
-                $(
-                    if let Some($property) = self.$property {
-                        writeln!(
-                            &mut result,
-                            "{key:<width$} = {value},",
-                            key=stringify!($property),
-                            width=field_width,
-                            value=$property
-                        ).unwrap()
-                    }
-                )*
-                result
-            }
         }
-        mro_display_to_display! {MroUsing}
     };
 }
 
@@ -546,12 +591,33 @@ impl InAndOut {
     fn iter_mro_fields(&self) -> impl Iterator<Item = &MroField> {
         self.inputs.iter().chain(self.outputs.iter())
     }
-    fn retain_field_names(&self) -> Vec<String> {
-        self.outputs
-            .iter()
-            .filter(|field| field.retain)
-            .map(|field| field.name.clone())
-            .collect()
+    fn retain_field_names(&self) -> impl Iterator<Item = &str> {
+        self.outputs.iter().filter_map(|field| {
+            if field.retain {
+                Some(field.name.as_ref())
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl Display for InAndOut {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let field_width = f.width().unwrap_or_default().max(self.min_width());
+        for (key, fields) in [("in ", &self.inputs), ("out", &self.outputs)] {
+            for field in fields {
+                writeln!(
+                    f,
+                    "{key:>indent$} {value:<width$},",
+                    indent = TAB_WIDTH_FOR_MRO + 3,
+                    key = key,
+                    value = field,
+                    width = field_width
+                )?;
+            }
+        }
+        Ok(())
     }
 }
 
@@ -560,30 +626,9 @@ impl MroDisplay for InAndOut {
         self.iter_mro_fields()
             .map(MroDisplay::min_width)
             .max()
-            .unwrap_or(0)
-    }
-
-    fn mro_string_no_width(&self) -> String {
-        self.mro_string_with_width(self.min_width())
-    }
-
-    fn mro_string_with_width(&self, field_width: usize) -> String {
-        let mut result = String::new();
-        for (key, fields) in &[("in", &self.inputs), ("out", &self.outputs)] {
-            for field in *fields {
-                writeln!(
-                    &mut result,
-                    "{key:3} {f},",
-                    key = key,
-                    f = field.mro_string_with_width(field_width)
-                )
-                .unwrap();
-            }
-        }
-        result
+            .unwrap_or_default()
     }
 }
-mro_display_to_display! {InAndOut}
 
 /// The list of filetypes we list at the top of the mro.
 /// This struct is a simple wrapper around a HashSet of all file extensions.
@@ -639,31 +684,27 @@ impl FiletypeHeader {
     }
 }
 
+impl Display for FiletypeHeader {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.0.is_empty() {
+            return Ok(());
+        }
+        let mut extensions: Vec<_> = self.0.iter().collect();
+        extensions.sort();
+        for ext in extensions {
+            writeln!(f, "filetype {};", ext)?;
+        }
+        writeln!(f)
+    }
+}
+
 // Just need display here
 impl MroDisplay for FiletypeHeader {
     fn min_width(&self) -> usize {
         // No configuration here
         0
     }
-    fn mro_string_no_width(&self) -> String {
-        let mut result = String::new();
-        if self.0.is_empty() {
-            return result;
-        }
-        let mut extensions: Vec<_> = self.0.iter().collect();
-        extensions.sort();
-        for ext in extensions {
-            writeln!(&mut result, "filetype {};", ext).unwrap();
-        }
-        writeln!(&mut result).unwrap();
-        result
-    }
-    fn mro_string_with_width(&self, _: usize) -> String {
-        self.mro_string_no_width()
-    }
 }
-
-mro_display_to_display! { FiletypeHeader }
 
 /// All the structs that need to be defined in an mro
 #[derive(Debug, Default)]
@@ -708,28 +749,26 @@ impl MroDisplay for StructHeader {
     fn min_width(&self) -> usize {
         0
     }
-    fn mro_string_no_width(&self) -> String {
-        self.mro_string_with_width(self.min_width())
-    }
-    fn mro_string_with_width(&self, field_width: usize) -> String {
-        let mut result = String::new();
+}
+
+impl Display for StructHeader {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let field_width = f.width().unwrap_or_else(|| self.min_width());
 
         let mut struct_defs: Vec<(StructDef, usize)> = self.0.values().cloned().collect();
         struct_defs.sort_by_key(|x| x.1);
 
         for struct_def in struct_defs.iter() {
             writeln!(
-                &mut result,
-                "{}",
-                struct_def.0.mro_string(Some(field_width))
-            )
-            .unwrap();
+                f,
+                "{def:<field_width$}",
+                def = struct_def.0,
+                field_width = field_width
+            )?;
         }
-        result
+        Ok(())
     }
 }
-
-mro_display_to_display! {StructHeader, TAB_WIDTH_FOR_MRO}
 
 /// An object that can generate a `StageMro`
 ///
@@ -776,64 +815,74 @@ impl MroDisplay for StageMro {
     fn min_width(&self) -> usize {
         0
     }
-    fn mro_string_no_width(&self) -> String {
-        self.mro_string_with_width(self.min_width())
-    }
+}
 
-    fn mro_string_with_width(&self, field_width: usize) -> String {
-        let mut result = String::new();
+impl Display for StageMro {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // Determing the field width for the type field
         let ty_width = std::cmp::max(
             self.stage_in_out.min_width(),
             self.chunk_in_out
                 .as_ref()
                 .map(MroDisplay::min_width)
-                .unwrap_or(0),
-        );
-        let indent = format!("{blank:indent$}", blank = "", indent = field_width);
-        writeln!(&mut result, "stage {}(", self.stage_name).unwrap();
-
-        for line in self.stage_in_out.mro_string(Some(ty_width)).lines() {
-            writeln!(&mut result, "{}{}", indent, line).unwrap();
-        }
+                .unwrap_or_default(),
+        )
+        .max(4);
+        writeln!(f, "stage {}(", self.stage_name)?;
+        write!(
+            f,
+            "{params:<ty_width$}",
+            params = self.stage_in_out,
+            ty_width = ty_width
+        )?;
         writeln!(
-            &mut result,
-            r#"{space}src {comp:ty_width$} "{adapter} martian {stage_key}","#,
-            space = indent,
+            f,
+            r#"{blank:indent$}src {comp:<ty_width$} "{adapter} martian {stage_key}","#,
+            blank = "",
+            indent = TAB_WIDTH_FOR_MRO,
             comp = "comp",
             ty_width = ty_width,
             adapter = self.adapter_name,
             stage_key = self.stage_key,
-        )
-        .unwrap();
+        )?;
 
         if let Some(ref chunk_in_out) = self.minified_chunk_in_outs() {
-            writeln!(&mut result, ") split (").unwrap();
-            for line in chunk_in_out.mro_string(Some(ty_width)).lines() {
-                writeln!(&mut result, "{}{}", indent, line).unwrap();
-            }
+            writeln!(f, ") split (")?;
+            write!(
+                f,
+                "{params:<ty_width$}",
+                params = chunk_in_out,
+                ty_width = ty_width
+            )?;
         }
 
         if self.using_attrs.need_using() {
-            writeln!(&mut result, ") using (").unwrap();
-            for line in self.using_attrs.mro_string(None).lines() {
-                writeln!(&mut result, "{}{}", indent, line).unwrap();
-            }
+            writeln!(f, ") using (")?;
+            write!(f, "{}", self.using_attrs)?;
         }
-        let retain_names = self.stage_in_out.retain_field_names();
-        if !retain_names.is_empty() {
-            writeln!(&mut result, ") retain (").unwrap();
+        let mut retain_names = self.stage_in_out.retain_field_names();
+        if let Some(first) = retain_names.next() {
+            writeln!(f, ") retain (")?;
+            writeln!(
+                f,
+                "{blank:indent$}{line},",
+                blank = "",
+                indent = TAB_WIDTH_FOR_MRO,
+                line = first
+            )?;
             for line in retain_names {
-                writeln!(&mut result, "{}{},", indent, line).unwrap();
+                writeln!(
+                    f,
+                    "{blank:indent$}{line},",
+                    blank = "",
+                    indent = TAB_WIDTH_FOR_MRO,
+                    line = line
+                )?;
             }
         }
-        writeln!(&mut result, ")").unwrap();
-
-        result
+        writeln!(f, ")")
     }
 }
-
-mro_display_to_display! {StageMro, TAB_WIDTH_FOR_MRO}
 
 impl StageMro {
     fn iter_mro_fields(&self) -> impl Iterator<Item = &MroField> {
@@ -871,11 +920,11 @@ impl StageMro {
         // deriving MartianStruct and is checked when creating a
         // MaroField wusing new() which is the only public entry point.
         // So we don't have anything to check for a MainOnly stage
-        if self.chunk_in_out.is_none() {
+        let chunk_in_out = if let Some(ref chunk_in_out) = self.chunk_in_out {
+            chunk_in_out
+        } else {
             return;
-        }
-
-        let chunk_in_out = self.chunk_in_out.as_ref().unwrap();
+        };
         // Do not allow the same field name in stage and chunk inputs
         // O(mn) is good enough
         for f_chunk in chunk_in_out.inputs.iter() {
@@ -938,6 +987,7 @@ mod tests {
     #[test]
     fn test_volatile_parse() {
         assert_eq!("strict".parse::<Volatile>(), Ok(Volatile::Strict));
+        assert_eq!("false".parse::<Volatile>(), Ok(Volatile::False));
         assert!("foo".parse::<Volatile>().is_err());
     }
 
@@ -948,6 +998,8 @@ mod tests {
         assert_eq!(vol.mro_string_no_width(), "strict");
         assert_eq!(vol.min_width(), 6);
         assert_eq!(vol.mro_string(Some(10)), "strict    ");
+        let vol = Volatile::False;
+        assert_eq!(vol.mro_string(None), "false");
     }
 
     #[test]
@@ -958,11 +1010,7 @@ mod tests {
                 ..Default::default()
             }
             .to_string(),
-            indoc!(
-                "
-                mem_gb = 1,
-            "
-            )
+            "    mem_gb = 1,\n"
         );
 
         assert_eq!(
@@ -973,13 +1021,10 @@ mod tests {
                 ..Default::default()
             }
             .mro_string_no_width(),
-            indoc!(
-                "
-                mem_gb   = 1,
-                vmem_gb  = 4,
-                volatile = strict,
-            "
-            )
+            "    mem_gb   = 1,
+    vmem_gb  = 4,
+    volatile = strict,
+",
         );
 
         assert_eq!(
@@ -988,11 +1033,7 @@ mod tests {
                 ..Default::default()
             }
             .mro_string_with_width(10),
-            indoc!(
-                "
-                threads    = 2,
-            "
-            )
+            "    threads    = 2,\n"
         );
     }
 
@@ -1024,14 +1065,11 @@ mod tests {
                 MroField::new("sum", Primary(Float)),
             ],
         };
-        let expected = indoc!(
-            "
-            in  float[] unsorted,
-            in  bool    reverse,
-            out float[] sorted,
-            out float   sum,
-        "
-        );
+        let expected = "    in  float[] unsorted,
+    in  bool    reverse,
+    out float[] sorted,
+    out float   sum,
+";
         assert_eq!(in_out.mro_string(None), expected);
         assert_eq!(in_out.to_string(), expected);
     }
@@ -1414,12 +1452,9 @@ mod tests {
                 })),
             )],
         };
-        let expected = indoc!(
-            "
-            in  h5       raw_matrix,
-            out MexFiles mex_files,
-        "
-        );
+        let expected = "    in  h5       raw_matrix,
+    out MexFiles mex_files,
+";
         assert_eq!(in_out.mro_string(None), expected);
         assert_eq!(in_out.to_string(), expected);
     }
