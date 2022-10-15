@@ -1,5 +1,4 @@
 use heck::{ToSnakeCase, ToUpperCamelCase};
-use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -174,10 +173,13 @@ pub fn new_stage(
     // Make sure the file does not exist already
     assert!(!path.exists(), "File {:?} already exists", path);
 
-    let mut vars = HashMap::new();
-    vars.insert("stage".into(), stage_name.to_upper_camel_case());
-    vars.insert("open".into(), "{".into());
-    vars.insert("close".into(), "}".into());
+    let vars = [
+        ("stage".to_string(), stage_name.to_upper_camel_case()),
+        ("open".to_string(), "{".to_string()),
+        ("close".to_string(), "}".to_string()),
+    ]
+    .into_iter()
+    .collect();
 
     let stage_template = if main_only {
         strfmt(STAGE_TEMPLATE_MAIN, &vars).unwrap()
@@ -278,10 +280,13 @@ pub fn new_adapter(adapter_name: impl AsRef<str>) {
     if exit_status.success() {
         {
             // Main file
-            let mut vars = HashMap::new();
-            vars.insert("adapter".into(), adapter_name.to_snake_case());
-            vars.insert("open".into(), "{".into());
-            vars.insert("close".into(), "}".into());
+            let vars = [
+                ("adapter".to_string(), adapter_name.to_snake_case()),
+                ("open".to_string(), "{".to_string()),
+                ("close".to_string(), "}".to_string()),
+            ]
+            .into_iter()
+            .collect();
 
             let mut path = PathBuf::from(&adapter_name);
             path.push("src");
