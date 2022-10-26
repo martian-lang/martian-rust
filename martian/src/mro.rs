@@ -826,8 +826,7 @@ impl Display for StageMro {
                 .as_ref()
                 .map(MroDisplay::min_width)
                 .unwrap_or_default(),
-        )
-        .max(4);
+        );
         writeln!(f, "stage {}(", self.stage_name)?;
         write!(
             f,
@@ -1308,6 +1307,124 @@ mod tests {
                 out float   sum,
                 src comp    "my_adapter martian sum_squares",
             ) split (
+            ) using (
+                mem_gb  = 1,
+                threads = 2,
+            )
+        "#
+        );
+        assert_eq!(stage_mro.to_string(), expected);
+    }
+
+    #[test]
+    fn test_stage_mro_type_width_1() {
+        // Check field alignment agrees with `mro format` when chunk arg
+        // types are narrower than stage arg types.
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES1",
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("values", Array(Float.into()))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: Some(InAndOut {
+                inputs: Vec::new(),
+                outputs: vec![MroField::new("value", Primary(Str))],
+            }),
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+        stage_mro.verify();
+        let expected = indoc!(
+            r#"
+            stage SUM_SQUARES1(
+                in  float[] values,
+                out float   sum,
+                src comp    "my_adapter martian sum_squares",
+            ) split (
+                out string  value,
+            ) using (
+                mem_gb  = 1,
+                threads = 2,
+            )
+        "#
+        );
+        assert_eq!(stage_mro.to_string(), expected);
+    }
+
+    #[test]
+    fn test_stage_mro_type_width_2() {
+        // Check field alignment agrees with `mro format` when stage arg
+        // types are narrower than stage src type.
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES2",
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("sum", Primary(Int))],
+                outputs: Vec::new(),
+            },
+            chunk_in_out: Some(InAndOut {
+                inputs: Vec::new(),
+                outputs: Vec::new(),
+            }),
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+        stage_mro.verify();
+        let expected = indoc!(
+            r#"
+            stage SUM_SQUARES2(
+                in  int sum,
+                src comp "my_adapter martian sum_squares",
+            ) split (
+            ) using (
+                mem_gb  = 1,
+                threads = 2,
+            )
+        "#
+        );
+        assert_eq!(stage_mro.to_string(), expected);
+    }
+
+    #[test]
+    fn test_stage_mro_type_width_3() {
+        // Check field alignment agrees with `mro format` when chunk arg
+        // types are wider than stage arg types.
+        let stage_mro = StageMro {
+            stage_name: "SUM_SQUARES3",
+            adapter_name: "my_adapter".into(),
+            stage_key: "sum_squares".into(),
+            stage_in_out: InAndOut {
+                inputs: vec![MroField::new("value", Primary(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float))],
+            },
+            chunk_in_out: Some(InAndOut {
+                inputs: Vec::new(),
+                outputs: vec![MroField::new("value_s", Primary(Str))],
+            }),
+            using_attrs: MroUsing {
+                mem_gb: Some(1),
+                threads: Some(2),
+                ..Default::default()
+            },
+        };
+        stage_mro.verify();
+        let expected = indoc!(
+            r#"
+            stage SUM_SQUARES3(
+                in  float  value,
+                out float  sum,
+                src comp   "my_adapter martian sum_squares",
+            ) split (
+                out string value_s,
             ) using (
                 mem_gb  = 1,
                 threads = 2,
