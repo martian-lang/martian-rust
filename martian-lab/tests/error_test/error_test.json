@@ -2,6 +2,6 @@
   "command": ["run_test.sh"],
   "expected_return": 1,
   "output_dir": "pipeline_test",
-  "contains_only_files": ["*"],
+  "contains_files": ["*"],
   "contents_match": ["*"]
 }
