@@ -15,7 +15,6 @@ stage SUM_SQUARES(
     out txt     log,
     src comp    "adapter martian sum_squares",
 ) using (
-    mem_gb   = 4,
-    threads  = 2,
-    volatile = strict,
+    mem_gb  = 4,
+    threads = 2,
 )
