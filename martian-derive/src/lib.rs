@@ -99,7 +99,7 @@ pub fn make_mro(
             Volatile::Strict => quote![volatile: Some(::martian::Volatile::Strict),],
             Volatile::False => quote![volatile: Some(::martian::Volatile::False),],
         },
-        None => quote![volatile: Some(::martian::Volatile::default()),],
+        None => quote![volatile: None,],
     };
     let using_attributes_fn = quote![
         fn using_attributes() -> ::martian::MroUsing {

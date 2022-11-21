@@ -478,7 +478,7 @@ pub enum Volatile {
 
 impl Default for Volatile {
     fn default() -> Self {
-        Volatile::Strict
+        Volatile::False
     }
 }
 
