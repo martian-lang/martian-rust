@@ -36,6 +36,4 @@ stage SETUP_CHUNKS(
     out RnaChunk[]   chunks,
     out ChemistryDef chemistry_def,
     src comp         "my_adapter martian setup_chunks",
-) using (
-    volatile = strict,
 )

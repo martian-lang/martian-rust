@@ -9,7 +9,6 @@ stage SUM_SQUARES(
     out float   sum_sq,
     src comp    "adapter martian sum_squares",
 ) using (
-    mem_gb   = 4,
-    threads  = 2,
-    volatile = strict,
+    mem_gb  = 4,
+    threads = 2,
 )
