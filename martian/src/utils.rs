@@ -179,6 +179,26 @@ mod tests {
             set_extension("/path/to/foo.txt", ""),
             PathBuf::from("/path/to/foo.txt")
         );
+        assert_eq!(
+            set_extension("/path/to/footxt", "txt"),
+            PathBuf::from("/path/to/footxt.txt")
+        );
+    }
+
+    #[test]
+    fn test_set_extension_non_ascii() {
+        assert_eq!(
+            set_extension("/💾/to/fö‼.txt", "txt"),
+            PathBuf::from("/💾/to/fö‼.txt")
+        );
+        assert_eq!(
+            set_extension("/path/to/fö💾.™txt", "™txt"),
+            PathBuf::from("/path/to/fö💾.™txt")
+        );
+        assert_eq!(
+            set_extension("/path/to/ﬁ‼e.txt💾", "™txt💾"),
+            PathBuf::from("/path/to/ﬁ‼e.txt💾.™txt💾")
+        );
     }
 
     #[test]
