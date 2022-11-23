@@ -238,7 +238,7 @@ impl Metadata {
     }
 
     fn _read_buf_err(file: &Path) -> Result<String> {
-        std::fs::read_to_string(&file).map_err(
+        std::fs::read_to_string(file).map_err(
             #[cold]
             |e| {
                 let context = format!("Failed to read file {:?} due to {}:", file, e);
