@@ -14,9 +14,8 @@ jobs:
         components: clippy
     - uses: actions/checkout@v3
     - uses: Swatinem/rust-cache@v2
-    - uses: actions-rs-plus/clippy-check@43303e5bdba1efbf5961020e5743d530fb1de0c1
+    - uses: 10XGenomics/clippy-check@main
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
         args: |
           --all-features --all-targets --
           -D clippy::perf
