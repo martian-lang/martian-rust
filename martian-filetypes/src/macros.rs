@@ -33,12 +33,25 @@ macro_rules! martian_filetype_inner {
                 }
             }
         }
+
         impl<F> AsRef<std::path::Path> for $name<F>
         where
             F: ::martian::MartianFileType
         {
+            /// Coerces this MartianFileType to a Path slice.
             fn as_ref(&self) -> &std::path::Path {
-                self.path.as_ref()
+                &self.path
+            }
+        }
+
+        impl<F> std::ops::Deref for $name<F>
+        where
+            F: ::martian::MartianFileType
+        {
+            type Target = ::std::path::Path;
+            /// Dereferences this MartianFileType to a Path slice.
+            fn deref(&self) -> &::std::path::Path {
+                &self.path
             }
         }
 
