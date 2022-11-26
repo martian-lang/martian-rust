@@ -801,9 +801,12 @@ For example, martian_filetype! {TxtFile, \"txt\"}",
         pub struct #struct_ident(::std::path::PathBuf);
         #[automatically_derived]
         impl ::martian::MartianFileType for #struct_ident {
+            /// Returns the extension of this MartianFileType.
             fn extension() -> String {
                 #extension.into()
             }
+
+            /// Creates a MartianFileType from a directory path and a filename.
             fn new(
                 file_path: impl ::std::convert::AsRef<::std::path::Path>,
                 file_name: impl ::std::convert::AsRef<::std::path::Path>,
@@ -816,17 +819,30 @@ For example, martian_filetype! {TxtFile, \"txt\"}",
                 #struct_ident(path)
             }
         }
+
         #[automatically_derived]
         impl ::std::convert::AsRef<::std::path::Path> for #struct_ident {
+            /// Coerces this MartianFileType to a Path slice.
             fn as_ref(&self) -> &::std::path::Path {
                 &self.0
             }
         }
+
+        #[automatically_derived]
+        impl ::std::ops::Deref for #struct_ident {
+            type Target = ::std::path::Path;
+            /// Dereferences this MartianFileType to a Path slice.
+            fn deref(&self) -> &::std::path::Path {
+                &self.0
+            }
+        }
+
         #[automatically_derived]
         impl<T> ::std::convert::From<T> for #struct_ident
         where
             ::std::path::PathBuf: ::std::convert::From<T>,
         {
+            /// Convert a PathBuf (or something convertible to a PathBuf) into this MartianFileType.
             fn from(source: T) -> Self {
                 ::martian::MartianFileType::from_path(::std::path::PathBuf::from(source).as_ref())
             }
