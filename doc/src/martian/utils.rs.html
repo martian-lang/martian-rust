@@ -193,6 +193,42 @@
 <span id="193">193</span>
 <span id="194">194</span>
 <span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Uncategorized collection of tiny useful functions</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! All the functions are simple wrappers around functions from</span>
@@ -201,6 +237,7 @@
 <span class="kw">use</span> <span class="ident">heck::ToUpperCamelCase</span>;
 <span class="kw">use</span> <span class="ident">serde::Serialize</span>;
 <span class="kw">use</span> <span class="ident">serde_json::Value</span>;
+<span class="kw">use</span> <span class="ident">std::os::unix::prelude::OsStrExt</span>;
 <span class="kw">use</span> <span class="ident">std::path::Path</span>;
 <span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
 
@@ -255,12 +292,13 @@
         .<span class="ident">into_owned</span>()
 }
 
-<span class="doccomment">/// Given a filename and an extension, return the filename with the correct extension</span>
+<span class="doccomment">/// Given a filename and an extension, return the filename with the correct extension.</span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// Let&#39;s say we have a file `foo.a1.a2.a3`. The `extension()` function associated with</span>
-<span class="doccomment">/// Path in rust return `a3` at the extension. This also means that if I ask Path to set</span>
-<span class="doccomment">/// the extension to `a2.a3`, the resulting filename would be `foo.a1.a2.a2.a3` :/</span>
-<span class="doccomment">/// This helper function accounts for paths with multiple dot extensions and sets up the</span>
-<span class="doccomment">/// filename correctly.</span>
+<span class="doccomment">/// Path in rust returns `a3` at the extension. This also means that</span>
+<span class="doccomment">/// `p.set_extension(&quot;a2.a3&quot;)` would be `foo.a1.a2.a2.a3`, which is probably</span>
+<span class="doccomment">/// not intended.  This helper function accounts for paths with multiple dot</span>
+<span class="doccomment">/// extensions and sets up the filename correctly.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// use martian::utils::set_extension;</span>
@@ -273,48 +311,52 @@
     <span class="ident">_set_extension</span>(<span class="ident">PathBuf::from</span>(<span class="ident">file_path</span>.<span class="ident">as_ref</span>()), <span class="ident">extension</span>.<span class="ident">to_string</span>())
 }
 
+<span class="comment">// Returns true if the given name ends with .ext.</span>
+<span class="comment">// Equivilent to `.endswith(&quot;.&quot;+ext)` except doesn&#39;t need to allocate.</span>
+<span class="kw">fn</span> <span class="ident">has_extension</span>(<span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">ext</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">bool</span> {
+    <span class="ident">name</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">ext</span>.<span class="ident">len</span>()
+        <span class="op">&amp;&amp;</span> <span class="ident">name</span>.<span class="ident">ends_with</span>(<span class="ident">ext</span>)
+        <span class="op">&amp;&amp;</span> <span class="ident">name</span>[<span class="ident">name</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">ext</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>..].<span class="ident">starts_with</span>(<span class="string">&#39;.&#39;</span>)
+}
+
 <span class="comment">// This is seperate from the public set_extension to avoid generating multiple</span>
 <span class="comment">// monomorphized versions of the function, and to improve efficiency for</span>
 <span class="comment">// make_path which is already handing over a PathBuf.</span>
 <span class="kw">fn</span> <span class="ident">_set_extension</span>(<span class="kw-2">mut</span> <span class="ident">result</span>: <span class="ident">PathBuf</span>, <span class="ident">extension</span>: <span class="ident">String</span>) -&gt; <span class="ident">PathBuf</span> {
-    <span class="macro">assert!</span>(
-        <span class="op">!</span><span class="ident">result</span>
-            .<span class="ident">display</span>()
-            .<span class="ident">to_string</span>()
-            .<span class="ident">ends_with</span>(<span class="ident">std::path::MAIN_SEPARATOR</span>),
+    <span class="macro">assert_ne!</span>(
+        {
+            <span class="kw">let</span> <span class="ident">r_str</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">as_os_str</span>().<span class="ident">as_bytes</span>();
+            <span class="kw-2">*</span><span class="ident">r_str</span>.<span class="ident">last</span>().<span class="ident">expect</span>(<span class="string">&quot;Path must be non-empty.&quot;</span>)
+        },
+        <span class="ident">std::path::MAIN_SEPARATOR</span> <span class="kw">as</span> <span class="ident">u8</span>,
         <span class="string">&quot;You passed a directory instead of a file: {:?}&quot;</span>,
         <span class="ident">result</span>
     );
-
-    <span class="kw">let</span> <span class="ident">current_name</span>: <span class="ident">String</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span>.<span class="ident">file_name</span>() {
-        <span class="prelude-val">Some</span>(<span class="ident">name</span>) =&gt; <span class="ident">name</span>.<span class="ident">to_string_lossy</span>().<span class="ident">into_owned</span>(),
-        <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Could not find the filename in {:?}&quot;</span>, <span class="ident">result</span>),
-    };
 
     <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">extension</span>.<span class="ident">starts_with</span>(<span class="string">&#39;.&#39;</span>));
     <span class="kw">if</span> <span class="ident">extension</span>.<span class="ident">is_empty</span>() {
         <span class="kw">return</span> <span class="ident">result</span>;
     }
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">accumulated_ext</span> <span class="op">=</span> <span class="ident">String::new</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">found_match</span> <span class="op">=</span> <span class="bool-val">false</span>;
-    <span class="kw">for</span> <span class="ident">part</span> <span class="kw">in</span> <span class="ident">extension</span>.<span class="ident">split</span>(<span class="string">&#39;.&#39;</span>) {
-        <span class="ident">accumulated_ext</span> <span class="op">=</span> <span class="ident">accumulated_ext</span> <span class="op">+</span> <span class="string">&quot;.&quot;</span> <span class="op">+</span> <span class="ident">part</span>;
-        <span class="kw">if</span> <span class="ident">current_name</span>.<span class="ident">ends_with</span>(<span class="kw-2">&amp;</span><span class="ident">accumulated_ext</span>) {
-            <span class="ident">found_match</span> <span class="op">=</span> <span class="bool-val">true</span>;
+    <span class="kw">let</span> <span class="ident">current_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span>.<span class="ident">file_name</span>() {
+        <span class="prelude-val">Some</span>(<span class="ident">name</span>) =&gt; <span class="ident">name</span>.<span class="ident">to_string_lossy</span>(),
+        <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Could not find the filename in {:?}&quot;</span>, <span class="ident">result</span>),
+    };
+    <span class="kw">let</span> <span class="ident">current_name</span> <span class="op">=</span> <span class="ident">current_name</span>.<span class="ident">as_ref</span>();
+    <span class="comment">// Trim parts of the extension which are already present in the result.</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remaining_extension</span> <span class="op">=</span> <span class="ident">extension</span>.<span class="ident">as_str</span>();
+    <span class="kw">if</span> <span class="ident">has_extension</span>(<span class="ident">current_name</span>, <span class="ident">remaining_extension</span>) {
+        <span class="kw">return</span> <span class="ident">result</span>;
+    }
+
+    <span class="kw">for</span> (<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">chr</span>) <span class="kw">in</span> <span class="ident">extension</span>.<span class="ident">as_bytes</span>().<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
+        <span class="kw">if</span> <span class="ident">chr</span> <span class="op">==</span> <span class="string">b&#39;.&#39;</span> <span class="op">&amp;&amp;</span> <span class="ident">has_extension</span>(<span class="ident">current_name</span>, <span class="kw-2">&amp;</span><span class="ident">extension</span>[..<span class="ident">i</span>]) {
+            <span class="ident">remaining_extension</span> <span class="op">=</span> <span class="ident">extension</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>..].<span class="ident">trim_start_matches</span>(<span class="string">&#39;.&#39;</span>);
             <span class="kw">break</span>;
         }
     }
-    <span class="kw">let</span> <span class="ident">extension_addition</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">found_match</span> {
-        <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">right</span>) <span class="op">=</span> <span class="ident">extension</span>.<span class="ident">split_at</span>(<span class="ident">accumulated_ext</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>); <span class="comment">// -1 because extension does not contain the leading `.`</span>
-        <span class="macro">debug_assert!</span>(<span class="ident">right</span>.<span class="ident">is_empty</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">right</span>.<span class="ident">starts_with</span>(<span class="string">&#39;.&#39;</span>));
-        <span class="ident">right</span>.<span class="ident">to_string</span>()
-    } <span class="kw">else</span> {
-        <span class="macro">format!</span>(<span class="string">&quot;.{}&quot;</span>, <span class="ident">extension</span>)
-    };
 
-    <span class="kw">let</span> <span class="ident">required_name</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}{}&quot;</span>, <span class="ident">current_name</span>, <span class="ident">extension_addition</span>);
-    <span class="ident">result</span>.<span class="ident">set_file_name</span>(<span class="ident">required_name</span>);
+    <span class="ident">result</span>.<span class="ident">set_file_name</span>(<span class="macro">format!</span>(<span class="string">&quot;{}.{}&quot;</span>, <span class="ident">current_name</span>, <span class="ident">remaining_extension</span>));
     <span class="ident">result</span>
 }
 
@@ -331,6 +373,16 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_has_extension</span>() {
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">has_extension</span>(<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;txt.txt&quot;</span>));
+        <span class="macro">assert!</span>(<span class="ident">has_extension</span>(<span class="string">&quot;foo.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>));
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">has_extension</span>(<span class="string">&quot;foo.txt&quot;</span>, <span class="string">&quot;txt.txt&quot;</span>));
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">has_extension</span>(<span class="string">&quot;foo.tar&quot;</span>, <span class="string">&quot;tar.gz&quot;</span>));
+        <span class="macro">assert!</span>(<span class="ident">has_extension</span>(<span class="string">&quot;foo.tar.gz&quot;</span>, <span class="string">&quot;gz&quot;</span>));
+    }
+
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_set_extension</span>() {
         <span class="macro">assert_eq!</span>(
@@ -373,6 +425,26 @@
         <span class="macro">assert_eq!</span>(
             <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>, <span class="string">&quot;&quot;</span>),
             <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/footxt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/footxt.txt&quot;</span>)
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_set_extension_non_ascii</span>() {
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">set_extension</span>(<span class="string">&quot;/💾/to/fö‼.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/💾/to/fö‼.txt&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/fö💾.™txt&quot;</span>, <span class="string">&quot;™txt&quot;</span>),
+            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/fö💾.™txt&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/ﬁ‼e.txt💾&quot;</span>, <span class="string">&quot;™txt💾&quot;</span>),
+            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/ﬁ‼e.txt💾.™txt💾&quot;</span>)
         );
     }
 
