@@ -563,7 +563,6 @@ dependencies = [
  "heck",
  "indoc",
  "insta",
- "libc",
  "log",
  "pretty_assertions",
  "rayon",
