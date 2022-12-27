@@ -103,7 +103,7 @@ fn setup_logging(log_file: File, level: LevelFilter) {
                 .unwrap_or_else(|_| OffsetDateTime::now_utc())
                 .format(DATE_FORMAT)
                 .unwrap();
-            out.finish(format_args!("{} [{}] {}", time_str, record.target(), msg))
+            out.finish(format_args!("{time_str} [{}] {msg}", record.target()))
         })
         .chain(log_file)
         .chain(io::stdout());
@@ -111,7 +111,7 @@ fn setup_logging(log_file: File, level: LevelFilter) {
     let cfg = base_config.chain(logger_config).apply();
 
     if let Err(e) = cfg {
-        panic!("Failed to initialize global logger: {}", e);
+        panic!("Failed to initialize global logger: {e}");
     }
 }
 
@@ -192,7 +192,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let mut md = match _md {
         Ok(m) => m,
         Err(e) => {
-            let _ = write_errors(&format!("{:?}", e), false);
+            let _ = write_errors(&format!("{e:?}"), false);
             return (1, Some(e));
         }
     };
@@ -207,7 +207,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let stage = match _stage {
         Ok(s) => s,
         Err(e) => {
-            let _ = write_errors(&format!("{:?}", e), false);
+            let _ = write_errors(&format!("{e:?}"), false);
             return (1, Some(e));
         }
     };
@@ -239,7 +239,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
                     location.line(),
                     backtrace
                 ),
-                None => format!("stage failed unexpectedly: '{}':\n{:?}", msg, backtrace),
+                None => format!("stage failed unexpectedly: '{msg}':\n{backtrace:?}"),
             };
 
             // write to _log
@@ -247,7 +247,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
             // write stack trace to to _stackvars.
             // this will just give up if any errors are encountere
-            let bt_string = format!("{:?}", backtrace);
+            let bt_string = format!("{backtrace:?}");
             let _ = File::create(&stackvars_path).map(move |mut f| {
                 let _ = f.write_all(bt_string.as_bytes());
             });
@@ -330,7 +330,7 @@ pub fn martian_make_mro(
             output.write_all(final_mro_string.as_bytes())?;
         }
         None => {
-            print!("{}", final_mro_string);
+            print!("{final_mro_string}");
         }
     }
     Ok(())
@@ -343,7 +343,7 @@ pub fn make_mro_string(header_comment: &str, mro_registry: &[StageMro]) -> Strin
     for stage_mro in mro_registry {
         filetype_header.add_stage(stage_mro);
         struct_header.add_stage(stage_mro);
-        writeln!(&mut mro_string, "{}", stage_mro).unwrap();
+        writeln!(&mut mro_string, "{stage_mro}").unwrap();
     }
     mro_string.pop();
 

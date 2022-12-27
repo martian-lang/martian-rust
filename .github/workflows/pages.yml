@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: dtolnay/rust-toolchain@1.64.0
+      - uses: dtolnay/rust-toolchain@1.66.0
 
       - name: Cargo doc
         run: |

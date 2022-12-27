@@ -109,7 +109,7 @@ fn _set_extension(mut result: PathBuf, extension: String) -> PathBuf {
 
     let current_name = match result.file_name() {
         Some(name) => name.to_string_lossy(),
-        _ => panic!("Could not find the filename in {:?}", result),
+        _ => panic!("Could not find the filename in {result:?}"),
     };
     let current_name = current_name.as_ref();
     // Trim parts of the extension which are already present in the result.
@@ -125,7 +125,7 @@ fn _set_extension(mut result: PathBuf, extension: String) -> PathBuf {
         }
     }
 
-    result.set_file_name(format!("{}.{}", current_name, remaining_extension));
+    result.set_file_name(format!("{current_name}.{remaining_extension}"));
     result
 }
 

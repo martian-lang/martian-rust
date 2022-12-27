@@ -189,13 +189,13 @@ impl Metadata {
     /// Update the Martian journal -- so that Martian knows what we've updated
     fn update_journal_main(&mut self, name: &str, force: bool) -> Result<()> {
         let journal_name: Cow<str> = if self.stage_type != "main" {
-            format!("{}_{}", self.stage_type, name).into()
+            format!("{}_{name}", self.stage_type).into()
         } else {
             name.into()
         };
 
         if force || !self.cache.contains(name) {
-            let tmp_run_file = format!("{}.{}.tmp", self.run_file, journal_name);
+            let tmp_run_file = format!("{}.{journal_name}.tmp", self.run_file);
             let run_file = &tmp_run_file[..tmp_run_file.len() - 4];
 
             {
@@ -204,7 +204,7 @@ impl Metadata {
                     // Pretty much ignore this error.  The only reason we need
                     // any content at all in this file is because some
                     // filesystems behave strangely with completely empty files.
-                    eprintln!("Writing journal file {}: {}", tmp_run_file, err);
+                    eprintln!("Writing journal file {tmp_run_file}: {err}");
                 }
             }
             rename(tmp_run_file.as_str(), run_file).or_else(ignore_not_found)?;
@@ -241,7 +241,7 @@ impl Metadata {
         std::fs::read_to_string(file).map_err(
             #[cold]
             |e| {
-                let context = format!("Failed to read file {:?} due to {}:", file, e);
+                let context = format!("Failed to read file {file:?} due to {e}:");
                 Error::new(e).context(context)
             },
         )
@@ -260,7 +260,7 @@ impl Metadata {
         let buf_lines: Vec<_> = buf
             .lines()
             .enumerate()
-            .map(|(i, line)| format!("{:>4}: {}", i + 1, line))
+            .map(|(i, line)| format!("{:>4}: {line}", i + 1))
             .collect();
         let context = format!(
             "The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
@@ -297,7 +297,7 @@ impl Metadata {
         let mut log_file = unsafe { File::from_raw_fd(3) };
 
         log_file
-            .write(format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
+            .write(format!("{} [{level}] {message}", make_timestamp_now()).as_bytes())
             .and(log_file.flush())?;
 
         let _ = log_file.into_raw_fd();
@@ -309,7 +309,7 @@ impl Metadata {
     }
 
     pub fn alarm(&mut self, message: &str) -> Result<()> {
-        self._append("alarm", &format!("{} {}", make_timestamp_now(), message))
+        self._append("alarm", &format!("{} {message}", make_timestamp_now()))
     }
 
     #[cold]

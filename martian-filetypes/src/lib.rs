@@ -324,7 +324,7 @@ pub(crate) fn maybe_add_format(extension: String, format: &str) -> String {
     if extension.ends_with(format) || format.is_empty() {
         extension
     } else {
-        format!("{}.{}", extension, format)
+        format!("{extension}.{format}")
     }
 }
 
