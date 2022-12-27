@@ -73,8 +73,8 @@ pub fn make_mro(
             return syn::Error::new(
                 span,
                 format!(
-                    "`stage_name` needs to be in SHOUTY_SNAKE_CASE (without any surrounding quotes). Found {}, use {} instead",
-                    name, expected
+                    "`stage_name` needs to be in SHOUTY_SNAKE_CASE (without any surrounding quotes). \
+                    Found {name}, use {expected} instead",
                 ),
             )
             .to_compile_error()
@@ -234,18 +234,27 @@ impl AssociatedTypeBuilder {
             }
             CHUNK_INPUT_IDENT => {
                 if self.chunk_inputs.is_some() {
-                    unreachable!("Found multiple assignments for associated type {}. I am not sure how to proceed.", CHUNK_INPUT_IDENT)
+                    unreachable!(
+                        "Found multiple assignments for associated type {}. \
+                    I am not sure how to proceed.",
+                        CHUNK_INPUT_IDENT
+                    )
                 }
                 self.chunk_inputs = Some(associated_type_val);
             }
             CHUNK_OUTPUT_IDENT => {
                 if self.chunk_outputs.is_some() {
-                    unreachable!("Found multiple assignments for associated type {}. I am not sure how to proceed.", CHUNK_INPUT_IDENT)
+                    unreachable!(
+                        "Found multiple assignments for associated type {}. \
+                    I am not sure how to proceed.",
+                        CHUNK_INPUT_IDENT
+                    )
                 }
                 self.chunk_outputs = Some(associated_type_val);
             }
             s => unreachable!(
-                "Got an unexpected associated type {}. I am not sure how to proceed",
+                "Got an unexpected associated type {}. \
+                I am not sure how to proceed",
                 s
             ),
         }
@@ -346,7 +355,8 @@ macro_rules! attr_parse {
                     let parts: Vec<_> = using_spec.trim().splitn(3, '=').map(str::trim).collect();
                     if parts.len() != 2 {
                         return Err(format!(
-                            "Expecting a comma separated `key=value` like tokens here. The allowed keys are: [{}]",
+                            "Expecting a comma separated `key=value` like tokens here. \
+                            The allowed keys are: [{}]",
                             stringify!($($property),*)));
                     }
                     match parts[0] {
@@ -363,7 +373,8 @@ macro_rules! attr_parse {
                             };
                         },)*
                         _ => return Err(format!(
-                            "Expecting a comma separated `key=value` like tokens here. The allowed keys are: [{}]. Found an invalid key {}",
+                            "Expecting a comma separated `key=value` like tokens here. \
+                            The allowed keys are: [{}]. Found an invalid key {}",
                             stringify!($($property),*), parts[0]))
                     }
                 }
@@ -446,7 +457,10 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                         retain = true;
                     }
                     syn::Meta::List(ref list) if list.path.is_ident("serde") => {
-                        return syn::Error::new_spanned(field, "Cannot use serde attributes here. This might be okay, but it's hard to guarantee that deriving MartianStruct would work correctly when using serde attributes.")
+                        return syn::Error::new_spanned(field,
+                            "Cannot use serde attributes here. \
+                            This might be okay, but it's hard to guarantee that deriving MartianStruct would work correctly when using serde attributes."
+                        )
                             .to_compile_error()
                             .into();
                     }
@@ -459,7 +473,9 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                                         if mro_type.is_some() {
                                             return syn::Error::new_spanned(
                                                 field,
-                                                format!("Looks like you are setting #[mro_type] twice for field '{}'", name)
+                                                format!(
+                                                    "Looks like you are setting #[mro_type] twice for field '{name}'"
+                                                )
                                             )
                                             .to_compile_error()
                                             .into();
@@ -579,7 +595,8 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
             Fields::Unit => {
                 syn::Error::new_spanned(
                     input,
-                    "MartianType cannot be derived for a unit struct. Unit structs don't store any data, so they are most likely not useful as a MartianType.",
+                    "MartianType cannot be derived for a unit struct. \
+                    Unit structs don't store any data, so they are most likely not useful as a MartianType.",
                 )
                 .to_compile_error()
                 .into()
@@ -597,7 +614,12 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
             Fields::Unnamed(_) => {
                 syn::Error::new_spanned(
                     input,
-                    "Using an tuple struct as an mro field is not recommended. The reason is that serde serializes unnamed structs as vectors and it can be represented as a type in martian only if all the fields serialize to the same martian type. i.e `struct Good(u8, u16, i32);` can be represented as `int[]`, but there is no martian representation for `struct Bad(u8, String, Foo)`. This property is hard to check in a procedural macro. Hence it is strongly recommended to use a named struct. Naming the fields would also improve the readability of the code.",
+                    "Using an tuple struct as an mro field is not recommended. \
+                    The reason is that serde serializes unnamed structs as vectors and it can be represented as a type in martian only if all the fields serialize to the same martian type. \
+                    i.e `struct Good(u8, u16, i32);` can be represented as `int[]`, but there is no martian representation for `struct Bad(u8, String, Foo)`. \
+                    This property is hard to check in a procedural macro. \
+                    Hence it is strongly recommended to use a named struct. \
+                    Naming the fields would also improve the readability of the code.",
                 )
                 .to_compile_error()
                 .into()
@@ -649,10 +671,12 @@ pub fn martian_type(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                     syn::Error::new_spanned(
                         input,
                         format!(
-                            "Deriving MartianType on enum {} failed because some of the variants in this enum map to MartianPrimaryType::Map while other variants map to MartianPrimaryType::Str.\n  1) MartianPrimaryType::Map -> [{}]\n  2) MartianPrimaryType::Str -> {}\nThe reason this happens is because serde will deserialize different variants of an enum differently. As a result, we cannot assign a unique martian type for this enum. Consider redesigning your enum to account for this.",
-                            ident,
-                            map_fields,
-                            str_fields
+                            "Deriving MartianType on enum {ident} failed because some of the variants in this enum map to MartianPrimaryType::Map while other variants map to MartianPrimaryType::Str.
+  1) MartianPrimaryType::Map -> [{map_fields}]
+  2) MartianPrimaryType::Str -> {str_fields}
+The reason this happens is because serde will deserialize different variants of an enum differently. \
+As a result, we cannot assign a unique martian type for this enum. \
+Consider redesigning your enum to account for this.",
                         )
                     )
                     .to_compile_error()
@@ -721,9 +745,17 @@ For example, martian_filetype! {TxtFile, \"txt\"}",
     // otherwise.
     let struct_ident = match syn::parse_str::<Ident>(struct_name) {
         Ok(ident) => ident,
-        Err(_) => return syn::Error::new_spanned(item2, format!("The first item `{}` in the martian_filetype! macro should be a valid identifier that can be used as a struct name.", struct_name))
-                .to_compile_error()
-                .into(),
+        Err(_) => {
+            return syn::Error::new_spanned(
+                item2,
+                format!(
+                    "The first item `{struct_name}` in the martian_filetype! macro \
+            should be a valid identifier that can be used as a struct name."
+                ),
+            )
+            .to_compile_error()
+            .into()
+        }
     };
 
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -733,9 +765,13 @@ For example, martian_filetype! {TxtFile, \"txt\"}",
     // string literal enclosed in double quotes. Generate a compiler error
     // otherwise.
     if !(extension.starts_with('"') && extension.ends_with('"')) {
-        return syn::Error::new_spanned(item2, "The second item in the martian_filetype! macro should be a string literal enclosed in double quotes.")
-                .to_compile_error()
-                .into();
+        return syn::Error::new_spanned(
+            item2,
+            "The second item in the martian_filetype! macro \
+            should be a string literal enclosed in double quotes.",
+        )
+        .to_compile_error()
+        .into();
     }
 
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -750,11 +786,12 @@ For example, martian_filetype! {TxtFile, \"txt\"}",
     };
     if chars_within_quotes.is_empty() {
         return syn::Error::new_spanned(
-                item2,
-                "The extension for a filetype cannot be empty. Consider using a PathBuf for filenames without any extension."
-            )
-            .to_compile_error()
-            .into();
+            item2,
+            "The extension for a filetype cannot be empty. \
+                Consider using a PathBuf for filenames without any extension.",
+        )
+        .to_compile_error()
+        .into();
     }
 
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -785,7 +822,10 @@ For example, martian_filetype! {TxtFile, \"txt\"}",
         if !((i > 0 && (c.is_ascii_alphanumeric() || *c == '.')) || c.is_ascii_alphabetic()) {
             return syn::Error::new_spanned(
                     item2,
-                    format!("The extension `{}` in the martian_filetype! macro should be alphanumeric (internal dots(.) are okay) starting with an alphabet.\nFound invalid character `{}` at position {}", extension, c, i))
+                    format!(
+                        "The extension `{extension}` in the martian_filetype! macro \
+                        should be alphanumeric (internal dots(.) are okay) starting with an alphabet.\
+                        \nFound invalid character `{c}` at position {i}"))
                 .to_compile_error()
                 .into();
         }

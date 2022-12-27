@@ -520,7 +520,7 @@ fn split_prelude(
     let split_path = prep_path(run_directory, subdir)?;
     let rover = MartianRover::new(split_path.as_path(), default_resource);
     println!("{}", ["-"; 80].concat());
-    println!("{}", stage_name);
+    println!("{stage_name}");
     println!("{}", ["-"; 80].concat());
     Ok(rover)
 }
@@ -587,8 +587,8 @@ pub trait MartianStage: MroMaker {
                 #[cfg(not(feature = "rayon"))]
                 println!(" > [chunk ] running {}", chunk_idx,);
                 #[cfg(feature = "rayon")]
-                println!(" > [chunk ] running with rayon {}", chunk_idx,);
-                let chunk_path = prep_path(run_directory, &format!("chnk{}", chunk_idx))?;
+                println!(" > [chunk ] running with rayon {chunk_idx}",);
+                let chunk_path = prep_path(run_directory, &format!("chnk{chunk_idx}"))?;
                 Ok(MartianRover::new(
                     chunk_path.as_path(),
                     fill_defaults(resource),

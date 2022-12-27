@@ -9,7 +9,7 @@ jobs:
   clippy_check:
     runs-on: ubuntu-latest
     steps:
-    - uses: dtolnay/rust-toolchain@1.65.0
+    - uses: dtolnay/rust-toolchain@1.66.0
       with:
         components: clippy
     - uses: actions/checkout@v3
@@ -29,3 +29,4 @@ jobs:
           -D rust_2021_compatibility
           -D unused
           -D clippy::unnecessary_mut_passed
+          -W clippy::uninlined_format_args

@@ -171,7 +171,7 @@ pub fn new_stage(
     path.set_extension("rs");
 
     // Make sure the file does not exist already
-    assert!(!path.exists(), "File {:?} already exists", path);
+    assert!(!path.exists(), "File {path:?} already exists");
 
     let vars = [
         ("stage".to_string(), stage_name.to_upper_camel_case()),
@@ -187,9 +187,9 @@ pub fn new_stage(
         strfmt(STAGE_TEMPLATE, &vars).unwrap()
     };
 
-    println!("Writing to file {:?}", path);
+    println!("Writing to file {path:?}");
     let mut f = File::create(path).expect("Failed to create file");
-    write!(f, "{}", stage_template).expect("Failed writing to file");
+    write!(f, "{stage_template}").expect("Failed writing to file");
 }
 
 const ADAPTER_MAIN_TEMPLATE: &str = r##"
@@ -303,9 +303,9 @@ pub fn new_adapter(adapter_name: impl AsRef<str>) {
             }
 
             let main_template = strfmt(ADAPTER_MAIN_TEMPLATE, &vars).unwrap();
-            eprintln!("Writing main template to {:?}", path);
+            eprintln!("Writing main template to {path:?}");
             let mut f = File::create(path).expect("Failed to create file");
-            write!(f, "{}", main_template).expect("Failed writing to main.rs file");
+            write!(f, "{main_template}").expect("Failed writing to main.rs file");
         }
 
         {
@@ -317,7 +317,7 @@ pub fn new_adapter(adapter_name: impl AsRef<str>) {
                 .append(true)
                 .open(path)
                 .expect("Couldn't open Cargo.toml for writing");
-            write!(f, "{}", CARGO_TOML_ADDITION).expect("Failed writing to Cargo.toml file");
+            write!(f, "{CARGO_TOML_ADDITION}").expect("Failed writing to Cargo.toml file");
         }
     }
 }

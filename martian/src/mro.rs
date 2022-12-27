@@ -50,7 +50,7 @@ pub trait MroDisplay: Display {
         self.to_string()
     }
     fn mro_string_with_width(&self, field_width: usize) -> String {
-        format!("{value:<width$}", value = self, width = field_width)
+        format!("{self:<field_width$}")
     }
 }
 
@@ -212,7 +212,7 @@ impl Display for MartianBlanketType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
             MartianBlanketType::Primary(ref primary) => {
-                write!(f, "{v:<w$}", v = primary, w = f.width().unwrap_or_default())
+                write!(f, "{primary:<w$}", w = f.width().unwrap_or_default())
             }
             MartianBlanketType::Array(ref blanket) => {
                 write!(
@@ -497,7 +497,7 @@ impl FromStr for Volatile {
         match s {
             "strict" => Ok(Volatile::Strict),
             "false" => Ok(Volatile::False),
-            _ => Err(format!("Expected strict for volatile, Found {}", s)),
+            _ => Err(format!("Expected strict for volatile, Found {s}")),
         }
     }
 }
@@ -692,7 +692,7 @@ impl Display for FiletypeHeader {
         let mut extensions: Vec<_> = self.0.iter().collect();
         extensions.sort();
         for ext in extensions {
-            writeln!(f, "filetype {};", ext)?;
+            writeln!(f, "filetype {ext};")?;
         }
         writeln!(f)
     }
@@ -734,8 +734,8 @@ impl StructHeader {
             if self.0.contains_key(&def.name) {
                 assert_eq!(
                     &self.0[&def.name].0, def,
-                    "struct {} has conflicting definitions.\nDefinition 1: {:?}\nDefinition 2: {:?}",
-                    def.name, &self.0[&def.name], def
+                    "struct {} has conflicting definitions.\nDefinition 1: {:?}\nDefinition 2: {def:?}",
+                    def.name, &self.0[&def.name]
                 );
             } else {
                 let index = self.0.len();
@@ -792,7 +792,7 @@ pub trait MroMaker {
         let stage_mro = Self::stage_mro(adapter_name, stage_key);
         let filetype = FiletypeHeader::from(&stage_mro);
         let struct_header = StructHeader::from(&stage_mro);
-        format!("{}{}{}", filetype, struct_header, stage_mro)
+        format!("{filetype}{struct_header}{stage_mro}")
     }
     fn stage_name() -> &'static str;
     fn stage_in_and_out() -> InAndOut;
