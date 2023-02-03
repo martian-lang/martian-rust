@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/gzip_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gzip_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/gzip_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gzip_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -88,95 +88,95 @@
 <span id="88">88</span>
 <span id="89">89</span>
 <span id="90">90</span>
-</pre><pre class="rust"><code><span class="doccomment">//!</span>
-<span class="doccomment">//! This module defines an `gzip` wrapper over other basic filetypes. Most basic</span>
-<span class="doccomment">//! filetypes automatically inherit this behavior through the trait heirarchy.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Simple read/write example</span>
-<span class="doccomment">//! The example shown below creates an gzip compressed json file.</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use martian_filetypes::FileTypeIO;</span>
-<span class="doccomment">//! use martian_filetypes::bin_file::BincodeFile;</span>
-<span class="doccomment">//! use martian_filetypes::json_file::JsonFile;</span>
-<span class="doccomment">//! use martian_filetypes::gzip_file::Gzip;</span>
-<span class="doccomment">//! use martian::Error;</span>
-<span class="doccomment">//! use serde::{Serialize, Deserialize};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #[derive(Debug, PartialEq, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct Chemistry {</span>
-<span class="doccomment">//!     name: String,</span>
-<span class="doccomment">//!     paired_end: bool,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };</span>
-<span class="doccomment">//!     let gz_json_file = Gzip::from_filetype(JsonFile::from(&quot;example&quot;)); // example.json.gz</span>
-<span class="doccomment">//!     // gz_json_file has the type Gzip&lt;JsonFile&gt;</span>
-<span class="doccomment">//!     gz_json_file.write(&amp;chem)?; // Writes gzip compressed json file</span>
-<span class="doccomment">//!     let decoded: Chemistry = gz_json_file.read()?;</span>
-<span class="doccomment">//!     assert_eq!(chem, decoded);</span>
-<span class="doccomment">//!     # std::fs::remove_file(gz_json_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!     Ok(())</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! ```</span>
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ErrorContext</span>, <span class="ident">FileStorage</span>, <span class="ident">FileTypeIO</span>};
-<span class="kw">use</span> <span class="ident">flate2::read::GzDecoder</span>;
-<span class="kw">use</span> <span class="ident">flate2::write::GzEncoder</span>;
-<span class="kw">use</span> <span class="ident">flate2::Compression</span>;
-<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">Error</span>, <span class="ident">MartianFileType</span>};
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>};
+</pre><pre class="rust"><code><span class="doccomment">//!
+//! This module defines an `gzip` wrapper over other basic filetypes. Most basic
+//! filetypes automatically inherit this behavior through the trait heirarchy.
+//!
+//! ## Simple read/write example
+//! The example shown below creates an gzip compressed json file.
+//! ```rust
+//! use martian_filetypes::FileTypeIO;
+//! use martian_filetypes::bin_file::BincodeFile;
+//! use martian_filetypes::json_file::JsonFile;
+//! use martian_filetypes::gzip_file::Gzip;
+//! use martian::Error;
+//! use serde::{Serialize, Deserialize};
+//!
+//! #[derive(Debug, PartialEq, Serialize, Deserialize)]
+//! struct Chemistry {
+//!     name: String,
+//!     paired_end: bool,
+//! }
+//!
+//! fn main() -&gt; Result&lt;(), Error&gt; {
+//!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };
+//!     let gz_json_file = Gzip::from_filetype(JsonFile::from(&quot;example&quot;)); // example.json.gz
+//!     // gz_json_file has the type Gzip&lt;JsonFile&gt;
+//!     gz_json_file.write(&amp;chem)?; // Writes gzip compressed json file
+//!     let decoded: Chemistry = gz_json_file.read()?;
+//!     assert_eq!(chem, decoded);
+//!     # std::fs::remove_file(gz_json_file)?; // Remove the file (hidden from the doc)
+//!     Ok(())
+//! }
+//! ```
+</span><span class="kw">use crate</span>::{ErrorContext, FileStorage, FileTypeIO};
+<span class="kw">use </span>flate2::read::GzDecoder;
+<span class="kw">use </span>flate2::write::GzEncoder;
+<span class="kw">use </span>flate2::Compression;
+<span class="kw">use </span>martian::{Error, MartianFileType};
+<span class="kw">use </span>serde::{Deserialize, Serialize};
+<span class="kw">use </span>std::io::{Read, Write};
 
-<span class="macro">crate::martian_filetype_inner!</span> {
-    <span class="doccomment">/// A struct that wraps a basic `MartianFileType` and adds gzip compression</span>
-    <span class="doccomment">/// capability.</span>
-    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Gzip</span>, <span class="string">&quot;gz&quot;</span>
-}
+<span class="macro">crate::martian_filetype_inner! </span>{
+    <span class="doccomment">/// A struct that wraps a basic `MartianFileType` and adds gzip compression
+    /// capability.
+    </span><span class="kw">pub struct </span>Gzip, <span class="string">&quot;gz&quot;
+</span>}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">Gzip</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
+<span class="kw">impl</span>&lt;F&gt; Gzip&lt;F&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
 {
-    <span class="doccomment">/// Create an Gzip wrapped filetype from a basic filetype</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian_filetypes::{gzip_file::Gzip, bin_file::BincodeFile};</span>
-    <span class="doccomment">/// let gz_bin_file = Gzip::from_filetype(BincodeFile::from(&quot;example&quot;));</span>
-    <span class="doccomment">/// assert_eq!(gz_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.gz&quot;));</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_filetype</span>(<span class="ident">source</span>: <span class="ident">F</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::from</span>(<span class="ident">source</span>.<span class="ident">as_ref</span>())
+    <span class="doccomment">/// Create an Gzip wrapped filetype from a basic filetype
+    /// ```rust
+    /// use martian_filetypes::{gzip_file::Gzip, bin_file::BincodeFile};
+    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::from(&quot;example&quot;));
+    /// assert_eq!(gz_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.gz&quot;));
+    /// ```
+    </span><span class="kw">pub fn </span>from_filetype(source: F) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::from(source.as_ref())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Gzip</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span>&lt;F, T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>Gzip&lt;F&gt; <span class="kw">where </span>F: FileStorage&lt;T&gt; {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Gzip</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+<span class="kw">impl</span>&lt;F, T&gt; FileTypeIO&lt;T&gt; <span class="kw">for </span>Gzip&lt;F&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileTypeIO&lt;T&gt;,
 {
-    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">GzDecoder::new</span>(<span class="self">self</span>.<span class="ident">buf_reader</span>()<span class="question-mark">?</span>);
-        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::read_from</span>(<span class="ident">decoder</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">ErrorContext::ReadContext</span>(<span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>(), <span class="ident">e</span>.<span class="ident">to_string</span>());
-            <span class="ident">e</span>.<span class="ident">context</span>(<span class="ident">context</span>)
+    <span class="kw">fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
+        <span class="kw">let </span>decoder = GzDecoder::new(<span class="self">self</span>.buf_reader()<span class="question-mark">?</span>);
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::read_from(decoder).map_err(|e| {
+            <span class="kw">let </span>context = ErrorContext::ReadContext(<span class="self">self</span>.as_ref().into(), e.to_string());
+            e.context(context)
         })
     }
-    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::read_from</span>(<span class="ident">reader</span>)
+    <span class="kw">fn </span>read_from&lt;R: Read&gt;(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
+        &lt;F <span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::read_from(reader)
     }
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="comment">// Default compression level and configuration</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">GzEncoder::new</span>(<span class="self">self</span>.<span class="ident">buf_writer</span>()<span class="question-mark">?</span>, <span class="ident">Compression::default</span>());
-        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::write_into</span>(<span class="kw-2">&amp;mut</span> <span class="ident">encoder</span>, <span class="ident">item</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">ErrorContext::WriteContext</span>(<span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>(), <span class="ident">e</span>.<span class="ident">to_string</span>());
-            <span class="ident">e</span>.<span class="ident">context</span>(<span class="ident">context</span>)
+    <span class="kw">fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="comment">// Default compression level and configuration
+        </span><span class="kw">let </span><span class="kw-2">mut </span>encoder = GzEncoder::new(<span class="self">self</span>.buf_writer()<span class="question-mark">?</span>, Compression::default());
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::write_into(<span class="kw-2">&amp;mut </span>encoder, item).map_err(|e| {
+            <span class="kw">let </span>context = ErrorContext::WriteContext(<span class="self">self</span>.as_ref().into(), e.to_string());
+            e.context(context)
         })<span class="question-mark">?</span>;
-        <span class="ident">encoder</span>.<span class="ident">try_finish</span>()<span class="question-mark">?</span>;
+        encoder.try_finish()<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
-    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::write_into</span>(<span class="ident">writer</span>, <span class="ident">item</span>)
+    <span class="kw">fn </span>write_into&lt;W: Write&gt;(writer: W, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        &lt;F <span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::write_into(writer, item)
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -460,467 +460,467 @@
 <span id="460">460</span>
 <span id="461">461</span>
 <span id="462">462</span>
-</pre><pre class="rust"><code><span class="doccomment">//!</span>
-<span class="doccomment">//! This crate serves two purposes:</span>
-<span class="doccomment">//! 1. Defines traits that let you associate filetypes to in memory objects.</span>
-<span class="doccomment">//! 2. Defines filetypes commonly used in bio informatics pipelines.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # 1. Compile-time type check with file IO</span>
-<span class="doccomment">//! Serde provides a very powerful framework for associating a object of type `T` in rust with an</span>
-<span class="doccomment">//! on-disk representation. However, the type information is lost in the on-disk representation.</span>
-<span class="doccomment">//! This could lead to an attempt to deserialize a file format into an incompatible type</span>
-<span class="doccomment">//! which often leads to a misleading runtime error in serde with a possibility of serde attempting</span>
-<span class="doccomment">//! to allocate an obnoxious amount of memory. For example, the following code will produce a</span>
-<span class="doccomment">//! runtime error.</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//! # use serde::{Deserialize, Serialize};</span>
-<span class="doccomment">//! # use serde_json;</span>
-<span class="doccomment">//! #[derive(Debug, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct Feature {</span>
-<span class="doccomment">//!     id: usize,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! #[derive(Debug, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct FeatureX {</span>
-<span class="doccomment">//!     idx: usize,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! # fn main() {</span>
-<span class="doccomment">//! let feature = Feature { id: 5 };</span>
-<span class="doccomment">//! let creature = FeatureX { idx: 10 };</span>
-<span class="doccomment">//! // Writing to a string instead of a file for convenience</span>
-<span class="doccomment">//! let feature_json = serde_json::to_string(&amp;feature).unwrap();</span>
-<span class="doccomment">//! let x_feature: Result&lt;FeatureX, _&gt; = serde_json::from_str(&amp;feature_json);</span>
-<span class="doccomment">//! assert!(x_feature.is_err());</span>
-<span class="doccomment">//! # }</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! In extreme circumstances, attempting to deserialize to a wrong type could succeed, which could</span>
-<span class="doccomment">//! potentially lead to bugs that are hard to track. The following example illustrates this:</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//! # use anyhow::Error;</span>
-<span class="doccomment">//! # use serde::{Deserialize, Serialize};</span>
-<span class="doccomment">//! # use serde_json;</span>
-<span class="doccomment">//! #[derive(Debug, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct Feature {</span>
-<span class="doccomment">//!     id: usize,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! #[derive(Debug, Serialize, Deserialize, PartialEq)]</span>
-<span class="doccomment">//! struct Creature {</span>
-<span class="doccomment">//!     id: usize,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! # fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//! let feature = Feature { id: 5 };</span>
-<span class="doccomment">//! let feature_json = serde_json::to_string(&amp;feature)?;</span>
-<span class="doccomment">//! let impossible_creature: Creature = serde_json::from_str(&amp;feature_json)?;</span>
-<span class="doccomment">//! assert_eq!(impossible_creature, Creature { id: 5 }); // THIS COULD BE PROBLEMATIC</span>
-<span class="doccomment">//! #    Ok(())</span>
-<span class="doccomment">//! # }</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//! What we would ideally want to achieve is that cases like the two examples above would</span>
-<span class="doccomment">//! generate a compiler error saying you are trying to deserialize from an incompatible file.</span>
-<span class="doccomment">//! This crate makes use of `MartianFiletype` trait in order to facilitate this.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! There are two concepts involved here:</span>
-<span class="doccomment">//! 1. **Representation**: How is the object represented on disk? E.g. json/bincode/csv etc.</span>
-<span class="doccomment">//! 2. **Validity**: Is it valid to deserialize this file as a type `T`?</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Let `F` be a `MartianFileType` and `T` be a type in rust which we want to store on-disk.</span>
-<span class="doccomment">//! ### Validity</span>
-<span class="doccomment">//! If `F: FileStorage&lt;T&gt;`, then it is **valid** to store some representation of the type `T`</span>
-<span class="doccomment">//! in the filetype `F`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ### Representation</span>
-<span class="doccomment">//! If `F: FileTypeIO&lt;T&gt;`, then a concrete representation of type `T` can be written to [read from]</span>
-<span class="doccomment">//! disk. `MartianFiletype`s which implement this trait are called `Formats`. For example, we can</span>
-<span class="doccomment">//! define a `JsonFormat&lt;F&gt;`, which can write out any type `T` onto disk as json as long as T is</span>
-<span class="doccomment">//! serializable and `F: FileStorage&lt;T&gt;`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//! # use anyhow ::Error;</span>
-<span class="doccomment">//! # use martian_derive::martian_filetype;</span>
-<span class="doccomment">//! # use martian_filetypes::json_file::JsonFormat;</span>
-<span class="doccomment">//! # use martian_filetypes::{FileStorage, FileTypeIO};</span>
-<span class="doccomment">//! # use serde::{Deserialize, Serialize};</span>
-<span class="doccomment">//! # use serde_json;</span>
-<span class="doccomment">//! #[derive(Debug, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct Feature {</span>
-<span class="doccomment">//!     id: usize,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! martian_filetype! {FeatureFile, &quot;feat&quot;}</span>
-<span class="doccomment">//! impl FileStorage&lt;Feature&gt; for FeatureFile {} // VALIDITY</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #[derive(Debug, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct Creature {</span>
-<span class="doccomment">//!     id: usize,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//! let feature = Feature { id: 5 };</span>
-<span class="doccomment">//! let creature = Creature { id: 10 };</span>
-<span class="doccomment">//! // JsonFormat&lt;_&gt; is the REPRESENTATION</span>
-<span class="doccomment">//! let feat_file: JsonFormat&lt;FeatureFile&gt; = JsonFormat::from(&quot;feature&quot;); // feature.feat.json</span>
-<span class="doccomment">//! feat_file.write(&amp;feature)?;</span>
-<span class="doccomment">//! // feat_file.write(&amp;creature)?; // This is a compiler error</span>
-<span class="doccomment">//! // let _: Creature = feat_file.read()?; // This is a compiler error</span>
-<span class="doccomment">//! let new_feature = feat_file.read()?; // Type infered automatically</span>
-<span class="doccomment">//! # std::fs::remove_file(feat_file)?;</span>
-<span class="doccomment">//! # Ok(())</span>
-<span class="doccomment">//! # }</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # 2. Common file formats</span>
-<span class="doccomment">//! ## Terminology</span>
-<span class="doccomment">//! - **Lazy Reading**: Read items one by one from a file that stores a list of items,</span>
-<span class="doccomment">//! without reading the entire file into memory</span>
-<span class="doccomment">//! - **Lazy Writing**: Write items one by one into a file that stores a list of items.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Performance comparison</span>
-<span class="doccomment">//! There are multiple criterion benchmarks in this crate to help you compare the performance</span>
-<span class="doccomment">//! of various read/write operations and their lazy variants. The easiest way to save an in-memory</span>
-<span class="doccomment">//! rust type to file is using serde. The following table is meant to be guide to help you choose</span>
-<span class="doccomment">//! the format. **The actual performance would depend on the details of the running enviroment and</span>
-<span class="doccomment">//! the underlying filesystem. For more insights, run the benchmarks in your environment**</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! The table shows the number of items that you can read/write per second from/into different filetypes</span>
-<span class="doccomment">//! using the functionalities provided in this crate. This will obviously be a function of what each</span>
-<span class="doccomment">//! item is. For the performance test, each item is a tiny struct with 4 fields.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! | File Format   | Reading      | Lazy Reading | Writing      | Lazy Writing |</span>
-<span class="doccomment">//! | ------------- | ------------ | ------------ | ------------ | ------------ |</span>
-<span class="doccomment">//! | `json`        | 815 Kelem/s  | 760 Kelem/s  | 1356 Kelem/s | 1190 Kelem/s |</span>
-<span class="doccomment">//! | `json.lz4`    | 327 Kelem/s  | 321 Kelem/s  | 496 Kelem/s  | 806 Kelem/s  |</span>
-<span class="doccomment">//! | `bincode`     | 7990 Kelem/s | 7633 Kelem/s | 4896 Kelem/s | 4887 Kelem/s |</span>
-<span class="doccomment">//! | `bincode.lz4` | 4554 Kelem/s | 4275 Kelem/s | 4444 Kelem/s | 4363 Kelem/s |</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Examples</span>
-<span class="doccomment">//! Look at the individual filetype modules for examples.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## TODO</span>
-<span class="doccomment">//! - FastaFile</span>
-<span class="doccomment">//! - FastaIndexFile</span>
-<span class="doccomment">//! - FastqFile</span>
-<span class="doccomment">//! - CsvFile</span>
-<span class="doccomment">//! - BamFile</span>
-<span class="doccomment">//! - BamIndexFile</span>
+</pre><pre class="rust"><code><span class="doccomment">//!
+//! This crate serves two purposes:
+//! 1. Defines traits that let you associate filetypes to in memory objects.
+//! 2. Defines filetypes commonly used in bio informatics pipelines.
+//!
+//! # 1. Compile-time type check with file IO
+//! Serde provides a very powerful framework for associating a object of type `T` in rust with an
+//! on-disk representation. However, the type information is lost in the on-disk representation.
+//! This could lead to an attempt to deserialize a file format into an incompatible type
+//! which often leads to a misleading runtime error in serde with a possibility of serde attempting
+//! to allocate an obnoxious amount of memory. For example, the following code will produce a
+//! runtime error.
+//! ```
+//! # use serde::{Deserialize, Serialize};
+//! # use serde_json;
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Feature {
+//!     id: usize,
+//! }
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct FeatureX {
+//!     idx: usize,
+//! }
+//! # fn main() {
+//! let feature = Feature { id: 5 };
+//! let creature = FeatureX { idx: 10 };
+//! // Writing to a string instead of a file for convenience
+//! let feature_json = serde_json::to_string(&amp;feature).unwrap();
+//! let x_feature: Result&lt;FeatureX, _&gt; = serde_json::from_str(&amp;feature_json);
+//! assert!(x_feature.is_err());
+//! # }
+//! ```
+//!
+//! In extreme circumstances, attempting to deserialize to a wrong type could succeed, which could
+//! potentially lead to bugs that are hard to track. The following example illustrates this:
+//! ```
+//! # use anyhow::Error;
+//! # use serde::{Deserialize, Serialize};
+//! # use serde_json;
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Feature {
+//!     id: usize,
+//! }
+//! #[derive(Debug, Serialize, Deserialize, PartialEq)]
+//! struct Creature {
+//!     id: usize,
+//! }
+//! # fn main() -&gt; Result&lt;(), Error&gt; {
+//! let feature = Feature { id: 5 };
+//! let feature_json = serde_json::to_string(&amp;feature)?;
+//! let impossible_creature: Creature = serde_json::from_str(&amp;feature_json)?;
+//! assert_eq!(impossible_creature, Creature { id: 5 }); // THIS COULD BE PROBLEMATIC
+//! #    Ok(())
+//! # }
+//! ```
+//! What we would ideally want to achieve is that cases like the two examples above would
+//! generate a compiler error saying you are trying to deserialize from an incompatible file.
+//! This crate makes use of `MartianFiletype` trait in order to facilitate this.
+//!
+//! There are two concepts involved here:
+//! 1. **Representation**: How is the object represented on disk? E.g. json/bincode/csv etc.
+//! 2. **Validity**: Is it valid to deserialize this file as a type `T`?
+//!
+//! Let `F` be a `MartianFileType` and `T` be a type in rust which we want to store on-disk.
+//! ### Validity
+//! If `F: FileStorage&lt;T&gt;`, then it is **valid** to store some representation of the type `T`
+//! in the filetype `F`.
+//!
+//! ### Representation
+//! If `F: FileTypeIO&lt;T&gt;`, then a concrete representation of type `T` can be written to [read from]
+//! disk. `MartianFiletype`s which implement this trait are called `Formats`. For example, we can
+//! define a `JsonFormat&lt;F&gt;`, which can write out any type `T` onto disk as json as long as T is
+//! serializable and `F: FileStorage&lt;T&gt;`.
+//!
+//! ```
+//! # use anyhow ::Error;
+//! # use martian_derive::martian_filetype;
+//! # use martian_filetypes::json_file::JsonFormat;
+//! # use martian_filetypes::{FileStorage, FileTypeIO};
+//! # use serde::{Deserialize, Serialize};
+//! # use serde_json;
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Feature {
+//!     id: usize,
+//! }
+//! martian_filetype! {FeatureFile, &quot;feat&quot;}
+//! impl FileStorage&lt;Feature&gt; for FeatureFile {} // VALIDITY
+//!
+//! #[derive(Debug, Serialize, Deserialize)]
+//! struct Creature {
+//!     id: usize,
+//! }
+//!
+//! # fn main() -&gt; Result&lt;(), Error&gt; {
+//! let feature = Feature { id: 5 };
+//! let creature = Creature { id: 10 };
+//! // JsonFormat&lt;_&gt; is the REPRESENTATION
+//! let feat_file: JsonFormat&lt;FeatureFile&gt; = JsonFormat::from(&quot;feature&quot;); // feature.feat.json
+//! feat_file.write(&amp;feature)?;
+//! // feat_file.write(&amp;creature)?; // This is a compiler error
+//! // let _: Creature = feat_file.read()?; // This is a compiler error
+//! let new_feature = feat_file.read()?; // Type infered automatically
+//! # std::fs::remove_file(feat_file)?;
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # 2. Common file formats
+//! ## Terminology
+//! - **Lazy Reading**: Read items one by one from a file that stores a list of items,
+//! without reading the entire file into memory
+//! - **Lazy Writing**: Write items one by one into a file that stores a list of items.
+//!
+//! ## Performance comparison
+//! There are multiple criterion benchmarks in this crate to help you compare the performance
+//! of various read/write operations and their lazy variants. The easiest way to save an in-memory
+//! rust type to file is using serde. The following table is meant to be guide to help you choose
+//! the format. **The actual performance would depend on the details of the running enviroment and
+//! the underlying filesystem. For more insights, run the benchmarks in your environment**
+//!
+//! The table shows the number of items that you can read/write per second from/into different filetypes
+//! using the functionalities provided in this crate. This will obviously be a function of what each
+//! item is. For the performance test, each item is a tiny struct with 4 fields.
+//!
+//! | File Format   | Reading      | Lazy Reading | Writing      | Lazy Writing |
+//! | ------------- | ------------ | ------------ | ------------ | ------------ |
+//! | `json`        | 815 Kelem/s  | 760 Kelem/s  | 1356 Kelem/s | 1190 Kelem/s |
+//! | `json.lz4`    | 327 Kelem/s  | 321 Kelem/s  | 496 Kelem/s  | 806 Kelem/s  |
+//! | `bincode`     | 7990 Kelem/s | 7633 Kelem/s | 4896 Kelem/s | 4887 Kelem/s |
+//! | `bincode.lz4` | 4554 Kelem/s | 4275 Kelem/s | 4444 Kelem/s | 4363 Kelem/s |
+//!
+//! ## Examples
+//! Look at the individual filetype modules for examples.
+//!
+//! ## TODO
+//! - FastaFile
+//! - FastaIndexFile
+//! - FastqFile
+//! - CsvFile
+//! - BamFile
+//! - BamIndexFile
 
-<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">Error</span>, <span class="ident">MartianFileType</span>};
+</span><span class="kw">use </span>martian::{Error, MartianFileType};
 
-<span class="kw">use</span> <span class="ident">std::fmt</span>;
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
-<span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
+<span class="kw">use </span>std::fmt;
+<span class="kw">use </span>std::fs::File;
+<span class="kw">use </span>std::io;
+<span class="kw">use </span>std::iter::FromIterator;
+<span class="kw">use </span>std::path::PathBuf;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">bin_file</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">gzip_file</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">json_file</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">lz4_file</span>;
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">macros</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">tabular_file</span>;
+<span class="kw">pub mod </span>bin_file;
+<span class="kw">pub mod </span>gzip_file;
+<span class="kw">pub mod </span>json_file;
+<span class="kw">pub mod </span>lz4_file;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>macros;
+<span class="kw">pub mod </span>tabular_file;
 
-<span class="doccomment">/// Provide context for errors that may arise during read/write</span>
-<span class="doccomment">/// of a `MartianFileType`</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ErrorContext</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">ToString</span><span class="op">&gt;</span> {
-    <span class="ident">ReadContext</span>(<span class="ident">PathBuf</span>, <span class="ident">E</span>),
-    <span class="ident">LazyReadContext</span>(<span class="ident">PathBuf</span>, <span class="ident">E</span>),
-    <span class="ident">WriteContext</span>(<span class="ident">PathBuf</span>, <span class="ident">E</span>),
+<span class="doccomment">/// Provide context for errors that may arise during read/write
+/// of a `MartianFileType`
+</span><span class="kw">pub enum </span>ErrorContext&lt;E: ToString&gt; {
+    ReadContext(PathBuf, E),
+    LazyReadContext(PathBuf, E),
+    WriteContext(PathBuf, E),
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ErrorContext</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">E</span>: <span class="ident">ToString</span>,
+<span class="kw">impl</span>&lt;E&gt; fmt::Display <span class="kw">for </span>ErrorContext&lt;E&gt;
+<span class="kw">where
+    </span>E: ToString,
 {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">formatter</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span> {
-            <span class="ident">ErrorContext::ReadContext</span>(<span class="ident">p</span>, <span class="ident">e</span>) =&gt; <span class="macro">write!</span>(
-                <span class="ident">formatter</span>,
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self </span>{
+            ErrorContext::ReadContext(p, e) =&gt; <span class="macro">write!</span>(
+                formatter,
                 <span class="string">&quot;Failed to read MartianFiletype {} due to error: {}&quot;</span>,
-                <span class="ident">p</span>.<span class="ident">display</span>(),
-                <span class="ident">e</span>.<span class="ident">to_string</span>()
+                p.display(),
+                e.to_string()
             ),
-            <span class="ident">ErrorContext::LazyReadContext</span>(<span class="ident">p</span>, <span class="ident">e</span>) =&gt; <span class="macro">write!</span>(
-                <span class="ident">formatter</span>,
+            ErrorContext::LazyReadContext(p, e) =&gt; <span class="macro">write!</span>(
+                formatter,
                 <span class="string">&quot;Failed to lazy read MartianFiletype {:?} due to error: {:?}&quot;</span>,
-                <span class="ident">p</span>.<span class="ident">display</span>(),
-                <span class="ident">e</span>.<span class="ident">to_string</span>()
+                p.display(),
+                e.to_string()
             ),
-            <span class="ident">ErrorContext::WriteContext</span>(<span class="ident">p</span>, <span class="ident">e</span>) =&gt; <span class="macro">write!</span>(
-                <span class="ident">formatter</span>,
+            ErrorContext::WriteContext(p, e) =&gt; <span class="macro">write!</span>(
+                formatter,
                 <span class="string">&quot;Failed to write to MartianFiletype {:?} due to error: {:?}&quot;</span>,
-                <span class="ident">p</span>.<span class="ident">display</span>(),
-                <span class="ident">e</span>.<span class="ident">to_string</span>()
+                p.display(),
+                e.to_string()
             ),
         }
     }
 }
 
-<span class="doccomment">/// A `MartianFileType` `F` is a `FileStorage&lt;T&gt;` if it is valid to</span>
-<span class="doccomment">/// save an object of type `T` in a file with the extension `F::extension()`</span>
-<span class="doccomment">/// This trait will give us compile time guarantees on whether we are</span>
-<span class="doccomment">/// writing into or reading from a file type into an invalid type</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">MartianFileType</span> {}
+<span class="doccomment">/// A `MartianFileType` `F` is a `FileStorage&lt;T&gt;` if it is valid to
+/// save an object of type `T` in a file with the extension `F::extension()`
+/// This trait will give us compile time guarantees on whether we are
+/// writing into or reading from a file type into an invalid type
+</span><span class="kw">pub trait </span>FileStorage&lt;T&gt;: MartianFileType {}
 
-<span class="doccomment">/// A trait that represents a `MartianFileType` that can be read into</span>
-<span class="doccomment">/// memory as type `T` or written from type `T`. Use the `read()` and</span>
-<span class="doccomment">/// `write()` methods to achieve these.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// If you want to implement this trait for a custom filetype, read</span>
-<span class="doccomment">/// the inline comments on which functions are provided and which</span>
-<span class="doccomment">/// are required.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">fmt::Debug</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Read the `MartianFileType` as type `T`</span>
-    <span class="doccomment">/// The default implementation should work in most cases. It is recommended</span>
-    <span class="doccomment">/// **not** to implement this for a custom filetype in general, instead implement</span>
-    <span class="doccomment">/// `read_from()`</span>
-    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">_fmt_err</span>(<span class="ident">e</span>: <span class="ident">Error</span>, <span class="ident">p</span>: <span class="ident">PathBuf</span>) -&gt; <span class="ident">Error</span> {
-            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">ErrorContext::ReadContext</span>(<span class="ident">p</span>, <span class="ident">e</span>.<span class="ident">to_string</span>());
-            <span class="ident">e</span>.<span class="ident">context</span>(<span class="ident">context</span>)
+<span class="doccomment">/// A trait that represents a `MartianFileType` that can be read into
+/// memory as type `T` or written from type `T`. Use the `read()` and
+/// `write()` methods to achieve these.
+///
+/// If you want to implement this trait for a custom filetype, read
+/// the inline comments on which functions are provided and which
+/// are required.
+</span><span class="kw">pub trait </span>FileTypeIO&lt;T&gt;: MartianFileType + fmt::Debug + FileStorage&lt;T&gt; {
+    <span class="doccomment">/// Read the `MartianFileType` as type `T`
+    /// The default implementation should work in most cases. It is recommended
+    /// **not** to implement this for a custom filetype in general, instead implement
+    /// `read_from()`
+    </span><span class="kw">fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
+        <span class="kw">fn </span>_fmt_err(e: Error, p: PathBuf) -&gt; Error {
+            <span class="kw">let </span>context = ErrorContext::ReadContext(p, e.to_string());
+            e.context(context)
         }
-        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::read_from</span>(<span class="self">self</span>.<span class="ident">buf_reader</span>()<span class="question-mark">?</span>)
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">_fmt_err</span>(<span class="ident">e</span>, <span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>()))
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::read_from(<span class="self">self</span>.buf_reader()<span class="question-mark">?</span>)
+            .map_err(|e| _fmt_err(e, <span class="self">self</span>.as_ref().into()))
     }
 
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="comment">// In general, do not call this function directly. Use `read()` instead</span>
-    <span class="comment">// This is the function you need to provide for custom implementations of</span>
-    <span class="comment">// `FileTypeIO&lt;T&gt;`. Note that the `read()` function is a wrapper around</span>
-    <span class="comment">// this function. This function essentially describes how you can read the</span>
-    <span class="comment">// object `T` from a reader. The reason for having this separate from the</span>
-    <span class="comment">// `read()` function is so that we can extend the functionality by passing</span>
-    <span class="comment">// in arbitrary readers (for e.g lz4 compressed). See the `lz4_file` for</span>
-    <span class="comment">// a concrete example</span>
-    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="attribute">#[doc(hidden)]
+    </span><span class="comment">// In general, do not call this function directly. Use `read()` instead
+    // This is the function you need to provide for custom implementations of
+    // `FileTypeIO&lt;T&gt;`. Note that the `read()` function is a wrapper around
+    // this function. This function essentially describes how you can read the
+    // object `T` from a reader. The reason for having this separate from the
+    // `read()` function is so that we can extend the functionality by passing
+    // in arbitrary readers (for e.g lz4 compressed). See the `lz4_file` for
+    // a concrete example
+    </span><span class="kw">fn </span>read_from&lt;R: io::Read&gt;(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt;;
 
-    <span class="doccomment">/// Write type `T` into the `MartianFileType`</span>
-    <span class="doccomment">/// The default implementation should work in most cases. It is recommended</span>
-    <span class="doccomment">/// **not** to implement this for a custom filetype in general, instead implement</span>
-    <span class="doccomment">/// `write_into()`.</span>
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">_fmt_err</span>(<span class="ident">e</span>: <span class="ident">Error</span>, <span class="ident">p</span>: <span class="ident">PathBuf</span>) -&gt; <span class="ident">Error</span> {
-            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">ErrorContext::WriteContext</span>(<span class="ident">p</span>, <span class="ident">e</span>.<span class="ident">to_string</span>());
-            <span class="ident">e</span>.<span class="ident">context</span>(<span class="ident">context</span>)
+    <span class="doccomment">/// Write type `T` into the `MartianFileType`
+    /// The default implementation should work in most cases. It is recommended
+    /// **not** to implement this for a custom filetype in general, instead implement
+    /// `write_into()`.
+    </span><span class="kw">fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">fn </span>_fmt_err(e: Error, p: PathBuf) -&gt; Error {
+            <span class="kw">let </span>context = ErrorContext::WriteContext(p, e.to_string());
+            e.context(context)
         }
-        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::write_into</span>(<span class="self">self</span>.<span class="ident">buf_writer</span>()<span class="question-mark">?</span>, <span class="ident">item</span>)
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">_fmt_err</span>(<span class="ident">e</span>, <span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>()))
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::write_into(<span class="self">self</span>.buf_writer()<span class="question-mark">?</span>, item)
+            .map_err(|e| _fmt_err(e, <span class="self">self</span>.as_ref().into()))
     }
 
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="comment">// In general, do not call this function directly. Use `write()` instead.</span>
-    <span class="comment">// The comments provided in `read_from()` apply here as well.</span>
-    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">io::Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="attribute">#[doc(hidden)]
+    </span><span class="comment">// In general, do not call this function directly. Use `write()` instead.
+    // The comments provided in `read_from()` apply here as well.
+    </span><span class="kw">fn </span>write_into&lt;W: io::Write&gt;(writer: W, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;;
 }
 
-<span class="doccomment">/// A trait that represents a `MartianFileType` which can be incrementally</span>
-<span class="doccomment">/// read or written. For example, you might have a fasta file and you might</span>
-<span class="doccomment">/// want to iterate over individual sequences in the file without</span>
-<span class="doccomment">/// reading everything into memory at once.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LazyFileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Reader</span>: <span class="ident">io::Read</span>;
-    <span class="kw">type</span> <span class="ident">Writer</span>: <span class="ident">io::Write</span>;
+<span class="doccomment">/// A trait that represents a `MartianFileType` which can be incrementally
+/// read or written. For example, you might have a fasta file and you might
+/// want to iterate over individual sequences in the file without
+/// reading everything into memory at once.
+</span><span class="kw">pub trait </span>LazyFileTypeIO&lt;T&gt;: MartianFileType + Sized + FileStorage&lt;Vec&lt;T&gt;&gt; {
+    <span class="kw">type </span>Reader: io::Read;
+    <span class="kw">type </span>Writer: io::Write;
 
-    <span class="doccomment">/// A type that lets you iterate over items of type `T` from a</span>
-    <span class="doccomment">/// `MartianFileType` which stores a `Vec&lt;T&gt;`</span>
-    <span class="kw">type</span> <span class="ident">LazyReader</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident"><span class="self">Self</span>::Reader</span>, <span class="ident">FileType</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>;
+    <span class="doccomment">/// A type that lets you iterate over items of type `T` from a
+    /// `MartianFileType` which stores a `Vec&lt;T&gt;`
+    </span><span class="kw">type </span>LazyReader: LazyRead&lt;T, <span class="self">Self</span>::Reader, FileType = <span class="self">Self</span>&gt;;
 
-    <span class="doccomment">/// A type that lets you write items of type `T` into a `MartianFileType`</span>
-    <span class="doccomment">/// which stores a `Vec&lt;T&gt;`. Implements `LazyWrite` trait</span>
-    <span class="kw">type</span> <span class="ident">LazyWriter</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident"><span class="self">Self</span>::Writer</span>, <span class="ident">FileType</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>;
+    <span class="doccomment">/// A type that lets you write items of type `T` into a `MartianFileType`
+    /// which stores a `Vec&lt;T&gt;`. Implements `LazyWrite` trait
+    </span><span class="kw">type </span>LazyWriter: LazyWrite&lt;T, <span class="self">Self</span>::Writer, FileType = <span class="self">Self</span>&gt;;
 
-    <span class="doccomment">/// Get a lazy reader for this `MartianFileType`</span>
-    <span class="kw">fn</span> <span class="ident">lazy_reader</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::LazyReader</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="doccomment">/// Get a lazy reader for this `MartianFileType`
+    </span><span class="kw">fn </span>lazy_reader(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::LazyReader, Error&gt;;
 
-    <span class="doccomment">/// Consume the reader and read all the items</span>
-    <span class="kw">fn</span> <span class="ident">read_all</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">FromIterator</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// Consume the reader and read all the items
+    </span><span class="kw">fn </span>read_all&lt;V&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;V, Error&gt;
+    <span class="kw">where
+        </span>V: FromIterator&lt;T&gt;,
     {
-        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>;
-        <span class="ident">reader</span>.<span class="ident">into_iter</span>().<span class="ident">collect</span>()
+        <span class="kw">let </span>reader = <span class="self">self</span>.lazy_reader()<span class="question-mark">?</span>;
+        reader.into_iter().collect()
     }
-    <span class="doccomment">/// Get a lazy writer for this `MartianFileType`</span>
-    <span class="kw">fn</span> <span class="ident">lazy_writer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::LazyWriter</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="doccomment">/// Get a lazy writer for this `MartianFileType`
+    </span><span class="kw">fn </span>lazy_writer(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::LazyWriter, Error&gt;;
 }
 
-<span class="doccomment">/// The trait lazy readers need to implement, which lets you read items one by one from a file</span>
-<span class="doccomment">/// that stores a list of items</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">FileType</span>: <span class="ident">MartianFileType</span>;
-    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+<span class="doccomment">/// The trait lazy readers need to implement, which lets you read items one by one from a file
+/// that stores a list of items
+</span><span class="kw">pub trait </span>LazyRead&lt;T, R: io::Read&gt;: Sized + Iterator&lt;Item = <span class="prelude-ty">Result</span>&lt;T, Error&gt;&gt; {
+    <span class="kw">type </span>FileType: MartianFileType;
+    <span class="kw">fn </span>with_reader(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt;;
 }
 
-<span class="doccomment">/// The trait lazy writers need to implement, which lets you</span>
-<span class="doccomment">/// write items one at a time and finish the writing</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>: <span class="ident">io::Write</span><span class="op">&gt;</span>: <span class="ident">Sized</span> {
-    <span class="kw">type</span> <span class="ident">FileType</span>: <span class="ident">MartianFileType</span>;
-    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="ident">writer</span>: <span class="ident">W</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="doccomment">/// Lazily write a single item into a writer which stores</span>
-    <span class="doccomment">/// a list of items.</span>
-    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="doccomment">/// Finish the lazy writer and return the underlying writer.</span>
-    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+<span class="doccomment">/// The trait lazy writers need to implement, which lets you
+/// write items one at a time and finish the writing
+</span><span class="kw">pub trait </span>LazyWrite&lt;T, W: io::Write&gt;: Sized {
+    <span class="kw">type </span>FileType: MartianFileType;
+    <span class="kw">fn </span>with_writer(writer: W) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt;;
+    <span class="doccomment">/// Lazily write a single item into a writer which stores
+    /// a list of items.
+    </span><span class="kw">fn </span>write_item(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;;
+    <span class="doccomment">/// Finish the lazy writer and return the underlying writer.
+    </span><span class="kw">fn </span>finish(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;W, Error&gt;;
 }
 
-<span class="doccomment">/// Define the lazy writer and lazy reader associated type for a MartianFileType</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>: <span class="ident">io::Write</span>, <span class="ident">R</span>: <span class="ident">io::Read</span><span class="op">&gt;</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">MartianFileType</span> {
-    <span class="kw">type</span> <span class="ident">LazyWriter</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">FileType</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">LazyReader</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span>, <span class="ident">FileType</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>;
+<span class="doccomment">/// Define the lazy writer and lazy reader associated type for a MartianFileType
+</span><span class="kw">pub trait </span>LazyAgents&lt;T, W: io::Write, R: io::Read&gt;: Sized + MartianFileType {
+    <span class="kw">type </span>LazyWriter: LazyWrite&lt;T, W, FileType = <span class="self">Self</span>&gt;;
+    <span class="kw">type </span>LazyReader: LazyRead&lt;T, R, FileType = <span class="self">Self</span>&gt;;
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">LazyFileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">F</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">io::BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">io::BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+<span class="kw">impl</span>&lt;F, T&gt; LazyFileTypeIO&lt;T&gt; <span class="kw">for </span>F
+<span class="kw">where
+    </span>F: LazyAgents&lt;T, io::BufWriter&lt;File&gt;, io::BufReader&lt;File&gt;&gt; + FileStorage&lt;Vec&lt;T&gt;&gt;,
 {
-    <span class="kw">type</span> <span class="ident">Writer</span> <span class="op">=</span> <span class="ident">io::BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">Reader</span> <span class="op">=</span> <span class="ident">io::BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">LazyWriter</span> <span class="op">=</span> <span class="ident">F::LazyWriter</span>;
-    <span class="kw">type</span> <span class="ident">LazyReader</span> <span class="op">=</span> <span class="ident">F::LazyReader</span>;
-    <span class="kw">fn</span> <span class="ident">lazy_reader</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::LazyReader</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="ident">LazyRead::with_reader</span>(<span class="self">self</span>.<span class="ident">buf_reader</span>()<span class="question-mark">?</span>)
+    <span class="kw">type </span>Writer = io::BufWriter&lt;File&gt;;
+    <span class="kw">type </span>Reader = io::BufReader&lt;File&gt;;
+    <span class="kw">type </span>LazyWriter = F::LazyWriter;
+    <span class="kw">type </span>LazyReader = F::LazyReader;
+    <span class="kw">fn </span>lazy_reader(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::LazyReader, Error&gt; {
+        LazyRead::with_reader(<span class="self">self</span>.buf_reader()<span class="question-mark">?</span>)
     }
-    <span class="kw">fn</span> <span class="ident">lazy_writer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::LazyWriter</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="ident">LazyWrite::with_writer</span>(<span class="self">self</span>.<span class="ident">buf_writer</span>()<span class="question-mark">?</span>)
-    }
-}
-
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">maybe_add_format</span>(<span class="ident">extension</span>: <span class="ident">String</span>, <span class="ident">format</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">if</span> <span class="ident">extension</span>.<span class="ident">ends_with</span>(<span class="ident">format</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">format</span>.<span class="ident">is_empty</span>() {
-        <span class="ident">extension</span>
-    } <span class="kw">else</span> {
-        <span class="macro">format!</span>(<span class="string">&quot;{}.{}&quot;</span>, <span class="ident">extension</span>, <span class="ident">format</span>)
+    <span class="kw">fn </span>lazy_writer(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::LazyWriter, Error&gt; {
+        LazyWrite::with_writer(<span class="self">self</span>.buf_writer()<span class="question-mark">?</span>)
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">round_trip_check</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">T</span>: <span class="ident">PartialEq</span>,
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>maybe_add_format(extension: String, format: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">if </span>extension.ends_with(format) || format.is_empty() {
+        extension
+    } <span class="kw">else </span>{
+        <span class="macro">format!</span>(<span class="string">&quot;{extension}.{format}&quot;</span>)
+    }
+}
+
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">pub fn </span>round_trip_check&lt;F, T&gt;(input: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;bool, Error&gt;
+<span class="kw">where
+    </span>F: FileTypeIO&lt;T&gt;,
+    T: PartialEq,
 {
-    <span class="comment">// TEST 1: Write as F and read from F</span>
-    <span class="kw">let</span> <span class="ident">pass_direct</span> <span class="op">=</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">F::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file_roundtrip&quot;</span>);
-        <span class="ident">file</span>.<span class="ident">write</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">T</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
+    <span class="comment">// TEST 1: Write as F and read from F
+    </span><span class="kw">let </span>pass_direct = {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file_roundtrip&quot;</span>);
+        file.write(input)<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded: T = file.read()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
     };
 
-    <span class="comment">// TEST 2: Write as Lz4&lt;F&gt; and read from Lz4&lt;F&gt;</span>
-    <span class="kw">let</span> <span class="ident">pass_compressed_lz4</span> <span class="op">=</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">lz4_file::Lz4</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file_roundtrip_compressed&quot;</span>);
-        <span class="ident">file</span>.<span class="ident">write</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">T</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
+    <span class="comment">// TEST 2: Write as Lz4&lt;F&gt; and read from Lz4&lt;F&gt;
+    </span><span class="kw">let </span>pass_compressed_lz4 = {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file_roundtrip_compressed&quot;</span>);
+        file.write(input)<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded: T = file.read()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
     };
 
-    <span class="comment">// TEST 3: Write as Gzip&lt;F&gt; and read from Gzip&lt;F&gt;</span>
-    <span class="kw">let</span> <span class="ident">pass_compressed_gzip</span> <span class="op">=</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">gzip_file::Gzip</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file_roundtrip_compressed&quot;</span>);
-        <span class="ident">file</span>.<span class="ident">write</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">T</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
+    <span class="comment">// TEST 3: Write as Gzip&lt;F&gt; and read from Gzip&lt;F&gt;
+    </span><span class="kw">let </span>pass_compressed_gzip = {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = gzip_file::Gzip::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file_roundtrip_compressed&quot;</span>);
+        file.write(input)<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded: T = file.read()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
     };
 
-    <span class="prelude-val">Ok</span>(<span class="ident">pass_direct</span> <span class="op">&amp;&amp;</span> <span class="ident">pass_compressed_lz4</span> <span class="op">&amp;&amp;</span> <span class="ident">pass_compressed_gzip</span>)
+    <span class="prelude-val">Ok</span>(pass_direct &amp;&amp; pass_compressed_lz4 &amp;&amp; pass_compressed_gzip)
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lazy_round_trip_check</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">require_read</span>: <span class="ident">bool</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">LazyFileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">lz4_file::Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>: <span class="ident">LazyFileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">T</span>: <span class="ident">PartialEq</span>,
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">pub fn </span>lazy_round_trip_check&lt;F, T&gt;(input: <span class="kw-2">&amp;</span>Vec&lt;T&gt;, require_read: bool) -&gt; <span class="prelude-ty">Result</span>&lt;bool, Error&gt;
+<span class="kw">where
+    </span>F: LazyFileTypeIO&lt;T&gt; + FileTypeIO&lt;Vec&lt;T&gt;&gt;,
+    lz4_file::Lz4&lt;F&gt;: LazyFileTypeIO&lt;T&gt; + FileTypeIO&lt;Vec&lt;T&gt;&gt;,
+    T: PartialEq,
 {
-    <span class="comment">// Write + Lazy read</span>
-    <span class="kw">let</span> <span class="ident">pass_w_lr</span> <span class="op">=</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">F::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="ident">file</span>.<span class="ident">write</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read_all</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
+    <span class="comment">// Write + Lazy read
+    </span><span class="kw">let </span>pass_w_lr = {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        file.write(input)<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded: Vec&lt;T&gt; = file.read_all()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
     };
 
-    <span class="comment">// Write + Lazy read [Compressed]</span>
-    <span class="kw">let</span> <span class="ident">pass_w_lr_c</span> <span class="op">=</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">lz4_file::Lz4</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="ident">file</span>.<span class="ident">write</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read_all</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
+    <span class="comment">// Write + Lazy read [Compressed]
+    </span><span class="kw">let </span>pass_w_lr_c = {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        file.write(input)<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded: Vec&lt;T&gt; = file.read_all()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
     };
 
-    <span class="comment">// Lazy write + read</span>
-    <span class="kw">let</span> <span class="ident">pass_lw_r</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">require_read</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">F::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lazy_writer</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="ident">input</span> {
-            <span class="ident">lazy_writer</span>.<span class="ident">write_item</span>(<span class="ident">item</span>)<span class="question-mark">?</span>;
+    <span class="comment">// Lazy write + read
+    </span><span class="kw">let </span>pass_lw_r = <span class="kw">if </span>require_read {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
+        <span class="kw">for </span>item <span class="kw">in </span>input {
+            lazy_writer.write_item(item)<span class="question-mark">?</span>;
         }
-        <span class="ident">lazy_writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
-    } <span class="kw">else</span> {
-        <span class="bool-val">true</span>
-    };
+        lazy_writer.finish()<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded = file.read()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
+    } <span class="kw">else </span>{
+        <span class="bool-val">true
+    </span>};
 
-    <span class="comment">// Lazy write + read [Compressed]</span>
-    <span class="kw">let</span> <span class="ident">pass_lw_r_c</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">require_read</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">lz4_file::Lz4</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lazy_writer</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="ident">input</span> {
-            <span class="ident">lazy_writer</span>.<span class="ident">write_item</span>(<span class="ident">item</span>)<span class="question-mark">?</span>;
+    <span class="comment">// Lazy write + read [Compressed]
+    </span><span class="kw">let </span>pass_lw_r_c = <span class="kw">if </span>require_read {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
+        <span class="kw">for </span>item <span class="kw">in </span>input {
+            lazy_writer.write_item(item)<span class="question-mark">?</span>;
         }
-        <span class="ident">lazy_writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
-    } <span class="kw">else</span> {
-        <span class="bool-val">true</span>
-    };
+        lazy_writer.finish()<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded = file.read()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
+    } <span class="kw">else </span>{
+        <span class="bool-val">true
+    </span>};
 
-    <span class="comment">// Lazy write + Lazy read</span>
-    <span class="kw">let</span> <span class="ident">pass_lw_lr</span> <span class="op">=</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">F::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lazy_writer</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="ident">input</span> {
-            <span class="ident">lazy_writer</span>.<span class="ident">write_item</span>(<span class="ident">item</span>)<span class="question-mark">?</span>;
+    <span class="comment">// Lazy write + Lazy read
+    </span><span class="kw">let </span>pass_lw_lr = {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
+        <span class="kw">for </span>item <span class="kw">in </span>input {
+            lazy_writer.write_item(item)<span class="question-mark">?</span>;
         }
-        <span class="ident">lazy_writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read_all</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
+        lazy_writer.finish()<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded: Vec&lt;T&gt; = file.read_all()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
     };
 
-    <span class="comment">// Lazy write + Lazy read [Compressed]</span>
-    <span class="kw">let</span> <span class="ident">pass_lw_lr_c</span> <span class="op">=</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">lz4_file::Lz4</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lazy_writer</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="ident">input</span> {
-            <span class="ident">lazy_writer</span>.<span class="ident">write_item</span>(<span class="ident">item</span>)<span class="question-mark">?</span>;
+    <span class="comment">// Lazy write + Lazy read [Compressed]
+    </span><span class="kw">let </span>pass_lw_lr_c = {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
+        <span class="kw">for </span>item <span class="kw">in </span>input {
+            lazy_writer.write_item(item)<span class="question-mark">?</span>;
         }
-        <span class="ident">lazy_writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoded</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">read_all</span>()<span class="question-mark">?</span>;
-        <span class="ident">input</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">decoded</span>
+        lazy_writer.finish()<span class="question-mark">?</span>;
+        <span class="kw">let </span>decoded: Vec&lt;T&gt; = file.read_all()<span class="question-mark">?</span>;
+        input == <span class="kw-2">&amp;</span>decoded
     };
 
-    <span class="prelude-val">Ok</span>(<span class="ident">pass_w_lr</span> <span class="op">&amp;&amp;</span> <span class="ident">pass_w_lr_c</span> <span class="op">&amp;&amp;</span> <span class="ident">pass_lw_r</span> <span class="op">&amp;&amp;</span> <span class="ident">pass_lw_r_c</span> <span class="op">&amp;&amp;</span> <span class="ident">pass_lw_lr</span> <span class="op">&amp;&amp;</span> <span class="ident">pass_lw_lr_c</span>)
+    <span class="prelude-val">Ok</span>(pass_w_lr &amp;&amp; pass_w_lr_c &amp;&amp; pass_lw_r &amp;&amp; pass_lw_r_c &amp;&amp; pass_lw_lr &amp;&amp; pass_lw_lr_c)
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="comment">// See https://docs.rs/trybuild/1.0.9/trybuild/ on how this test setup works</span>
-    <span class="comment">// run `cargo test` with the environment variable `TRYBUILD=overwrite` to regenerate the</span>
-    <span class="comment">// expected output in case you change the error message.</span>
-    <span class="comment">// You should only use one test function.</span>
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">ui</span>() {
-        <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">trybuild::TestCases::new</span>();
-        <span class="ident">t</span>.<span class="ident">compile_fail</span>(<span class="string">&quot;tests/ui/*.rs&quot;</span>);
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="comment">// See https://docs.rs/trybuild/1.0.9/trybuild/ on how this test setup works
+    // run `cargo test` with the environment variable `TRYBUILD=overwrite` to regenerate the
+    // expected output in case you change the error message.
+    // You should only use one test function.
+    </span><span class="attribute">#[test]
+    </span><span class="kw">fn </span>ui() {
+        <span class="kw">let </span>t = trybuild::TestCases::new();
+        t.compile_fail(<span class="string">&quot;tests/ui/*.rs&quot;</span>);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

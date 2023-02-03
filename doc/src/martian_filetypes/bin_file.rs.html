@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/bin_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>bin_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/bin_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>bin_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -471,478 +471,478 @@
 <span id="471">471</span>
 <span id="472">472</span>
 <span id="473">473</span>
-</pre><pre class="rust"><code><span class="doccomment">//!</span>
-<span class="doccomment">//! This module defines a `BincodeFile` and implements `FileTypeIO&lt;T&gt;` and</span>
-<span class="doccomment">//! `LazyFileTypeIO&lt;T&gt;` trait for a bincode file. It is essentially a wrapper</span>
-<span class="doccomment">//! around the bincode crate. Note that we store additional type info in the file</span>
-<span class="doccomment">//! header. Hence the files cannot be directly parsed using the bincode crate</span>
-<span class="doccomment">//! functions.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Compatibility</span>
-<span class="doccomment">//! Lazily writing items of type T produces a bincode file which **cannot** be read</span>
-<span class="doccomment">//! as `Vec&lt;T&gt;` using `FileTypeIO::read()`, instead you need to use the lazy reader</span>
-<span class="doccomment">//! to read items one at a time. The helper fn `LazyFileTypeIO::read_all()`</span>
-<span class="doccomment">//! can be used to collect all the items in a `Vec&lt;T&gt;`</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Simple read/write example</span>
-<span class="doccomment">//! `BincodeFile` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use martian_filetypes::{FileTypeIO, bin_file::BincodeFile};</span>
-<span class="doccomment">//! use martian::Error;</span>
-<span class="doccomment">//! use serde::{Serialize, Deserialize};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #[derive(Debug, PartialEq, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct Chemistry {</span>
-<span class="doccomment">//!     name: String,</span>
-<span class="doccomment">//!     paired_end: bool,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };</span>
-<span class="doccomment">//!     let bin_file = BincodeFile::from(&quot;bin_example&quot;);</span>
-<span class="doccomment">//!     // The two functions below are simple wrappers over bincode crate functions</span>
-<span class="doccomment">//!     bin_file.write(&amp;chem)?;</span>
-<span class="doccomment">//!     let decoded: Chemistry = bin_file.read()?;</span>
-<span class="doccomment">//!     assert_eq!(chem, decoded);</span>
-<span class="doccomment">//!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!     Ok(())</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Lazy read/write example</span>
-<span class="doccomment">//! If the bincode file stores a list of items of type `T`, then the items can be read</span>
-<span class="doccomment">//! one at a time without reading the whole file into memory. A list of items</span>
-<span class="doccomment">//! of type `T` can also be incrementally written to a bincode file.</span>
-<span class="doccomment">//! `BincodeFile` implements `LazyFileTypeIO&lt;T&gt;` for any serializable type `T`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};</span>
-<span class="doccomment">//! use martian_filetypes::bin_file::{BincodeFile, LazyBincodeReader, LazyBincodeWriter};</span>
-<span class="doccomment">//! use martian::Error;</span>
-<span class="doccomment">//! use serde::{Serialize, Deserialize};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//!     let bin_file = BincodeFile::from(&quot;bin_example_lazy&quot;);</span>
-<span class="doccomment">//!     let mut writer: LazyBincodeWriter&lt;i32&gt; = bin_file.lazy_writer()?;</span>
-<span class="doccomment">//!     // writer implements the trait `LazyWrite&lt;i32&gt;`</span>
-<span class="doccomment">//!     for val in 0..10_000i32 {</span>
-<span class="doccomment">//!         writer.write_item(&amp;val)?;</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//!     writer.finish()?; // The file writing is not completed until finish() is called.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     // We could have collected the vector and invoked write().</span>
-<span class="doccomment">//!     // Both approaches will give you a bincode file which you can lazily read.</span>
-<span class="doccomment">//!     // Note that the bincode files **will not be identical** in the two cases.</span>
-<span class="doccomment">//!     // let vals: Vec&lt;_&gt; = (0..10_000).into_iter().collect()</span>
-<span class="doccomment">//!     // bin_file.write(&amp;vals)?;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     // Type inference engine should figure out the type automatically,</span>
-<span class="doccomment">//!     // but it is shown here for illustration.</span>
-<span class="doccomment">//!     let mut reader: LazyBincodeReader&lt;i32&gt; = bin_file.lazy_reader()?;</span>
-<span class="doccomment">//!     let mut max_val = 0;</span>
-<span class="doccomment">//!     // reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;</span>
-<span class="doccomment">//!     for (i, val) in reader.enumerate() {</span>
-<span class="doccomment">//!         let val: i32 = val?;</span>
-<span class="doccomment">//!         assert_eq!(i as i32, val);</span>
-<span class="doccomment">//!         max_val = std::cmp::max(max_val, val);</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//!     assert_eq!(max_val, 9999i32);</span>
-<span class="doccomment">//!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!     Ok(())</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! ```</span>
+</pre><pre class="rust"><code><span class="doccomment">//!
+//! This module defines a `BincodeFile` and implements `FileTypeIO&lt;T&gt;` and
+//! `LazyFileTypeIO&lt;T&gt;` trait for a bincode file. It is essentially a wrapper
+//! around the bincode crate. Note that we store additional type info in the file
+//! header. Hence the files cannot be directly parsed using the bincode crate
+//! functions.
+//!
+//! ## Compatibility
+//! Lazily writing items of type T produces a bincode file which **cannot** be read
+//! as `Vec&lt;T&gt;` using `FileTypeIO::read()`, instead you need to use the lazy reader
+//! to read items one at a time. The helper fn `LazyFileTypeIO::read_all()`
+//! can be used to collect all the items in a `Vec&lt;T&gt;`
+//!
+//! ## Simple read/write example
+//! `BincodeFile` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.
+//! ```rust
+//! use martian_filetypes::{FileTypeIO, bin_file::BincodeFile};
+//! use martian::Error;
+//! use serde::{Serialize, Deserialize};
+//!
+//! #[derive(Debug, PartialEq, Serialize, Deserialize)]
+//! struct Chemistry {
+//!     name: String,
+//!     paired_end: bool,
+//! }
+//!
+//! fn main() -&gt; Result&lt;(), Error&gt; {
+//!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };
+//!     let bin_file = BincodeFile::from(&quot;bin_example&quot;);
+//!     // The two functions below are simple wrappers over bincode crate functions
+//!     bin_file.write(&amp;chem)?;
+//!     let decoded: Chemistry = bin_file.read()?;
+//!     assert_eq!(chem, decoded);
+//!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ## Lazy read/write example
+//! If the bincode file stores a list of items of type `T`, then the items can be read
+//! one at a time without reading the whole file into memory. A list of items
+//! of type `T` can also be incrementally written to a bincode file.
+//! `BincodeFile` implements `LazyFileTypeIO&lt;T&gt;` for any serializable type `T`.
+//!
+//! ```rust
+//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::bin_file::{BincodeFile, LazyBincodeReader, LazyBincodeWriter};
+//! use martian::Error;
+//! use serde::{Serialize, Deserialize};
+//!
+//! fn main() -&gt; Result&lt;(), Error&gt; {
+//!     let bin_file = BincodeFile::from(&quot;bin_example_lazy&quot;);
+//!     let mut writer: LazyBincodeWriter&lt;i32&gt; = bin_file.lazy_writer()?;
+//!     // writer implements the trait `LazyWrite&lt;i32&gt;`
+//!     for val in 0..10_000i32 {
+//!         writer.write_item(&amp;val)?;
+//!     }
+//!     writer.finish()?; // The file writing is not completed until finish() is called.
+//!
+//!     // We could have collected the vector and invoked write().
+//!     // Both approaches will give you a bincode file which you can lazily read.
+//!     // Note that the bincode files **will not be identical** in the two cases.
+//!     // let vals: Vec&lt;_&gt; = (0..10_000).into_iter().collect()
+//!     // bin_file.write(&amp;vals)?;
+//!
+//!     // Type inference engine should figure out the type automatically,
+//!     // but it is shown here for illustration.
+//!     let mut reader: LazyBincodeReader&lt;i32&gt; = bin_file.lazy_reader()?;
+//!     let mut max_val = 0;
+//!     // reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;
+//!     for (i, val) in reader.enumerate() {
+//!         let val: i32 = val?;
+//!         assert_eq!(i as i32, val);
+//!         max_val = std::cmp::max(max_val, val);
+//!     }
+//!     assert_eq!(max_val, 9999i32);
+//!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)
+//!     Ok(())
+//! }
+//! ```
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">FileStorage</span>, <span class="ident">FileTypeIO</span>, <span class="ident">LazyAgents</span>, <span class="ident">LazyRead</span>, <span class="ident">LazyWrite</span>};
-<span class="kw">use</span> <span class="ident">anyhow::format_err</span>;
-<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">Error</span>, <span class="ident">MartianFileType</span>};
-<span class="kw">use</span> <span class="ident">martian_derive::martian_filetype</span>;
-<span class="kw">use</span> <span class="ident">serde::de::DeserializeOwned</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">std::any</span>::{<span class="ident">type_name</span>, <span class="ident">Any</span>};
-<span class="kw">use</span> <span class="ident">std::fmt::Debug</span>;
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">BufReader</span>, <span class="ident">BufWriter</span>, <span class="ident">Read</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std::iter::Iterator</span>;
-<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
+</span><span class="kw">use crate</span>::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+<span class="kw">use </span>anyhow::format_err;
+<span class="kw">use </span>martian::{Error, MartianFileType};
+<span class="kw">use </span>martian_derive::martian_filetype;
+<span class="kw">use </span>serde::de::DeserializeOwned;
+<span class="kw">use </span>serde::{Deserialize, Serialize};
+<span class="kw">use </span>std::any::{type_name, Any};
+<span class="kw">use </span>std::fmt::Debug;
+<span class="kw">use </span>std::fs::File;
+<span class="kw">use </span>std::io::{<span class="self">self</span>, BufReader, BufWriter, Read, Write};
+<span class="kw">use </span>std::iter::Iterator;
+<span class="kw">use </span>std::marker::PhantomData;
 
-<span class="macro">martian_filetype!</span> {<span class="ident">Bincode</span>, <span class="string">&quot;bincode&quot;</span>}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Bincode</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> {}
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">BincodeFile</span> <span class="op">=</span> <span class="ident">BinaryFormat</span><span class="op">&lt;</span><span class="ident">Bincode</span><span class="op">&gt;</span>;
+<span class="macro">martian_filetype! </span>{Bincode, <span class="string">&quot;bincode&quot;</span>}
+<span class="kw">impl</span>&lt;T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>Bincode <span class="kw">where </span>T: Serialize + DeserializeOwned {}
+<span class="kw">pub type </span>BincodeFile = BinaryFormat&lt;Bincode&gt;;
 
-<span class="macro">crate::martian_filetype_inner!</span> {
-    <span class="doccomment">/// Binary format</span>
-    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BinaryFormat</span>, <span class="string">&quot;bincode&quot;</span>
-}
+<span class="macro">crate::martian_filetype_inner! </span>{
+    <span class="doccomment">/// Binary format
+    </span><span class="kw">pub struct </span>BinaryFormat, <span class="string">&quot;bincode&quot;
+</span>}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BinaryFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span>&lt;F, T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>BinaryFormat&lt;F&gt; <span class="kw">where </span>F: MartianFileType + FileStorage&lt;T&gt; {}
 
-<span class="doccomment">/// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`</span>
-<span class="doccomment">/// TODO: Include the TypeId here?</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BinaryFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
-    <span class="ident">F</span>: <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="doccomment">/// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
+/// TODO: Include the TypeId here?
+</span><span class="kw">impl</span>&lt;T, F&gt; FileTypeIO&lt;T&gt; <span class="kw">for </span>BinaryFormat&lt;F&gt;
+<span class="kw">where
+    </span>T: Any + Serialize + DeserializeOwned,
+    F: FileStorage&lt;T&gt; + Debug,
 {
-    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">check_type</span>(
-            <span class="ident">actual_type</span>: <span class="ident">String</span>,
-            <span class="ident">expect_type</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
-            <span class="ident">marker_type</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
-        ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="kw">if</span> <span class="ident">actual_type</span> <span class="op">==</span> <span class="ident">expect_type</span> {
+    <span class="kw">fn </span>read_from&lt;R: Read&gt;(<span class="kw-2">mut </span>reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
+        <span class="kw">fn </span>check_type(
+            actual_type: String,
+            expect_type: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+            marker_type: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+            <span class="kw">if </span>actual_type == expect_type {
                 <span class="prelude-val">Ok</span>(())
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">actual_type</span> <span class="op">==</span> <span class="ident">marker_type</span> {
+            } <span class="kw">else if </span>actual_type == marker_type {
                 <span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
-                    <span class="string">&quot;Lazily written bincode files cannot be read using FileTypeIO::read(). Use LazyFileTypeIO::read_all() instead.&quot;</span>
-                ))
-            } <span class="kw">else</span> {
+                    <span class="string">&quot;Lazily written bincode files cannot be read using FileTypeIO::read(). Use LazyFileTypeIO::read_all() instead.&quot;
+                </span>))
+            } <span class="kw">else </span>{
                 <span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
                     <span class="string">&quot;Data type {} does not match expected type {} or {}&quot;</span>,
-                    <span class="ident">actual_type</span>,
-                    <span class="ident">expect_type</span>,
-                    <span class="ident">marker_type</span>
+                    actual_type,
+                    expect_type,
+                    marker_type
                 ))
             }
         }
-        <span class="ident">check_type</span>(
-            <span class="ident">bincode::deserialize_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">reader</span>)<span class="question-mark">?</span>,
-            <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(),
-            <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">LazyMarker</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
+        check_type(
+            bincode::deserialize_from(<span class="kw-2">&amp;mut </span>reader)<span class="question-mark">?</span>,
+            type_name::&lt;T&gt;(),
+            type_name::&lt;LazyMarker&lt;T&gt;&gt;(),
         )<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">bincode::deserialize_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">reader</span>)<span class="question-mark">?</span>)
+        <span class="prelude-val">Ok</span>(bincode::deserialize_from(<span class="kw-2">&amp;mut </span>reader)<span class="question-mark">?</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">type_hash</span> <span class="op">=</span> <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
-        <span class="ident">bincode::serialize_into</span>(<span class="kw-2">&amp;mut</span> <span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">type_hash</span>)<span class="question-mark">?</span>;
-        <span class="ident">bincode::serialize_into</span>(<span class="kw-2">&amp;mut</span> <span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">fn </span>write_into&lt;W: Write&gt;(<span class="kw-2">mut </span>writer: W, input: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>type_hash = type_name::&lt;T&gt;();
+        bincode::serialize_into(<span class="kw-2">&amp;mut </span>writer, <span class="kw-2">&amp;</span>type_hash)<span class="question-mark">?</span>;
+        bincode::serialize_into(<span class="kw-2">&amp;mut </span>writer, <span class="kw-2">&amp;</span>input)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 }
 
-<span class="kw">enum</span> <span class="ident">FileMode</span> {
-    <span class="ident">Vec</span>(<span class="ident">usize</span>),
-    <span class="ident">Lazy</span>,
+<span class="kw">enum </span>FileMode {
+    Vec(usize),
+    Lazy,
 }
 
-<span class="doccomment">/// Iterator over individual items  within a bincode file that</span>
-<span class="doccomment">/// stores a list of items.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span> <span class="op">=</span> <span class="ident">Bincode</span>, <span class="ident">R</span> <span class="op">=</span> <span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
+<span class="doccomment">/// Iterator over individual items  within a bincode file that
+/// stores a list of items.
+</span><span class="kw">pub struct </span>LazyBincodeReader&lt;T, F = Bincode, R = BufReader&lt;File&gt;&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    R: Read,
+    T: Any + DeserializeOwned,
 {
-    <span class="ident">reader</span>: <span class="ident">R</span>,
-    <span class="ident">mode</span>: <span class="ident">FileMode</span>,
-    <span class="ident">processed_items</span>: <span class="ident">usize</span>,
-    <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>,
-    <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    reader: R,
+    mode: FileMode,
+    processed_items: usize,
+    phantom_f: PhantomData&lt;F&gt;,
+    phantom_t: PhantomData&lt;T&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
+<span class="kw">impl</span>&lt;T, F, R&gt; LazyRead&lt;T, R&gt; <span class="kw">for </span>LazyBincodeReader&lt;T, F, R&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    R: Read,
+    T: Any + Serialize + DeserializeOwned,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">BinaryFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">check_type</span>(
-            <span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="kw">impl</span> <span class="ident">Read</span>,
-            <span class="ident">vec_type</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
-            <span class="ident">lazy_type</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
-        ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">FileMode</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> <span class="ident">actual_type</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">bincode::deserialize_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">reader</span>)<span class="question-mark">?</span>;
-            <span class="kw">if</span> <span class="ident">actual_type</span> <span class="op">==</span> <span class="ident">vec_type</span> {
-                <span class="kw">let</span> <span class="ident">total_items</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">bincode::deserialize_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">reader</span>)<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="ident">FileMode::Vec</span>(<span class="ident">total_items</span>))
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">actual_type</span> <span class="op">==</span> <span class="ident">lazy_type</span> {
-                <span class="prelude-val">Ok</span>(<span class="ident">FileMode::Lazy</span>)
-            } <span class="kw">else</span> {
+    <span class="kw">type </span>FileType = BinaryFormat&lt;F&gt;;
+    <span class="kw">fn </span>with_reader(<span class="kw-2">mut </span>reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="kw">fn </span>check_type(
+            <span class="kw-2">mut </span>reader: <span class="kw">impl </span>Read,
+            vec_type: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+            lazy_type: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;FileMode, Error&gt; {
+            <span class="kw">let </span>actual_type: String = bincode::deserialize_from(<span class="kw-2">&amp;mut </span>reader)<span class="question-mark">?</span>;
+            <span class="kw">if </span>actual_type == vec_type {
+                <span class="kw">let </span>total_items: usize = bincode::deserialize_from(<span class="kw-2">&amp;mut </span>reader)<span class="question-mark">?</span>;
+                <span class="prelude-val">Ok</span>(FileMode::Vec(total_items))
+            } <span class="kw">else if </span>actual_type == lazy_type {
+                <span class="prelude-val">Ok</span>(FileMode::Lazy)
+            } <span class="kw">else </span>{
                 <span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
                     <span class="string">&quot;Data type {} does not match expected type {} or {}&quot;</span>,
-                    <span class="ident">actual_type</span>,
-                    <span class="ident">vec_type</span>,
-                    <span class="ident">lazy_type</span>
+                    actual_type,
+                    vec_type,
+                    lazy_type
                 ))
             }
         }
-        <span class="kw">let</span> <span class="ident">mode</span> <span class="op">=</span> <span class="ident">check_type</span>(
-            <span class="kw-2">&amp;mut</span> <span class="ident">reader</span>,
-            <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
-            <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">LazyMarker</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
+        <span class="kw">let </span>mode = check_type(
+            <span class="kw-2">&amp;mut </span>reader,
+            type_name::&lt;Vec&lt;T&gt;&gt;(),
+            type_name::&lt;LazyMarker&lt;Vec&lt;T&gt;&gt;&gt;(),
         )<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">LazyBincodeReader</span> {
-            <span class="ident">reader</span>,
-            <span class="ident">mode</span>,
-            <span class="ident">processed_items</span>: <span class="number">0</span>,
-            <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span>,
-            <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span>,
+        <span class="prelude-val">Ok</span>(LazyBincodeReader {
+            reader,
+            mode,
+            processed_items: <span class="number">0</span>,
+            phantom_f: PhantomData,
+            phantom_t: PhantomData,
         })
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
+<span class="kw">impl</span>&lt;T, F, R&gt; Iterator <span class="kw">for </span>LazyBincodeReader&lt;T, F, R&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    R: Read,
+    T: Any + DeserializeOwned,
 {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Item</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">mode</span> {
-            <span class="ident">FileMode::Vec</span>(<span class="ident">total_items</span>) =&gt; {
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">processed_items</span> <span class="op">&lt;</span> <span class="ident">total_items</span> {
-                    <span class="self">self</span>.<span class="ident">processed_items</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-                    <span class="kw">match</span> <span class="ident">bincode::deserialize_from</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">reader</span>) {
-                        <span class="prelude-val">Ok</span>(<span class="ident">t</span>) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">t</span>)),
-                        <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">Error::from</span>(<span class="ident">e</span>))),
+    <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;T, Error&gt;;
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+        <span class="kw">match </span><span class="self">self</span>.mode {
+            FileMode::Vec(total_items) =&gt; {
+                <span class="kw">if </span><span class="self">self</span>.processed_items &lt; total_items {
+                    <span class="self">self</span>.processed_items += <span class="number">1</span>;
+                    <span class="kw">match </span>bincode::deserialize_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>.reader) {
+                        <span class="prelude-val">Ok</span>(t) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(t)),
+                        <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(Error::from(e))),
                     }
-                } <span class="kw">else</span> {
-                    <span class="prelude-val">None</span>
-                }
+                } <span class="kw">else </span>{
+                    <span class="prelude-val">None
+                </span>}
             }
-            <span class="ident">FileMode::Lazy</span> =&gt; <span class="kw">match</span> <span class="ident">try_bincode_deserialize</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">reader</span>) {
-                <span class="ident">DeserializeResult::Item</span>(<span class="ident">t</span>) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">t</span>)),
-                <span class="ident">DeserializeResult::Eof</span> =&gt; <span class="prelude-val">None</span>,
-                <span class="ident">DeserializeResult::ReadError</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)),
+            FileMode::Lazy =&gt; <span class="kw">match </span>try_bincode_deserialize(<span class="kw-2">&amp;mut </span><span class="self">self</span>.reader) {
+                DeserializeResult::Item(t) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(t)),
+                DeserializeResult::Eof =&gt; <span class="prelude-val">None</span>,
+                DeserializeResult::ReadError(e) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(e)),
             },
         }
     }
 }
 
-<span class="kw">enum</span> <span class="ident">DeserializeResult</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span> {
-    <span class="ident">Item</span>(<span class="ident">T</span>),
-    <span class="ident">ReadError</span>(<span class="ident">E</span>),
-    <span class="ident">Eof</span>,
+<span class="kw">enum </span>DeserializeResult&lt;T, E&gt; {
+    Item(T),
+    ReadError(E),
+    Eof,
 }
 
-<span class="kw">fn</span> <span class="ident">try_bincode_deserialize</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">DeserializeResult</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">DeserializeOwned</span>,
+<span class="kw">fn </span>try_bincode_deserialize&lt;T, R&gt;(reader: <span class="kw-2">&amp;mut </span>R) -&gt; DeserializeResult&lt;T, Error&gt;
+<span class="kw">where
+    </span>R: Read,
+    T: DeserializeOwned,
 {
-    <span class="kw">match</span> <span class="ident">bincode::deserialize_from</span>(<span class="ident">reader</span>) {
-        <span class="prelude-val">Ok</span>(<span class="ident">t</span>) =&gt; <span class="ident">DeserializeResult::Item</span>(<span class="ident">t</span>),
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
-            <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">e</span>.<span class="ident">as_ref</span>() {
-                <span class="ident">bincode::ErrorKind::Io</span>(<span class="kw-2">ref</span> <span class="ident">io_e</span>) =&gt; {
-                    <span class="kw">match</span> <span class="ident">io_e</span>.<span class="ident">kind</span>() {
-                        <span class="ident">io::ErrorKind::UnexpectedEof</span> =&gt; <span class="ident">DeserializeResult::Eof</span>, <span class="comment">// We are at the end of the stream</span>
-                        <span class="kw">_</span> =&gt; <span class="ident">DeserializeResult::ReadError</span>(<span class="ident">Error::from</span>(<span class="ident">e</span>)),
+    <span class="kw">match </span>bincode::deserialize_from(reader) {
+        <span class="prelude-val">Ok</span>(t) =&gt; DeserializeResult::Item(t),
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="kw">match </span><span class="kw-2">*</span>e.as_ref() {
+                bincode::ErrorKind::Io(<span class="kw-2">ref </span>io_e) =&gt; {
+                    <span class="kw">match </span>io_e.kind() {
+                        io::ErrorKind::UnexpectedEof =&gt; DeserializeResult::Eof, <span class="comment">// We are at the end of the stream
+                        </span><span class="kw">_ </span>=&gt; DeserializeResult::ReadError(Error::from(e)),
                     }
                 }
-                <span class="kw">_</span> =&gt; <span class="ident">DeserializeResult::ReadError</span>(<span class="ident">Error::from</span>(<span class="ident">e</span>)),
+                <span class="kw">_ </span>=&gt; DeserializeResult::ReadError(Error::from(e)),
             }
         }
     }
 }
 
-<span class="comment">// When a list of items of type T is lazily written,</span>
-<span class="comment">// the typeid we store is that of LazyMarker&lt;Vec&lt;T&gt;&gt;</span>
-<span class="kw">struct</span> <span class="ident">LazyMarker</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
+<span class="comment">// When a list of items of type T is lazily written,
+// the typeid we store is that of LazyMarker&lt;Vec&lt;T&gt;&gt;
+</span><span class="kw">struct </span>LazyMarker&lt;T&gt;(PhantomData&lt;T&gt;);
 
-<span class="doccomment">/// Helper struct to write items one by one to a bincode file that</span>
-<span class="doccomment">/// stores a list of items</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyBincodeWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span> <span class="op">=</span> <span class="ident">Bincode</span>, <span class="ident">W</span> <span class="op">=</span> <span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span>,
+<span class="doccomment">/// Helper struct to write items one by one to a bincode file that
+/// stores a list of items
+</span><span class="kw">pub struct </span>LazyBincodeWriter&lt;T, F = Bincode, W = BufWriter&lt;File&gt;&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    W: Write,
+    T: Any + Serialize,
 {
-    <span class="ident">writer</span>: <span class="ident">W</span>,
-    <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>,
-    <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">processed_items</span>: <span class="ident">usize</span>,
+    writer: W,
+    phantom_f: PhantomData&lt;F&gt;,
+    phantom_t: PhantomData&lt;T&gt;,
+    processed_items: usize,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyBincodeWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span>,
+<span class="kw">impl</span>&lt;T, F, W&gt; LazyWrite&lt;T, W&gt; <span class="kw">for </span>LazyBincodeWriter&lt;T, F, W&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    W: Write,
+    T: Any + Serialize,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">BinaryFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="ident">W</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">type_hash</span> <span class="op">=</span> <span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">LazyMarker</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(); <span class="comment">// The file stores Vec&lt;T&gt;, not T</span>
-        <span class="ident">bincode::serialize_into</span>(<span class="kw-2">&amp;mut</span> <span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">type_hash</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">LazyBincodeWriter</span> {
-            <span class="ident">writer</span>,
-            <span class="ident">phantom_f</span>: <span class="ident">PhantomData</span>,
-            <span class="ident">phantom_t</span>: <span class="ident">PhantomData</span>,
-            <span class="ident">processed_items</span>: <span class="number">0</span>,
+    <span class="kw">type </span>FileType = BinaryFormat&lt;F&gt;;
+    <span class="kw">fn </span>with_writer(<span class="kw-2">mut </span>writer: W) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="kw">let </span>type_hash = type_name::&lt;LazyMarker&lt;Vec&lt;T&gt;&gt;&gt;(); <span class="comment">// The file stores Vec&lt;T&gt;, not T
+        </span>bincode::serialize_into(<span class="kw-2">&amp;mut </span>writer, <span class="kw-2">&amp;</span>type_hash)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(LazyBincodeWriter {
+            writer,
+            phantom_f: PhantomData,
+            phantom_t: PhantomData,
+            processed_items: <span class="number">0</span>,
         })
     }
-    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">processed_items</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-        <span class="ident">bincode::serialize_into</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">item</span>)<span class="question-mark">?</span>;
+    <span class="kw">fn </span>write_item(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="self">self</span>.processed_items += <span class="number">1</span>;
+        bincode::serialize_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.writer, <span class="kw-2">&amp;</span>item)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
-    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">writer</span>)
+    <span class="kw">fn </span>finish(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;W, Error&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.writer)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BinaryFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
+<span class="kw">impl</span>&lt;T, F, W, R&gt; LazyAgents&lt;T, W, R&gt; <span class="kw">for </span>BinaryFormat&lt;F&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    R: Read,
+    W: Write,
+    T: Any + Serialize + DeserializeOwned,
 {
-    <span class="kw">type</span> <span class="ident">LazyWriter</span> <span class="op">=</span> <span class="ident">LazyBincodeWriter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">W</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">LazyReader</span> <span class="op">=</span> <span class="ident">LazyBincodeReader</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>;
+    <span class="kw">type </span>LazyWriter = LazyBincodeWriter&lt;T, F, W&gt;;
+    <span class="kw">type </span>LazyReader = LazyBincodeReader&lt;T, F, R&gt;;
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::LazyFileTypeIO</span>;
-    <span class="kw">use</span> <span class="ident">martian::MartianFileType</span>;
-    <span class="kw">use</span> <span class="ident">proptest::arbitrary::any</span>;
-    <span class="kw">use</span> <span class="ident">proptest::collection::vec</span>;
-    <span class="kw">use</span> <span class="ident">proptest</span>::{<span class="ident">prop_assert</span>, <span class="ident">proptest</span>};
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
+    <span class="kw">use </span>martian::MartianFileType;
+    <span class="kw">use </span>proptest::arbitrary::any;
+    <span class="kw">use </span>proptest::collection::vec;
+    <span class="kw">use </span>proptest::{prop_assert, proptest};
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
-    <span class="kw">enum</span> <span class="ident">Bar</span> {
-        <span class="ident">Variant</span>,
+    <span class="attribute">#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+    </span><span class="kw">enum </span>Bar {
+        Variant,
     }
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">Foo</span> {
-        <span class="ident">v1</span>: <span class="ident">u32</span>,
-        <span class="ident">v2</span>: <span class="ident">String</span>,
-        <span class="ident">v3</span>: <span class="ident">Bar</span>,
-    }
-
-    <span class="macro">proptest!</span> {
-        <span class="attribute">#[<span class="ident">test</span>]</span>
-        <span class="kw">fn</span> <span class="ident">prop_test_bincode_file_u8</span>(
-            <span class="kw-2">ref</span> <span class="ident">seq</span> <span class="kw">in</span> <span class="ident">vec</span>(<span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(), <span class="number">0usize</span>..<span class="number">1000usize</span>),
-        ) {
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>());
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>, <span class="bool-val">false</span>).<span class="ident">unwrap</span>());
-        }
-        <span class="attribute">#[<span class="ident">test</span>]</span>
-        <span class="kw">fn</span> <span class="ident">prop_test_bincode_file_bool</span>(
-            <span class="kw-2">ref</span> <span class="ident">seq</span> <span class="kw">in</span> <span class="ident">vec</span>(<span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>(), <span class="number">0usize</span>..<span class="number">1000usize</span>),
-        ) {
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>());
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>, <span class="bool-val">false</span>).<span class="ident">unwrap</span>());
-        }
-        <span class="attribute">#[<span class="ident">test</span>]</span>
-        <span class="kw">fn</span> <span class="ident">prop_test_bincode_file_vec_string</span>(
-            <span class="kw-2">ref</span> <span class="ident">seq</span> <span class="kw">in</span> <span class="ident">vec</span>(<span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>(), <span class="number">0usize</span>..<span class="number">20usize</span>),
-        ) {
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>());
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>, <span class="bool-val">false</span>).<span class="ident">unwrap</span>());
-        }
-        <span class="attribute">#[<span class="ident">test</span>]</span>
-        <span class="kw">fn</span> <span class="ident">prop_test_bincode_file_string</span>(
-            <span class="kw-2">ref</span> <span class="ident">seq</span> <span class="kw">in</span> <span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>(),
-        ) {
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">seq</span>).<span class="ident">unwrap</span>());
-        }
-        <span class="attribute">#[<span class="ident">test</span>]</span>
-        <span class="kw">fn</span> <span class="ident">prop_test_bincode_file_struct</span>(
-            <span class="kw-2">ref</span> <span class="ident">v1</span> <span class="kw">in</span> <span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(),
-            <span class="kw-2">ref</span> <span class="ident">v2</span> <span class="kw">in</span> <span class="ident">any</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>(),
-        ) {
-            <span class="kw">let</span> <span class="ident">foo</span> <span class="op">=</span> <span class="ident">Foo</span> {<span class="ident">v1</span>: <span class="kw-2">*</span><span class="ident">v1</span>, <span class="ident">v2</span>: <span class="ident">v2</span>.<span class="ident">clone</span>(), <span class="ident">v3</span>: <span class="ident">Bar::Variant</span>};
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">foo</span>).<span class="ident">unwrap</span>());
-
-            <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="ident">foo</span>.<span class="ident">clone</span>(); <span class="number">20</span>];
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">unwrap</span>());
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="bool-val">false</span>).<span class="ident">unwrap</span>());
-
-            <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="ident">foo</span>; <span class="number">2</span>]; <span class="number">4</span>];
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">unwrap</span>());
-            <span class="macro">prop_assert!</span>(<span class="ident"><span class="kw">crate</span>::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="bool-val">false</span>).<span class="ident">unwrap</span>());
-
-        }
+    <span class="attribute">#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+    </span><span class="kw">struct </span>Foo {
+        v1: u32,
+        v2: String,
+        v3: Bar,
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_bincode_simple_roundtrip</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>)]</span>
-        <span class="kw">struct</span> <span class="ident">Foo</span> {
-            <span class="ident">name</span>: <span class="ident">String</span>,
-            <span class="ident">id</span>: <span class="ident">usize</span>,
+    <span class="macro">proptest! </span>{
+        <span class="attribute">#[test]
+        </span><span class="kw">fn </span>prop_test_bincode_file_u8(
+            <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;u8&gt;(), <span class="number">0usize</span>..<span class="number">1000usize</span>),
+        ) {
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
         }
-        <span class="kw">let</span> <span class="ident">foo</span> <span class="op">=</span> <span class="ident">Foo</span> {
-            <span class="ident">name</span>: <span class="string">&quot;Bar&quot;</span>.<span class="ident">into</span>(),
-            <span class="ident">id</span>: <span class="number">100</span>,
+        <span class="attribute">#[test]
+        </span><span class="kw">fn </span>prop_test_bincode_file_bool(
+            <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;bool&gt;(), <span class="number">0usize</span>..<span class="number">1000usize</span>),
+        ) {
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
+        }
+        <span class="attribute">#[test]
+        </span><span class="kw">fn </span>prop_test_bincode_file_vec_string(
+            <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;String&gt;(), <span class="number">0usize</span>..<span class="number">20usize</span>),
+        ) {
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
+        }
+        <span class="attribute">#[test]
+        </span><span class="kw">fn </span>prop_test_bincode_file_string(
+            <span class="kw-2">ref </span>seq <span class="kw">in </span>any::&lt;String&gt;(),
+        ) {
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
+        }
+        <span class="attribute">#[test]
+        </span><span class="kw">fn </span>prop_test_bincode_file_struct(
+            <span class="kw-2">ref </span>v1 <span class="kw">in </span>any::&lt;u32&gt;(),
+            <span class="kw-2">ref </span>v2 <span class="kw">in </span>any::&lt;String&gt;(),
+        ) {
+            <span class="kw">let </span>foo = Foo {v1: <span class="kw-2">*</span>v1, v2: v2.clone(), v3: Bar::Variant};
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo).unwrap());
+
+            <span class="kw">let </span>input = <span class="macro">vec!</span>[foo.clone(); <span class="number">20</span>];
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">false</span>).unwrap());
+
+            <span class="kw">let </span>input = <span class="macro">vec!</span>[<span class="macro">vec!</span>[foo; <span class="number">2</span>]; <span class="number">4</span>];
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">false</span>).unwrap());
+
+        }
+    }
+
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_bincode_simple_roundtrip() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="attribute">#[derive(Serialize, Deserialize, PartialEq)]
+        </span><span class="kw">struct </span>Foo {
+            name: String,
+            id: usize,
+        }
+        <span class="kw">let </span>foo = Foo {
+            name: <span class="string">&quot;Bar&quot;</span>.into(),
+            id: <span class="number">100</span>,
         };
-        <span class="macro">assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">BincodeFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">foo</span>)<span class="question-mark">?</span>);
+        <span class="macro">assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo)<span class="question-mark">?</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_bincode_inconsistent_type</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_bincode_inconsistent_type() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">fn1</span> <span class="op">=</span> <span class="ident">BincodeFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;test1&quot;</span>);
-        <span class="kw">let</span> <span class="ident">fn2</span> <span class="op">=</span> <span class="ident">BincodeFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;test2&quot;</span>);
+        <span class="kw">let </span>fn1 = BincodeFile::new(dir.path(), <span class="string">&quot;test1&quot;</span>);
+        <span class="kw">let </span>fn2 = BincodeFile::new(dir.path(), <span class="string">&quot;test2&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">v1</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">1u8</span>, <span class="number">2u8</span>, <span class="number">3u8</span>];
-        <span class="kw">let</span> <span class="ident">v2</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">1u64</span>, <span class="number">2u64</span>, <span class="number">3u64</span>];
-        <span class="ident">fn1</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="ident">v1</span>)<span class="question-mark">?</span>;
-        <span class="ident">fn2</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="ident">v2</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>v1 = <span class="macro">vec!</span>[<span class="number">1u8</span>, <span class="number">2u8</span>, <span class="number">3u8</span>];
+        <span class="kw">let </span>v2 = <span class="macro">vec!</span>[<span class="number">1u64</span>, <span class="number">2u64</span>, <span class="number">3u64</span>];
+        fn1.write(<span class="kw-2">&amp;</span>v1)<span class="question-mark">?</span>;
+        fn2.write(<span class="kw-2">&amp;</span>v2)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">fn1</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">fn2</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
+        <span class="kw">let _</span>: Vec&lt;u8&gt; = fn1.read()<span class="question-mark">?</span>;
+        <span class="kw">let _</span>: Vec&lt;u64&gt; = fn2.read()<span class="question-mark">?</span>;
 
-        <span class="macro">assert!</span>(<span class="ident">FileTypeIO</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::read</span>(<span class="kw-2">&amp;</span><span class="ident">fn1</span>).<span class="ident">is_err</span>());
-        <span class="macro">assert!</span>(<span class="ident">FileTypeIO</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="ident">::read</span>(<span class="kw-2">&amp;</span><span class="ident">fn1</span>).<span class="ident">is_err</span>());
-        <span class="macro">assert!</span>(<span class="ident">FileTypeIO</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="ident">::read</span>(<span class="kw-2">&amp;</span><span class="ident">fn1</span>).<span class="ident">is_err</span>());
+        <span class="macro">assert!</span>(FileTypeIO::&lt;Vec&lt;u64&gt;&gt;::read(<span class="kw-2">&amp;</span>fn1).is_err());
+        <span class="macro">assert!</span>(FileTypeIO::&lt;u8&gt;::read(<span class="kw-2">&amp;</span>fn1).is_err());
+        <span class="macro">assert!</span>(FileTypeIO::&lt;String&gt;::read(<span class="kw-2">&amp;</span>fn1).is_err());
 
-        <span class="macro">assert!</span>(<span class="ident">FileTypeIO</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::read</span>(<span class="kw-2">&amp;</span><span class="ident">fn2</span>).<span class="ident">is_err</span>());
-        <span class="macro">assert!</span>(<span class="ident">FileTypeIO</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="ident">::read</span>(<span class="kw-2">&amp;</span><span class="ident">fn2</span>).<span class="ident">is_err</span>());
-        <span class="macro">assert!</span>(<span class="ident">FileTypeIO</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="ident">::read</span>(<span class="kw-2">&amp;</span><span class="ident">fn2</span>).<span class="ident">is_err</span>());
+        <span class="macro">assert!</span>(FileTypeIO::&lt;Vec&lt;u8&gt;&gt;::read(<span class="kw-2">&amp;</span>fn2).is_err());
+        <span class="macro">assert!</span>(FileTypeIO::&lt;u8&gt;::read(<span class="kw-2">&amp;</span>fn2).is_err());
+        <span class="macro">assert!</span>(FileTypeIO::&lt;String&gt;::read(<span class="kw-2">&amp;</span>fn2).is_err());
 
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lazy_read</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">100</span>).<span class="ident">into_iter</span>().<span class="ident">collect</span>();
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">bin_file</span> <span class="op">=</span> <span class="ident">BincodeFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="ident">bin_file</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="ident">values</span>)<span class="question-mark">?</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lazy_read() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>values: Vec&lt;u16&gt; = (<span class="number">0</span>..<span class="number">100</span>).into_iter().collect();
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>bin_file = BincodeFile::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        bin_file.write(<span class="kw-2">&amp;</span>values)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">inc_reader</span> <span class="op">=</span> <span class="ident">bin_file</span>.<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">v</span>) <span class="kw">in</span> <span class="ident">inc_reader</span>.<span class="ident">enumerate</span>() {
-            <span class="kw">let</span> <span class="ident">v</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">v</span><span class="question-mark">?</span>;
-            <span class="macro">assert_eq!</span>(<span class="ident">i</span> <span class="kw">as</span> <span class="ident">u16</span>, <span class="ident">v</span>);
+        <span class="kw">let </span>inc_reader = bin_file.lazy_reader()<span class="question-mark">?</span>;
+        <span class="kw">for </span>(i, v) <span class="kw">in </span>inc_reader.enumerate() {
+            <span class="kw">let </span>v: u16 = v<span class="question-mark">?</span>;
+            <span class="macro">assert_eq!</span>(i <span class="kw">as </span>u16, v);
         }
 
-        <span class="kw">let</span> <span class="ident">max_val</span> <span class="op">=</span> <span class="ident">bin_file</span>
-            .<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>
-            .<span class="ident">map</span>(<span class="ident">std::result::Result::unwrap</span>)
-            .<span class="ident">max</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">max_val</span>, <span class="prelude-val">Some</span>(<span class="number">99u16</span>));
+        <span class="kw">let </span>max_val = bin_file
+            .lazy_reader()<span class="question-mark">?
+            </span>.map(std::result::Result::unwrap)
+            .max();
+        <span class="macro">assert_eq!</span>(max_val, <span class="prelude-val">Some</span>(<span class="number">99u16</span>));
 
-        <span class="comment">// Invalid Type</span>
-        <span class="macro">assert!</span>(<span class="ident">LazyBincodeReader</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="ident">::with_reader</span>(<span class="ident">bin_file</span>.<span class="ident">buf_reader</span>()<span class="question-mark">?</span>).<span class="ident">is_err</span>());
+        <span class="comment">// Invalid Type
+        </span><span class="macro">assert!</span>(LazyBincodeReader::&lt;u8&gt;::with_reader(bin_file.buf_reader()<span class="question-mark">?</span>).is_err());
 
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_bincode_lazy_write_and_read</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">bin_file</span> <span class="op">=</span> <span class="ident">BincodeFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;my_file&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">bin_file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">10i32</span> {
-            <span class="ident">writer</span>.<span class="ident">write_item</span>(<span class="kw-2">&amp;</span><span class="ident">i</span>)<span class="question-mark">?</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_bincode_lazy_write_and_read() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>bin_file = BincodeFile::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>writer = bin_file.lazy_writer()<span class="question-mark">?</span>;
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10i32 </span>{
+            writer.write_item(<span class="kw-2">&amp;</span>i)<span class="question-mark">?</span>;
         }
-        <span class="ident">writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
+        writer.finish()<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">r</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">bin_file</span>.<span class="ident">read</span>();
-        <span class="macro">assert!</span>(<span class="ident">r</span>.<span class="ident">is_err</span>());
+        <span class="kw">let </span>r: <span class="prelude-ty">Result</span>&lt;Vec&lt;i32&gt;, Error&gt; = bin_file.read();
+        <span class="macro">assert!</span>(r.is_err());
         <span class="prelude-val">Ok</span>(())
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

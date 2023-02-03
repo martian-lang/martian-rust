@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/lz4_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lz4_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/lz4_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lz4_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -437,444 +437,444 @@
 <span id="437">437</span>
 <span id="438">438</span>
 <span id="439">439</span>
-</pre><pre class="rust"><code><span class="doccomment">//!</span>
-<span class="doccomment">//! This module defines an `lz4` wrapper over other basic filetypes. Most basic</span>
-<span class="doccomment">//! filetypes automatically inherit this behavior through the trait heirarchy.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Simple read/write example</span>
-<span class="doccomment">//! The example shown below creates an lz4 compressed json and bincode file.</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use martian_filetypes::FileTypeIO;</span>
-<span class="doccomment">//! use martian_filetypes::bin_file::BincodeFile;</span>
-<span class="doccomment">//! use martian_filetypes::json_file::JsonFile;</span>
-<span class="doccomment">//! use martian_filetypes::lz4_file::Lz4;</span>
-<span class="doccomment">//! use martian::Error;</span>
-<span class="doccomment">//! use serde::{Serialize, Deserialize};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #[derive(Debug, PartialEq, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct Chemistry {</span>
-<span class="doccomment">//!     name: String,</span>
-<span class="doccomment">//!     paired_end: bool,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };</span>
-<span class="doccomment">//!     // --------------------- Json ----------------------------------</span>
-<span class="doccomment">//!     let lz4_json_file = Lz4::from_filetype(JsonFile::from(&quot;example&quot;)); // example.json.lz4</span>
-<span class="doccomment">//!     // lz4_json_file has the type Lz4&lt;JsonFile&gt;</span>
-<span class="doccomment">//!     lz4_json_file.write(&amp;chem)?; // Writes lz4 compressed json file</span>
-<span class="doccomment">//!     let decoded: Chemistry = lz4_json_file.read()?;</span>
-<span class="doccomment">//!     assert_eq!(chem, decoded);</span>
-<span class="doccomment">//!     # std::fs::remove_file(lz4_json_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     // --------------------- Bincode ----------------------------------</span>
-<span class="doccomment">//!     let lz4_bin_file: Lz4&lt;BincodeFile&gt; = Lz4::from(&quot;example&quot;); // example.bincode.lz4</span>
-<span class="doccomment">//!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()</span>
-<span class="doccomment">//!     lz4_bin_file.write(&amp;chem)?; // Writes lz4 compressed bincode file</span>
-<span class="doccomment">//!     let decoded: Chemistry = lz4_bin_file.read()?;</span>
-<span class="doccomment">//!     assert_eq!(chem, decoded);</span>
-<span class="doccomment">//!     # std::fs::remove_file(lz4_bin_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     Ok(())</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Lazy read/write example</span>
-<span class="doccomment">//! The example below illustrates writing an integer one by one into an lz4 compressed Bincode file</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #### IMPORTANT</span>
-<span class="doccomment">//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing and capture</span>
-<span class="doccomment">//! the resulting errors. When the writer is dropped, we attempt to complete the writing, but</span>
-<span class="doccomment">//! ignoring the errors.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};</span>
-<span class="doccomment">//! use martian_filetypes::bin_file::BincodeFile;</span>
-<span class="doccomment">//! use martian_filetypes::lz4_file::Lz4;</span>
-<span class="doccomment">//! use martian::Error;</span>
-<span class="doccomment">//! use serde::{Serialize, Deserialize};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//!     let lz4_bin_file: Lz4&lt;BincodeFile&gt; = Lz4::from(&quot;example_lazy&quot;);</span>
-<span class="doccomment">//!     let mut lz4_writer = lz4_bin_file.lazy_writer()?;</span>
-<span class="doccomment">//!     // The type of the lz4_writer will be inferred by the compiler as:</span>
-<span class="doccomment">//!     // LazyLz4Writer&lt;LazyBincodeWriter&lt;i32, lz4::encoder::Encoder&lt;BufWriter&lt;File&gt;&gt;&gt;, i32, BufWriter&lt;File&gt;&gt;</span>
-<span class="doccomment">//!     // Clearly you want the compiler to figure this out.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     // writer implements the trait `LazyWrite&lt;_&gt;`</span>
-<span class="doccomment">//!     for _ in 0..10_000 {</span>
-<span class="doccomment">//!         lz4_writer.write_item(&amp;0i32)?;</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//!     lz4_writer.finish()?; // The file writing is not completed until finish() is called.</span>
-<span class="doccomment">//!     // IF YOU DON&#39;T CALL finish(), THE FILE COULD BE INCOMPLETE UNTIL THE WRITER IS DROPPED</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     // For this extreme case of compression, the output file will be just 194 bytes, as opposed to</span>
-<span class="doccomment">//!     // 39KB uncompressed</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     let mut lz4_reader = lz4_bin_file.lazy_reader()?;</span>
-<span class="doccomment">//!     // The type of the lz4_reader will be inferred by the compiler as:</span>
-<span class="doccomment">//!     // LazyLz4Reader&lt;LazyBincodeReader&lt;i32, lz4::decoder::Decoder&lt;BufReader&lt;File&gt;&gt;&gt;, i32, BufReader&lt;File&gt;&gt;</span>
-<span class="doccomment">//!     // Clearly you want the compiler to figure this out.</span>
-<span class="doccomment">//!     let mut n_val = 0;</span>
-<span class="doccomment">//!     // lz4_reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;</span>
-<span class="doccomment">//!     for (i, val) in lz4_reader.enumerate() {</span>
-<span class="doccomment">//!         let val: i32 = val?; // Helps with the type inference</span>
-<span class="doccomment">//!         assert_eq!(0i32, val);</span>
-<span class="doccomment">//!         n_val += 1;</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//!     assert_eq!(n_val, 10_000i32);</span>
-<span class="doccomment">//!     # std::fs::remove_file(lz4_bin_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!     Ok(())</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! ```</span>
+</pre><pre class="rust"><code><span class="doccomment">//!
+//! This module defines an `lz4` wrapper over other basic filetypes. Most basic
+//! filetypes automatically inherit this behavior through the trait heirarchy.
+//!
+//!
+//! ## Simple read/write example
+//! The example shown below creates an lz4 compressed json and bincode file.
+//! ```rust
+//! use martian_filetypes::FileTypeIO;
+//! use martian_filetypes::bin_file::BincodeFile;
+//! use martian_filetypes::json_file::JsonFile;
+//! use martian_filetypes::lz4_file::Lz4;
+//! use martian::Error;
+//! use serde::{Serialize, Deserialize};
+//!
+//! #[derive(Debug, PartialEq, Serialize, Deserialize)]
+//! struct Chemistry {
+//!     name: String,
+//!     paired_end: bool,
+//! }
+//!
+//! fn main() -&gt; Result&lt;(), Error&gt; {
+//!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };
+//!     // --------------------- Json ----------------------------------
+//!     let lz4_json_file = Lz4::from_filetype(JsonFile::from(&quot;example&quot;)); // example.json.lz4
+//!     // lz4_json_file has the type Lz4&lt;JsonFile&gt;
+//!     lz4_json_file.write(&amp;chem)?; // Writes lz4 compressed json file
+//!     let decoded: Chemistry = lz4_json_file.read()?;
+//!     assert_eq!(chem, decoded);
+//!     # std::fs::remove_file(lz4_json_file)?; // Remove the file (hidden from the doc)
+//!
+//!     // --------------------- Bincode ----------------------------------
+//!     let lz4_bin_file: Lz4&lt;BincodeFile&gt; = Lz4::from(&quot;example&quot;); // example.bincode.lz4
+//!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()
+//!     lz4_bin_file.write(&amp;chem)?; // Writes lz4 compressed bincode file
+//!     let decoded: Chemistry = lz4_bin_file.read()?;
+//!     assert_eq!(chem, decoded);
+//!     # std::fs::remove_file(lz4_bin_file)?; // Remove the file (hidden from the doc)
+//!
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ## Lazy read/write example
+//! The example below illustrates writing an integer one by one into an lz4 compressed Bincode file
+//!
+//! #### IMPORTANT
+//! You need to explicitly call **`finish()`** on a lazy writer to complete the writing and capture
+//! the resulting errors. When the writer is dropped, we attempt to complete the writing, but
+//! ignoring the errors.
+//!
+//! ```rust
+//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::bin_file::BincodeFile;
+//! use martian_filetypes::lz4_file::Lz4;
+//! use martian::Error;
+//! use serde::{Serialize, Deserialize};
+//!
+//! fn main() -&gt; Result&lt;(), Error&gt; {
+//!     let lz4_bin_file: Lz4&lt;BincodeFile&gt; = Lz4::from(&quot;example_lazy&quot;);
+//!     let mut lz4_writer = lz4_bin_file.lazy_writer()?;
+//!     // The type of the lz4_writer will be inferred by the compiler as:
+//!     // LazyLz4Writer&lt;LazyBincodeWriter&lt;i32, lz4::encoder::Encoder&lt;BufWriter&lt;File&gt;&gt;&gt;, i32, BufWriter&lt;File&gt;&gt;
+//!     // Clearly you want the compiler to figure this out.
+//!
+//!     // writer implements the trait `LazyWrite&lt;_&gt;`
+//!     for _ in 0..10_000 {
+//!         lz4_writer.write_item(&amp;0i32)?;
+//!     }
+//!     lz4_writer.finish()?; // The file writing is not completed until finish() is called.
+//!     // IF YOU DON&#39;T CALL finish(), THE FILE COULD BE INCOMPLETE UNTIL THE WRITER IS DROPPED
+//!
+//!     // For this extreme case of compression, the output file will be just 194 bytes, as opposed to
+//!     // 39KB uncompressed
+//!
+//!     let mut lz4_reader = lz4_bin_file.lazy_reader()?;
+//!     // The type of the lz4_reader will be inferred by the compiler as:
+//!     // LazyLz4Reader&lt;LazyBincodeReader&lt;i32, lz4::decoder::Decoder&lt;BufReader&lt;File&gt;&gt;&gt;, i32, BufReader&lt;File&gt;&gt;
+//!     // Clearly you want the compiler to figure this out.
+//!     let mut n_val = 0;
+//!     // lz4_reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;
+//!     for (i, val) in lz4_reader.enumerate() {
+//!         let val: i32 = val?; // Helps with the type inference
+//!         assert_eq!(0i32, val);
+//!         n_val += 1;
+//!     }
+//!     assert_eq!(n_val, 10_000i32);
+//!     # std::fs::remove_file(lz4_bin_file)?; // Remove the file (hidden from the doc)
+//!     Ok(())
+//! }
+//! ```
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::martian_filetype_inner</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ErrorContext</span>, <span class="ident">FileStorage</span>, <span class="ident">FileTypeIO</span>, <span class="ident">LazyAgents</span>, <span class="ident">LazyRead</span>, <span class="ident">LazyWrite</span>};
-<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">Error</span>, <span class="ident">MartianFileType</span>};
+</span><span class="kw">use </span><span class="kw">crate</span>::martian_filetype_inner;
+<span class="kw">use crate</span>::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+<span class="kw">use </span>martian::{Error, MartianFileType};
 
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">std::convert::From</span>;
+<span class="kw">use </span>serde::{Deserialize, Serialize};
+<span class="kw">use </span>std::convert::From;
 
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
+<span class="kw">use </span>std::io::{Read, Write};
+<span class="kw">use </span>std::marker::PhantomData;
 
-<span class="macro">martian_filetype_inner!</span> {
-    <span class="doccomment">/// A struct that wraps a basic `MartianFileType` and adds lz4 compression</span>
-    <span class="doccomment">/// capability.</span>
-    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Lz4</span>, <span class="string">&quot;lz4&quot;</span>
-}
+<span class="macro">martian_filetype_inner! </span>{
+    <span class="doccomment">/// A struct that wraps a basic `MartianFileType` and adds lz4 compression
+    /// capability.
+    </span><span class="kw">pub struct </span>Lz4, <span class="string">&quot;lz4&quot;
+</span>}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
+<span class="kw">impl</span>&lt;F&gt; Lz4&lt;F&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
 {
-    <span class="doccomment">/// Create an Lz4 wrapped filetype from a basic filetype</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian_filetypes::{lz4_file::Lz4, bin_file::BincodeFile};</span>
-    <span class="doccomment">/// let lz4_bin_file = Lz4::from_filetype(BincodeFile::from(&quot;example&quot;));</span>
-    <span class="doccomment">/// assert_eq!(lz4_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.lz4&quot;));</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_filetype</span>(<span class="ident">source</span>: <span class="ident">F</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::from</span>(<span class="ident">source</span>.<span class="ident">as_ref</span>())
+    <span class="doccomment">/// Create an Lz4 wrapped filetype from a basic filetype
+    /// ```rust
+    /// use martian_filetypes::{lz4_file::Lz4, bin_file::BincodeFile};
+    /// let lz4_bin_file = Lz4::from_filetype(BincodeFile::from(&quot;example&quot;));
+    /// assert_eq!(lz4_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.lz4&quot;));
+    /// ```
+    </span><span class="kw">pub fn </span>from_filetype(source: F) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::from(source.as_ref())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span>&lt;F, T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>Lz4&lt;F&gt; <span class="kw">where </span>F: FileStorage&lt;T&gt; {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+<span class="kw">impl</span>&lt;F, T&gt; FileTypeIO&lt;T&gt; <span class="kw">for </span>Lz4&lt;F&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileTypeIO&lt;T&gt;,
 {
-    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">lz4::Decoder::new</span>(<span class="self">self</span>.<span class="ident">buf_reader</span>()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
-        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::read_from</span>(<span class="ident">decoder</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">ErrorContext::ReadContext</span>(<span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>(), <span class="ident">e</span>.<span class="ident">to_string</span>());
-            <span class="ident">e</span>.<span class="ident">context</span>(<span class="ident">context</span>)
+    <span class="kw">fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
+        <span class="kw">let </span>decoder = lz4::Decoder::new(<span class="self">self</span>.buf_reader()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::read_from(decoder).map_err(|e| {
+            <span class="kw">let </span>context = ErrorContext::ReadContext(<span class="self">self</span>.as_ref().into(), e.to_string());
+            e.context(context)
         })
     }
-    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::read_from</span>(<span class="ident">reader</span>)
+    <span class="kw">fn </span>read_from&lt;R: Read&gt;(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
+        &lt;F <span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::read_from(reader)
     }
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="comment">// Default compression level and configuration</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">lz4::EncoderBuilder::new</span>().<span class="ident">build</span>(<span class="self">self</span>.<span class="ident">buf_writer</span>()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
-        <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::write_into</span>(<span class="kw-2">&amp;mut</span> <span class="ident">encoder</span>, <span class="ident">item</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">ErrorContext::WriteContext</span>(<span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">into</span>(), <span class="ident">e</span>.<span class="ident">to_string</span>());
-            <span class="ident">e</span>.<span class="ident">context</span>(<span class="ident">context</span>)
+    <span class="kw">fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="comment">// Default compression level and configuration
+        </span><span class="kw">let </span><span class="kw-2">mut </span>encoder = lz4::EncoderBuilder::new().build(<span class="self">self</span>.buf_writer()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::write_into(<span class="kw-2">&amp;mut </span>encoder, item).map_err(|e| {
+            <span class="kw">let </span>context = ErrorContext::WriteContext(<span class="self">self</span>.as_ref().into(), e.to_string());
+            e.context(context)
         })<span class="question-mark">?</span>;
-        <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">result</span>) <span class="op">=</span> <span class="ident">encoder</span>.<span class="ident">finish</span>();
-        <span class="prelude-val">Ok</span>(<span class="ident">result</span><span class="question-mark">?</span>)
+        <span class="kw">let </span>(<span class="kw">_</span>, result) = encoder.finish();
+        <span class="prelude-val">Ok</span>(result<span class="question-mark">?</span>)
     }
-    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::write_into</span>(<span class="ident">writer</span>, <span class="ident">item</span>)
+    <span class="kw">fn </span>write_into&lt;W: Write&gt;(writer: W, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        &lt;F <span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::write_into(writer, item)
     }
 }
 
-<span class="doccomment">/// Helper struct to write items one by one into an Lz4 file.</span>
-<span class="doccomment">/// Implements `LazyWrite` trait.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
+<span class="doccomment">/// Helper struct to write items one by one into an Lz4 file.
+/// Implements `LazyWrite` trait.
+</span><span class="kw">pub struct </span>LazyLz4Writer&lt;L, T, W&gt;
+<span class="kw">where
+    </span>L: LazyWrite&lt;T, lz4::Encoder&lt;W&gt;&gt;,
+    W: Write,
 {
-    <span class="ident">inner</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">L</span><span class="op">&gt;</span>,
-    <span class="ident">phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span>(<span class="ident">T</span>, <span class="ident">W</span>)<span class="op">&gt;</span>,
+    inner: <span class="prelude-ty">Option</span>&lt;L&gt;,
+    phantom: PhantomData&lt;(T, W)&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
+<span class="kw">impl</span>&lt;L, T, W&gt; LazyWrite&lt;T, W&gt; <span class="kw">for </span>LazyLz4Writer&lt;L, T, W&gt;
+<span class="kw">where
+    </span>L: LazyWrite&lt;T, lz4::Encoder&lt;W&gt;&gt;,
+    W: Write,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">L::FileType</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="ident">writer</span>: <span class="ident">W</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">lz4::EncoderBuilder::new</span>().<span class="ident">build</span>(<span class="ident">writer</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">L::with_writer</span>(<span class="ident">encoder</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">LazyLz4Writer</span> {
-            <span class="ident">inner</span>: <span class="prelude-val">Some</span>(<span class="ident">inner</span>),
-            <span class="ident">phantom</span>: <span class="ident">PhantomData</span>,
+    <span class="kw">type </span>FileType = Lz4&lt;L::FileType&gt;;
+    <span class="kw">fn </span>with_writer(writer: W) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="kw">let </span>encoder = lz4::EncoderBuilder::new().build(writer)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = L::with_writer(encoder)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(LazyLz4Writer {
+            inner: <span class="prelude-val">Some</span>(inner),
+            phantom: PhantomData,
         })
     }
 
-    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_mut</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">inner</span>) =&gt; <span class="ident">inner</span>.<span class="ident">write_item</span>(<span class="ident">item</span>),
-            <span class="prelude-val">None</span> =&gt; <span class="macro">unreachable!</span>(),
+    <span class="kw">fn </span>write_item(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">match </span><span class="self">self</span>.inner.as_mut() {
+            <span class="prelude-val">Some</span>(inner) =&gt; inner.write_item(item),
+            <span class="prelude-val">None </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">_finished</span>()<span class="question-mark">?</span>.<span class="ident">unwrap</span>())
+    <span class="kw">fn </span>finish(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;W, Error&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>._finished()<span class="question-mark">?</span>.unwrap())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
+<span class="kw">impl</span>&lt;L, T, W&gt; LazyLz4Writer&lt;L, T, W&gt;
+<span class="kw">where
+    </span>L: LazyWrite&lt;T, lz4::Encoder&lt;W&gt;&gt;,
+    W: Write,
 {
-    <span class="kw">fn</span> <span class="ident">_finished</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">take</span>() {
-            <span class="prelude-val">Some</span>(<span class="ident">inner</span>) =&gt; {
-                <span class="kw">let</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-                <span class="kw">let</span> (<span class="ident">writer</span>, <span class="ident">result</span>) <span class="op">=</span> <span class="ident">encoder</span>.<span class="ident">finish</span>(); <span class="comment">// weird API. Why not just return Result&lt;W&gt;?</span>
-                <span class="ident">result</span><span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">writer</span>))
+    <span class="kw">fn </span>_finished(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;W&gt;, Error&gt; {
+        <span class="kw">match </span><span class="self">self</span>.inner.take() {
+            <span class="prelude-val">Some</span>(inner) =&gt; {
+                <span class="kw">let </span>encoder = inner.finish()<span class="question-mark">?</span>;
+                <span class="kw">let </span>(writer, result) = encoder.finish(); <span class="comment">// weird API. Why not just return Result&lt;W&gt;?
+                </span>result<span class="question-mark">?</span>;
+                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(writer))
             }
-            <span class="prelude-val">None</span> =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
+<span class="kw">impl</span>&lt;L, T, W&gt; Drop <span class="kw">for </span>LazyLz4Writer&lt;L, T, W&gt;
+<span class="kw">where
+    </span>L: LazyWrite&lt;T, lz4::Encoder&lt;W&gt;&gt;,
+    W: Write,
 {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="comment">// Use the finish() method to capture the IO error on closing the writers</span>
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">_finished</span>();
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="comment">// Use the finish() method to capture the IO error on closing the writers
+        </span><span class="kw">let _ </span>= <span class="self">self</span>._finished();
     }
 }
 
-<span class="doccomment">/// Iterator over individual items  within an lz4 file that</span>
-<span class="doccomment">/// stores a list of items.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
+<span class="doccomment">/// Iterator over individual items  within an lz4 file that
+/// stores a list of items.
+</span><span class="kw">pub struct </span>LazyLz4Reader&lt;L, T, R&gt;
+<span class="kw">where
+    </span>L: LazyRead&lt;T, lz4::Decoder&lt;R&gt;&gt;,
+    R: Read,
 {
-    <span class="ident">inner</span>: <span class="ident">L</span>,
-    <span class="ident">phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span>(<span class="ident">T</span>, <span class="ident">R</span>)<span class="op">&gt;</span>,
+    inner: L,
+    phantom: PhantomData&lt;(T, R)&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
+<span class="kw">impl</span>&lt;L, T, R&gt; LazyRead&lt;T, R&gt; <span class="kw">for </span>LazyLz4Reader&lt;L, T, R&gt;
+<span class="kw">where
+    </span>L: LazyRead&lt;T, lz4::Decoder&lt;R&gt;&gt;,
+    R: Read,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">L::FileType</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">lz4::Decoder::new</span>(<span class="ident">reader</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">L::with_reader</span>(<span class="ident">decoder</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">LazyLz4Reader</span> {
-            <span class="ident">inner</span>,
-            <span class="ident">phantom</span>: <span class="ident">PhantomData</span>,
+    <span class="kw">type </span>FileType = Lz4&lt;L::FileType&gt;;
+    <span class="kw">fn </span>with_reader(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="kw">let </span>decoder = lz4::Decoder::new(reader)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = L::with_reader(decoder)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(LazyLz4Reader {
+            inner,
+            phantom: PhantomData,
         })
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">L</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">L</span>: <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
+<span class="kw">impl</span>&lt;L, T, R&gt; Iterator <span class="kw">for </span>LazyLz4Reader&lt;L, T, R&gt;
+<span class="kw">where
+    </span>L: LazyRead&lt;T, lz4::Decoder&lt;R&gt;&gt;,
+    R: Read,
 {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Item</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">next</span>()
+    <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;T, Error&gt;;
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+        <span class="self">self</span>.inner.next()
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">F</span>: <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">lz4::Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>, <span class="ident">lz4::Decoder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+<span class="kw">impl</span>&lt;F, T, W, R&gt; LazyAgents&lt;T, W, R&gt; <span class="kw">for </span>Lz4&lt;F&gt;
+<span class="kw">where
+    </span>R: Read,
+    W: Write,
+    F: LazyAgents&lt;T, lz4::Encoder&lt;W&gt;, lz4::Decoder&lt;R&gt;&gt;,
 {
-    <span class="kw">type</span> <span class="ident">LazyWriter</span> <span class="op">=</span> <span class="ident">LazyLz4Writer</span><span class="op">&lt;</span><span class="ident">F::LazyWriter</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">LazyReader</span> <span class="op">=</span> <span class="ident">LazyLz4Reader</span><span class="op">&lt;</span><span class="ident">F::LazyReader</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>;
+    <span class="kw">type </span>LazyWriter = LazyLz4Writer&lt;F::LazyWriter, T, W&gt;;
+    <span class="kw">type </span>LazyReader = LazyLz4Reader&lt;F::LazyReader, T, R&gt;;
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::json_file::JsonFile</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::LazyFileTypeIO</span>;
-    <span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::json_file::JsonFile;
+    <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
+    <span class="kw">use </span>std::path::{Path, PathBuf};
 
-    <span class="macro">martian_derive::martian_filetype!</span> {<span class="ident">CompoundFile</span>, <span class="string">&quot;foo.bar&quot;</span>}
+    <span class="macro">martian_derive::martian_filetype! </span>{CompoundFile, <span class="string">&quot;foo.bar&quot;</span>}
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lz4_new</span>() {
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lz4_new() {
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            <span class="ident">Lz4</span> {
-                <span class="ident">inner</span>: <span class="ident">PhantomData</span>,
-                <span class="ident">path</span>: <span class="ident">PathBuf::from</span>(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Lz4 {
+                inner: PhantomData,
+                path: PathBuf::from(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
             }
         );
 
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json&quot;</span>),
-            <span class="ident">Lz4</span> {
-                <span class="ident">inner</span>: <span class="ident">PhantomData</span>,
-                <span class="ident">path</span>: <span class="ident">PathBuf::from</span>(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json&quot;</span>),
+            Lz4 {
+                inner: PhantomData,
+                path: PathBuf::from(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
             }
         );
 
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file_json&quot;</span>),
-            <span class="ident">Lz4</span> {
-                <span class="ident">inner</span>: <span class="ident">PhantomData</span>,
-                <span class="ident">path</span>: <span class="ident">PathBuf::from</span>(<span class="string">&quot;/some/path/file_json.json.lz4&quot;</span>)
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file_json&quot;</span>),
+            Lz4 {
+                inner: PhantomData,
+                path: PathBuf::from(<span class="string">&quot;/some/path/file_json.json.lz4&quot;</span>)
             }
         );
 
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json.lz4&quot;</span>),
-            <span class="ident">Lz4</span> {
-                <span class="ident">inner</span>: <span class="ident">PhantomData</span>,
-                <span class="ident">path</span>: <span class="ident">PathBuf::from</span>(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json.lz4&quot;</span>),
+            Lz4 {
+                inner: PhantomData,
+                path: PathBuf::from(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
             }
         );
 
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
-            <span class="ident">Lz4</span> {
-                <span class="ident">inner</span>: <span class="ident">PhantomData</span>,
-                <span class="ident">path</span>: <span class="ident">PathBuf::from</span>(<span class="string">&quot;/some/path/file.tmp.json.lz4&quot;</span>)
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
+            Lz4 {
+                inner: PhantomData,
+                path: PathBuf::from(<span class="string">&quot;/some/path/file.tmp.json.lz4&quot;</span>)
             }
         );
 
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>).<span class="ident">as_ref</span>(),
-            <span class="ident">Path::new</span>(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>).as_ref(),
+            Path::new(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lz4_compound_extension</span>() {
-        <span class="macro">assert_eq!</span>(<span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span><span class="ident">::extension</span>(), <span class="string">&quot;foo.bar.lz4&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lz4_compound_extension() {
+        <span class="macro">assert_eq!</span>(Lz4::&lt;CompoundFile&gt;::extension(), <span class="string">&quot;foo.bar.lz4&quot;</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>).<span class="ident">as_ref</span>(),
-            <span class="ident">Path::new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
+            Lz4::&lt;CompoundFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>).as_ref(),
+            Path::new(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo&quot;</span>).<span class="ident">as_ref</span>(),
-            <span class="ident">Path::new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
+            Lz4::&lt;CompoundFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo&quot;</span>).as_ref(),
+            Path::new(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo.bar&quot;</span>).<span class="ident">as_ref</span>(),
-            <span class="ident">Path::new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
+            Lz4::&lt;CompoundFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo.bar&quot;</span>).as_ref(),
+            Path::new(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">CompoundFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo.bar.lz4&quot;</span>).<span class="ident">as_ref</span>(),
-            <span class="ident">Path::new</span>(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
-        );
-    }
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lz4_from</span>() {
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="string">&quot;/some/path/file&quot;</span>)
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="string">&quot;/some/path/file.json&quot;</span>)
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="string">&quot;/some/path/file.tmp.json.lz4&quot;</span>)
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp.json&quot;</span>),
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
+            Lz4::&lt;CompoundFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.foo.bar.lz4&quot;</span>).as_ref(),
+            Path::new(<span class="string">&quot;/some/path/file.foo.bar.lz4&quot;</span>)
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lz4_from_filetype</span>() {
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lz4_from() {
         <span class="macro">assert_eq!</span>(
-            <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            <span class="ident">Lz4::from_filetype</span>(<span class="ident">JsonFile::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>))
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Lz4::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Lz4::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.json&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Lz4::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
+            Lz4::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.tmp.json.lz4&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
+            Lz4::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp.json&quot;</span>),
+            Lz4::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lz4_extension</span>() {
-        <span class="macro">assert_eq!</span>(<span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::extension</span>(), <span class="string">&quot;json.lz4&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lz4_from_filetype() {
+        <span class="macro">assert_eq!</span>(
+            Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Lz4::from_filetype(JsonFile::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>))
+        );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_json_lz4_lazy_write</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">json_file</span> <span class="op">=</span> <span class="ident">JsonFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;file&quot;</span>);
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">Lz4::from_filetype</span>(<span class="ident">json_file</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">10usize</span> {
-            <span class="ident">writer</span>.<span class="ident">write_item</span>(<span class="kw-2">&amp;</span><span class="ident">i</span>)<span class="question-mark">?</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lz4_extension() {
+        <span class="macro">assert_eq!</span>(Lz4::&lt;JsonFile&gt;::extension(), <span class="string">&quot;json.lz4&quot;</span>);
+    }
+
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_json_lz4_lazy_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;file&quot;</span>);
+        <span class="kw">let </span>file = Lz4::from_filetype(json_file);
+        <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer()<span class="question-mark">?</span>;
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10usize </span>{
+            writer.write_item(<span class="kw-2">&amp;</span>i)<span class="question-mark">?</span>;
         }
-        <span class="ident">writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_reader</span>()<span class="question-mark">?</span>;
-        <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">val</span>) <span class="kw">in</span> <span class="ident">reader</span>.<span class="ident">enumerate</span>() {
-            <span class="kw">let</span> <span class="ident">val</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">val</span><span class="question-mark">?</span>;
-            <span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="ident">i</span>);
+        writer.finish()<span class="question-mark">?</span>;
+        <span class="kw">let </span>reader = file.lazy_reader()<span class="question-mark">?</span>;
+        <span class="kw">for </span>(i, val) <span class="kw">in </span>reader.enumerate() {
+            <span class="kw">let </span>val: usize = val<span class="question-mark">?</span>;
+            <span class="macro">assert_eq!</span>(val, i);
         }
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_json_lz4_lazy_write_no_finish</span>() {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;file&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_writer</span>().<span class="ident">unwrap</span>();
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">10</span> {
-            <span class="ident">writer</span>.<span class="ident">write_item</span>(<span class="kw-2">&amp;</span><span class="ident">i</span>).<span class="ident">unwrap</span>();
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_json_lz4_lazy_write_no_finish() {
+        <span class="kw">let </span>dir = tempfile::tempdir().unwrap();
+        <span class="kw">let </span>file = Lz4::&lt;JsonFile&gt;::new(dir.path(), <span class="string">&quot;file&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer().unwrap();
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10 </span>{
+            writer.write_item(<span class="kw-2">&amp;</span>i).unwrap();
         }
-        <span class="ident">drop</span>(<span class="ident">writer</span>);
-        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">lazy_reader</span>().<span class="ident">unwrap</span>();
-        <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">val</span>) <span class="kw">in</span> <span class="ident">reader</span>.<span class="ident">enumerate</span>() {
-            <span class="kw">let</span> <span class="ident">val</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">val</span>.<span class="ident">unwrap</span>();
-            <span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="ident">i</span>);
+        drop(writer);
+        <span class="kw">let </span>reader = file.lazy_reader().unwrap();
+        <span class="kw">for </span>(i, val) <span class="kw">in </span>reader.enumerate() {
+            <span class="kw">let </span>val: usize = val.unwrap();
+            <span class="macro">assert_eq!</span>(val, i);
         }
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_serialize</span>() {
-        <span class="kw">let</span> <span class="ident">lz4_file</span> <span class="op">=</span> <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>);
-        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_serialize() {
+        <span class="kw">let </span>lz4_file = Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>);
+        <span class="kw">let </span>path = PathBuf::from(<span class="string">&quot;/some/path/file.json.lz4&quot;</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">lz4_file</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>).<span class="ident">unwrap</span>()
+            serde_json::to_string(<span class="kw-2">&amp;</span>lz4_file).unwrap(),
+            serde_json::to_string(<span class="kw-2">&amp;</span>path).unwrap()
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_deserialize</span>() {
-        <span class="kw">let</span> <span class="ident">lz4_file</span>: <span class="ident">Lz4</span><span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span> <span class="op">=</span>
-            <span class="ident">serde_json::from_str</span>(<span class="string">r#&quot;&quot;/some/path/file.json.lz4&quot;&quot;#</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">lz4_file</span>, <span class="ident">Lz4</span>::<span class="op">&lt;</span><span class="ident">JsonFile</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_deserialize() {
+        <span class="kw">let </span>lz4_file: Lz4&lt;JsonFile&gt; =
+            serde_json::from_str(<span class="string">r#&quot;&quot;/some/path/file.json.lz4&quot;&quot;#</span>).unwrap();
+        <span class="macro">assert_eq!</span>(lz4_file, Lz4::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>));
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

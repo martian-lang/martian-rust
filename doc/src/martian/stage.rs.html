@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/stage.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>stage.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/stage.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>stage.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -796,803 +796,803 @@
 <span id="796">796</span>
 <span id="797">797</span>
 <span id="798">798</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::metadata::Metadata</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::metadata::Version</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mro</span>::{<span class="ident">MartianStruct</span>, <span class="ident">MroMaker</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::obj_encode</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Error</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rayon&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">rayon::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">serde::de::DeserializeOwned</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">BufReader</span>, <span class="ident">BufWriter</span>};
-<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::metadata::Metadata;
+<span class="kw">use </span><span class="kw">crate</span>::metadata::Version;
+<span class="kw">use </span><span class="kw">crate</span>::mro::{MartianStruct, MroMaker};
+<span class="kw">use </span><span class="kw">crate</span>::utils::obj_encode;
+<span class="kw">use </span><span class="kw">crate</span>::Error;
+<span class="attribute">#[cfg(feature = <span class="string">&quot;rayon&quot;</span>)]
+</span><span class="kw">use </span>rayon::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>serde::de::DeserializeOwned;
+<span class="kw">use </span>serde::{Deserialize, Serialize};
+<span class="kw">use </span>std::fs::File;
+<span class="kw">use </span>std::io::{BufReader, BufWriter};
+<span class="kw">use </span>std::path::{Path, PathBuf};
 
-<span class="doccomment">/// A struct which needs to be used as one of the associated types in `MartianMain` or</span>
-<span class="doccomment">/// `MartianStage` if it is empty. For example, a stage with no chunk inputs, would</span>
-<span class="doccomment">/// set `type ChunkInputs = MartianVoid;`</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MartianVoid</span> {
-    <span class="comment">// Adding a field as a hack so that this can be deserialized</span>
-    <span class="comment">// from the json args object martian creates</span>
-    <span class="ident">__null__</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
+<span class="doccomment">/// A struct which needs to be used as one of the associated types in `MartianMain` or
+/// `MartianStage` if it is empty. For example, a stage with no chunk inputs, would
+/// set `type ChunkInputs = MartianVoid;`
+</span><span class="attribute">#[derive(Clone, Serialize, Deserialize)]
+</span><span class="kw">pub struct </span>MartianVoid {
+    <span class="comment">// Adding a field as a hack so that this can be deserialized
+    // from the json args object martian creates
+    </span>__null__: <span class="prelude-ty">Option</span>&lt;bool&gt;,
 }
 
-<span class="kw">fn</span> <span class="ident">split_file_name</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; (<span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="kw-2">&amp;</span><span class="ident">Path</span>) {
-    <span class="kw">let</span> <span class="ident">file_name</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">file_name</span>().<span class="ident">unwrap</span>();
-    <span class="kw">match</span> <span class="ident">p</span>.<span class="ident">parent</span>() {
-        <span class="prelude-val">Some</span>(<span class="ident">path</span>) =&gt; (<span class="ident">path</span>, <span class="ident">file_name</span>.<span class="ident">as_ref</span>()),
-        <span class="prelude-val">None</span> =&gt; (<span class="string">&quot;&quot;</span>.<span class="ident">as_ref</span>(), <span class="ident">file_name</span>.<span class="ident">as_ref</span>()),
+<span class="kw">fn </span>split_file_name(p: <span class="kw-2">&amp;</span>Path) -&gt; (<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) {
+    <span class="kw">let </span>file_name = p.file_name().unwrap();
+    <span class="kw">match </span>p.parent() {
+        <span class="prelude-val">Some</span>(path) =&gt; (path, file_name.as_ref()),
+        <span class="prelude-val">None </span>=&gt; (<span class="string">&quot;&quot;</span>.as_ref(), file_name.as_ref()),
     }
 }
 
-<span class="doccomment">/// A `MartianFiletype` is associated with a file of know non-empty</span>
-<span class="doccomment">/// extension. This encodes the concept of a `filepath` in martian.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianFileType</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">extension</span>() -&gt; <span class="ident">String</span>;
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span>;
-    <span class="doccomment">/// This function is equivalent to calling `new(p.parent(), p.file_name())`</span>
-    <span class="doccomment">/// except that it handles the case of the path lacking one or the other.</span>
-    <span class="kw">fn</span> <span class="ident">from_path</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">let</span> (<span class="ident">path</span>, <span class="ident">file_name</span>) <span class="op">=</span> <span class="ident">split_file_name</span>(<span class="ident">p</span>);
-        <span class="ident"><span class="self">Self</span>::new</span>(<span class="ident">path</span>, <span class="ident">file_name</span>)
+<span class="doccomment">/// A `MartianFiletype` is associated with a file of know non-empty
+/// extension. This encodes the concept of a `filepath` in martian.
+</span><span class="kw">pub trait </span>MartianFileType: AsRef&lt;Path&gt; + From&lt;PathBuf&gt; {
+    <span class="kw">fn </span>extension() -&gt; String;
+    <span class="kw">fn </span>new(file_path: <span class="kw">impl </span>AsRef&lt;Path&gt;, file_name: <span class="kw">impl </span>AsRef&lt;Path&gt;) -&gt; <span class="self">Self</span>;
+    <span class="doccomment">/// This function is equivalent to calling `new(p.parent(), p.file_name())`
+    /// except that it handles the case of the path lacking one or the other.
+    </span><span class="kw">fn </span>from_path(p: <span class="kw-2">&amp;</span>Path) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>(path, file_name) = split_file_name(p);
+        <span class="self">Self</span>::new(path, file_name)
     }
-    <span class="doccomment">/// This function will create a file if it does not exist, and will truncate it if it does.</span>
-    <span class="kw">fn</span> <span class="ident">buf_writer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">_buf_writer</span>(<span class="ident">ty</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufWriter</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">BufWriter::new</span>(<span class="ident">File::create</span>(<span class="ident">ty</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-                <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">format!</span>(
+    <span class="doccomment">/// This function will create a file if it does not exist, and will truncate it if it does.
+    </span><span class="kw">fn </span>buf_writer(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;BufWriter&lt;File&gt;, Error&gt; {
+        <span class="kw">fn </span>_buf_writer(ty: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;BufWriter&lt;File&gt;, Error&gt; {
+            <span class="prelude-val">Ok</span>(BufWriter::new(File::create(ty).map_err(|e| {
+                <span class="kw">let </span>context = <span class="macro">format!</span>(
                     <span class="string">&quot;Failed to create file &#39;{}&#39; from within MartianType::buf_writer() due to {:?}&quot;</span>,
-                    <span class="ident">ty</span>.<span class="ident">display</span>(),
-                    <span class="ident">e</span>
+                    ty.display(),
+                    e
                 );
-                <span class="ident">Error::new</span>(<span class="ident">e</span>).<span class="ident">context</span>(<span class="ident">context</span>)
+                Error::new(e).context(context)
             })<span class="question-mark">?</span>))
         }
-        <span class="ident">_buf_writer</span>(<span class="self">self</span>.<span class="ident">as_ref</span>())
+        _buf_writer(<span class="self">self</span>.as_ref())
     }
-    <span class="kw">fn</span> <span class="ident">buf_reader</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">_buf_reader</span>(<span class="ident">ty</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">BufReader::new</span>(<span class="ident">File::open</span>(<span class="ident">ty</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-                <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">format!</span>(
+    <span class="kw">fn </span>buf_reader(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;BufReader&lt;File&gt;, Error&gt; {
+        <span class="kw">fn </span>_buf_reader(ty: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;BufReader&lt;File&gt;, Error&gt; {
+            <span class="prelude-val">Ok</span>(BufReader::new(File::open(ty).map_err(|e| {
+                <span class="kw">let </span>context = <span class="macro">format!</span>(
                     <span class="string">&quot;Failed to open file &#39;{}&#39; from within MartianType::buf_reader() due to {:?}&quot;</span>,
-                    <span class="ident">ty</span>.<span class="ident">display</span>(),
-                    <span class="ident">e</span>
+                    ty.display(),
+                    e
                 );
-                <span class="ident">Error::new</span>(<span class="ident">e</span>).<span class="ident">context</span>(<span class="ident">context</span>)
+                Error::new(e).context(context)
             })<span class="question-mark">?</span>))
         }
-        <span class="ident">_buf_reader</span>(<span class="self">self</span>.<span class="ident">as_ref</span>())
+        _buf_reader(<span class="self">self</span>.as_ref())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident"><span class="kw">crate</span>::mro::AsMartianPrimaryType</span> <span class="kw">for</span> <span class="ident">F</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
+<span class="kw">impl</span>&lt;F&gt; <span class="kw">crate</span>::mro::AsMartianPrimaryType <span class="kw">for </span>F
+<span class="kw">where
+    </span>F: MartianFileType,
 {
-    <span class="kw">fn</span> <span class="ident">as_martian_primary_type</span>() -&gt; <span class="ident"><span class="kw">crate</span>::mro::MartianPrimaryType</span> {
-        <span class="ident"><span class="kw">crate</span>::mro::MartianPrimaryType::FileType</span>(<span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">MartianFileType</span><span class="op">&gt;</span><span class="ident">::extension</span>())
+    <span class="kw">fn </span>as_martian_primary_type() -&gt; <span class="kw">crate</span>::mro::MartianPrimaryType {
+        <span class="kw">crate</span>::mro::MartianPrimaryType::FileType(&lt;<span class="self">Self </span><span class="kw">as </span>MartianFileType&gt;::extension())
     }
 }
 
-<span class="doccomment">/// A trait satisfied by objects which can create a `file_name` in a `directory`</span>
-<span class="doccomment">/// with the correct extension if needed. `MartianFiletype`s implement</span>
-<span class="doccomment">/// this trait.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianMakePath</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span>;
+<span class="doccomment">/// A trait satisfied by objects which can create a `file_name` in a `directory`
+/// with the correct extension if needed. `MartianFiletype`s implement
+/// this trait.
+</span><span class="kw">pub trait </span>MartianMakePath {
+    <span class="kw">fn </span>make_path(directory: <span class="kw">impl </span>AsRef&lt;Path&gt;, file_name: <span class="kw">impl </span>AsRef&lt;Path&gt;) -&gt; <span class="self">Self</span>;
 }
 
-<span class="kw">fn</span> <span class="ident">_make_path_buf</span>(<span class="ident">directory</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="ident">file_name</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="ident">PathBuf</span> {
-    <span class="ident">directory</span>.<span class="ident">join</span>(<span class="ident">file_name</span>)
+<span class="kw">fn </span>_make_path_buf(directory: <span class="kw-2">&amp;</span>Path, file_name: <span class="kw-2">&amp;</span>Path) -&gt; PathBuf {
+    directory.join(file_name)
 }
 
-<span class="kw">impl</span> <span class="ident">MartianMakePath</span> <span class="kw">for</span> <span class="ident">PathBuf</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">_make_path_buf</span>(<span class="ident">directory</span>.<span class="ident">as_ref</span>(), <span class="ident">file_name</span>.<span class="ident">as_ref</span>())
+<span class="kw">impl </span>MartianMakePath <span class="kw">for </span>PathBuf {
+    <span class="kw">fn </span>make_path(directory: <span class="kw">impl </span>AsRef&lt;Path&gt;, file_name: <span class="kw">impl </span>AsRef&lt;Path&gt;) -&gt; <span class="self">Self </span>{
+        _make_path_buf(directory.as_ref(), file_name.as_ref())
     }
 }
 
-<span class="kw">impl</span> <span class="ident">MartianMakePath</span> <span class="kw">for</span> <span class="ident">String</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">fn</span> <span class="ident">_make_path</span>(<span class="ident">directory</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="ident">file_name</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="ident">String</span> {
-            <span class="ident">_make_path_buf</span>(<span class="ident">directory</span>, <span class="ident">file_name</span>)
-                .<span class="ident">to_str</span>()
-                .<span class="ident">unwrap</span>()
-                .<span class="ident">to_string</span>()
+<span class="kw">impl </span>MartianMakePath <span class="kw">for </span>String {
+    <span class="kw">fn </span>make_path(directory: <span class="kw">impl </span>AsRef&lt;Path&gt;, file_name: <span class="kw">impl </span>AsRef&lt;Path&gt;) -&gt; <span class="self">Self </span>{
+        <span class="kw">fn </span>_make_path(directory: <span class="kw-2">&amp;</span>Path, file_name: <span class="kw-2">&amp;</span>Path) -&gt; String {
+            _make_path_buf(directory, file_name)
+                .to_str()
+                .unwrap()
+                .to_string()
         }
-        <span class="ident">_make_path</span>(<span class="ident">directory</span>.<span class="ident">as_ref</span>(), <span class="ident">file_name</span>.<span class="ident">as_ref</span>())
+        _make_path(directory.as_ref(), file_name.as_ref())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">MartianFileType</span><span class="op">&gt;</span> <span class="ident">MartianMakePath</span> <span class="kw">for</span> <span class="ident">T</span> {
-    <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
-        <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianFileType</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">directory</span>, <span class="ident">file_name</span>)
+<span class="kw">impl</span>&lt;T: MartianFileType&gt; MartianMakePath <span class="kw">for </span>T {
+    <span class="kw">fn </span>make_path(directory: <span class="kw">impl </span>AsRef&lt;Path&gt;, file_name: <span class="kw">impl </span>AsRef&lt;Path&gt;) -&gt; <span class="self">Self </span>{
+        &lt;T <span class="kw">as </span>MartianFileType&gt;::new(directory, file_name)
     }
 }
 
-<span class="doccomment">/// Memory and threads reservations for a stage.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Memory/ thread request can be negative in matrian. See</span>
-<span class="doccomment">/// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Default</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Resource</span> {
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;__mem_gb&quot;</span>)]</span>
-    <span class="ident">mem_gb</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;__threads&quot;</span>)]</span>
-    <span class="ident">threads</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;__vmem_gb&quot;</span>)]</span>
-    <span class="ident">vmem_gb</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span>,
+<span class="doccomment">/// Memory and threads reservations for a stage.
+///
+/// Memory/ thread request can be negative in matrian. See
+/// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)
+</span><span class="attribute">#[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
+</span><span class="kw">pub struct </span>Resource {
+    <span class="attribute">#[serde(rename = <span class="string">&quot;__mem_gb&quot;</span>)]
+    </span>mem_gb: <span class="prelude-ty">Option</span>&lt;isize&gt;,
+    <span class="attribute">#[serde(rename = <span class="string">&quot;__threads&quot;</span>)]
+    </span>threads: <span class="prelude-ty">Option</span>&lt;isize&gt;,
+    <span class="attribute">#[serde(rename = <span class="string">&quot;__vmem_gb&quot;</span>)]
+    </span>vmem_gb: <span class="prelude-ty">Option</span>&lt;isize&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">Resource</span> {
-    <span class="doccomment">/// Create a new resource with default reservation</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This sets all the fields to `None`. The default reservation is</span>
-    <span class="doccomment">/// controlled by the [jobmanager config](https://github.com/martian-lang/martian/blob/master/jobmanagers/config.json).</span>
-    <span class="doccomment">/// As of Martian 3.2 the default reservation is:</span>
-    <span class="doccomment">/// - `mem_gb`: 1</span>
-    <span class="doccomment">/// - `threads`: 1</span>
-    <span class="doccomment">/// - `vmem_gb`: `mem_gb` + 3</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian::Resource;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let resource = Resource::new();</span>
-    <span class="doccomment">/// assert_eq!(resource.get_mem_gb(), None);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident">Resource::default</span>()
+<span class="kw">impl </span>Resource {
+    <span class="doccomment">/// Create a new resource with default reservation
+    ///
+    /// This sets all the fields to `None`. The default reservation is
+    /// controlled by the [jobmanager config](https://github.com/martian-lang/martian/blob/master/jobmanagers/config.json).
+    /// As of Martian 3.2 the default reservation is:
+    /// - `mem_gb`: 1
+    /// - `threads`: 1
+    /// - `vmem_gb`: `mem_gb` + 3
+    ///
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new();
+    /// assert_eq!(resource.get_mem_gb(), None);
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        Resource::default()
     }
 
-    <span class="doccomment">/// Get the mem_gb</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">mem_gb</span>
+    <span class="doccomment">/// Get the mem_gb
+    </span><span class="kw">pub fn </span>get_mem_gb(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;isize&gt; {
+        <span class="self">self</span>.mem_gb
     }
 
-    <span class="doccomment">/// Get the vmem_gb</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vmem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">vmem_gb</span>
+    <span class="doccomment">/// Get the vmem_gb
+    </span><span class="kw">pub fn </span>get_vmem_gb(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;isize&gt; {
+        <span class="self">self</span>.vmem_gb
     }
 
-    <span class="doccomment">/// Get the threads</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">threads</span>
+    <span class="doccomment">/// Get the threads
+    </span><span class="kw">pub fn </span>get_threads(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;isize&gt; {
+        <span class="self">self</span>.threads
     }
 
-    <span class="doccomment">/// Set the mem_gb</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian::Resource;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let resource = Resource::new().mem_gb(2);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_mem_gb(), Some(2));</span>
-    <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mem_gb</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">mem_gb</span>: <span class="ident">isize</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">self</span>.<span class="ident">mem_gb</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">mem_gb</span>);
-        <span class="self">self</span>
-    }
+    <span class="doccomment">/// Set the mem_gb
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2);
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
+    </span><span class="kw">pub fn </span>mem_gb(<span class="kw-2">mut </span><span class="self">self</span>, mem_gb: isize) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.mem_gb = <span class="prelude-val">Some</span>(mem_gb);
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Set the threads</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian::Resource;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let resource = Resource::new().mem_gb(2).threads(4);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_mem_gb(), Some(2));</span>
-    <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_threads(), Some(4));</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">threads</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">threads</span>: <span class="ident">isize</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">self</span>.<span class="ident">threads</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">threads</span>);
-        <span class="self">self</span>
-    }
+    <span class="doccomment">/// Set the threads
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2).threads(4);
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), Some(4));
+    /// ```
+    </span><span class="kw">pub fn </span>threads(<span class="kw-2">mut </span><span class="self">self</span>, threads: isize) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.threads = <span class="prelude-val">Some</span>(threads);
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Set the vmem_gb</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian::Resource;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let resource = Resource::new().mem_gb(2).vmem_gb(4);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_mem_gb(), Some(2));</span>
-    <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), Some(4));</span>
-    <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vmem_gb</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">vmem_gb</span>: <span class="ident">isize</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">self</span>.<span class="ident">vmem_gb</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">vmem_gb</span>);
-        <span class="self">self</span>
-    }
+    <span class="doccomment">/// Set the vmem_gb
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2).vmem_gb(4);
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), Some(4));
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
+    </span><span class="kw">pub fn </span>vmem_gb(<span class="kw-2">mut </span><span class="self">self</span>, vmem_gb: isize) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.vmem_gb = <span class="prelude-val">Some</span>(vmem_gb);
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Create a resource with the specified `mem_gb`. `vmem_gb` and</span>
-    <span class="doccomment">/// `threads` are set to None.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian::Resource;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let resource = Resource::with_mem_gb(-2); // Same as Resource::new().mem_gb(-2);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_mem_gb(), Some(-2));</span>
-    <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_threads(), None);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_mem_gb</span>(<span class="ident">mem_gb</span>: <span class="ident">isize</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">Resource</span> {
-            <span class="ident">mem_gb</span>: <span class="prelude-val">Some</span>(<span class="ident">mem_gb</span>),
-            <span class="ident">threads</span>: <span class="prelude-val">None</span>,
-            <span class="ident">vmem_gb</span>: <span class="prelude-val">None</span>,
-        }
-    }
-
-    <span class="doccomment">/// Create a resource with the specified `threads`. `mem_gb` and</span>
-    <span class="doccomment">/// `vmem_gb` are set to None.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian::Resource;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let resource = Resource::with_threads(4); // Same as Resource::new().threads(4);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_mem_gb(), None);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_vmem_gb(), None);</span>
-    <span class="doccomment">/// assert_eq!(resource.get_threads(), Some(4));</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_threads</span>(<span class="ident">threads</span>: <span class="ident">isize</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">Resource</span> {
-            <span class="ident">mem_gb</span>: <span class="prelude-val">None</span>,
-            <span class="ident">threads</span>: <span class="prelude-val">Some</span>(<span class="ident">threads</span>),
-            <span class="ident">vmem_gb</span>: <span class="prelude-val">None</span>,
+    <span class="doccomment">/// Create a resource with the specified `mem_gb`. `vmem_gb` and
+    /// `threads` are set to None.
+    ///
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::with_mem_gb(-2); // Same as Resource::new().mem_gb(-2);
+    /// assert_eq!(resource.get_mem_gb(), Some(-2));
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), None);
+    /// ```
+    </span><span class="kw">pub fn </span>with_mem_gb(mem_gb: isize) -&gt; <span class="self">Self </span>{
+        Resource {
+            mem_gb: <span class="prelude-val">Some</span>(mem_gb),
+            threads: <span class="prelude-val">None</span>,
+            vmem_gb: <span class="prelude-val">None</span>,
         }
     }
-}
 
-<span class="comment">// Definition of a chunk which contains the inputs to the</span>
-<span class="comment">// chunk as well as the resource allocation.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">struct</span> <span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
-    <span class="ident">inputs</span>: <span class="ident">T</span>,
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
-    <span class="ident">resource</span>: <span class="ident">Resource</span>,
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="comment">// Create a ChunkDef from its inputs.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">inputs</span>: <span class="ident">T</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">ChunkDef</span> {
-            <span class="ident">inputs</span>,
-            <span class="ident">resource</span>: <span class="ident">Resource::default</span>(),
+    <span class="doccomment">/// Create a resource with the specified `threads`. `mem_gb` and
+    /// `vmem_gb` are set to None.
+    ///
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::with_threads(4); // Same as Resource::new().threads(4);
+    /// assert_eq!(resource.get_mem_gb(), None);
+    /// assert_eq!(resource.get_vmem_gb(), None);
+    /// assert_eq!(resource.get_threads(), Some(4));
+    /// ```
+    </span><span class="kw">pub fn </span>with_threads(threads: isize) -&gt; <span class="self">Self </span>{
+        Resource {
+            mem_gb: <span class="prelude-val">None</span>,
+            threads: <span class="prelude-val">Some</span>(threads),
+            vmem_gb: <span class="prelude-val">None</span>,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">T</span>, <span class="ident">Resource</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="comment">// Create a ChunkDef from its inputs and resource.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>((<span class="ident">inputs</span>, <span class="ident">resource</span>): (<span class="ident">T</span>, <span class="ident">Resource</span>)) -&gt; <span class="self">Self</span> {
-        <span class="ident">ChunkDef</span> { <span class="ident">inputs</span>, <span class="ident">resource</span> }
+<span class="comment">// Definition of a chunk which contains the inputs to the
+// chunk as well as the resource allocation.
+</span><span class="attribute">#[derive(Debug, Serialize, Deserialize)]
+</span><span class="kw">struct </span>ChunkDef&lt;T&gt; {
+    <span class="attribute">#[serde(flatten)]
+    </span>inputs: T,
+    <span class="attribute">#[serde(flatten)]
+    </span>resource: Resource,
+}
+
+<span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>ChunkDef&lt;T&gt; {
+    <span class="comment">// Create a ChunkDef from its inputs.
+    </span><span class="kw">fn </span>from(inputs: T) -&gt; <span class="self">Self </span>{
+        ChunkDef {
+            inputs,
+            resource: Resource::default(),
+        }
     }
 }
 
-<span class="doccomment">/// All the chunks in the stage (with their inputs &amp; resource)</span>
-<span class="doccomment">/// along with the join resource. This needs to be constructed</span>
-<span class="doccomment">/// in the `split()` function, so that martian can create chunks</span>
-<span class="doccomment">/// appropriately and set resource reservations for `main()` and</span>
-<span class="doccomment">/// `join()`</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Take a look at the `split()` function [here for a concrete example.](https://github.com/martian-lang/martian-rust/blob/master/martian-lab/examples/sum_sq/src/sum_squares.rs#L61)</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// `StageDef` is generic over type `T` which is the type of `ChunkInputs`</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// the toy example below constructs 100 chunks.</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// use martian::prelude::*;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// struct ChunkInputs {</span>
-<span class="doccomment">///     chunk_id: usize,</span>
-<span class="doccomment">/// }</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// let join_resource = Resource::new().mem_gb(16).threads(4); //</span>
-<span class="doccomment">/// let mut stage_def = StageDef::with_join_resource(join_resource);</span>
-<span class="doccomment">/// // You can use StageDef::new() for default join resource allocation</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// for chunk_id in 0..100 {</span>
-<span class="doccomment">///    let chunk_inputs = ChunkInputs { chunk_id };</span>
-<span class="doccomment">///    let chunk_resource = Resource::with_mem_gb(3); // Could be a function of chunk inputs</span>
-<span class="doccomment">///    stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource);</span>
-<span class="doccomment">///    // You can use stage_def.add_chunk(chunk_inputs) for default chunk resource allocation</span>
-<span class="doccomment">/// }</span>
-<span class="doccomment">/// ```</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">chunks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;join&quot;</span>)]</span>
-    <span class="ident">join_resource</span>: <span class="ident">Resource</span>,
+<span class="kw">impl</span>&lt;T&gt; From&lt;(T, Resource)&gt; <span class="kw">for </span>ChunkDef&lt;T&gt; {
+    <span class="comment">// Create a ChunkDef from its inputs and resource.
+    </span><span class="kw">fn </span>from((inputs, resource): (T, Resource)) -&gt; <span class="self">Self </span>{
+        ChunkDef { inputs, resource }
+    }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Create a new `StageDef` with no chunks and default join resource.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident">StageDef</span> {
-            <span class="ident">chunks</span>: <span class="ident">Vec::new</span>(),
-            <span class="ident">join_resource</span>: <span class="ident">Resource::default</span>(),
+<span class="doccomment">/// All the chunks in the stage (with their inputs &amp; resource)
+/// along with the join resource. This needs to be constructed
+/// in the `split()` function, so that martian can create chunks
+/// appropriately and set resource reservations for `main()` and
+/// `join()`
+///
+/// Take a look at the `split()` function [here for a concrete example.](https://github.com/martian-lang/martian-rust/blob/master/martian-lab/examples/sum_sq/src/sum_squares.rs#L61)
+///
+/// `StageDef` is generic over type `T` which is the type of `ChunkInputs`
+///
+/// the toy example below constructs 100 chunks.
+/// ```rust
+/// use martian::prelude::*;
+///
+/// struct ChunkInputs {
+///     chunk_id: usize,
+/// }
+///
+/// let join_resource = Resource::new().mem_gb(16).threads(4); //
+/// let mut stage_def = StageDef::with_join_resource(join_resource);
+/// // You can use StageDef::new() for default join resource allocation
+///
+/// for chunk_id in 0..100 {
+///    let chunk_inputs = ChunkInputs { chunk_id };
+///    let chunk_resource = Resource::with_mem_gb(3); // Could be a function of chunk inputs
+///    stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource);
+///    // You can use stage_def.add_chunk(chunk_inputs) for default chunk resource allocation
+/// }
+/// ```
+</span><span class="attribute">#[derive(Debug, Default, Serialize, Deserialize)]
+</span><span class="kw">pub struct </span>StageDef&lt;T&gt; {
+    chunks: Vec&lt;ChunkDef&lt;T&gt;&gt;,
+    <span class="attribute">#[serde(rename = <span class="string">&quot;join&quot;</span>)]
+    </span>join_resource: Resource,
+}
+
+<span class="kw">impl</span>&lt;T&gt; StageDef&lt;T&gt; {
+    <span class="doccomment">/// Create a new `StageDef` with no chunks and default join resource.
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        StageDef {
+            chunks: Vec::new(),
+            join_resource: Resource::default(),
         }
     }
 
-    <span class="doccomment">/// Create a new `StageDef` with no chunks and the specified join resource.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_join_resource</span>(<span class="ident">join_resource</span>: <span class="ident">Resource</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">StageDef</span> {
-            <span class="ident">chunks</span>: <span class="ident">Vec::new</span>(),
-            <span class="ident">join_resource</span>,
+    <span class="doccomment">/// Create a new `StageDef` with no chunks and the specified join resource.
+    </span><span class="kw">pub fn </span>with_join_resource(join_resource: Resource) -&gt; <span class="self">Self </span>{
+        StageDef {
+            chunks: Vec::new(),
+            join_resource,
         }
     }
 
-    <span class="doccomment">/// Add a chunk to the `StageDef` with the given inputs and</span>
-    <span class="doccomment">/// default resource reservations.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_chunk</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">inputs</span>: <span class="ident">T</span>) {
-        <span class="kw">let</span> <span class="ident">chunk_def</span> <span class="op">=</span> <span class="ident">ChunkDef</span> {
-            <span class="ident">inputs</span>,
-            <span class="ident">resource</span>: <span class="ident">Resource::default</span>(),
+    <span class="doccomment">/// Add a chunk to the `StageDef` with the given inputs and
+    /// default resource reservations.
+    </span><span class="kw">pub fn </span>add_chunk(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inputs: T) {
+        <span class="kw">let </span>chunk_def = ChunkDef {
+            inputs,
+            resource: Resource::default(),
         };
-        <span class="self">self</span>.<span class="ident">chunks</span>.<span class="ident">push</span>(<span class="ident">chunk_def</span>);
+        <span class="self">self</span>.chunks.push(chunk_def);
     }
 
-    <span class="doccomment">/// Add a chunk to the `StageDef` with the given inputs and</span>
-    <span class="doccomment">/// resource reservations.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_chunk_with_resource</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">inputs</span>: <span class="ident">T</span>, <span class="ident">resource</span>: <span class="ident">Resource</span>) {
-        <span class="kw">let</span> <span class="ident">chunk_def</span> <span class="op">=</span> <span class="ident">ChunkDef</span> { <span class="ident">inputs</span>, <span class="ident">resource</span> };
-        <span class="self">self</span>.<span class="ident">chunks</span>.<span class="ident">push</span>(<span class="ident">chunk_def</span>);
+    <span class="doccomment">/// Add a chunk to the `StageDef` with the given inputs and
+    /// resource reservations.
+    </span><span class="kw">pub fn </span>add_chunk_with_resource(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inputs: T, resource: Resource) {
+        <span class="kw">let </span>chunk_def = ChunkDef { inputs, resource };
+        <span class="self">self</span>.chunks.push(chunk_def);
     }
 
-    <span class="doccomment">/// Set the join resource.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">join_resource</span>(<span class="self">self</span>, <span class="ident">join_resource</span>: <span class="ident">Resource</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">join_resource</span>,
-            ..<span class="self">self</span>
+    <span class="doccomment">/// Set the join resource.
+    </span><span class="kw">pub fn </span>join_resource(<span class="self">self</span>, join_resource: Resource) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            join_resource,
+            ..<span class="self">self
+        </span>}
+    }
+
+    <span class="doccomment">/// Set the join resource.
+    </span><span class="attribute">#[deprecated(since = <span class="string">&quot;0.26.0&quot;</span>, note = <span class="string">&quot;use `join_resource` instead&quot;</span>)]
+    </span><span class="kw">pub fn </span>set_join_resource(<span class="kw-2">&amp;mut </span><span class="self">self</span>, join_resource: Resource) {
+        <span class="self">self</span>.join_resource = join_resource;
+    }
+}
+
+<span class="kw">impl</span>&lt;T&gt; Extend&lt;T&gt; <span class="kw">for </span>StageDef&lt;T&gt; {
+    <span class="doccomment">/// Add chunks to this StageDef.
+    </span><span class="kw">fn </span>extend&lt;I: IntoIterator&lt;Item = T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
+        <span class="self">self</span>.chunks.extend(iter.into_iter().map(ChunkDef::from))
+    }
+}
+
+<span class="kw">impl</span>&lt;T&gt; Extend&lt;(T, Resource)&gt; <span class="kw">for </span>StageDef&lt;T&gt; {
+    <span class="doccomment">/// Add chunks with resources to this StageDef.
+    </span><span class="kw">fn </span>extend&lt;I: IntoIterator&lt;Item = (T, Resource)&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
+        <span class="self">self</span>.chunks.extend(iter.into_iter().map(ChunkDef::from));
+    }
+}
+
+<span class="kw">impl</span>&lt;T&gt; FromIterator&lt;T&gt; <span class="kw">for </span>StageDef&lt;T&gt; {
+    <span class="doccomment">/// Construct a StageDef from an iterator of chunks.
+    </span><span class="kw">fn </span>from_iter&lt;I: IntoIterator&lt;Item = T&gt;&gt;(iter: I) -&gt; StageDef&lt;T&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>stagedef = StageDef::new();
+        stagedef.extend(iter);
+        stagedef
+    }
+}
+
+<span class="kw">impl</span>&lt;T&gt; FromIterator&lt;(T, Resource)&gt; <span class="kw">for </span>StageDef&lt;T&gt; {
+    <span class="doccomment">/// Construct a StageDef from an iterator of chunks and resources.
+    </span><span class="kw">fn </span>from_iter&lt;I: IntoIterator&lt;Item = (T, Resource)&gt;&gt;(iter: I) -&gt; StageDef&lt;T&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>stagedef = StageDef::new();
+        stagedef.extend(iter);
+        stagedef
+    }
+}
+
+<span class="doccomment">/// A struct that knows about the files directory associated with the
+/// martian run as well as the actual resources available for you.
+</span><span class="kw">pub struct </span>MartianRover {
+    files_path: PathBuf,
+    mem_gb: usize,
+    threads: usize,
+    vmem_gb: usize,
+    version: Version,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Metadata&gt; <span class="kw">for </span>MartianRover {
+    <span class="kw">fn </span>from(md: <span class="kw-2">&amp;</span>Metadata) -&gt; MartianRover {
+        MartianRover {
+            files_path: PathBuf::from(<span class="kw-2">&amp;</span>md.files_path),
+            mem_gb: md.jobinfo.mem_gb,
+            threads: md.jobinfo.threads,
+            vmem_gb: md.jobinfo.vmem_gb,
+            version: md.jobinfo.version.clone(),
         }
     }
+}
 
-    <span class="doccomment">/// Set the join resource.</span>
-    <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">since</span> <span class="op">=</span> <span class="string">&quot;0.26.0&quot;</span>, <span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;use `join_resource` instead&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_join_resource</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">join_resource</span>: <span class="ident">Resource</span>) {
-        <span class="self">self</span>.<span class="ident">join_resource</span> <span class="op">=</span> <span class="ident">join_resource</span>;
+<span class="kw">impl </span>MartianRover {
+    <span class="doccomment">/// Create a new martian rover with the files path and the resources
+    /// Rover needs to know the resources explicitly, so none of the
+    /// resource fields shoulbd be empty when invoking this function.
+    </span><span class="kw">pub fn </span>new(files_path: <span class="kw">impl </span>AsRef&lt;Path&gt;, resource: Resource) -&gt; <span class="self">Self </span>{
+        MartianRover::_new(files_path.as_ref(), resource)
     }
-}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Add chunks to this StageDef.</span>
-    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">iter</span>: <span class="ident">I</span>) {
-        <span class="self">self</span>.<span class="ident">chunks</span>.<span class="ident">extend</span>(<span class="ident">iter</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="ident">ChunkDef::from</span>))
-    }
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span>(<span class="ident">T</span>, <span class="ident">Resource</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Add chunks with resources to this StageDef.</span>
-    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">T</span>, <span class="ident">Resource</span>)<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">iter</span>: <span class="ident">I</span>) {
-        <span class="self">self</span>.<span class="ident">chunks</span>.<span class="ident">extend</span>(<span class="ident">iter</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="ident">ChunkDef::from</span>));
-    }
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FromIterator</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Construct a StageDef from an iterator of chunks.</span>
-    <span class="kw">fn</span> <span class="ident">from_iter</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) -&gt; <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stagedef</span> <span class="op">=</span> <span class="ident">StageDef::new</span>();
-        <span class="ident">stagedef</span>.<span class="ident">extend</span>(<span class="ident">iter</span>);
-        <span class="ident">stagedef</span>
-    }
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FromIterator</span><span class="op">&lt;</span>(<span class="ident">T</span>, <span class="ident">Resource</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Construct a StageDef from an iterator of chunks and resources.</span>
-    <span class="kw">fn</span> <span class="ident">from_iter</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">T</span>, <span class="ident">Resource</span>)<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) -&gt; <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stagedef</span> <span class="op">=</span> <span class="ident">StageDef::new</span>();
-        <span class="ident">stagedef</span>.<span class="ident">extend</span>(<span class="ident">iter</span>);
-        <span class="ident">stagedef</span>
-    }
-}
-
-<span class="doccomment">/// A struct that knows about the files directory associated with the</span>
-<span class="doccomment">/// martian run as well as the actual resources available for you.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MartianRover</span> {
-    <span class="ident">files_path</span>: <span class="ident">PathBuf</span>,
-    <span class="ident">mem_gb</span>: <span class="ident">usize</span>,
-    <span class="ident">threads</span>: <span class="ident">usize</span>,
-    <span class="ident">vmem_gb</span>: <span class="ident">usize</span>,
-    <span class="ident">version</span>: <span class="ident">Version</span>,
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Metadata</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">MartianRover</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">md</span>: <span class="kw-2">&amp;</span><span class="ident">Metadata</span>) -&gt; <span class="ident">MartianRover</span> {
-        <span class="ident">MartianRover</span> {
-            <span class="ident">files_path</span>: <span class="ident">PathBuf::from</span>(<span class="kw-2">&amp;</span><span class="ident">md</span>.<span class="ident">files_path</span>),
-            <span class="ident">mem_gb</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">mem_gb</span>,
-            <span class="ident">threads</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">threads</span>,
-            <span class="ident">vmem_gb</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">vmem_gb</span>,
-            <span class="ident">version</span>: <span class="ident">md</span>.<span class="ident">jobinfo</span>.<span class="ident">version</span>.<span class="ident">clone</span>(),
+    <span class="kw">fn </span>_new(files_path: <span class="kw-2">&amp;</span>Path, resource: Resource) -&gt; <span class="self">Self </span>{
+        <span class="comment">// Resource should both be full populated before creating a rover
+        </span><span class="macro">assert!</span>(resource.mem_gb.is_some());
+        <span class="macro">assert!</span>(resource.mem_gb.unwrap() &gt;= <span class="number">0</span>);
+        <span class="macro">assert!</span>(resource.threads.is_some());
+        <span class="macro">assert!</span>(resource.threads.unwrap() &gt;= <span class="number">0</span>);
+        <span class="macro">assert!</span>(resource.vmem_gb.is_some());
+        <span class="macro">assert!</span>(resource.vmem_gb.unwrap() &gt;= <span class="number">0</span>);
+        MartianRover {
+            files_path: PathBuf::from(files_path),
+            mem_gb: resource.mem_gb.unwrap() <span class="kw">as </span>usize,
+            threads: resource.threads.unwrap() <span class="kw">as </span>usize,
+            vmem_gb: resource.vmem_gb.unwrap() <span class="kw">as </span>usize,
+            version: Version::default(),
         }
     }
-}
-
-<span class="kw">impl</span> <span class="ident">MartianRover</span> {
-    <span class="doccomment">/// Create a new martian rover with the files path and the resources</span>
-    <span class="doccomment">/// Rover needs to know the resources explicitly, so none of the</span>
-    <span class="doccomment">/// resource fields shoulbd be empty when invoking this function.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">files_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">resource</span>: <span class="ident">Resource</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">MartianRover::_new</span>(<span class="ident">files_path</span>.<span class="ident">as_ref</span>(), <span class="ident">resource</span>)
-    }
-
-    <span class="kw">fn</span> <span class="ident">_new</span>(<span class="ident">files_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="ident">resource</span>: <span class="ident">Resource</span>) -&gt; <span class="self">Self</span> {
-        <span class="comment">// Resource should both be full populated before creating a rover</span>
-        <span class="macro">assert!</span>(<span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">is_some</span>());
-        <span class="macro">assert!</span>(<span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">unwrap</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span>);
-        <span class="macro">assert!</span>(<span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">is_some</span>());
-        <span class="macro">assert!</span>(<span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">unwrap</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span>);
-        <span class="macro">assert!</span>(<span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">is_some</span>());
-        <span class="macro">assert!</span>(<span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">unwrap</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span>);
-        <span class="ident">MartianRover</span> {
-            <span class="ident">files_path</span>: <span class="ident">PathBuf::from</span>(<span class="ident">files_path</span>),
-            <span class="ident">mem_gb</span>: <span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>,
-            <span class="ident">threads</span>: <span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>,
-            <span class="ident">vmem_gb</span>: <span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>,
-            <span class="ident">version</span>: <span class="ident">Version::default</span>(),
-        }
-    }
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Create a file in the `files` directory associated with the run. The correct</span>
-    <span class="doccomment">/// extension is added depending on the return type.</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// use martian::{MartianRover, Resource};</span>
-    <span class="doccomment">/// use std::path::{Path, PathBuf};</span>
-    <span class="doccomment">/// let resource = Resource::new().mem_gb(2).threads(1).vmem_gb(5);</span>
-    <span class="doccomment">/// let rover = MartianRover::new(&quot;/some/path&quot;, resource);</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// // Note: The right extension is added for types which implement</span>
-    <span class="doccomment">/// // `MartianFileType` trait.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// // You can also create a file with a custom name by using a</span>
-    <span class="doccomment">/// // PathBuf (preferred) or a String</span>
-    <span class="doccomment">/// let path_name: PathBuf = rover.make_path(&quot;bar.lz4&quot;);</span>
-    <span class="doccomment">/// assert_eq!(path_name.as_path(), Path::new(&quot;/some/path/bar.lz4&quot;));</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let file_name: String = rover.make_path(&quot;wl.txt&quot;); // NOT Recommended. Prefer a PathBuf.</span>
-    <span class="doccomment">/// assert_eq!(file_name, String::from(&quot;/some/path/wl.txt&quot;));</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">filename</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="ident">T</span>
-    <span class="kw">where</span>
-        <span class="ident">T</span>: <span class="ident">MartianMakePath</span>,
+    <span class="doccomment">///
+    /// Create a file in the `files` directory associated with the run. The correct
+    /// extension is added depending on the return type.
+    /// ```rust
+    /// use martian::{MartianRover, Resource};
+    /// use std::path::{Path, PathBuf};
+    /// let resource = Resource::new().mem_gb(2).threads(1).vmem_gb(5);
+    /// let rover = MartianRover::new(&quot;/some/path&quot;, resource);
+    ///
+    /// // Note: The right extension is added for types which implement
+    /// // `MartianFileType` trait.
+    ///
+    /// // You can also create a file with a custom name by using a
+    /// // PathBuf (preferred) or a String
+    /// let path_name: PathBuf = rover.make_path(&quot;bar.lz4&quot;);
+    /// assert_eq!(path_name.as_path(), Path::new(&quot;/some/path/bar.lz4&quot;));
+    ///
+    /// let file_name: String = rover.make_path(&quot;wl.txt&quot;); // NOT Recommended. Prefer a PathBuf.
+    /// assert_eq!(file_name, String::from(&quot;/some/path/wl.txt&quot;));
+    /// ```
+    </span><span class="kw">pub fn </span>make_path&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, filename: <span class="kw">impl </span>AsRef&lt;Path&gt;) -&gt; T
+    <span class="kw">where
+        </span>T: MartianMakePath,
     {
-        <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMakePath</span><span class="op">&gt;</span><span class="ident">::make_path</span>(<span class="self">self</span>.<span class="ident">files_path</span>.<span class="ident">as_path</span>(), <span class="ident">filename</span>.<span class="ident">as_ref</span>())
+        &lt;T <span class="kw">as </span>MartianMakePath&gt;::make_path(<span class="self">self</span>.files_path.as_path(), filename.as_ref())
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="ident">mem_gb</span>
+    <span class="kw">pub fn </span>get_mem_gb(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.mem_gb
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_threads</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="ident">threads</span>
+    <span class="kw">pub fn </span>get_threads(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.threads
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vmem_gb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="ident">vmem_gb</span>
+    <span class="kw">pub fn </span>get_vmem_gb(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.vmem_gb
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">files_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Path</span> {
-        <span class="self">self</span>.<span class="ident">files_path</span>.<span class="ident">as_path</span>()
+    <span class="kw">pub fn </span>files_path(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Path {
+        <span class="self">self</span>.files_path.as_path()
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">martian_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="ident">version</span>.<span class="ident">martian</span>.<span class="ident">clone</span>()
+    <span class="kw">pub fn </span>martian_version(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+        <span class="self">self</span>.version.martian.clone()
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pipelines_version</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="ident">version</span>.<span class="ident">pipelines</span>.<span class="ident">clone</span>()
+    <span class="kw">pub fn </span>pipelines_version(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+        <span class="self">self</span>.version.pipelines.clone()
     }
 }
 
-<span class="doccomment">/// Two different kinds of marian stages. `MainOnly` stages only have a</span>
-<span class="doccomment">/// `main()` function whereas `WithSplit` stages have `split()` and `join()` too.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// `MartianStage` trait has a default implementation for the function `stage_kind()`</span>
-<span class="doccomment">/// which returns `StageKind::WithSplit`. `MartianMain` trait overrides this to return</span>
-<span class="doccomment">/// `StageKind::MainOnly`. This enum exists so that one can determine whether a stage object</span>
-<span class="doccomment">/// implements `MartianMain` or `MartianStage`</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">StageKind</span> {
-    <span class="doccomment">/// Stage with only a `main()` function</span>
-    <span class="ident">MainOnly</span>,
-    <span class="doccomment">/// Stage with `split()`, `main()` and `join()` functions</span>
-    <span class="ident">WithSplit</span>,
+<span class="doccomment">/// Two different kinds of marian stages. `MainOnly` stages only have a
+/// `main()` function whereas `WithSplit` stages have `split()` and `join()` too.
+///
+/// `MartianStage` trait has a default implementation for the function `stage_kind()`
+/// which returns `StageKind::WithSplit`. `MartianMain` trait overrides this to return
+/// `StageKind::MainOnly`. This enum exists so that one can determine whether a stage object
+/// implements `MartianMain` or `MartianStage`
+</span><span class="attribute">#[derive(Debug)]
+</span><span class="kw">pub enum </span>StageKind {
+    <span class="doccomment">/// Stage with only a `main()` function
+    </span>MainOnly,
+    <span class="doccomment">/// Stage with `split()`, `main()` and `join()` functions
+    </span>WithSplit,
 }
 
-<span class="doccomment">/// A stage in martian with just the main function.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// For a toy example, see: [https://martian-lang.github.io/martian-rust/#/content/quick_start](https://martian-lang.github.io/martian-rust/#/content/quick_start)</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianMain</span>: <span class="ident">MroMaker</span> {
-    <span class="kw">type</span> <span class="ident">StageInputs</span>: <span class="ident">DeserializeOwned</span> <span class="op">+</span> <span class="ident">MartianStruct</span>;
-    <span class="kw">type</span> <span class="ident">StageOutputs</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> <span class="op">+</span> <span class="ident">MartianStruct</span>;
+<span class="doccomment">/// A stage in martian with just the main function.
+///
+/// For a toy example, see: [https://martian-lang.github.io/martian-rust/#/content/quick_start](https://martian-lang.github.io/martian-rust/#/content/quick_start)
+</span><span class="kw">pub trait </span>MartianMain: MroMaker {
+    <span class="kw">type </span>StageInputs: DeserializeOwned + MartianStruct;
+    <span class="kw">type </span>StageOutputs: Serialize + DeserializeOwned + MartianStruct;
 
-    <span class="kw">fn</span> <span class="ident">main</span>(
+    <span class="kw">fn </span>main(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-        <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+        args: <span class="self">Self</span>::StageInputs,
+        rover: MartianRover,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::StageOutputs, Error&gt;;
 }
 
-<span class="kw">fn</span> <span class="ident">split_prelude</span>(
-    <span class="ident">run_directory</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
-    <span class="ident">stage_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
-    <span class="ident">subdir</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
-) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MartianRover</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="comment">// Use default resource for split</span>
-    <span class="kw">let</span> <span class="ident">default_resource</span> <span class="op">=</span> <span class="ident">Resource::new</span>().<span class="ident">mem_gb</span>(<span class="number">1</span>).<span class="ident">vmem_gb</span>(<span class="number">2</span>).<span class="ident">threads</span>(<span class="number">1</span>);
-    <span class="kw">let</span> <span class="ident">split_path</span> <span class="op">=</span> <span class="ident">prep_path</span>(<span class="ident">run_directory</span>, <span class="ident">subdir</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">MartianRover::new</span>(<span class="ident">split_path</span>.<span class="ident">as_path</span>(), <span class="ident">default_resource</span>);
-    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, [<span class="string">&quot;-&quot;</span>; <span class="number">80</span>].<span class="ident">concat</span>());
-    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">stage_name</span>);
-    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, [<span class="string">&quot;-&quot;</span>; <span class="number">80</span>].<span class="ident">concat</span>());
-    <span class="prelude-val">Ok</span>(<span class="ident">rover</span>)
+<span class="kw">fn </span>split_prelude(
+    run_directory: <span class="kw-2">&amp;</span>Path,
+    stage_name: <span class="kw-2">&amp;</span>str,
+    subdir: <span class="kw-2">&amp;</span>str,
+) -&gt; <span class="prelude-ty">Result</span>&lt;MartianRover, Error&gt; {
+    <span class="comment">// Use default resource for split
+    </span><span class="kw">let </span>default_resource = Resource::new().mem_gb(<span class="number">1</span>).vmem_gb(<span class="number">2</span>).threads(<span class="number">1</span>);
+    <span class="kw">let </span>split_path = prep_path(run_directory, subdir)<span class="question-mark">?</span>;
+    <span class="kw">let </span>rover = MartianRover::new(split_path.as_path(), default_resource);
+    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, [<span class="string">&quot;-&quot;</span>; <span class="number">80</span>].concat());
+    <span class="macro">println!</span>(<span class="string">&quot;{stage_name}&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, [<span class="string">&quot;-&quot;</span>; <span class="number">80</span>].concat());
+    <span class="prelude-val">Ok</span>(rover)
 }
 
-<span class="doccomment">/// A stage in martian which has `split`, `main` and `join`</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// For a toy example, see [https://martian-lang.github.io/martian-rust/#/content/quick_start_split](https://martian-lang.github.io/martian-rust/#/content/quick_start_split)</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MartianStage</span>: <span class="ident">MroMaker</span> {
-    <span class="kw">type</span> <span class="ident">StageInputs</span>: <span class="ident">DeserializeOwned</span> <span class="op">+</span> <span class="ident">MartianStruct</span>;
-    <span class="kw">type</span> <span class="ident">StageOutputs</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">MartianStruct</span>;
-    <span class="kw">type</span> <span class="ident">ChunkInputs</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> <span class="op">+</span> <span class="ident">MartianStruct</span>;
-    <span class="kw">type</span> <span class="ident">ChunkOutputs</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> <span class="op">+</span> <span class="ident">MartianStruct</span>;
+<span class="doccomment">/// A stage in martian which has `split`, `main` and `join`
+///
+/// For a toy example, see [https://martian-lang.github.io/martian-rust/#/content/quick_start_split](https://martian-lang.github.io/martian-rust/#/content/quick_start_split)
+</span><span class="kw">pub trait </span>MartianStage: MroMaker {
+    <span class="kw">type </span>StageInputs: DeserializeOwned + MartianStruct;
+    <span class="kw">type </span>StageOutputs: Serialize + MartianStruct;
+    <span class="kw">type </span>ChunkInputs: Serialize + DeserializeOwned + MartianStruct;
+    <span class="kw">type </span>ChunkOutputs: Serialize + DeserializeOwned + MartianStruct;
 
-    <span class="kw">fn</span> <span class="ident">split</span>(
+    <span class="kw">fn </span>split(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-        <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkInputs</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+        args: <span class="self">Self</span>::StageInputs,
+        rover: MartianRover,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;StageDef&lt;<span class="self">Self</span>::ChunkInputs&gt;, Error&gt;;
 
-    <span class="kw">fn</span> <span class="ident">main</span>(
+    <span class="kw">fn </span>main(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-        <span class="ident">chunk_args</span>: <span class="ident"><span class="self">Self</span>::ChunkInputs</span>,
-        <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+        args: <span class="self">Self</span>::StageInputs,
+        chunk_args: <span class="self">Self</span>::ChunkInputs,
+        rover: MartianRover,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::ChunkOutputs, Error&gt;;
 
-    <span class="kw">fn</span> <span class="ident">join</span>(
+    <span class="kw">fn </span>join(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-        <span class="ident">chunk_defs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkInputs</span><span class="op">&gt;</span>,
-        <span class="ident">chunk_outs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkOutputs</span><span class="op">&gt;</span>,
-        <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+        args: <span class="self">Self</span>::StageInputs,
+        chunk_defs: Vec&lt;<span class="self">Self</span>::ChunkInputs&gt;,
+        chunk_outs: Vec&lt;<span class="self">Self</span>::ChunkOutputs&gt;,
+        rover: MartianRover,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::StageOutputs, Error&gt;;
 
-    <span class="doccomment">/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.</span>
-    <span class="doccomment">/// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split</span>
-    <span class="doccomment">/// to get the stage definition (chunks), executes each chunk one after another and finally calls the join function.</span>
-    <span class="kw">fn</span> <span class="ident">test_run</span>(
+    <span class="doccomment">/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+    /// Executes stage with arguments `args` in directory `run_directory`. The defaul implementation executes split
+    /// to get the stage definition (chunks), executes each chunk one after another and finally calls the join function.
+    </span><span class="kw">fn </span>test_run(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">run_directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
-        <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="self">Self</span>: <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::ChunkInputs</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::StageInputs</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::ChunkOutputs</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
+        run_directory: <span class="kw">impl </span>AsRef&lt;Path&gt; + Send + Sync,
+        args: <span class="self">Self</span>::StageInputs,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::StageOutputs, Error&gt;
+    <span class="kw">where
+        </span><span class="self">Self</span>: Sync,
+        <span class="self">Self</span>::ChunkInputs: Clone + Send + Sync,
+        <span class="self">Self</span>::StageInputs: Clone + Send + Sync,
+        <span class="self">Self</span>::ChunkOutputs: Send + Sync,
     {
-        <span class="kw">let</span> <span class="ident">run_directory</span> <span class="op">=</span> <span class="ident">run_directory</span>.<span class="ident">as_ref</span>();
+        <span class="kw">let </span>run_directory = run_directory.as_ref();
 
-        <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">split_prelude</span>(<span class="ident">run_directory</span>, <span class="ident"><span class="self">Self</span>::stage_name</span>(), <span class="string">&quot;split&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>rover = split_prelude(run_directory, <span class="self">Self</span>::stage_name(), <span class="string">&quot;split&quot;</span>)<span class="question-mark">?</span>;
         <span class="macro">println!</span>(<span class="string">&quot; &gt; [split ] running&quot;</span>);
-        <span class="kw">let</span> <span class="ident">stage_defs</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">split</span>(<span class="ident">args</span>.<span class="ident">clone</span>(), <span class="ident">rover</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>stage_defs = <span class="self">self</span>.split(args.clone(), rover)<span class="question-mark">?</span>;
         <span class="macro">println!</span>(<span class="string">&quot; &gt; [split ] complete&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">run_chunk</span> <span class="op">=</span> <span class="op">|</span><span class="ident">chunk</span>: <span class="kw-2">&amp;</span><span class="ident">ChunkDef</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkInputs</span><span class="op">&gt;</span>,
-                         <span class="ident">chunk_idx</span>: <span class="ident">usize</span><span class="op">|</span>
-         -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="kw">fn</span> <span class="ident">_chunk_prelude</span>(
-                <span class="ident">chunk_idx</span>: <span class="ident">usize</span>,
-                <span class="ident">run_directory</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
-                <span class="ident">resource</span>: <span class="ident">Resource</span>,
-            ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MartianRover</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rayon&quot;</span>))]</span>
-                <span class="macro">println!</span>(<span class="string">&quot; &gt; [chunk ] running {}&quot;</span>, <span class="ident">chunk_idx</span>,);
-                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rayon&quot;</span>)]</span>
-                <span class="macro">println!</span>(<span class="string">&quot; &gt; [chunk ] running with rayon {}&quot;</span>, <span class="ident">chunk_idx</span>,);
-                <span class="kw">let</span> <span class="ident">chunk_path</span> <span class="op">=</span> <span class="ident">prep_path</span>(<span class="ident">run_directory</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;chnk{}&quot;</span>, <span class="ident">chunk_idx</span>))<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="ident">MartianRover::new</span>(
-                    <span class="ident">chunk_path</span>.<span class="ident">as_path</span>(),
-                    <span class="ident">fill_defaults</span>(<span class="ident">resource</span>),
+        <span class="kw">let </span>run_chunk = |chunk: <span class="kw-2">&amp;</span>ChunkDef&lt;<span class="self">Self</span>::ChunkInputs&gt;,
+                         chunk_idx: usize|
+         -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::ChunkOutputs, Error&gt; {
+            <span class="kw">fn </span>_chunk_prelude(
+                chunk_idx: usize,
+                run_directory: <span class="kw-2">&amp;</span>Path,
+                resource: Resource,
+            ) -&gt; <span class="prelude-ty">Result</span>&lt;MartianRover, Error&gt; {
+                <span class="attribute">#[cfg(not(feature = <span class="string">&quot;rayon&quot;</span>))]
+                </span><span class="macro">println!</span>(<span class="string">&quot; &gt; [chunk ] running {}&quot;</span>, chunk_idx,);
+                <span class="attribute">#[cfg(feature = <span class="string">&quot;rayon&quot;</span>)]
+                </span><span class="macro">println!</span>(<span class="string">&quot; &gt; [chunk ] running with rayon {chunk_idx}&quot;</span>,);
+                <span class="kw">let </span>chunk_path = prep_path(run_directory, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;chnk{chunk_idx}&quot;</span>))<span class="question-mark">?</span>;
+                <span class="prelude-val">Ok</span>(MartianRover::new(
+                    chunk_path.as_path(),
+                    fill_defaults(resource),
                 ))
             }
-            <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">_chunk_prelude</span>(<span class="ident">chunk_idx</span>, <span class="ident">run_directory</span>, <span class="ident">chunk</span>.<span class="ident">resource</span>)<span class="question-mark">?</span>;
-            <span class="self">self</span>.<span class="ident">main</span>(<span class="ident">args</span>.<span class="ident">clone</span>(), <span class="ident">chunk</span>.<span class="ident">inputs</span>.<span class="ident">clone</span>(), <span class="ident">rover</span>)
+            <span class="kw">let </span>rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource)<span class="question-mark">?</span>;
+            <span class="self">self</span>.main(args.clone(), chunk.inputs.clone(), rover)
         };
 
-        <span class="macro">println!</span>(<span class="string">&quot; &gt; [chunks] {} chunks in total&quot;</span>, <span class="ident">stage_defs</span>.<span class="ident">chunks</span>.<span class="ident">len</span>());
+        <span class="macro">println!</span>(<span class="string">&quot; &gt; [chunks] {} chunks in total&quot;</span>, stage_defs.chunks.len());
 
-        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rayon&quot;</span>))]</span>
-        <span class="kw">let</span> <span class="ident">chunk_outs</span> <span class="op">=</span> <span class="ident">stage_defs</span>
-            .<span class="ident">chunks</span>
-            .<span class="ident">iter</span>()
-            .<span class="ident">enumerate</span>()
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">chunk_idx</span>, <span class="ident">chunk</span>)<span class="op">|</span> <span class="ident">run_chunk</span>(<span class="ident">chunk</span>, <span class="ident">chunk_idx</span>))
-            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="attribute">#[cfg(not(feature = <span class="string">&quot;rayon&quot;</span>))]
+        </span><span class="kw">let </span>chunk_outs = stage_defs
+            .chunks
+            .iter()
+            .enumerate()
+            .map(|(chunk_idx, chunk)| run_chunk(chunk, chunk_idx))
+            .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, Error&gt;&gt;()<span class="question-mark">?</span>;
 
-        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rayon&quot;</span>)]</span>
-        <span class="kw">let</span> <span class="ident">chunk_outs</span> <span class="op">=</span> <span class="ident">stage_defs</span>
-            .<span class="ident">chunks</span>
-            .<span class="ident">par_iter</span>()
-            .<span class="ident">enumerate</span>()
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">chunk_idx</span>, <span class="ident">chunk</span>)<span class="op">|</span> <span class="ident">run_chunk</span>(<span class="ident">chunk</span>, <span class="ident">chunk_idx</span>))
-            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="attribute">#[cfg(feature = <span class="string">&quot;rayon&quot;</span>)]
+        </span><span class="kw">let </span>chunk_outs = stage_defs
+            .chunks
+            .par_iter()
+            .enumerate()
+            .map(|(chunk_idx, chunk)| run_chunk(chunk, chunk_idx))
+            .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, Error&gt;&gt;()<span class="question-mark">?</span>;
 
         <span class="macro">println!</span>(<span class="string">&quot; &gt; [chunks] complete&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">join_path</span> <span class="op">=</span> <span class="ident">prep_path</span>(<span class="ident">run_directory</span>, <span class="string">&quot;join&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">MartianRover::new</span>(<span class="ident">join_path</span>.<span class="ident">as_path</span>(), <span class="ident">fill_defaults</span>(<span class="ident">stage_defs</span>.<span class="ident">join_resource</span>));
+        <span class="kw">let </span>join_path = prep_path(run_directory, <span class="string">&quot;join&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>rover = MartianRover::new(join_path.as_path(), fill_defaults(stage_defs.join_resource));
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chunk_defs</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-        <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">stage_defs</span>.<span class="ident">chunks</span> {
-            <span class="ident">chunk_defs</span>.<span class="ident">push</span>(<span class="ident">c</span>.<span class="ident">inputs</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>chunk_defs = Vec::new();
+        <span class="kw">for </span>c <span class="kw">in </span>stage_defs.chunks {
+            chunk_defs.push(c.inputs);
         }
 
         <span class="macro">println!</span>(<span class="string">&quot; &gt; [join  ] running&quot;</span>);
-        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">join</span>(<span class="ident">args</span>, <span class="ident">chunk_defs</span>, <span class="ident">chunk_outs</span>, <span class="ident">rover</span>);
+        <span class="kw">let </span>result = <span class="self">self</span>.join(args, chunk_defs, chunk_outs, rover);
         <span class="macro">println!</span>(<span class="string">&quot; &gt; [stage ] complete&quot;</span>);
-        <span class="ident">result</span>
+        result
     }
 
-    <span class="doccomment">/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.</span>
-    <span class="doccomment">/// Executes stage with arguments `args` in temporary directory that will always be cleaned up.</span>
-    <span class="kw">fn</span> <span class="ident">test_run_tmpdir</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="self">Self</span>: <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::ChunkInputs</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::StageInputs</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::ChunkOutputs</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
+    <span class="doccomment">/// In-process stage runner, useful for writing unit tests that exercise one of more stages purely from Rust.
+    /// Executes stage with arguments `args` in temporary directory that will always be cleaned up.
+    </span><span class="kw">fn </span>test_run_tmpdir(<span class="kw-2">&amp;</span><span class="self">self</span>, args: <span class="self">Self</span>::StageInputs) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::StageOutputs, Error&gt;
+    <span class="kw">where
+        </span><span class="self">Self</span>: Sync,
+        <span class="self">Self</span>::ChunkInputs: Clone + Send + Sync,
+        <span class="self">Self</span>::StageInputs: Clone + Send + Sync,
+        <span class="self">Self</span>::ChunkOutputs: Send + Sync,
     {
-        <span class="kw">let</span> <span class="ident">tmp_dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="self">self</span>.<span class="ident">test_run</span>(<span class="kw-2">&amp;</span><span class="ident">tmp_dir</span>, <span class="ident">args</span>)
+        <span class="kw">let </span>tmp_dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="self">self</span>.test_run(<span class="kw-2">&amp;</span>tmp_dir, args)
     }
-    <span class="kw">fn</span> <span class="ident">stage_kind</span>() -&gt; <span class="ident">StageKind</span> {
-        <span class="ident">StageKind::WithSplit</span>
+    <span class="kw">fn </span>stage_kind() -&gt; StageKind {
+        StageKind::WithSplit
     }
 }
 
-<span class="doccomment">/// A raw martian stage that works with untype metadata. It is recommended</span>
-<span class="doccomment">/// not to implement this directly. Use `MartianMain` or `MartianStage` traits instead</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">RawMartianStage</span> {
-    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Metadata</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">main</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Metadata</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Metadata</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span>;
+<span class="doccomment">/// A raw martian stage that works with untype metadata. It is recommended
+/// not to implement this directly. Use `MartianMain` or `MartianStage` traits instead
+</span><span class="kw">pub trait </span>RawMartianStage {
+    <span class="kw">fn </span>split(<span class="kw-2">&amp;</span><span class="self">self</span>, metadata: <span class="kw-2">&amp;mut </span>Metadata) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;;
+    <span class="kw">fn </span>main(<span class="kw-2">&amp;</span><span class="self">self</span>, metadata: <span class="kw-2">&amp;mut </span>Metadata) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;;
+    <span class="kw">fn </span>join(<span class="kw-2">&amp;</span><span class="self">self</span>, metadata: <span class="kw-2">&amp;mut </span>Metadata) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;;
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">MartianStage</span> <span class="kw">for</span> <span class="ident">T</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">MartianMain</span>,
+<span class="kw">impl</span>&lt;T&gt; MartianStage <span class="kw">for </span>T
+<span class="kw">where
+    </span>T: MartianMain,
 {
-    <span class="kw">type</span> <span class="ident">StageInputs</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMain</span><span class="op">&gt;</span><span class="ident">::StageInputs</span>;
-    <span class="kw">type</span> <span class="ident">StageOutputs</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMain</span><span class="op">&gt;</span><span class="ident">::StageOutputs</span>;
-    <span class="kw">type</span> <span class="ident">ChunkInputs</span> <span class="op">=</span> <span class="ident">MartianVoid</span>;
-    <span class="kw">type</span> <span class="ident">ChunkOutputs</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMain</span><span class="op">&gt;</span><span class="ident">::StageOutputs</span>;
+    <span class="kw">type </span>StageInputs = &lt;T <span class="kw">as </span>MartianMain&gt;::StageInputs;
+    <span class="kw">type </span>StageOutputs = &lt;T <span class="kw">as </span>MartianMain&gt;::StageOutputs;
+    <span class="kw">type </span>ChunkInputs = MartianVoid;
+    <span class="kw">type </span>ChunkOutputs = &lt;T <span class="kw">as </span>MartianMain&gt;::StageOutputs;
 
-    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>, <span class="kw">_</span>: <span class="ident">MartianRover</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">MartianVoid</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn </span>split(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="self">Self</span>::StageInputs, <span class="kw">_</span>: MartianRover) -&gt; <span class="prelude-ty">Result</span>&lt;StageDef&lt;MartianVoid&gt;, Error&gt; {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">main</span>(
+    <span class="kw">fn </span>main(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-        <span class="kw">_</span>: <span class="ident">MartianVoid</span>,
-        <span class="ident">rover</span>: <span class="ident">MartianRover</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianMain</span><span class="op">&gt;</span><span class="ident">::main</span>(<span class="self">self</span>, <span class="ident">args</span>, <span class="ident">rover</span>)
+        args: <span class="self">Self</span>::StageInputs,
+        <span class="kw">_</span>: MartianVoid,
+        rover: MartianRover,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::ChunkOutputs, Error&gt; {
+        &lt;T <span class="kw">as </span>MartianMain&gt;::main(<span class="self">self</span>, args, rover)
     }
 
-    <span class="kw">fn</span> <span class="ident">join</span>(
+    <span class="kw">fn </span>join(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="kw">_</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-        <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MartianVoid</span><span class="op">&gt;</span>,
-        <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::ChunkOutputs</span><span class="op">&gt;</span>,
-        <span class="kw">_</span>: <span class="ident">MartianRover</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">_</span>: <span class="self">Self</span>::StageInputs,
+        <span class="kw">_</span>: Vec&lt;MartianVoid&gt;,
+        <span class="kw">_</span>: Vec&lt;<span class="self">Self</span>::ChunkOutputs&gt;,
+        <span class="kw">_</span>: MartianRover,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::StageOutputs, Error&gt; {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">test_run</span>(
+    <span class="kw">fn </span>test_run(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">run_directory</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>,
-        <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="comment">// Use default resource for main</span>
-        <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">split_prelude</span>(<span class="ident">run_directory</span>.<span class="ident">as_ref</span>(), <span class="ident"><span class="self">Self</span>::stage_name</span>(), <span class="string">&quot;main&quot;</span>)<span class="question-mark">?</span>;
+        run_directory: <span class="kw">impl </span>AsRef&lt;Path&gt;,
+        args: <span class="self">Self</span>::StageInputs,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::StageOutputs, Error&gt; {
+        <span class="comment">// Use default resource for main
+        </span><span class="kw">let </span>rover = split_prelude(run_directory.as_ref(), <span class="self">Self</span>::stage_name(), <span class="string">&quot;main&quot;</span>)<span class="question-mark">?</span>;
         <span class="macro">println!</span>(<span class="string">&quot; &gt; [chunk] running&quot;</span>);
-        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">main</span>(<span class="ident">args</span>, <span class="ident">rover</span>);
+        <span class="kw">let </span>result = <span class="self">self</span>.main(args, rover);
         <span class="macro">println!</span>(<span class="string">&quot; &gt; [stage] complete&quot;</span>);
-        <span class="ident">result</span>
+        result
     }
 
-    <span class="kw">fn</span> <span class="ident">test_run_tmpdir</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">args</span>: <span class="ident"><span class="self">Self</span>::StageInputs</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::StageOutputs</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="self">Self</span>: <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::ChunkInputs</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::StageInputs</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
-        <span class="ident"><span class="self">Self</span>::ChunkOutputs</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
+    <span class="kw">fn </span>test_run_tmpdir(<span class="kw-2">&amp;</span><span class="self">self</span>, args: <span class="self">Self</span>::StageInputs) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::StageOutputs, Error&gt;
+    <span class="kw">where
+        </span><span class="self">Self</span>: Sync,
+        <span class="self">Self</span>::ChunkInputs: Clone + Send + Sync,
+        <span class="self">Self</span>::StageInputs: Clone + Send + Sync,
+        <span class="self">Self</span>::ChunkOutputs: Send + Sync,
     {
-        <span class="kw">let</span> <span class="ident">tmp_dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="self">self</span>.<span class="ident">test_run</span>(<span class="kw-2">&amp;</span><span class="ident">tmp_dir</span>, <span class="ident">args</span>)
+        <span class="kw">let </span>tmp_dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="self">self</span>.test_run(<span class="kw-2">&amp;</span>tmp_dir, args)
     }
-    <span class="kw">fn</span> <span class="ident">stage_kind</span>() -&gt; <span class="ident">StageKind</span> {
-        <span class="ident">StageKind::MainOnly</span>
+    <span class="kw">fn </span>stage_kind() -&gt; StageKind {
+        StageKind::MainOnly
     }
 }
 
-<span class="kw">const</span> <span class="ident">ARGS_FN</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;args&quot;</span>;
-<span class="kw">const</span> <span class="ident">OUTS_FN</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;outs&quot;</span>;
+<span class="kw">const </span>ARGS_FN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;args&quot;</span>;
+<span class="kw">const </span>OUTS_FN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;outs&quot;</span>;
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">RawMartianStage</span> <span class="kw">for</span> <span class="ident">T</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">MartianStage</span>,
+<span class="kw">impl</span>&lt;T&gt; RawMartianStage <span class="kw">for </span>T
+<span class="kw">where
+    </span>T: MartianStage,
 {
-    <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">md</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Metadata</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span><span class="ident">::StageInputs</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">decode</span>(<span class="ident">ARGS_FN</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">rover</span>: <span class="ident">MartianRover</span> <span class="op">=</span> <span class="ident">MartianRover::from</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">md</span>);
-        <span class="kw">let</span> <span class="ident">stage_defs</span> <span class="op">=</span> <span class="ident">MartianStage::split</span>(<span class="self">self</span>, <span class="ident">args</span>, <span class="ident">rover</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">stage_def_obj</span> <span class="op">=</span> <span class="ident">obj_encode</span>(<span class="kw-2">&amp;</span><span class="ident">stage_defs</span>)<span class="question-mark">?</span>;
-        <span class="ident">md</span>.<span class="ident">complete_with</span>(<span class="string">&quot;stage_defs&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">stage_def_obj</span>)
+    <span class="kw">fn </span>split(<span class="kw-2">&amp;</span><span class="self">self</span>, md: <span class="kw-2">&amp;mut </span>Metadata) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>args: &lt;T <span class="kw">as </span>MartianStage&gt;::StageInputs = md.decode(ARGS_FN)<span class="question-mark">?</span>;
+        <span class="kw">let </span>rover: MartianRover = MartianRover::from(<span class="kw-2">&amp;*</span>md);
+        <span class="kw">let </span>stage_defs = MartianStage::split(<span class="self">self</span>, args, rover)<span class="question-mark">?</span>;
+        <span class="kw">let </span>stage_def_obj = obj_encode(<span class="kw-2">&amp;</span>stage_defs)<span class="question-mark">?</span>;
+        md.complete_with(<span class="string">&quot;stage_defs&quot;</span>, <span class="kw-2">&amp;</span>stage_def_obj)
     }
 
-    <span class="kw">fn</span> <span class="ident">main</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">md</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Metadata</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span><span class="ident">::StageInputs</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">decode</span>(<span class="ident">ARGS_FN</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">chunk_args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span><span class="ident">::ChunkInputs</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">decode</span>(<span class="ident">ARGS_FN</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">MartianRover::from</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">md</span>);
-        <span class="kw">let</span> <span class="ident">outs</span> <span class="op">=</span> <span class="ident">MartianStage::main</span>(<span class="self">self</span>, <span class="ident">args</span>, <span class="ident">chunk_args</span>, <span class="ident">rover</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">outs_obj</span> <span class="op">=</span> <span class="ident">obj_encode</span>(<span class="kw-2">&amp;</span><span class="ident">outs</span>)<span class="question-mark">?</span>;
-        <span class="ident">md</span>.<span class="ident">complete_with</span>(<span class="ident">OUTS_FN</span>, <span class="kw-2">&amp;</span><span class="ident">outs_obj</span>)
+    <span class="kw">fn </span>main(<span class="kw-2">&amp;</span><span class="self">self</span>, md: <span class="kw-2">&amp;mut </span>Metadata) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>args: &lt;T <span class="kw">as </span>MartianStage&gt;::StageInputs = md.decode(ARGS_FN)<span class="question-mark">?</span>;
+        <span class="kw">let </span>chunk_args: &lt;T <span class="kw">as </span>MartianStage&gt;::ChunkInputs = md.decode(ARGS_FN)<span class="question-mark">?</span>;
+        <span class="kw">let </span>rover = MartianRover::from(<span class="kw-2">&amp;*</span>md);
+        <span class="kw">let </span>outs = MartianStage::main(<span class="self">self</span>, args, chunk_args, rover)<span class="question-mark">?</span>;
+        <span class="kw">let </span>outs_obj = obj_encode(<span class="kw-2">&amp;</span>outs)<span class="question-mark">?</span>;
+        md.complete_with(OUTS_FN, <span class="kw-2">&amp;</span>outs_obj)
     }
 
-    <span class="kw">fn</span> <span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">md</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Metadata</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">args</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span><span class="ident">::StageInputs</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">decode</span>(<span class="ident">ARGS_FN</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">rover</span> <span class="op">=</span> <span class="ident">MartianRover::from</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">md</span>);
-        <span class="comment">// let outs = md.read_json_obj(&quot;outs&quot;)?;</span>
-        <span class="kw">let</span> <span class="ident">chunk_defs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span><span class="ident">::ChunkInputs</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">decode</span>(<span class="string">&quot;chunk_defs&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">chunk_outs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">MartianStage</span><span class="op">&gt;</span><span class="ident">::ChunkOutputs</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">decode</span>(<span class="string">&quot;chunk_outs&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">outs</span> <span class="op">=</span> <span class="ident">MartianStage::join</span>(<span class="self">self</span>, <span class="ident">args</span>, <span class="ident">chunk_defs</span>, <span class="ident">chunk_outs</span>, <span class="ident">rover</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">outs_obj</span> <span class="op">=</span> <span class="ident">obj_encode</span>(<span class="kw-2">&amp;</span><span class="ident">outs</span>)<span class="question-mark">?</span>;
-        <span class="ident">md</span>.<span class="ident">complete_with</span>(<span class="ident">OUTS_FN</span>, <span class="kw-2">&amp;</span><span class="ident">outs_obj</span>)
+    <span class="kw">fn </span>join(<span class="kw-2">&amp;</span><span class="self">self</span>, md: <span class="kw-2">&amp;mut </span>Metadata) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>args: &lt;T <span class="kw">as </span>MartianStage&gt;::StageInputs = md.decode(ARGS_FN)<span class="question-mark">?</span>;
+        <span class="kw">let </span>rover = MartianRover::from(<span class="kw-2">&amp;*</span>md);
+        <span class="comment">// let outs = md.read_json_obj(&quot;outs&quot;)?;
+        </span><span class="kw">let </span>chunk_defs: Vec&lt;&lt;T <span class="kw">as </span>MartianStage&gt;::ChunkInputs&gt; = md.decode(<span class="string">&quot;chunk_defs&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>chunk_outs: Vec&lt;&lt;T <span class="kw">as </span>MartianStage&gt;::ChunkOutputs&gt; = md.decode(<span class="string">&quot;chunk_outs&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>outs = MartianStage::join(<span class="self">self</span>, args, chunk_defs, chunk_outs, rover)<span class="question-mark">?</span>;
+        <span class="kw">let </span>outs_obj = obj_encode(<span class="kw-2">&amp;</span>outs)<span class="question-mark">?</span>;
+        md.complete_with(OUTS_FN, <span class="kw-2">&amp;</span>outs_obj)
     }
 }
 
-<span class="comment">// Prep a path for a test run of a stage.</span>
-<span class="kw">fn</span> <span class="ident">prep_path</span>(<span class="ident">path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">subdir</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PathBuf</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="ident">_prep_path</span>(<span class="ident">path</span>.<span class="ident">as_ref</span>(), <span class="ident">subdir</span>)
+<span class="comment">// Prep a path for a test run of a stage.
+</span><span class="kw">fn </span>prep_path(path: <span class="kw">impl </span>AsRef&lt;Path&gt;, subdir: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, Error&gt; {
+    _prep_path(path.as_ref(), subdir)
 }
 
-<span class="kw">fn</span> <span class="ident">_prep_path</span>(<span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="ident">subdir</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PathBuf</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">sub_path</span> <span class="op">=</span> <span class="ident">path</span>.<span class="ident">join</span>(<span class="ident">subdir</span>);
+<span class="kw">fn </span>_prep_path(path: <span class="kw-2">&amp;</span>Path, subdir: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, Error&gt; {
+    <span class="kw">let </span>sub_path = path.join(subdir);
 
-    <span class="ident">std::fs::create_dir</span>(<span class="kw-2">&amp;</span><span class="ident">sub_path</span>)<span class="question-mark">?</span>;
-    <span class="prelude-val">Ok</span>(<span class="ident">sub_path</span>)
+    std::fs::create_dir(<span class="kw-2">&amp;</span>sub_path)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(sub_path)
 }
 
-<span class="kw">fn</span> <span class="ident">fill_defaults</span>(<span class="kw-2">mut</span> <span class="ident">resource</span>: <span class="ident">Resource</span>) -&gt; <span class="ident">Resource</span> {
-    <span class="kw">if</span> <span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">is_none</span>() {
-        <span class="ident">resource</span>.<span class="ident">mem_gb</span>.<span class="ident">replace</span>(<span class="number">1</span>);
+<span class="kw">fn </span>fill_defaults(<span class="kw-2">mut </span>resource: Resource) -&gt; Resource {
+    <span class="kw">if </span>resource.mem_gb.is_none() {
+        resource.mem_gb.replace(<span class="number">1</span>);
     }
 
-    <span class="kw">if</span> <span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">is_none</span>() {
-        <span class="ident">resource</span>.<span class="ident">vmem_gb</span>.<span class="ident">replace</span>(<span class="number">2</span>);
+    <span class="kw">if </span>resource.vmem_gb.is_none() {
+        resource.vmem_gb.replace(<span class="number">2</span>);
     }
 
-    <span class="kw">if</span> <span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">is_none</span>() {
-        <span class="ident">resource</span>.<span class="ident">threads</span>.<span class="ident">replace</span>(<span class="number">1</span>);
+    <span class="kw">if </span>resource.threads.is_none() {
+        resource.threads.replace(<span class="number">1</span>);
     }
 
-    <span class="ident">resource</span>
+    resource
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">test</span> {
-    <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Resource</span>, <span class="ident">StageDef</span>};
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>test {
+    <span class="kw">use crate</span>::{Resource, StageDef};
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_stage_def_extend</span>() {
-        <span class="kw">let</span> <span class="ident">_stagedef</span> <span class="op">=</span> <span class="ident">StageDef::from_iter</span>([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]);
-        <span class="kw">let</span> <span class="ident">_stagedef</span>: <span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">3</span>).<span class="ident">into_iter</span>().<span class="ident">collect</span>();
-        <span class="kw">let</span> <span class="ident">_stagedef</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">3</span>)
-            .<span class="ident">into_iter</span>()
-            .<span class="ident">zip</span>(<span class="ident">std::iter::repeat</span>(<span class="ident">Resource::default</span>()))
-            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">StageDef</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span>()
-            .<span class="ident">join_resource</span>(<span class="ident">Resource::default</span>());
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_stage_def_extend() {
+        <span class="kw">let </span>_stagedef = StageDef::from_iter([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]);
+        <span class="kw">let </span>_stagedef: StageDef&lt;usize&gt; = (<span class="number">0</span>..<span class="number">3</span>).into_iter().collect();
+        <span class="kw">let </span>_stagedef = (<span class="number">0</span>..<span class="number">3</span>)
+            .into_iter()
+            .zip(std::iter::repeat(Resource::default()))
+            .collect::&lt;StageDef&lt;usize&gt;&gt;()
+            .join_resource(Resource::default());
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

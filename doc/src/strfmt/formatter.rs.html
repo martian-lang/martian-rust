@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/strfmt-0.2.2/src/formatter.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>formatter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../strfmt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../strfmt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../strfmt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/strfmt-0.2.2/src/formatter.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>formatter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../strfmt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -412,419 +412,419 @@
 <span id="412">412</span>
 <span id="413">413</span>
 <span id="414">414</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fmt</span>;
-<span class="kw">use</span> <span class="ident">std::fmt::Write</span>;
-<span class="kw">use</span> <span class="ident">std::iter::Iterator</span>;
-<span class="kw">use</span> <span class="ident">std::str</span>;
-<span class="kw">use</span> <span class="ident">std::string::String</span>;
+</pre><pre class="rust"><code><span class="kw">use </span>std::fmt;
+<span class="kw">use </span>std::fmt::Write;
+<span class="kw">use </span>std::iter::Iterator;
+<span class="kw">use </span>std::str;
+<span class="kw">use </span>std::string::String;
 
-<span class="kw">use</span> <span class="ident">types</span>::<span class="kw-2">*</span>;
+<span class="kw">use </span>types::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
-    <span class="ident">fill</span>: <span class="ident">char</span>,
-    <span class="ident">align</span>: <span class="ident">Alignment</span>, <span class="comment">// default Right for numbers, Left for strings</span>
-    <span class="ident">sign</span>: <span class="ident">Sign</span>,
-    <span class="ident">alternate</span>: <span class="ident">bool</span>,
-    <span class="ident">width</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
-    <span class="ident">thousands</span>: <span class="ident">bool</span>,
-    <span class="ident">precision</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
-    <span class="ident">ty</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span>,
-    <span class="ident">buff</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="ident">String</span>,
-    <span class="ident">pattern</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
+<span class="attribute">#[derive(Debug, PartialEq)]
+</span><span class="kw">pub struct </span>Formatter&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt; {
+    <span class="kw">pub </span>key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+    fill: char,
+    align: Alignment, <span class="comment">// default Right for numbers, Left for strings
+    </span>sign: Sign,
+    alternate: bool,
+    width: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+    thousands: bool,
+    precision: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+    ty: <span class="prelude-ty">Option</span>&lt;char&gt;,
+    buff: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>String,
+    pattern: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
 }
 
-<span class="kw">fn</span> <span class="ident">is_alignment_token</span>(<span class="ident">c</span>: <span class="ident">char</span>) -&gt; <span class="ident">bool</span> {
-    <span class="kw">match</span> <span class="ident">c</span> {
-        <span class="string">&#39;=&#39;</span> <span class="op">|</span> <span class="string">&#39;&lt;&#39;</span> <span class="op">|</span> <span class="string">&#39;^&#39;</span> <span class="op">|</span> <span class="string">&#39;&gt;&#39;</span> =&gt; <span class="bool-val">true</span>,
-        <span class="kw">_</span> =&gt; <span class="bool-val">false</span>,
+<span class="kw">fn </span>is_alignment_token(c: char) -&gt; bool {
+    <span class="kw">match </span>c {
+        <span class="string">&#39;=&#39; </span>| <span class="string">&#39;&lt;&#39; </span>| <span class="string">&#39;^&#39; </span>| <span class="string">&#39;&gt;&#39; </span>=&gt; <span class="bool-val">true</span>,
+        <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
     }
 }
 
-<span class="kw">fn</span> <span class="ident">is_sign_element</span>(<span class="ident">c</span>: <span class="ident">char</span>) -&gt; <span class="ident">bool</span> {
-    <span class="kw">match</span> <span class="ident">c</span> {
-        <span class="string">&#39; &#39;</span> <span class="op">|</span> <span class="string">&#39;-&#39;</span> <span class="op">|</span> <span class="string">&#39;+&#39;</span> =&gt; <span class="bool-val">true</span>,
-        <span class="kw">_</span> =&gt; <span class="bool-val">false</span>,
+<span class="kw">fn </span>is_sign_element(c: char) -&gt; bool {
+    <span class="kw">match </span>c {
+        <span class="string">&#39; &#39; </span>| <span class="string">&#39;-&#39; </span>| <span class="string">&#39;+&#39; </span>=&gt; <span class="bool-val">true</span>,
+        <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
     }
 }
 
-<span class="kw">fn</span> <span class="ident">is_type_element</span>(<span class="ident">c</span>: <span class="ident">char</span>) -&gt; <span class="ident">bool</span> {
-    <span class="kw">match</span> <span class="ident">c</span> {
-        <span class="string">&#39;b&#39;</span> <span class="op">|</span> <span class="string">&#39;o&#39;</span> <span class="op">|</span> <span class="string">&#39;x&#39;</span> <span class="op">|</span> <span class="string">&#39;X&#39;</span> <span class="op">|</span> <span class="string">&#39;e&#39;</span> <span class="op">|</span> <span class="string">&#39;E&#39;</span> <span class="op">|</span> <span class="string">&#39;f&#39;</span> <span class="op">|</span> <span class="string">&#39;F&#39;</span> <span class="op">|</span> <span class="string">&#39;%&#39;</span> <span class="op">|</span> <span class="string">&#39;s&#39;</span> <span class="op">|</span> <span class="string">&#39;?&#39;</span> =&gt; <span class="bool-val">true</span>,
-        <span class="kw">_</span> =&gt; <span class="bool-val">false</span>,
+<span class="kw">fn </span>is_type_element(c: char) -&gt; bool {
+    <span class="kw">match </span>c {
+        <span class="string">&#39;b&#39; </span>| <span class="string">&#39;o&#39; </span>| <span class="string">&#39;x&#39; </span>| <span class="string">&#39;X&#39; </span>| <span class="string">&#39;e&#39; </span>| <span class="string">&#39;E&#39; </span>| <span class="string">&#39;f&#39; </span>| <span class="string">&#39;F&#39; </span>| <span class="string">&#39;%&#39; </span>| <span class="string">&#39;s&#39; </span>| <span class="string">&#39;?&#39; </span>=&gt; <span class="bool-val">true</span>,
+        <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
     }
 }
 
-<span class="comment">// get an integer from pos, returning the number of bytes</span>
-<span class="comment">// consumed and the integer</span>
-<span class="kw">fn</span> <span class="ident">get_integer</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">pos</span>: <span class="ident">usize</span>) -&gt; (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>) {
-    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">s</span>.<span class="ident">split_at</span>(<span class="ident">pos</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">consumed</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">for</span> <span class="ident">b</span> <span class="kw">in</span> <span class="ident">rest</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">b</span> <span class="kw">as</span> <span class="ident">char</span> {
-            <span class="string">&#39;0&#39;</span>..<span class="op">=</span><span class="string">&#39;9&#39;</span> =&gt; {}
-            <span class="kw">_</span> =&gt; <span class="kw">break</span>,
+<span class="comment">// get an integer from pos, returning the number of bytes
+// consumed and the integer
+</span><span class="kw">fn </span>get_integer(s: <span class="kw-2">&amp;</span>[u8], pos: usize) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;i64&gt;) {
+    <span class="kw">let </span>(<span class="kw">_</span>, rest) = s.split_at(pos);
+    <span class="kw">let </span><span class="kw-2">mut </span>consumed: usize = <span class="number">0</span>;
+    <span class="kw">for </span>b <span class="kw">in </span>rest {
+        <span class="kw">match </span><span class="kw-2">*</span>b <span class="kw">as </span>char {
+            <span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39; </span>=&gt; {}
+            <span class="kw">_ </span>=&gt; <span class="kw">break</span>,
         };
-        <span class="ident">consumed</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        consumed += <span class="number">1</span>;
     }
-    <span class="kw">if</span> <span class="ident">consumed</span> <span class="op">==</span> <span class="number">0</span> {
+    <span class="kw">if </span>consumed == <span class="number">0 </span>{
         (<span class="number">0</span>, <span class="prelude-val">None</span>)
-    } <span class="kw">else</span> {
-        <span class="kw">let</span> (<span class="ident">intstr</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">rest</span>.<span class="ident">split_at</span>(<span class="ident">consumed</span>);
-        <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-            <span class="comment">// I think I can be reasonably sure that 0-9 chars are utf8 :)</span>
-            <span class="kw">match</span> <span class="ident">str::from_utf8_unchecked</span>(<span class="ident">intstr</span>).<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>() {
-                <span class="prelude-val">Ok</span>(<span class="ident">v</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">v</span>),
+    } <span class="kw">else </span>{
+        <span class="kw">let </span>(intstr, <span class="kw">_</span>) = rest.split_at(consumed);
+        <span class="kw">let </span>val = <span class="kw">unsafe </span>{
+            <span class="comment">// I think I can be reasonably sure that 0-9 chars are utf8 :)
+            </span><span class="kw">match </span>str::from_utf8_unchecked(intstr).parse::&lt;i64&gt;() {
+                <span class="prelude-val">Ok</span>(v) =&gt; <span class="prelude-val">Some</span>(v),
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
             }
         };
-        (<span class="ident">consumed</span>, <span class="ident">val</span>)
+        (consumed, val)
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="doccomment">/// The format struct as it is defined in the python source</span>
-<span class="kw">struct</span> <span class="ident">FmtPy</span> {
-    <span class="kw">pub</span> <span class="ident">fill</span>: <span class="ident">char</span>,
-    <span class="kw">pub</span> <span class="ident">align</span>: <span class="ident">char</span>,
-    <span class="kw">pub</span> <span class="ident">alternate</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">sign</span>: <span class="ident">char</span>,
-    <span class="kw">pub</span> <span class="ident">width</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">thousands</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">precision</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">ty</span>: <span class="ident">char</span>,
+<span class="attribute">#[derive(Debug)]
+</span><span class="doccomment">/// The format struct as it is defined in the python source
+</span><span class="kw">struct </span>FmtPy {
+    <span class="kw">pub </span>fill: char,
+    <span class="kw">pub </span>align: char,
+    <span class="kw">pub </span>alternate: bool,
+    <span class="kw">pub </span>sign: char,
+    <span class="kw">pub </span>width: i64,
+    <span class="kw">pub </span>thousands: bool,
+    <span class="kw">pub </span>precision: i64,
+    <span class="kw">pub </span>ty: char,
 }
 
-<span class="kw">fn</span> <span class="ident">parse_like_python</span>(<span class="ident">rest</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">FmtPy</span><span class="op">&gt;</span> {
-    <span class="comment">// The rest of this was pretty much strait up copied from python&#39;s format parser</span>
-    <span class="comment">// All credit goes to python source file: formatter_unicode.c</span>
-    <span class="comment">//</span>
+<span class="kw">fn </span>parse_like_python(rest: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;FmtPy&gt; {
+    <span class="comment">// The rest of this was pretty much strait up copied from python&#39;s format parser
+    // All credit goes to python source file: formatter_unicode.c
+    //
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">FmtPy</span> {
-        <span class="ident">fill</span>: <span class="string">&#39; &#39;</span>,
-        <span class="ident">align</span>: <span class="string">&#39;\0&#39;</span>,
-        <span class="ident">alternate</span>: <span class="bool-val">false</span>,
-        <span class="ident">sign</span>: <span class="string">&#39;\0&#39;</span>,
-        <span class="ident">width</span>: <span class="op">-</span><span class="number">1</span>,
-        <span class="ident">thousands</span>: <span class="bool-val">false</span>,
-        <span class="ident">precision</span>: <span class="op">-</span><span class="number">1</span>,
-        <span class="ident">ty</span>: <span class="string">&#39;\0&#39;</span>,
+    </span><span class="kw">let </span><span class="kw-2">mut </span>format = FmtPy {
+        fill: <span class="string">&#39; &#39;</span>,
+        align: <span class="string">&#39;\0&#39;</span>,
+        alternate: <span class="bool-val">false</span>,
+        sign: <span class="string">&#39;\0&#39;</span>,
+        width: -<span class="number">1</span>,
+        thousands: <span class="bool-val">false</span>,
+        precision: -<span class="number">1</span>,
+        ty: <span class="string">&#39;\0&#39;</span>,
     };
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chars</span> <span class="op">=</span> <span class="ident">rest</span>.<span class="ident">chars</span>();
-    <span class="kw">let</span> <span class="ident">fake_fill</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">chars</span>.<span class="ident">next</span>() {
-        <span class="prelude-val">Some</span>(<span class="ident">c</span>) =&gt; <span class="ident">c</span>,
-        <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">format</span>),
+    <span class="kw">let </span><span class="kw-2">mut </span>chars = rest.chars();
+    <span class="kw">let </span>fake_fill = <span class="kw">match </span>chars.next() {
+        <span class="prelude-val">Some</span>(c) =&gt; c,
+        <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(format),
     };
-    <span class="comment">// from now on all format characters MUST be valid</span>
-    <span class="comment">// ASCII characters (fill and identifier were the</span>
-    <span class="comment">// only ones that weren&#39;t.</span>
-    <span class="comment">// Therefore we can use bytes for the rest</span>
-    <span class="kw">let</span> <span class="ident">rest</span> <span class="op">=</span> <span class="ident">rest</span>.<span class="ident">as_bytes</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">align_specified</span> <span class="op">=</span> <span class="bool-val">false</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fill_specified</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="comment">// from now on all format characters MUST be valid
+    // ASCII characters (fill and identifier were the
+    // only ones that weren&#39;t.
+    // Therefore we can use bytes for the rest
+    </span><span class="kw">let </span>rest = rest.as_bytes();
+    <span class="kw">let </span><span class="kw-2">mut </span>align_specified = <span class="bool-val">false</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>fill_specified = <span class="bool-val">false</span>;
 
-    <span class="kw">let</span> <span class="ident">end</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">rest</span>.<span class="ident">len</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pos</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let </span>end: usize = rest.len();
+    <span class="kw">let </span><span class="kw-2">mut </span>pos: usize = <span class="number">0</span>;
 
-    <span class="comment">// If the second char is an alignment token,</span>
-    <span class="comment">// then fake_fill as fill</span>
-    <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">fake_fill</span>.<span class="ident">len_utf8</span>()
-        <span class="op">&amp;&amp;</span> <span class="ident">is_alignment_token</span>(<span class="ident">rest</span>[<span class="ident">pos</span> <span class="op">+</span> <span class="ident">fake_fill</span>.<span class="ident">len_utf8</span>()] <span class="kw">as</span> <span class="ident">char</span>)
+    <span class="comment">// If the second char is an alignment token,
+    // then fake_fill as fill
+    </span><span class="kw">if </span>end - pos &gt;= <span class="number">1 </span>+ fake_fill.len_utf8()
+        &amp;&amp; is_alignment_token(rest[pos + fake_fill.len_utf8()] <span class="kw">as </span>char)
     {
-        <span class="ident">format</span>.<span class="ident">align</span> <span class="op">=</span> <span class="ident">rest</span>[<span class="ident">pos</span> <span class="op">+</span> <span class="ident">fake_fill</span>.<span class="ident">len_utf8</span>()] <span class="kw">as</span> <span class="ident">char</span>;
-        <span class="ident">format</span>.<span class="ident">fill</span> <span class="op">=</span> <span class="ident">fake_fill</span>;
-        <span class="ident">fill_specified</span> <span class="op">=</span> <span class="bool-val">true</span>;
-        <span class="ident">align_specified</span> <span class="op">=</span> <span class="bool-val">true</span>;
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">fake_fill</span>.<span class="ident">len_utf8</span>();
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">is_alignment_token</span>(<span class="ident">fake_fill</span>) {
-        <span class="ident">format</span>.<span class="ident">align</span> <span class="op">=</span> <span class="ident">fake_fill</span>;
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="ident">fake_fill</span>.<span class="ident">len_utf8</span>();
+        format.align = rest[pos + fake_fill.len_utf8()] <span class="kw">as </span>char;
+        format.fill = fake_fill;
+        fill_specified = <span class="bool-val">true</span>;
+        align_specified = <span class="bool-val">true</span>;
+        pos += <span class="number">1 </span>+ fake_fill.len_utf8();
+    } <span class="kw">else if </span>end - pos &gt;= <span class="number">1 </span>&amp;&amp; is_alignment_token(fake_fill) {
+        format.align = fake_fill;
+        pos += fake_fill.len_utf8();
     }
 
-    <span class="comment">// Parse the various sign options</span>
-    <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">is_sign_element</span>(<span class="ident">rest</span>[<span class="ident">pos</span>] <span class="kw">as</span> <span class="ident">char</span>) {
-        <span class="ident">format</span>.<span class="ident">sign</span> <span class="op">=</span> <span class="ident">rest</span>[<span class="ident">pos</span>] <span class="kw">as</span> <span class="ident">char</span>;
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+    <span class="comment">// Parse the various sign options
+    </span><span class="kw">if </span>end - pos &gt;= <span class="number">1 </span>&amp;&amp; is_sign_element(rest[pos] <span class="kw">as </span>char) {
+        format.sign = rest[pos] <span class="kw">as </span>char;
+        pos += <span class="number">1</span>;
     }
 
-    <span class="comment">// If the next character is #, we&#39;re in alternate mode.  This only</span>
-    <span class="comment">// applies to integers.</span>
-    <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">rest</span>[<span class="ident">pos</span>] <span class="kw">as</span> <span class="ident">char</span> <span class="op">==</span> <span class="string">&#39;#&#39;</span> {
-        <span class="ident">format</span>.<span class="ident">alternate</span> <span class="op">=</span> <span class="bool-val">true</span>;
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+    <span class="comment">// If the next character is #, we&#39;re in alternate mode.  This only
+    // applies to integers.
+    </span><span class="kw">if </span>end - pos &gt;= <span class="number">1 </span>&amp;&amp; rest[pos] <span class="kw">as </span>char == <span class="string">&#39;#&#39; </span>{
+        format.alternate = <span class="bool-val">true</span>;
+        pos += <span class="number">1</span>;
     }
 
-    <span class="comment">// The special case for 0-padding (backwards compat)</span>
-    <span class="kw">if</span> <span class="op">!</span><span class="ident">fill_specified</span> <span class="op">&amp;&amp;</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">rest</span>[<span class="ident">pos</span>] <span class="op">==</span> <span class="string">&#39;0&#39;</span> <span class="kw">as</span> <span class="ident">u8</span> {
-        <span class="ident">format</span>.<span class="ident">fill</span> <span class="op">=</span> <span class="string">&#39;0&#39;</span>;
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">align_specified</span> {
-            <span class="ident">format</span>.<span class="ident">align</span> <span class="op">=</span> <span class="string">&#39;=&#39;</span>;
+    <span class="comment">// The special case for 0-padding (backwards compat)
+    </span><span class="kw">if </span>!fill_specified &amp;&amp; end - pos &gt;= <span class="number">1 </span>&amp;&amp; rest[pos] == <span class="string">&#39;0&#39; </span><span class="kw">as </span>u8 {
+        format.fill = <span class="string">&#39;0&#39;</span>;
+        <span class="kw">if </span>!align_specified {
+            format.align = <span class="string">&#39;=&#39;</span>;
         }
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        pos += <span class="number">1</span>;
     }
 
-    <span class="comment">// check to make sure that val is good</span>
-    <span class="kw">let</span> (<span class="ident">consumed</span>, <span class="ident">val</span>) <span class="op">=</span> <span class="ident">get_integer</span>(<span class="ident">rest</span>, <span class="ident">pos</span>);
-    <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="ident">consumed</span>;
-    <span class="kw">if</span> <span class="ident">consumed</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-        <span class="kw">match</span> <span class="ident">val</span> {
-            <span class="prelude-val">None</span> =&gt; {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(
-                    <span class="string">&quot;overflow error when parsing width&quot;</span>.<span class="ident">to_string</span>(),
+    <span class="comment">// check to make sure that val is good
+    </span><span class="kw">let </span>(consumed, val) = get_integer(rest, pos);
+    pos += consumed;
+    <span class="kw">if </span>consumed != <span class="number">0 </span>{
+        <span class="kw">match </span>val {
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(
+                    <span class="string">&quot;overflow error when parsing width&quot;</span>.to_string(),
                 ))
             }
-            <span class="prelude-val">Some</span>(<span class="ident">v</span>) =&gt; {
-                <span class="ident">format</span>.<span class="ident">width</span> <span class="op">=</span> <span class="ident">v</span>;
+            <span class="prelude-val">Some</span>(v) =&gt; {
+                format.width = v;
             }
         }
     }
 
-    <span class="comment">// Comma signifies add thousands separators</span>
-    <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">rest</span>[<span class="ident">pos</span>] <span class="kw">as</span> <span class="ident">char</span> <span class="op">==</span> <span class="string">&#39;,&#39;</span> {
-        <span class="ident">format</span>.<span class="ident">thousands</span> <span class="op">=</span> <span class="bool-val">true</span>;
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+    <span class="comment">// Comma signifies add thousands separators
+    </span><span class="kw">if </span>end - pos &gt; <span class="number">0 </span>&amp;&amp; rest[pos] <span class="kw">as </span>char == <span class="string">&#39;,&#39; </span>{
+        format.thousands = <span class="bool-val">true</span>;
+        pos += <span class="number">1</span>;
     }
 
-    <span class="comment">// Parse field precision</span>
-    <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">rest</span>[<span class="ident">pos</span>] <span class="kw">as</span> <span class="ident">char</span> <span class="op">==</span> <span class="string">&#39;.&#39;</span> {
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+    <span class="comment">// Parse field precision
+    </span><span class="kw">if </span>end - pos &gt; <span class="number">0 </span>&amp;&amp; rest[pos] <span class="kw">as </span>char == <span class="string">&#39;.&#39; </span>{
+        pos += <span class="number">1</span>;
 
-        <span class="kw">let</span> (<span class="ident">consumed</span>, <span class="ident">val</span>) <span class="op">=</span> <span class="ident">get_integer</span>(<span class="ident">rest</span>, <span class="ident">pos</span>);
-        <span class="kw">if</span> <span class="ident">consumed</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="kw">match</span> <span class="ident">val</span> {
-                <span class="prelude-val">None</span> =&gt; {
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(
-                        <span class="string">&quot;overflow error when parsing precision&quot;</span>.<span class="ident">to_string</span>(),
+        <span class="kw">let </span>(consumed, val) = get_integer(rest, pos);
+        <span class="kw">if </span>consumed != <span class="number">0 </span>{
+            <span class="kw">match </span>val {
+                <span class="prelude-val">None </span>=&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(
+                        <span class="string">&quot;overflow error when parsing precision&quot;</span>.to_string(),
                     ))
                 }
-                <span class="prelude-val">Some</span>(<span class="ident">v</span>) =&gt; {
-                    <span class="ident">format</span>.<span class="ident">precision</span> <span class="op">=</span> <span class="ident">v</span>;
+                <span class="prelude-val">Some</span>(v) =&gt; {
+                    format.precision = v;
                 }
             }
-        } <span class="kw">else</span> {
-            <span class="comment">// Not having a precision after a dot is an error.</span>
-            <span class="kw">if</span> <span class="ident">consumed</span> <span class="op">==</span> <span class="number">0</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(
-                    <span class="string">&quot;Format specifier missing precision&quot;</span>.<span class="ident">to_string</span>(),
+        } <span class="kw">else </span>{
+            <span class="comment">// Not having a precision after a dot is an error.
+            </span><span class="kw">if </span>consumed == <span class="number">0 </span>{
+                <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(
+                    <span class="string">&quot;Format specifier missing precision&quot;</span>.to_string(),
                 ));
             }
         }
-        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="ident">consumed</span>;
+        pos += consumed;
     }
 
-    <span class="comment">// Finally, parse the type field.</span>
-    <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">&gt;</span> <span class="number">1</span> {
-        <span class="comment">// More than one char remain, invalid format specifier.</span>
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(<span class="string">&quot;Invalid format specifier&quot;</span>.<span class="ident">to_string</span>()));
+    <span class="comment">// Finally, parse the type field.
+    </span><span class="kw">if </span>end - pos &gt; <span class="number">1 </span>{
+        <span class="comment">// More than one char remain, invalid format specifier.
+        </span><span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(<span class="string">&quot;Invalid format specifier&quot;</span>.to_string()));
     }
 
-    <span class="kw">if</span> <span class="ident">end</span> <span class="op">-</span> <span class="ident">pos</span> <span class="op">==</span> <span class="number">1</span> {
-        <span class="ident">format</span>.<span class="ident">ty</span> <span class="op">=</span> <span class="ident">rest</span>[<span class="ident">pos</span>] <span class="kw">as</span> <span class="ident">char</span>;
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">is_type_element</span>(<span class="ident">format</span>.<span class="ident">ty</span>) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">msg</span> <span class="op">=</span> <span class="ident">String::new</span>();
-            <span class="macro">write!</span>(<span class="ident">msg</span>, <span class="string">&quot;Invalid type specifier: {:?}&quot;</span>, <span class="ident">format</span>.<span class="ident">ty</span>).<span class="ident">unwrap</span>();
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::TypeError</span>(<span class="ident">msg</span>));
+    <span class="kw">if </span>end - pos == <span class="number">1 </span>{
+        format.ty = rest[pos] <span class="kw">as </span>char;
+        <span class="kw">if </span>!is_type_element(format.ty) {
+            <span class="kw">let </span><span class="kw-2">mut </span>msg = String::new();
+            <span class="macro">write!</span>(msg, <span class="string">&quot;Invalid type specifier: {:?}&quot;</span>, format.ty).unwrap();
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::TypeError(msg));
         }
-        <span class="comment">// pos+=1;</span>
-    }
+        <span class="comment">// pos+=1;
+    </span>}
 
-    <span class="comment">// Do as much validating as we can, just by looking at the format</span>
-    <span class="comment">// specifier.  Do not take into account what type of formatting</span>
-    <span class="comment">// we&#39;re doing (int, float, string).</span>
-    <span class="kw">if</span> <span class="ident">format</span>.<span class="ident">thousands</span> {
-        <span class="kw">match</span> <span class="ident">format</span>.<span class="ident">ty</span> {
-            <span class="string">&#39;d&#39;</span> <span class="op">|</span> <span class="string">&#39;e&#39;</span> <span class="op">|</span> <span class="string">&#39;f&#39;</span> <span class="op">|</span> <span class="string">&#39;g&#39;</span> <span class="op">|</span> <span class="string">&#39;E&#39;</span> <span class="op">|</span> <span class="string">&#39;G&#39;</span> <span class="op">|</span> <span class="string">&#39;%&#39;</span> <span class="op">|</span> <span class="string">&#39;F&#39;</span> <span class="op">|</span> <span class="string">&#39;\0&#39;</span> =&gt; {} <span class="comment">/* These are allowed. See PEP 378.*/</span>
+    <span class="comment">// Do as much validating as we can, just by looking at the format
+    // specifier.  Do not take into account what type of formatting
+    // we&#39;re doing (int, float, string).
+    </span><span class="kw">if </span>format.thousands {
+        <span class="kw">match </span>format.ty {
+            <span class="string">&#39;d&#39; </span>| <span class="string">&#39;e&#39; </span>| <span class="string">&#39;f&#39; </span>| <span class="string">&#39;g&#39; </span>| <span class="string">&#39;E&#39; </span>| <span class="string">&#39;G&#39; </span>| <span class="string">&#39;%&#39; </span>| <span class="string">&#39;F&#39; </span>| <span class="string">&#39;\0&#39; </span>=&gt; {} <span class="comment">/* These are allowed. See PEP 378.*/
 
-            <span class="kw">_</span> =&gt; {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">msg</span> <span class="op">=</span> <span class="ident">String::new</span>();
-                <span class="macro">write!</span>(<span class="ident">msg</span>, <span class="string">&quot;Invalid comma type: {}&quot;</span>, <span class="ident">format</span>.<span class="ident">ty</span>).<span class="ident">unwrap</span>();
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(<span class="ident">msg</span>));
+            </span><span class="kw">_ </span>=&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>msg = String::new();
+                <span class="macro">write!</span>(msg, <span class="string">&quot;Invalid comma type: {}&quot;</span>, format.ty).unwrap();
+                <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(msg));
             }
         }
     }
-    <span class="prelude-val">Ok</span>(<span class="ident">format</span>)
+    <span class="prelude-val">Ok</span>(format)
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// create Formatter from format string</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="ident">buff</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="ident">String</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">found_colon</span> <span class="op">=</span> <span class="bool-val">false</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chars</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">chars</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">c</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">chars</span>.<span class="ident">next</span>() {
-            <span class="prelude-val">Some</span>(<span class="string">&#39;:&#39;</span>) <span class="op">|</span> <span class="prelude-val">None</span> =&gt; {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(<span class="string">&quot;must specify identifier&quot;</span>.<span class="ident">to_string</span>()))
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt; Formatter&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt; {
+    <span class="doccomment">/// create Formatter from format string
+    </span><span class="kw">pub fn </span>from_str(s: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str, buff: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>String) -&gt; <span class="prelude-ty">Result</span>&lt;Formatter&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt;&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>found_colon = <span class="bool-val">false</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>chars = s.chars();
+        <span class="kw">let </span><span class="kw-2">mut </span>c = <span class="kw">match </span>chars.next() {
+            <span class="prelude-val">Some</span>(<span class="string">&#39;:&#39;</span>) | <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(<span class="string">&quot;must specify identifier&quot;</span>.to_string()))
             }
-            <span class="prelude-val">Some</span>(<span class="ident">c</span>) =&gt; <span class="ident">c</span>,
+            <span class="prelude-val">Some</span>(c) =&gt; c,
         };
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">consumed</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="comment">// find the identifier</span>
-        <span class="kw">loop</span> {
-            <span class="ident">consumed</span> <span class="op">+</span><span class="op">=</span> <span class="ident">c</span>.<span class="ident">len_utf8</span>();
-            <span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;:&#39;</span> {
-                <span class="ident">found_colon</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>consumed = <span class="number">0</span>;
+        <span class="comment">// find the identifier
+        </span><span class="kw">loop </span>{
+            consumed += c.len_utf8();
+            <span class="kw">if </span>c == <span class="string">&#39;:&#39; </span>{
+                found_colon = <span class="bool-val">true</span>;
                 <span class="kw">break</span>;
             }
-            <span class="ident">c</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">chars</span>.<span class="ident">next</span>() {
-                <span class="prelude-val">Some</span>(<span class="ident">c</span>) =&gt; <span class="ident">c</span>,
-                <span class="prelude-val">None</span> =&gt; {
+            c = <span class="kw">match </span>chars.next() {
+                <span class="prelude-val">Some</span>(c) =&gt; c,
+                <span class="prelude-val">None </span>=&gt; {
                     <span class="kw">break</span>;
                 }
             };
         }
-        <span class="kw">let</span> (<span class="ident">identifier</span>, <span class="ident">rest</span>) <span class="op">=</span> <span class="ident">s</span>.<span class="ident">split_at</span>(<span class="ident">consumed</span>);
-        <span class="kw">let</span> <span class="ident">identifier</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">found_colon</span> {
-            <span class="kw">let</span> (<span class="ident">i</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">identifier</span>.<span class="ident">split_at</span>(<span class="ident">identifier</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>); <span class="comment">// get rid of &#39;:&#39;</span>
-            <span class="ident">i</span>
-        } <span class="kw">else</span> {
-            <span class="ident">identifier</span>
+        <span class="kw">let </span>(identifier, rest) = s.split_at(consumed);
+        <span class="kw">let </span>identifier = <span class="kw">if </span>found_colon {
+            <span class="kw">let </span>(i, <span class="kw">_</span>) = identifier.split_at(identifier.len() - <span class="number">1</span>); <span class="comment">// get rid of &#39;:&#39;
+            </span>i
+        } <span class="kw">else </span>{
+            identifier
         };
 
-        <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">parse_like_python</span>(<span class="ident">rest</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>format = parse_like_python(rest)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">Formatter</span> {
-            <span class="ident">key</span>: <span class="ident">identifier</span>,
-            <span class="ident">fill</span>: <span class="ident">format</span>.<span class="ident">fill</span>,
-            <span class="ident">align</span>: <span class="kw">match</span> <span class="ident">format</span>.<span class="ident">align</span> {
-                <span class="string">&#39;\0&#39;</span> =&gt; <span class="ident">Alignment::Unspecified</span>,
-                <span class="string">&#39;&lt;&#39;</span> =&gt; <span class="ident">Alignment::Left</span>,
-                <span class="string">&#39;^&#39;</span> =&gt; <span class="ident">Alignment::Center</span>,
-                <span class="string">&#39;&gt;&#39;</span> =&gt; <span class="ident">Alignment::Right</span>,
-                <span class="string">&#39;=&#39;</span> =&gt; <span class="ident">Alignment::Equal</span>,
-                <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
+        <span class="prelude-val">Ok</span>(Formatter {
+            key: identifier,
+            fill: format.fill,
+            align: <span class="kw">match </span>format.align {
+                <span class="string">&#39;\0&#39; </span>=&gt; Alignment::Unspecified,
+                <span class="string">&#39;&lt;&#39; </span>=&gt; Alignment::Left,
+                <span class="string">&#39;^&#39; </span>=&gt; Alignment::Center,
+                <span class="string">&#39;&gt;&#39; </span>=&gt; Alignment::Right,
+                <span class="string">&#39;=&#39; </span>=&gt; Alignment::Equal,
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             },
-            <span class="ident">sign</span>: <span class="kw">match</span> <span class="ident">format</span>.<span class="ident">sign</span> {
-                <span class="string">&#39;\0&#39;</span> =&gt; <span class="ident">Sign::Unspecified</span>,
-                <span class="string">&#39;+&#39;</span> =&gt; <span class="ident">Sign::Plus</span>,
-                <span class="string">&#39;-&#39;</span> =&gt; <span class="ident">Sign::Minus</span>,
-                <span class="string">&#39; &#39;</span> =&gt; <span class="ident">Sign::Space</span>,
-                <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
+            sign: <span class="kw">match </span>format.sign {
+                <span class="string">&#39;\0&#39; </span>=&gt; Sign::Unspecified,
+                <span class="string">&#39;+&#39; </span>=&gt; Sign::Plus,
+                <span class="string">&#39;-&#39; </span>=&gt; Sign::Minus,
+                <span class="string">&#39; &#39; </span>=&gt; Sign::Space,
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             },
-            <span class="ident">alternate</span>: <span class="ident">format</span>.<span class="ident">alternate</span>,
-            <span class="ident">width</span>: <span class="kw">match</span> <span class="ident">format</span>.<span class="ident">width</span> {
-                <span class="op">-</span><span class="number">1</span> =&gt; <span class="prelude-val">None</span>,
-                <span class="kw">_</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">format</span>.<span class="ident">width</span> <span class="kw">as</span> <span class="ident">usize</span>),
+            alternate: format.alternate,
+            width: <span class="kw">match </span>format.width {
+                -<span class="number">1 </span>=&gt; <span class="prelude-val">None</span>,
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(format.width <span class="kw">as </span>usize),
             },
-            <span class="ident">thousands</span>: <span class="ident">format</span>.<span class="ident">thousands</span>,
-            <span class="ident">precision</span>: <span class="kw">match</span> <span class="ident">format</span>.<span class="ident">precision</span> {
-                <span class="op">-</span><span class="number">1</span> =&gt; <span class="prelude-val">None</span>,
-                <span class="kw">_</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">format</span>.<span class="ident">precision</span> <span class="kw">as</span> <span class="ident">usize</span>),
+            thousands: format.thousands,
+            precision: <span class="kw">match </span>format.precision {
+                -<span class="number">1 </span>=&gt; <span class="prelude-val">None</span>,
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(format.precision <span class="kw">as </span>usize),
             },
-            <span class="ident">ty</span>: <span class="kw">match</span> <span class="ident">format</span>.<span class="ident">ty</span> {
-                <span class="string">&#39;\0&#39;</span> =&gt; <span class="prelude-val">None</span>,
-                <span class="kw">_</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">format</span>.<span class="ident">ty</span>),
+            ty: <span class="kw">match </span>format.ty {
+                <span class="string">&#39;\0&#39; </span>=&gt; <span class="prelude-val">None</span>,
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(format.ty),
             },
-            <span class="ident">buff</span>: <span class="ident">buff</span>,
-            <span class="ident">pattern</span>: <span class="ident">s</span>,
+            buff: buff,
+            pattern: s,
         })
     }
 
-    <span class="doccomment">/// call this to re-write the original format string verbatum</span>
-    <span class="doccomment">/// back to the output</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">skip</span>(<span class="kw-2">mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">buff</span>.<span class="ident">push</span>(<span class="string">&#39;{&#39;</span>);
-        <span class="self">self</span>.<span class="ident">write_str</span>(<span class="self">self</span>.<span class="ident">pattern</span>).<span class="ident">unwrap</span>();
-        <span class="self">self</span>.<span class="ident">buff</span>.<span class="ident">push</span>(<span class="string">&#39;}&#39;</span>);
+    <span class="doccomment">/// call this to re-write the original format string verbatum
+    /// back to the output
+    </span><span class="kw">pub fn </span>skip(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="self">self</span>.buff.push(<span class="string">&#39;{&#39;</span>);
+        <span class="self">self</span>.write_str(<span class="self">self</span>.pattern).unwrap();
+        <span class="self">self</span>.buff.push(<span class="string">&#39;}&#39;</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// fill getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fill</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">char</span> {
-        <span class="self">self</span>.<span class="ident">fill</span>
+    <span class="doccomment">/// fill getter
+    </span><span class="kw">pub fn </span>fill(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; char {
+        <span class="self">self</span>.fill
     }
 
-    <span class="doccomment">/// align getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">align</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Alignment</span> {
-        <span class="self">self</span>.<span class="ident">align</span>.<span class="ident">clone</span>()
+    <span class="doccomment">/// align getter
+    </span><span class="kw">pub fn </span>align(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Alignment {
+        <span class="self">self</span>.align.clone()
     }
 
-    <span class="comment">// provide default for unspecified alignment</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_default_align</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">align</span>: <span class="ident">Alignment</span>) {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">align</span> <span class="op">==</span> <span class="ident">Alignment::Unspecified</span> {
-            <span class="self">self</span>.<span class="ident">align</span> <span class="op">=</span> <span class="ident">align</span>
+    <span class="comment">// provide default for unspecified alignment
+    </span><span class="kw">pub fn </span>set_default_align(<span class="kw-2">&amp;mut </span><span class="self">self</span>, align: Alignment) {
+        <span class="kw">if </span><span class="self">self</span>.align == Alignment::Unspecified {
+            <span class="self">self</span>.align = align
         }
     }
 
-    <span class="doccomment">/// width getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">width</span>
+    <span class="doccomment">/// width getter
+    </span><span class="kw">pub fn </span>width(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="self">self</span>.width
     }
 
-    <span class="doccomment">/// thousands getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">thousands</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">thousands</span>
+    <span class="doccomment">/// thousands getter
+    </span><span class="kw">pub fn </span>thousands(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.thousands
     }
 
-    <span class="doccomment">/// precision getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">precision</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">precision</span>
+    <span class="doccomment">/// precision getter
+    </span><span class="kw">pub fn </span>precision(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="self">self</span>.precision
     }
 
-    <span class="doccomment">/// set precision to None, used for formatting int, float, etc</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_precision</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">precision</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
-        <span class="self">self</span>.<span class="ident">precision</span> <span class="op">=</span> <span class="ident">precision</span>;
+    <span class="doccomment">/// set precision to None, used for formatting int, float, etc
+    </span><span class="kw">pub fn </span>set_precision(<span class="kw-2">&amp;mut </span><span class="self">self</span>, precision: <span class="prelude-ty">Option</span>&lt;usize&gt;) {
+        <span class="self">self</span>.precision = precision;
     }
 
-    <span class="doccomment">/// sign getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sign</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Sign</span> {
-        <span class="self">self</span>.<span class="ident">sign</span>.<span class="ident">clone</span>()
+    <span class="doccomment">/// sign getter
+    </span><span class="kw">pub fn </span>sign(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Sign {
+        <span class="self">self</span>.sign.clone()
     }
 
-    <span class="doccomment">/// sign plus getter</span>
-    <span class="doccomment">/// here because it is in fmt::Formatter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sign_plus</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">sign</span> <span class="op">==</span> <span class="ident">Sign::Plus</span>
+    <span class="doccomment">/// sign plus getter
+    /// here because it is in fmt::Formatter
+    </span><span class="kw">pub fn </span>sign_plus(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.sign == Sign::Plus
     }
 
-    <span class="doccomment">/// sign minus getter</span>
-    <span class="doccomment">/// here because it is in fmt::Formatter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sign_minus</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">sign</span> <span class="op">==</span> <span class="ident">Sign::Minus</span>
+    <span class="doccomment">/// sign minus getter
+    /// here because it is in fmt::Formatter
+    </span><span class="kw">pub fn </span>sign_minus(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.sign == Sign::Minus
     }
 
-    <span class="doccomment">/// alternate getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">alternate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">alternate</span>
+    <span class="doccomment">/// alternate getter
+    </span><span class="kw">pub fn </span>alternate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.alternate
     }
 
-    <span class="comment">// sign_aware_zero_pad // Not supported</span>
+    <span class="comment">// sign_aware_zero_pad // Not supported
 
-    <span class="doccomment">/// type getter</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">ty</span>
+    </span><span class="doccomment">/// type getter
+    </span><span class="kw">pub fn </span>ty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
+        <span class="self">self</span>.ty
     }
 
-    <span class="doccomment">/// UNSTABLE: in the future, this may return true if all validty</span>
-    <span class="doccomment">///   checks for a float return true</span>
-    <span class="doccomment">/// return true if ty is valid for formatting integers</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_int_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">ty</span> {
-            <span class="prelude-val">None</span> =&gt; <span class="bool-val">true</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">c</span>) =&gt; <span class="kw">match</span> <span class="ident">c</span> {
-                <span class="string">&#39;b&#39;</span> <span class="op">|</span> <span class="string">&#39;o&#39;</span> <span class="op">|</span> <span class="string">&#39;x&#39;</span> <span class="op">|</span> <span class="string">&#39;X&#39;</span> =&gt; <span class="bool-val">true</span>,
-                <span class="kw">_</span> =&gt; <span class="bool-val">false</span>,
+    <span class="doccomment">/// UNSTABLE: in the future, this may return true if all validty
+    ///   checks for a float return true
+    /// return true if ty is valid for formatting integers
+    </span><span class="kw">pub fn </span>is_int_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="self">self</span>.ty {
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">true</span>,
+            <span class="prelude-val">Some</span>(c) =&gt; <span class="kw">match </span>c {
+                <span class="string">&#39;b&#39; </span>| <span class="string">&#39;o&#39; </span>| <span class="string">&#39;x&#39; </span>| <span class="string">&#39;X&#39; </span>=&gt; <span class="bool-val">true</span>,
+                <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
             },
         }
     }
 
-    <span class="doccomment">/// UNSTABLE: in the future, this may return true if all validty</span>
-    <span class="doccomment">///   checks for a float return true</span>
-    <span class="doccomment">/// return true if ty is valid for formatting floats</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_float_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">ty</span> {
-            <span class="prelude-val">None</span> =&gt; <span class="bool-val">true</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">c</span>) =&gt; <span class="kw">match</span> <span class="ident">c</span> {
-                <span class="string">&#39;f&#39;</span> <span class="op">|</span> <span class="string">&#39;e&#39;</span> <span class="op">|</span> <span class="string">&#39;E&#39;</span> =&gt; <span class="bool-val">true</span>,
-                <span class="kw">_</span> =&gt; <span class="bool-val">false</span>,
+    <span class="doccomment">/// UNSTABLE: in the future, this may return true if all validty
+    ///   checks for a float return true
+    /// return true if ty is valid for formatting floats
+    </span><span class="kw">pub fn </span>is_float_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="self">self</span>.ty {
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">true</span>,
+            <span class="prelude-val">Some</span>(c) =&gt; <span class="kw">match </span>c {
+                <span class="string">&#39;f&#39; </span>| <span class="string">&#39;e&#39; </span>| <span class="string">&#39;E&#39; </span>=&gt; <span class="bool-val">true</span>,
+                <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
             },
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">fmt::Write</span> <span class="kw">for</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">write_str</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="self">self</span>.<span class="ident">buff</span>.<span class="ident">write_str</span>(<span class="ident">s</span>)
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt; fmt::Write <span class="kw">for </span>Formatter&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt; {
+    <span class="kw">fn </span>write_str(<span class="kw-2">&amp;mut </span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; fmt::Result {
+        <span class="self">self</span>.buff.write_str(s)
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="strfmt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="strfmt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

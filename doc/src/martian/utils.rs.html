@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/utils.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utils.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/utils.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utils.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -229,236 +229,236 @@
 <span id="229">229</span>
 <span id="230">230</span>
 <span id="231">231</span>
-</pre><pre class="rust"><code><span class="doccomment">//! Uncategorized collection of tiny useful functions</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! All the functions are simple wrappers around functions from</span>
-<span class="doccomment">//! other crates.</span>
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Error</span>, <span class="ident">JsonDict</span>};
-<span class="kw">use</span> <span class="ident">heck::ToUpperCamelCase</span>;
-<span class="kw">use</span> <span class="ident">serde::Serialize</span>;
-<span class="kw">use</span> <span class="ident">serde_json::Value</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::prelude::OsStrExt</span>;
-<span class="kw">use</span> <span class="ident">std::path::Path</span>;
-<span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
+</pre><pre class="rust"><code><span class="doccomment">//! Uncategorized collection of tiny useful functions
+//!
+//! All the functions are simple wrappers around functions from
+//! other crates.
+</span><span class="kw">use crate</span>::{Error, JsonDict};
+<span class="kw">use </span>heck::ToUpperCamelCase;
+<span class="kw">use </span>serde::Serialize;
+<span class="kw">use </span>serde_json::Value;
+<span class="kw">use </span>std::os::unix::prelude::OsStrExt;
+<span class="kw">use </span>std::path::Path;
+<span class="kw">use </span>std::path::PathBuf;
 
-<span class="doccomment">/// Shortcut function to encode an object as a Json dictionary</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">obj_encode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Serialize</span><span class="op">&gt;</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">JsonDict</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">objify</span>(<span class="ident">v</span>: <span class="ident">Value</span>) -&gt; <span class="ident">JsonDict</span> {
-        <span class="ident">v</span>.<span class="ident">as_object</span>().<span class="ident">unwrap</span>().<span class="ident">to_owned</span>()
+<span class="doccomment">/// Shortcut function to encode an object as a Json dictionary
+</span><span class="kw">pub fn </span>obj_encode&lt;T: Serialize&gt;(v: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;JsonDict, Error&gt; {
+    <span class="kw">fn </span>objify(v: Value) -&gt; JsonDict {
+        v.as_object().unwrap().to_owned()
     }
-    <span class="prelude-val">Ok</span>(<span class="ident">objify</span>(<span class="ident">serde_json::to_value</span>(<span class="ident">v</span>)<span class="question-mark">?</span>))
+    <span class="prelude-val">Ok</span>(objify(serde_json::to_value(v)<span class="question-mark">?</span>))
 }
 
-<span class="doccomment">/// Given a path to the struct which may be fully qualified,</span>
-<span class="doccomment">/// return the struct name in lower snake case.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The input is expected to be a stage struct and the output</span>
-<span class="doccomment">/// is a stage key that is used in the stage registry.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_stage_key</span>(<span class="ident">struct_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="ident">last_name</span> <span class="op">=</span> <span class="ident">struct_name</span>
-        .<span class="ident">split</span>(<span class="string">&quot;::&quot;</span>)
-        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()
-        .<span class="ident">last</span>()
-        .<span class="ident">unwrap</span>()
-        .<span class="ident">to_string</span>();
-    <span class="ident">to_snake_case</span>(<span class="kw-2">&amp;</span><span class="ident">last_name</span>)
+<span class="doccomment">/// Given a path to the struct which may be fully qualified,
+/// return the struct name in lower snake case.
+///
+/// The input is expected to be a stage struct and the output
+/// is a stage key that is used in the stage registry.
+</span><span class="kw">pub fn </span>to_stage_key(struct_name: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">let </span>last_name = struct_name
+        .split(<span class="string">&quot;::&quot;</span>)
+        .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
+        .last()
+        .unwrap()
+        .to_string();
+    to_snake_case(<span class="kw-2">&amp;</span>last_name)
 }
 
-<span class="doccomment">/// Convert the input to `SHOUTY_SNAKE_CASE`</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_shouty_snake_case</span>(<span class="ident">struct_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">use</span> <span class="ident">heck::ToShoutySnakeCase</span>;
-    <span class="ident">struct_name</span>.<span class="ident">to_shouty_snake_case</span>()
+<span class="doccomment">/// Convert the input to `SHOUTY_SNAKE_CASE`
+</span><span class="kw">pub fn </span>to_shouty_snake_case(struct_name: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">use </span>heck::ToShoutySnakeCase;
+    struct_name.to_shouty_snake_case()
 }
 
-<span class="doccomment">/// Convert the input to `snake_case`</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_snake_case</span>(<span class="ident">struct_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">use</span> <span class="ident">heck::ToSnakeCase</span>;
-    <span class="ident">struct_name</span>.<span class="ident">to_snake_case</span>()
+<span class="doccomment">/// Convert the input to `snake_case`
+</span><span class="kw">pub fn </span>to_snake_case(struct_name: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">use </span>heck::ToSnakeCase;
+    struct_name.to_snake_case()
 }
 
-<span class="doccomment">/// Convert the input to `CamelCase`</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_camel_case</span>(<span class="ident">stage_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="ident">stage_name</span>.<span class="ident">to_upper_camel_case</span>()
+<span class="doccomment">/// Convert the input to `CamelCase`
+</span><span class="kw">pub fn </span>to_camel_case(stage_name: <span class="kw-2">&amp;</span>str) -&gt; String {
+    stage_name.to_upper_camel_case()
 }
 
-<span class="doccomment">/// Parse the `env::args()` and return the name of the</span>
-<span class="doccomment">/// current executable as a String</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">current_executable</span>() -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::env::args</span>().<span class="ident">collect</span>();
-    <span class="ident">std::path::Path::new</span>(<span class="kw-2">&amp;</span><span class="ident">args</span>[<span class="number">0</span>])
-        .<span class="ident">file_name</span>()
-        .<span class="ident">unwrap</span>()
-        .<span class="ident">to_string_lossy</span>()
-        .<span class="ident">into_owned</span>()
+<span class="doccomment">/// Parse the `env::args()` and return the name of the
+/// current executable as a String
+</span><span class="kw">pub fn </span>current_executable() -&gt; String {
+    <span class="kw">let </span>args: Vec&lt;<span class="kw">_</span>&gt; = std::env::args().collect();
+    std::path::Path::new(<span class="kw-2">&amp;</span>args[<span class="number">0</span>])
+        .file_name()
+        .unwrap()
+        .to_string_lossy()
+        .into_owned()
 }
 
-<span class="doccomment">/// Given a filename and an extension, return the filename with the correct extension.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Let&#39;s say we have a file `foo.a1.a2.a3`. The `extension()` function associated with</span>
-<span class="doccomment">/// Path in rust returns `a3` at the extension. This also means that</span>
-<span class="doccomment">/// `p.set_extension(&quot;a2.a3&quot;)` would be `foo.a1.a2.a2.a3`, which is probably</span>
-<span class="doccomment">/// not intended.  This helper function accounts for paths with multiple dot</span>
-<span class="doccomment">/// extensions and sets up the filename correctly.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use martian::utils::set_extension;</span>
-<span class="doccomment">/// assert_eq!(</span>
-<span class="doccomment">///     set_extension(&quot;/path/to/foo.bar.baz&quot;, &quot;bar.baz.tmp&quot;),</span>
-<span class="doccomment">///     std::path::PathBuf::from(&quot;/path/to/foo.bar.baz.tmp&quot;)</span>
-<span class="doccomment">/// );</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_extension</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">extension</span>: <span class="kw">impl</span> <span class="ident">ToString</span>) -&gt; <span class="ident">PathBuf</span> {
-    <span class="ident">_set_extension</span>(<span class="ident">PathBuf::from</span>(<span class="ident">file_path</span>.<span class="ident">as_ref</span>()), <span class="ident">extension</span>.<span class="ident">to_string</span>())
+<span class="doccomment">/// Given a filename and an extension, return the filename with the correct extension.
+///
+/// Let&#39;s say we have a file `foo.a1.a2.a3`. The `extension()` function associated with
+/// Path in rust returns `a3` at the extension. This also means that
+/// `p.set_extension(&quot;a2.a3&quot;)` would be `foo.a1.a2.a2.a3`, which is probably
+/// not intended.  This helper function accounts for paths with multiple dot
+/// extensions and sets up the filename correctly.
+///
+/// ```
+/// use martian::utils::set_extension;
+/// assert_eq!(
+///     set_extension(&quot;/path/to/foo.bar.baz&quot;, &quot;bar.baz.tmp&quot;),
+///     std::path::PathBuf::from(&quot;/path/to/foo.bar.baz.tmp&quot;)
+/// );
+/// ```
+</span><span class="kw">pub fn </span>set_extension(file_path: <span class="kw">impl </span>AsRef&lt;Path&gt;, extension: <span class="kw">impl </span>ToString) -&gt; PathBuf {
+    _set_extension(PathBuf::from(file_path.as_ref()), extension.to_string())
 }
 
-<span class="comment">// Returns true if the given name ends with .ext.</span>
-<span class="comment">// Equivilent to `.endswith(&quot;.&quot;+ext)` except doesn&#39;t need to allocate.</span>
-<span class="kw">fn</span> <span class="ident">has_extension</span>(<span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">ext</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">bool</span> {
-    <span class="ident">name</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">ext</span>.<span class="ident">len</span>()
-        <span class="op">&amp;&amp;</span> <span class="ident">name</span>.<span class="ident">ends_with</span>(<span class="ident">ext</span>)
-        <span class="op">&amp;&amp;</span> <span class="ident">name</span>[<span class="ident">name</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">ext</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>..].<span class="ident">starts_with</span>(<span class="string">&#39;.&#39;</span>)
+<span class="comment">// Returns true if the given name ends with .ext.
+// Equivilent to `.endswith(&quot;.&quot;+ext)` except doesn&#39;t need to allocate.
+</span><span class="kw">fn </span>has_extension(name: <span class="kw-2">&amp;</span>str, ext: <span class="kw-2">&amp;</span>str) -&gt; bool {
+    name.len() &gt; ext.len()
+        &amp;&amp; name.ends_with(ext)
+        &amp;&amp; name[name.len() - ext.len() - <span class="number">1</span>..].starts_with(<span class="string">&#39;.&#39;</span>)
 }
 
-<span class="comment">// This is seperate from the public set_extension to avoid generating multiple</span>
-<span class="comment">// monomorphized versions of the function, and to improve efficiency for</span>
-<span class="comment">// make_path which is already handing over a PathBuf.</span>
-<span class="kw">fn</span> <span class="ident">_set_extension</span>(<span class="kw-2">mut</span> <span class="ident">result</span>: <span class="ident">PathBuf</span>, <span class="ident">extension</span>: <span class="ident">String</span>) -&gt; <span class="ident">PathBuf</span> {
+<span class="comment">// This is seperate from the public set_extension to avoid generating multiple
+// monomorphized versions of the function, and to improve efficiency for
+// make_path which is already handing over a PathBuf.
+</span><span class="kw">fn </span>_set_extension(<span class="kw-2">mut </span>result: PathBuf, extension: String) -&gt; PathBuf {
     <span class="macro">assert_ne!</span>(
         {
-            <span class="kw">let</span> <span class="ident">r_str</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">as_os_str</span>().<span class="ident">as_bytes</span>();
-            <span class="kw-2">*</span><span class="ident">r_str</span>.<span class="ident">last</span>().<span class="ident">expect</span>(<span class="string">&quot;Path must be non-empty.&quot;</span>)
+            <span class="kw">let </span>r_str = result.as_os_str().as_bytes();
+            <span class="kw-2">*</span>r_str.last().expect(<span class="string">&quot;Path must be non-empty.&quot;</span>)
         },
-        <span class="ident">std::path::MAIN_SEPARATOR</span> <span class="kw">as</span> <span class="ident">u8</span>,
+        std::path::MAIN_SEPARATOR <span class="kw">as </span>u8,
         <span class="string">&quot;You passed a directory instead of a file: {:?}&quot;</span>,
-        <span class="ident">result</span>
+        result
     );
 
-    <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">extension</span>.<span class="ident">starts_with</span>(<span class="string">&#39;.&#39;</span>));
-    <span class="kw">if</span> <span class="ident">extension</span>.<span class="ident">is_empty</span>() {
-        <span class="kw">return</span> <span class="ident">result</span>;
+    <span class="macro">assert!</span>(!extension.starts_with(<span class="string">&#39;.&#39;</span>));
+    <span class="kw">if </span>extension.is_empty() {
+        <span class="kw">return </span>result;
     }
 
-    <span class="kw">let</span> <span class="ident">current_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span>.<span class="ident">file_name</span>() {
-        <span class="prelude-val">Some</span>(<span class="ident">name</span>) =&gt; <span class="ident">name</span>.<span class="ident">to_string_lossy</span>(),
-        <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Could not find the filename in {:?}&quot;</span>, <span class="ident">result</span>),
+    <span class="kw">let </span>current_name = <span class="kw">match </span>result.file_name() {
+        <span class="prelude-val">Some</span>(name) =&gt; name.to_string_lossy(),
+        <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Could not find the filename in {result:?}&quot;</span>),
     };
-    <span class="kw">let</span> <span class="ident">current_name</span> <span class="op">=</span> <span class="ident">current_name</span>.<span class="ident">as_ref</span>();
-    <span class="comment">// Trim parts of the extension which are already present in the result.</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remaining_extension</span> <span class="op">=</span> <span class="ident">extension</span>.<span class="ident">as_str</span>();
-    <span class="kw">if</span> <span class="ident">has_extension</span>(<span class="ident">current_name</span>, <span class="ident">remaining_extension</span>) {
-        <span class="kw">return</span> <span class="ident">result</span>;
+    <span class="kw">let </span>current_name = current_name.as_ref();
+    <span class="comment">// Trim parts of the extension which are already present in the result.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>remaining_extension = extension.as_str();
+    <span class="kw">if </span>has_extension(current_name, remaining_extension) {
+        <span class="kw">return </span>result;
     }
 
-    <span class="kw">for</span> (<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">chr</span>) <span class="kw">in</span> <span class="ident">extension</span>.<span class="ident">as_bytes</span>().<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
-        <span class="kw">if</span> <span class="ident">chr</span> <span class="op">==</span> <span class="string">b&#39;.&#39;</span> <span class="op">&amp;&amp;</span> <span class="ident">has_extension</span>(<span class="ident">current_name</span>, <span class="kw-2">&amp;</span><span class="ident">extension</span>[..<span class="ident">i</span>]) {
-            <span class="ident">remaining_extension</span> <span class="op">=</span> <span class="ident">extension</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>..].<span class="ident">trim_start_matches</span>(<span class="string">&#39;.&#39;</span>);
+    <span class="kw">for </span>(i, <span class="kw-2">&amp;</span>chr) <span class="kw">in </span>extension.as_bytes().iter().enumerate() {
+        <span class="kw">if </span>chr == <span class="string">b&#39;.&#39; </span>&amp;&amp; has_extension(current_name, <span class="kw-2">&amp;</span>extension[..i]) {
+            remaining_extension = extension[i + <span class="number">1</span>..].trim_start_matches(<span class="string">&#39;.&#39;</span>);
             <span class="kw">break</span>;
         }
     }
 
-    <span class="ident">result</span>.<span class="ident">set_file_name</span>(<span class="macro">format!</span>(<span class="string">&quot;{}.{}&quot;</span>, <span class="ident">current_name</span>, <span class="ident">remaining_extension</span>));
-    <span class="ident">result</span>
+    result.set_file_name(<span class="macro">format!</span>(<span class="string">&quot;{current_name}.{remaining_extension}&quot;</span>));
+    result
 }
 
-<span class="doccomment">/// Given a path, file name, and extension, produce a file name with that</span>
-<span class="doccomment">/// extension.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// This is intended primarily for use by the filetype macros, to avoid</span>
-<span class="doccomment">/// generating large amounts of duplicate code, and should generally not be</span>
-<span class="doccomment">/// used directly.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_path</span>(<span class="ident">file_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="ident">file_name</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="ident">extension</span>: <span class="ident">String</span>) -&gt; <span class="ident">PathBuf</span> {
-    <span class="ident">_set_extension</span>(<span class="ident">file_path</span>.<span class="ident">join</span>(<span class="ident">file_name</span>), <span class="ident">extension</span>)
+<span class="doccomment">/// Given a path, file name, and extension, produce a file name with that
+/// extension.
+///
+/// This is intended primarily for use by the filetype macros, to avoid
+/// generating large amounts of duplicate code, and should generally not be
+/// used directly.
+</span><span class="kw">pub fn </span>make_path(file_path: <span class="kw-2">&amp;</span>Path, file_name: <span class="kw-2">&amp;</span>Path, extension: String) -&gt; PathBuf {
+    _set_extension(file_path.join(file_name), extension)
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_has_extension</span>() {
-        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">has_extension</span>(<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;txt.txt&quot;</span>));
-        <span class="macro">assert!</span>(<span class="ident">has_extension</span>(<span class="string">&quot;foo.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>));
-        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">has_extension</span>(<span class="string">&quot;foo.txt&quot;</span>, <span class="string">&quot;txt.txt&quot;</span>));
-        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">has_extension</span>(<span class="string">&quot;foo.tar&quot;</span>, <span class="string">&quot;tar.gz&quot;</span>));
-        <span class="macro">assert!</span>(<span class="ident">has_extension</span>(<span class="string">&quot;foo.tar.gz&quot;</span>, <span class="string">&quot;gz&quot;</span>));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_has_extension() {
+        <span class="macro">assert!</span>(!has_extension(<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;txt.txt&quot;</span>));
+        <span class="macro">assert!</span>(has_extension(<span class="string">&quot;foo.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>));
+        <span class="macro">assert!</span>(!has_extension(<span class="string">&quot;foo.txt&quot;</span>, <span class="string">&quot;txt.txt&quot;</span>));
+        <span class="macro">assert!</span>(!has_extension(<span class="string">&quot;foo.tar&quot;</span>, <span class="string">&quot;tar.gz&quot;</span>));
+        <span class="macro">assert!</span>(has_extension(<span class="string">&quot;foo.tar.gz&quot;</span>, <span class="string">&quot;gz&quot;</span>));
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_set_extension</span>() {
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_set_extension() {
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo&quot;</span>, <span class="string">&quot;txt&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.tx&quot;</span>, <span class="string">&quot;txt&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.tx.txt&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo.tx&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.tx.txt&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo&quot;</span>, <span class="string">&quot;txt.lz4&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt.lz4&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo&quot;</span>, <span class="string">&quot;txt.lz4&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt.lz4&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo.txt&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.txt.lz4&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo.txt.lz4&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>, <span class="string">&quot;txt.lz4.tmp&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt.lz4.tmp&quot;</span>)
         );
-        <span class="macro">assert_eq!</span>(<span class="ident">set_extension</span>(<span class="string">&quot;.json&quot;</span>, <span class="string">&quot;json&quot;</span>), <span class="ident">PathBuf::from</span>(<span class="string">&quot;.json&quot;</span>));
+        <span class="macro">assert_eq!</span>(set_extension(<span class="string">&quot;.json&quot;</span>, <span class="string">&quot;json&quot;</span>), PathBuf::from(<span class="string">&quot;.json&quot;</span>));
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.txt.foo&quot;</span>, <span class="string">&quot;txt&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt.foo.txt&quot;</span>)
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>, <span class="string">&quot;&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/foo.txt&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo.txt.foo&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt.foo.txt&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/footxt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/footxt.txt&quot;</span>)
-        );
-    }
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_set_extension_non_ascii</span>() {
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/💾/to/fö‼.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/💾/to/fö‼.txt&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/foo.txt&quot;</span>, <span class="string">&quot;&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/foo.txt&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/fö💾.™txt&quot;</span>, <span class="string">&quot;™txt&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/fö💾.™txt&quot;</span>)
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/ﬁ‼e.txt💾&quot;</span>, <span class="string">&quot;™txt💾&quot;</span>),
-            <span class="ident">PathBuf::from</span>(<span class="string">&quot;/path/to/ﬁ‼e.txt💾.™txt💾&quot;</span>)
+            set_extension(<span class="string">&quot;/path/to/footxt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/footxt.txt&quot;</span>)
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">should_panic</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_set_extension_not_file</span>() {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/&quot;</span>, <span class="string">&quot;foo&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_set_extension_non_ascii() {
+        <span class="macro">assert_eq!</span>(
+            set_extension(<span class="string">&quot;/💾/to/fö‼.txt&quot;</span>, <span class="string">&quot;txt&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/💾/to/fö‼.txt&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            set_extension(<span class="string">&quot;/path/to/fö💾.™txt&quot;</span>, <span class="string">&quot;™txt&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/fö💾.™txt&quot;</span>)
+        );
+        <span class="macro">assert_eq!</span>(
+            set_extension(<span class="string">&quot;/path/to/ﬁ‼e.txt💾&quot;</span>, <span class="string">&quot;™txt💾&quot;</span>),
+            PathBuf::from(<span class="string">&quot;/path/to/ﬁ‼e.txt💾.™txt💾&quot;</span>)
+        );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">should_panic</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_set_extension_extension_dot</span>() {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">set_extension</span>(<span class="string">&quot;/path/to/file&quot;</span>, <span class="string">&quot;.foo&quot;</span>);
+    <span class="attribute">#[test]
+    #[should_panic]
+    </span><span class="kw">fn </span>test_set_extension_not_file() {
+        <span class="kw">let _ </span>= set_extension(<span class="string">&quot;/path/to/&quot;</span>, <span class="string">&quot;foo&quot;</span>);
+    }
+
+    <span class="attribute">#[test]
+    #[should_panic]
+    </span><span class="kw">fn </span>test_set_extension_extension_dot() {
+        <span class="kw">let _ </span>= set_extension(<span class="string">&quot;/path/to/file&quot;</span>, <span class="string">&quot;.foo&quot;</span>);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

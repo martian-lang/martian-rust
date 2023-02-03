@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/docopt-1.1.1/src/dopt.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dopt.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../docopt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../docopt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../docopt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/docopt-1.1.1/src/dopt.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dopt.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../docopt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -990,997 +990,997 @@
 <span id="990">990</span>
 <span id="991">991</span>
 <span id="992">992</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
-<span class="kw">use</span> <span class="ident">std::error::Error</span> <span class="kw">as</span> <span class="ident">StdError</span>;
-<span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
-<span class="kw">use</span> <span class="ident">std::result</span>;
+</pre><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
+<span class="kw">use </span>std::error::Error <span class="kw">as </span>StdError;
+<span class="kw">use </span>std::fmt::{<span class="self">self</span>, Debug};
+<span class="kw">use </span>std::io::{<span class="self">self</span>, Write};
+<span class="kw">use </span>std::str::FromStr;
+<span class="kw">use </span>std::result;
 
-<span class="kw">use</span> <span class="ident">lazy_static::lazy_static</span>;
-<span class="kw">use</span> <span class="ident">regex</span>::{<span class="ident">Captures</span>, <span class="ident">Regex</span>};
-<span class="kw">use</span> <span class="ident">serde::de</span>;
-<span class="kw">use</span> <span class="ident">serde::de::IntoDeserializer</span>;
+<span class="kw">use </span>lazy_static::lazy_static;
+<span class="kw">use </span>regex::{Captures, Regex};
+<span class="kw">use </span>serde::de;
+<span class="kw">use </span>serde::de::IntoDeserializer;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::parse::Parser</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::synonym::SynonymMap</span>;
+<span class="kw">use </span><span class="kw">crate</span>::parse::Parser;
+<span class="kw">use </span><span class="kw">crate</span>::synonym::SynonymMap;
 
-<span class="kw">use</span> <span class="ident"><span class="self">self</span>::Value</span>::{<span class="ident">Switch</span>, <span class="ident">Counted</span>, <span class="ident">Plain</span>, <span class="ident">List</span>};
-<span class="kw">use</span> <span class="ident"><span class="self">self</span>::Error</span>::{<span class="ident">Usage</span>, <span class="ident">Argv</span>, <span class="ident">NoMatch</span>, <span class="ident">Deserialize</span>, <span class="ident">WithProgramUsage</span>, <span class="ident">Help</span>, <span class="ident">Version</span>};
+<span class="kw">use </span><span class="self">self</span>::Value::{Switch, Counted, Plain, List};
+<span class="kw">use </span><span class="self">self</span>::Error::{Usage, Argv, NoMatch, Deserialize, WithProgramUsage, Help, Version};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::cap_or_empty</span>;
+<span class="kw">use </span><span class="kw">crate</span>::cap_or_empty;
 
-<span class="doccomment">/// Represents the different types of Docopt errors.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// This error type has a lot of variants. In the common case, you probably</span>
-<span class="doccomment">/// don&#39;t care why Docopt has failed, and would rather just quit the program</span>
-<span class="doccomment">/// and show an error message instead. The `exit` method defined on the `Error`</span>
-<span class="doccomment">/// type will do just that. It will also set the exit code appropriately</span>
-<span class="doccomment">/// (no error for `--help` or `--version`, but an error code for bad usage,</span>
-<span class="doccomment">/// bad argv, no match or bad decode).</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// ### Example</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Generally, you want to parse the usage string, try to match the argv</span>
-<span class="doccomment">/// and then quit the program if there was an error reported at any point</span>
-<span class="doccomment">/// in that process. This can be achieved like so:</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// ```no_run</span>
-<span class="doccomment">/// use docopt::Docopt;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// const USAGE: &amp;&#39;static str = &quot;</span>
-<span class="doccomment">/// Usage: ...</span>
-<span class="doccomment">/// &quot;;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// let args = Docopt::new(USAGE)</span>
-<span class="doccomment">///                   .and_then(|d| d.parse())</span>
-<span class="doccomment">///                   .unwrap_or_else(|e| e.exit());</span>
-<span class="doccomment">/// ```</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
-    <span class="doccomment">/// Parsing the usage string failed.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This error can only be triggered by the programmer, i.e., the writer</span>
-    <span class="doccomment">/// of the Docopt usage string. This error is usually indicative of a bug</span>
-    <span class="doccomment">/// in your program.</span>
-    <span class="ident">Usage</span>(<span class="ident">String</span>),
+<span class="doccomment">/// Represents the different types of Docopt errors.
+///
+/// This error type has a lot of variants. In the common case, you probably
+/// don&#39;t care why Docopt has failed, and would rather just quit the program
+/// and show an error message instead. The `exit` method defined on the `Error`
+/// type will do just that. It will also set the exit code appropriately
+/// (no error for `--help` or `--version`, but an error code for bad usage,
+/// bad argv, no match or bad decode).
+///
+/// ### Example
+///
+/// Generally, you want to parse the usage string, try to match the argv
+/// and then quit the program if there was an error reported at any point
+/// in that process. This can be achieved like so:
+///
+/// ```no_run
+/// use docopt::Docopt;
+///
+/// const USAGE: &amp;&#39;static str = &quot;
+/// Usage: ...
+/// &quot;;
+///
+/// let args = Docopt::new(USAGE)
+///                   .and_then(|d| d.parse())
+///                   .unwrap_or_else(|e| e.exit());
+/// ```
+</span><span class="attribute">#[derive(Debug)]
+</span><span class="kw">pub enum </span>Error {
+    <span class="doccomment">/// Parsing the usage string failed.
+    ///
+    /// This error can only be triggered by the programmer, i.e., the writer
+    /// of the Docopt usage string. This error is usually indicative of a bug
+    /// in your program.
+    </span>Usage(String),
 
-    <span class="doccomment">/// Parsing the argv specified failed.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// The payload is a string describing why the arguments provided could not</span>
-    <span class="doccomment">/// be parsed.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This is distinct from `NoMatch` because it will catch errors like</span>
-    <span class="doccomment">/// using flags that aren&#39;t defined in the usage string.</span>
-    <span class="ident">Argv</span>(<span class="ident">String</span>),
+    <span class="doccomment">/// Parsing the argv specified failed.
+    ///
+    /// The payload is a string describing why the arguments provided could not
+    /// be parsed.
+    ///
+    /// This is distinct from `NoMatch` because it will catch errors like
+    /// using flags that aren&#39;t defined in the usage string.
+    </span>Argv(String),
 
-    <span class="doccomment">/// The given argv parsed successfully, but it did not match any example</span>
-    <span class="doccomment">/// usage of the program.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Regrettably, there is no descriptive message describing *why* the</span>
-    <span class="doccomment">/// given argv didn&#39;t match any of the usage strings.</span>
-    <span class="ident">NoMatch</span>,
+    <span class="doccomment">/// The given argv parsed successfully, but it did not match any example
+    /// usage of the program.
+    ///
+    /// Regrettably, there is no descriptive message describing *why* the
+    /// given argv didn&#39;t match any of the usage strings.
+    </span>NoMatch,
 
-    <span class="doccomment">/// This indicates a problem deserializing a successful argv match into a</span>
-    <span class="doccomment">/// deserializable value.</span>
-    <span class="ident">Deserialize</span>(<span class="ident">String</span>),
+    <span class="doccomment">/// This indicates a problem deserializing a successful argv match into a
+    /// deserializable value.
+    </span>Deserialize(String),
 
-    <span class="doccomment">/// Parsing failed, and the program usage should be printed next to the</span>
-    <span class="doccomment">/// failure message. Typically this wraps `Argv` and `NoMatch` errors.</span>
-    <span class="ident">WithProgramUsage</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;</span>, <span class="ident">String</span>),
+    <span class="doccomment">/// Parsing failed, and the program usage should be printed next to the
+    /// failure message. Typically this wraps `Argv` and `NoMatch` errors.
+    </span>WithProgramUsage(Box&lt;Error&gt;, String),
 
-    <span class="doccomment">/// Decoding or parsing failed because the command line specified that the</span>
-    <span class="doccomment">/// help message should be printed.</span>
-    <span class="ident">Help</span>,
+    <span class="doccomment">/// Decoding or parsing failed because the command line specified that the
+    /// help message should be printed.
+    </span>Help,
 
-    <span class="doccomment">/// Decoding or parsing failed because the command line specified that the</span>
-    <span class="doccomment">/// version should be printed</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// The version is included as a payload to this variant.</span>
-    <span class="ident">Version</span>(<span class="ident">String</span>),
+    <span class="doccomment">/// Decoding or parsing failed because the command line specified that the
+    /// version should be printed
+    ///
+    /// The version is included as a payload to this variant.
+    </span>Version(String),
 }
 
-<span class="kw">impl</span> <span class="ident">Error</span> {
-    <span class="doccomment">/// Return whether this was a fatal error or not.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Non-fatal errors include requests to print the help or version</span>
-    <span class="doccomment">/// information of a program, while fatal errors include those such as</span>
-    <span class="doccomment">/// failing to decode or parse.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fatal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Help</span> <span class="op">|</span> <span class="ident">Version</span>(..) =&gt; <span class="bool-val">false</span>,
-            <span class="ident">Usage</span>(..) <span class="op">|</span> <span class="ident">Argv</span>(..) <span class="op">|</span> <span class="ident">NoMatch</span> <span class="op">|</span> <span class="ident">Deserialize</span>(..) =&gt; <span class="bool-val">true</span>,
-            <span class="ident">WithProgramUsage</span>(<span class="kw-2">ref</span> <span class="ident">b</span>, <span class="kw">_</span>) =&gt; <span class="ident">b</span>.<span class="ident">fatal</span>(),
+<span class="kw">impl </span>Error {
+    <span class="doccomment">/// Return whether this was a fatal error or not.
+    ///
+    /// Non-fatal errors include requests to print the help or version
+    /// information of a program, while fatal errors include those such as
+    /// failing to decode or parse.
+    </span><span class="kw">pub fn </span>fatal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            Help | Version(..) =&gt; <span class="bool-val">false</span>,
+            Usage(..) | Argv(..) | NoMatch | Deserialize(..) =&gt; <span class="bool-val">true</span>,
+            WithProgramUsage(<span class="kw-2">ref </span>b, <span class="kw">_</span>) =&gt; b.fatal(),
         }
     }
 
-    <span class="doccomment">/// Print this error and immediately exit the program.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If the error is non-fatal (e.g., `Help` or `Version`), then the</span>
-    <span class="doccomment">/// error is printed to stdout and the exit status will be `0`. Otherwise,</span>
-    <span class="doccomment">/// when the error is fatal, the error is printed to stderr and the</span>
-    <span class="doccomment">/// exit status will be `1`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">exit</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="op">!</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">fatal</span>() {
+    <span class="doccomment">/// Print this error and immediately exit the program.
+    ///
+    /// If the error is non-fatal (e.g., `Help` or `Version`), then the
+    /// error is printed to stdout and the exit status will be `0`. Otherwise,
+    /// when the error is fatal, the error is printed to stderr and the
+    /// exit status will be `1`.
+    </span><span class="kw">pub fn </span>exit(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ! {
+        <span class="kw">if </span><span class="self">self</span>.fatal() {
             <span class="macro">werr!</span>(<span class="string">&quot;{}\n&quot;</span>, <span class="self">self</span>);
-            <span class="ident">::std::process::exit</span>(<span class="number">1</span>)
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut</span> <span class="ident">io::stdout</span>(), <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>);
-            <span class="ident">::std::process::exit</span>(<span class="number">0</span>)
+            ::std::process::exit(<span class="number">1</span>)
+        } <span class="kw">else </span>{
+            <span class="kw">let _ </span>= <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut </span>io::stdout(), <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>);
+            ::std::process::exit(<span class="number">0</span>)
         }
     }
 }
 
-<span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+<span class="kw">type </span><span class="prelude-ty">Result</span>&lt;T&gt; = result::Result&lt;T, Error&gt;;
 
-<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Error</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">WithProgramUsage</span>(<span class="kw-2">ref</span> <span class="ident">other</span>, <span class="kw-2">ref</span> <span class="ident">usage</span>) =&gt; {
-                <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">other</span>.<span class="ident">to_string</span>();
-                <span class="kw">if</span> <span class="ident">other</span>.<span class="ident">is_empty</span>() {
-                    <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">usage</span>)
-                } <span class="kw">else</span> {
-                    <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}\n\n{}&quot;</span>, <span class="ident">other</span>, <span class="ident">usage</span>)
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>Error {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            WithProgramUsage(<span class="kw-2">ref </span>other, <span class="kw-2">ref </span>usage) =&gt; {
+                <span class="kw">let </span>other = other.to_string();
+                <span class="kw">if </span>other.is_empty() {
+                    <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, usage)
+                } <span class="kw">else </span>{
+                    <span class="macro">write!</span>(f, <span class="string">&quot;{}\n\n{}&quot;</span>, other, usage)
                 }
             }
-            <span class="ident">Help</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;&quot;</span>),
-            <span class="ident">NoMatch</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Invalid arguments.&quot;</span>),
-            <span class="ident">Usage</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Argv</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Deserialize</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Version</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">s</span>),
+            Help =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;&quot;</span>),
+            NoMatch =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;Invalid arguments.&quot;</span>),
+            Usage(<span class="kw-2">ref </span>s) |
+            Argv(<span class="kw-2">ref </span>s) |
+            Deserialize(<span class="kw-2">ref </span>s) |
+            Version(<span class="kw-2">ref </span>s) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, s),
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">StdError</span> <span class="kw">for</span> <span class="ident">Error</span> {
-    <span class="kw">fn</span> <span class="ident">source</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>(<span class="kw">dyn</span> <span class="ident">StdError</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>)<span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">WithProgramUsage</span>(<span class="kw-2">ref</span> <span class="ident">cause</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">cause</span>),
-            <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+<span class="kw">impl </span>StdError <span class="kw">for </span>Error {
+    <span class="kw">fn </span>source(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>(<span class="kw">dyn </span>StdError + <span class="lifetime">&#39;static</span>)&gt; {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            WithProgramUsage(<span class="kw-2">ref </span>cause, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;**</span>cause),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">de::Error</span> <span class="kw">for</span> <span class="ident">Error</span> {
-    <span class="kw">fn</span> <span class="ident">custom</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt::Display</span><span class="op">&gt;</span>(<span class="ident">msg</span>: <span class="ident">T</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">Error::Deserialize</span>(<span class="ident">msg</span>.<span class="ident">to_string</span>())
+<span class="kw">impl </span>de::Error <span class="kw">for </span>Error {
+    <span class="kw">fn </span>custom&lt;T: fmt::Display&gt;(msg: T) -&gt; <span class="self">Self </span>{
+        Error::Deserialize(msg.to_string())
     }
 }
 
-<span class="doccomment">/// The main Docopt type, which is constructed with a Docopt usage string.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// This can be used to match command line arguments to produce a `ArgvMap`.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Docopt</span> {
-    <span class="ident">p</span>: <span class="ident">Parser</span>,
-    <span class="ident">argv</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">options_first</span>: <span class="ident">bool</span>,
-    <span class="ident">help</span>: <span class="ident">bool</span>,
-    <span class="ident">version</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+<span class="doccomment">/// The main Docopt type, which is constructed with a Docopt usage string.
+///
+/// This can be used to match command line arguments to produce a `ArgvMap`.
+</span><span class="attribute">#[derive(Clone, Debug)]
+</span><span class="kw">pub struct </span>Docopt {
+    p: Parser,
+    argv: <span class="prelude-ty">Option</span>&lt;Vec&lt;String&gt;&gt;,
+    options_first: bool,
+    help: bool,
+    version: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">Docopt</span> {
-    <span class="doccomment">/// Parse the Docopt usage string given.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// The `Docopt` value returned may be used immediately to parse command</span>
-    <span class="doccomment">/// line arguments with a default configuration.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If there was a problem parsing the usage string, a `Usage` error</span>
-    <span class="doccomment">/// is returned.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="ident">usage</span>: <span class="ident">S</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Docopt</span><span class="op">&gt;</span>
-            <span class="kw">where</span> <span class="ident">S</span>: <span class="ident">::std::ops::Deref</span><span class="op">&lt;</span><span class="ident">Target</span><span class="op">=</span><span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="ident">Parser::new</span>(<span class="ident">usage</span>.<span class="ident">deref</span>())
-               .<span class="ident">map_err</span>(<span class="ident">Usage</span>)
-               .<span class="ident">map</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="ident">Docopt</span> {
-                   <span class="ident">p</span>: <span class="ident">p</span>,
-                   <span class="ident">argv</span>: <span class="prelude-val">None</span>,
-                   <span class="ident">options_first</span>: <span class="bool-val">false</span>,
-                   <span class="ident">help</span>: <span class="bool-val">true</span>,
-                   <span class="ident">version</span>: <span class="prelude-val">None</span>,
+<span class="kw">impl </span>Docopt {
+    <span class="doccomment">/// Parse the Docopt usage string given.
+    ///
+    /// The `Docopt` value returned may be used immediately to parse command
+    /// line arguments with a default configuration.
+    ///
+    /// If there was a problem parsing the usage string, a `Usage` error
+    /// is returned.
+    </span><span class="kw">pub fn </span>new&lt;S&gt;(usage: S) -&gt; <span class="prelude-ty">Result</span>&lt;Docopt&gt;
+            <span class="kw">where </span>S: ::std::ops::Deref&lt;Target=str&gt; {
+        Parser::new(usage.deref())
+               .map_err(Usage)
+               .map(|p| Docopt {
+                   p: p,
+                   argv: <span class="prelude-val">None</span>,
+                   options_first: <span class="bool-val">false</span>,
+                   help: <span class="bool-val">true</span>,
+                   version: <span class="prelude-val">None</span>,
                 })
     }
 
-    <span class="doccomment">/// Parse and deserialize the given argv.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This is a convenience method for</span>
-    <span class="doccomment">/// `parse().and_then(|vals| vals.deserialize())`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// For details on how decoding works, please see the documentation for</span>
-    <span class="doccomment">/// `ArgvMap`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>: <span class="lifetime">&#39;a</span>, <span class="ident">D</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">D</span>: <span class="ident">de::Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="doccomment">/// Parse and deserialize the given argv.
+    ///
+    /// This is a convenience method for
+    /// `parse().and_then(|vals| vals.deserialize())`.
+    ///
+    /// For details on how decoding works, please see the documentation for
+    /// `ArgvMap`.
+    </span><span class="kw">pub fn </span>deserialize&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>: <span class="lifetime">&#39;a</span>, D&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;D&gt;
+        <span class="kw">where </span>D: de::Deserialize&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="self">self</span>.<span class="ident">parse</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">vals</span><span class="op">|</span> <span class="ident">vals</span>.<span class="ident">deserialize</span>())
+        <span class="self">self</span>.parse().and_then(|vals| vals.deserialize())
     }
 
-    <span class="doccomment">/// Parse command line arguments and try to match them against a usage</span>
-    <span class="doccomment">/// pattern specified in the Docopt string.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If there is a match, then an `ArgvMap` is returned, which maps</span>
-    <span class="doccomment">/// flags, commands and arguments to values.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If parsing the command line arguments fails, then an `Argv` error is</span>
-    <span class="doccomment">/// returned. If parsing succeeds but there is no match, then a `NoMatch`</span>
-    <span class="doccomment">/// error is returned. Both of these errors are always returned inside a</span>
-    <span class="doccomment">/// `WithProgramUsage` error.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If special handling of `help` or `version` is enabled (the former is</span>
-    <span class="doccomment">/// enabled by default), then `Help` or `Version` errors are returned</span>
-    <span class="doccomment">/// if `--help` or `--version` is present.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ArgvMap</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">argv</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">argv</span>.<span class="ident">clone</span>().<span class="ident">unwrap_or_else</span>(<span class="ident">Docopt::get_argv</span>);
-        <span class="kw">let</span> <span class="ident">vals</span> <span class="op">=</span>
-            <span class="self">self</span>.<span class="ident">p</span>.<span class="ident">parse_argv</span>(<span class="ident">argv</span>, <span class="self">self</span>.<span class="ident">options_first</span>)
-                .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">err_with_usage</span>(<span class="ident">Argv</span>(<span class="ident">s</span>)))
-                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">argv</span><span class="op">|</span>
-                    <span class="kw">match</span> <span class="self">self</span>.<span class="ident">p</span>.<span class="ident">matches</span>(<span class="kw-2">&amp;</span><span class="ident">argv</span>) {
-                        <span class="prelude-val">Some</span>(<span class="ident">m</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">ArgvMap</span> { <span class="ident">map</span>: <span class="ident">m</span> }),
-                        <span class="prelude-val">None</span> =&gt; <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">err_with_usage</span>(<span class="ident">NoMatch</span>)),
+    <span class="doccomment">/// Parse command line arguments and try to match them against a usage
+    /// pattern specified in the Docopt string.
+    ///
+    /// If there is a match, then an `ArgvMap` is returned, which maps
+    /// flags, commands and arguments to values.
+    ///
+    /// If parsing the command line arguments fails, then an `Argv` error is
+    /// returned. If parsing succeeds but there is no match, then a `NoMatch`
+    /// error is returned. Both of these errors are always returned inside a
+    /// `WithProgramUsage` error.
+    ///
+    /// If special handling of `help` or `version` is enabled (the former is
+    /// enabled by default), then `Help` or `Version` errors are returned
+    /// if `--help` or `--version` is present.
+    </span><span class="kw">pub fn </span>parse(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;ArgvMap&gt; {
+        <span class="kw">let </span>argv = <span class="self">self</span>.argv.clone().unwrap_or_else(Docopt::get_argv);
+        <span class="kw">let </span>vals =
+            <span class="self">self</span>.p.parse_argv(argv, <span class="self">self</span>.options_first)
+                .map_err(|s| <span class="self">self</span>.err_with_usage(Argv(s)))
+                .and_then(|argv|
+                    <span class="kw">match </span><span class="self">self</span>.p.matches(<span class="kw-2">&amp;</span>argv) {
+                        <span class="prelude-val">Some</span>(m) =&gt; <span class="prelude-val">Ok</span>(ArgvMap { map: m }),
+                        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="self">self</span>.err_with_usage(NoMatch)),
                     })<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">help</span> <span class="op">&amp;&amp;</span> <span class="ident">vals</span>.<span class="ident">get_bool</span>(<span class="string">&quot;--help&quot;</span>) {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">err_with_full_doc</span>(<span class="ident">Help</span>));
+        <span class="kw">if </span><span class="self">self</span>.help &amp;&amp; vals.get_bool(<span class="string">&quot;--help&quot;</span>) {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.err_with_full_doc(Help));
         }
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">version</span> {
-            <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">v</span>) <span class="kw">if</span> <span class="ident">vals</span>.<span class="ident">get_bool</span>(<span class="string">&quot;--version&quot;</span>) =&gt; {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Version</span>(<span class="ident">v</span>.<span class="ident">clone</span>()))
+        <span class="kw">match </span><span class="self">self</span>.version {
+            <span class="prelude-val">Some</span>(<span class="kw-2">ref </span>v) <span class="kw">if </span>vals.get_bool(<span class="string">&quot;--version&quot;</span>) =&gt; {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(Version(v.clone()))
             }
-            <span class="kw">_</span> =&gt; {},
+            <span class="kw">_ </span>=&gt; {},
         }
-        <span class="prelude-val">Ok</span>(<span class="ident">vals</span>)
+        <span class="prelude-val">Ok</span>(vals)
     }
 
-    <span class="doccomment">/// Set the argv to be used for Docopt parsing.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// By default, when no argv is set, and it is automatically taken from</span>
-    <span class="doccomment">/// `std::env::args()`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// The `argv` given *must* be the full set of `argv` passed to the</span>
-    <span class="doccomment">/// program. e.g., `[&quot;cp&quot;, &quot;src&quot;, &quot;dest&quot;]` is right while `[&quot;src&quot;, &quot;dest&quot;]`</span>
-    <span class="doccomment">/// is wrong.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">argv</span><span class="op">&lt;</span><span class="ident">I</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">argv</span>: <span class="ident">I</span>) -&gt; <span class="ident">Docopt</span>
-               <span class="kw">where</span> <span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">=</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">argv</span> <span class="op">=</span> <span class="prelude-val">Some</span>(
-            <span class="ident">argv</span>.<span class="ident">into_iter</span>().<span class="ident">skip</span>(<span class="number">1</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="ident">s</span>.<span class="ident">as_ref</span>().<span class="ident">to_owned</span>()).<span class="ident">collect</span>()
+    <span class="doccomment">/// Set the argv to be used for Docopt parsing.
+    ///
+    /// By default, when no argv is set, and it is automatically taken from
+    /// `std::env::args()`.
+    ///
+    /// The `argv` given *must* be the full set of `argv` passed to the
+    /// program. e.g., `[&quot;cp&quot;, &quot;src&quot;, &quot;dest&quot;]` is right while `[&quot;src&quot;, &quot;dest&quot;]`
+    /// is wrong.
+    </span><span class="kw">pub fn </span>argv&lt;I, S&gt;(<span class="kw-2">mut </span><span class="self">self</span>, argv: I) -&gt; Docopt
+               <span class="kw">where </span>I: IntoIterator&lt;Item=S&gt;, S: AsRef&lt;str&gt; {
+        <span class="self">self</span>.argv = <span class="prelude-val">Some</span>(
+            argv.into_iter().skip(<span class="number">1</span>).map(|s| s.as_ref().to_owned()).collect()
         );
-        <span class="self">self</span>
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Enables the &quot;options first&quot; Docopt behavior.
+    ///
+    /// The options first behavior means that all flags *must* appear before
+    /// position arguments. That is, after the first position argument is
+    /// seen, all proceeding arguments are interpreted as positional
+    /// arguments unconditionally.
+    </span><span class="kw">pub fn </span>options_first(<span class="kw-2">mut </span><span class="self">self</span>, yes: bool) -&gt; Docopt {
+        <span class="self">self</span>.options_first = yes;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Enables automatic handling of `--help`.
+    ///
+    /// When this is enabled and `--help` appears anywhere in the arguments,
+    /// then a `Help` error will be returned. You may then use the `exit`
+    /// method on the error value to conveniently quit the program (which will
+    /// print the full usage string to stdout).
+    ///
+    /// Note that for this to work, `--help` must be a valid pattern.
+    ///
+    /// When disabled, there is no special handling of `--help`.
+    </span><span class="kw">pub fn </span>help(<span class="kw-2">mut </span><span class="self">self</span>, yes: bool) -&gt; Docopt {
+        <span class="self">self</span>.help = yes;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Enables automatic handling of `--version`.
+    ///
+    /// When this is enabled and `--version` appears anywhere in the arguments,
+    /// then a `Version(s)` error will be returned, where `s` is the string
+    /// given here. You may then use the `exit` method on the error value to
+    /// convenient quit the program (which will print the version to stdout).
+    ///
+    /// When disabled (a `None` value), there is no special handling of
+    /// `--version`.
+    </span><span class="kw">pub fn </span>version(<span class="kw-2">mut </span><span class="self">self</span>, version: <span class="prelude-ty">Option</span>&lt;String&gt;) -&gt; Docopt {
+        <span class="self">self</span>.version = version;
+        <span class="self">self
+    </span>}
+
+    <span class="attribute">#[doc(hidden)]
+    </span><span class="kw">pub fn </span>parser(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Parser {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.p
     }
 
-    <span class="doccomment">/// Enables the &quot;options first&quot; Docopt behavior.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// The options first behavior means that all flags *must* appear before</span>
-    <span class="doccomment">/// position arguments. That is, after the first position argument is</span>
-    <span class="doccomment">/// seen, all proceeding arguments are interpreted as positional</span>
-    <span class="doccomment">/// arguments unconditionally.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">options_first</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">yes</span>: <span class="ident">bool</span>) -&gt; <span class="ident">Docopt</span> {
-        <span class="self">self</span>.<span class="ident">options_first</span> <span class="op">=</span> <span class="ident">yes</span>;
-        <span class="self">self</span>
+    <span class="kw">fn </span>err_with_usage(<span class="kw-2">&amp;</span><span class="self">self</span>, e: Error) -&gt; Error {
+        WithProgramUsage(
+            Box::new(e), <span class="self">self</span>.p.usage.trim().into())
     }
 
-    <span class="doccomment">/// Enables automatic handling of `--help`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// When this is enabled and `--help` appears anywhere in the arguments,</span>
-    <span class="doccomment">/// then a `Help` error will be returned. You may then use the `exit`</span>
-    <span class="doccomment">/// method on the error value to conveniently quit the program (which will</span>
-    <span class="doccomment">/// print the full usage string to stdout).</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Note that for this to work, `--help` must be a valid pattern.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// When disabled, there is no special handling of `--help`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">help</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">yes</span>: <span class="ident">bool</span>) -&gt; <span class="ident">Docopt</span> {
-        <span class="self">self</span>.<span class="ident">help</span> <span class="op">=</span> <span class="ident">yes</span>;
-        <span class="self">self</span>
+    <span class="kw">fn </span>err_with_full_doc(<span class="kw-2">&amp;</span><span class="self">self</span>, e: Error) -&gt; Error {
+        WithProgramUsage(
+            Box::new(e), <span class="self">self</span>.p.full_doc.trim().into())
     }
 
-    <span class="doccomment">/// Enables automatic handling of `--version`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// When this is enabled and `--version` appears anywhere in the arguments,</span>
-    <span class="doccomment">/// then a `Version(s)` error will be returned, where `s` is the string</span>
-    <span class="doccomment">/// given here. You may then use the `exit` method on the error value to</span>
-    <span class="doccomment">/// convenient quit the program (which will print the version to stdout).</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// When disabled (a `None` value), there is no special handling of</span>
-    <span class="doccomment">/// `--version`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">version</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">version</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) -&gt; <span class="ident">Docopt</span> {
-        <span class="self">self</span>.<span class="ident">version</span> <span class="op">=</span> <span class="ident">version</span>;
-        <span class="self">self</span>
-    }
-
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parser</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Parser</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">p</span>
-    }
-
-    <span class="kw">fn</span> <span class="ident">err_with_usage</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">e</span>: <span class="ident">Error</span>) -&gt; <span class="ident">Error</span> {
-        <span class="ident">WithProgramUsage</span>(
-            <span class="ident">Box::new</span>(<span class="ident">e</span>), <span class="self">self</span>.<span class="ident">p</span>.<span class="ident">usage</span>.<span class="ident">trim</span>().<span class="ident">into</span>())
-    }
-
-    <span class="kw">fn</span> <span class="ident">err_with_full_doc</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">e</span>: <span class="ident">Error</span>) -&gt; <span class="ident">Error</span> {
-        <span class="ident">WithProgramUsage</span>(
-            <span class="ident">Box::new</span>(<span class="ident">e</span>), <span class="self">self</span>.<span class="ident">p</span>.<span class="ident">full_doc</span>.<span class="ident">trim</span>().<span class="ident">into</span>())
-    }
-
-    <span class="kw">fn</span> <span class="ident">get_argv</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-        <span class="comment">// Hmm, we should probably handle a Unicode decode error here... ---AG</span>
-        <span class="ident">::std::env::args</span>().<span class="ident">skip</span>(<span class="number">1</span>).<span class="ident">collect</span>()
+    <span class="kw">fn </span>get_argv() -&gt; Vec&lt;String&gt; {
+        <span class="comment">// Hmm, we should probably handle a Unicode decode error here... ---AG
+        </span>::std::env::args().skip(<span class="number">1</span>).collect()
     }
 }
 
-<span class="doccomment">/// A map containing matched values from command line arguments.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The keys are just as specified in Docopt: `--flag` for a long flag or</span>
-<span class="doccomment">/// `-f` for a short flag. (If `-f` is a synonym for `--flag`, then either</span>
-<span class="doccomment">/// key will work.) `ARG` or `&lt;arg&gt;` specify a positional argument and `cmd`</span>
-<span class="doccomment">/// specifies a command.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArgvMap</span> {
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">map</span>: <span class="ident">SynonymMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>,
+<span class="doccomment">/// A map containing matched values from command line arguments.
+///
+/// The keys are just as specified in Docopt: `--flag` for a long flag or
+/// `-f` for a short flag. (If `-f` is a synonym for `--flag`, then either
+/// key will work.) `ARG` or `&lt;arg&gt;` specify a positional argument and `cmd`
+/// specifies a command.
+</span><span class="attribute">#[derive(Clone)]
+</span><span class="kw">pub struct </span>ArgvMap {
+    <span class="attribute">#[doc(hidden)]
+    </span><span class="kw">pub </span>map: SynonymMap&lt;String, Value&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">ArgvMap</span> {
-    <span class="doccomment">/// Tries to deserialize the map of values into a struct.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This method should always be called to deserialize a `ArgvMap` into</span>
-    <span class="doccomment">/// a struct. All fields of the struct must map to a corresponding key</span>
-    <span class="doccomment">/// in the `ArgvMap`. To this end, each member must have a special prefix</span>
-    <span class="doccomment">/// corresponding to the different kinds of patterns in Docopt. There are</span>
-    <span class="doccomment">/// three prefixes: `flag_`, `arg_` and `cmd_` which respectively</span>
-    <span class="doccomment">/// correspond to short/long flags, positional arguments and commands.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If a Docopt item has a `-` in its name, then it is converted to an `_`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Example</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// use serde::Deserialize;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// use docopt::Docopt;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// const USAGE: &amp;&#39;static str = &quot;</span>
-    <span class="doccomment">/// Usage: cargo [options] (build | test)</span>
-    <span class="doccomment">///        cargo --help</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Options: -v, --verbose</span>
-    <span class="doccomment">///          -h, --help</span>
-    <span class="doccomment">/// &quot;;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// #[derive(Deserialize)]</span>
-    <span class="doccomment">/// struct Args {</span>
-    <span class="doccomment">///   cmd_build: bool,</span>
-    <span class="doccomment">///   cmd_test: bool,</span>
-    <span class="doccomment">///   flag_verbose: bool,</span>
-    <span class="doccomment">///   flag_h: bool,</span>
-    <span class="doccomment">/// }</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let argv = || vec![&quot;cargo&quot;, &quot;build&quot;, &quot;-v&quot;].into_iter();</span>
-    <span class="doccomment">/// let args: Args = Docopt::new(USAGE)</span>
-    <span class="doccomment">///     .and_then(|d| d.argv(argv()).deserialize())</span>
-    <span class="doccomment">///     .unwrap_or_else(|e| e.exit());</span>
-    <span class="doccomment">/// assert!(args.cmd_build &amp;&amp; !args.cmd_test</span>
-    <span class="doccomment">///         &amp;&amp; args.flag_verbose &amp;&amp; !args.flag_h);</span>
-    <span class="doccomment">/// # }</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Note that in the above example, `flag_h` is used but `flag_help`</span>
-    <span class="doccomment">/// could also be used. (In fact, both could be used at the same time.)</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// In this example, only the `bool` type was used, but any type satisfying</span>
-    <span class="doccomment">/// the `Deserialize` trait is valid.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">T</span>: <span class="ident">de::Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="ident">de::Deserialize::deserialize</span>(<span class="kw-2">&amp;mut</span> <span class="ident">Deserializer</span> {
-                                              <span class="ident">vals</span>: <span class="self">self</span>,
-                                              <span class="ident">stack</span>: <span class="macro">vec!</span>[],
+<span class="kw">impl </span>ArgvMap {
+    <span class="doccomment">/// Tries to deserialize the map of values into a struct.
+    ///
+    /// This method should always be called to deserialize a `ArgvMap` into
+    /// a struct. All fields of the struct must map to a corresponding key
+    /// in the `ArgvMap`. To this end, each member must have a special prefix
+    /// corresponding to the different kinds of patterns in Docopt. There are
+    /// three prefixes: `flag_`, `arg_` and `cmd_` which respectively
+    /// correspond to short/long flags, positional arguments and commands.
+    ///
+    /// If a Docopt item has a `-` in its name, then it is converted to an `_`.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # fn main() {
+    /// use serde::Deserialize;
+    ///
+    /// use docopt::Docopt;
+    ///
+    /// const USAGE: &amp;&#39;static str = &quot;
+    /// Usage: cargo [options] (build | test)
+    ///        cargo --help
+    ///
+    /// Options: -v, --verbose
+    ///          -h, --help
+    /// &quot;;
+    ///
+    /// #[derive(Deserialize)]
+    /// struct Args {
+    ///   cmd_build: bool,
+    ///   cmd_test: bool,
+    ///   flag_verbose: bool,
+    ///   flag_h: bool,
+    /// }
+    ///
+    /// let argv = || vec![&quot;cargo&quot;, &quot;build&quot;, &quot;-v&quot;].into_iter();
+    /// let args: Args = Docopt::new(USAGE)
+    ///     .and_then(|d| d.argv(argv()).deserialize())
+    ///     .unwrap_or_else(|e| e.exit());
+    /// assert!(args.cmd_build &amp;&amp; !args.cmd_test
+    ///         &amp;&amp; args.flag_verbose &amp;&amp; !args.flag_h);
+    /// # }
+    /// ```
+    ///
+    /// Note that in the above example, `flag_h` is used but `flag_help`
+    /// could also be used. (In fact, both could be used at the same time.)
+    ///
+    /// In this example, only the `bool` type was used, but any type satisfying
+    /// the `Deserialize` trait is valid.
+    </span><span class="kw">pub fn </span>deserialize&lt;<span class="lifetime">&#39;de</span>, T: de::Deserialize&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T&gt; {
+        de::Deserialize::deserialize(<span class="kw-2">&amp;mut </span>Deserializer {
+                                              vals: <span class="self">self</span>,
+                                              stack: <span class="macro">vec!</span>[],
                                           })
     }
 
-    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_bool()` on it.</span>
-    <span class="doccomment">/// If the key does not exist, `false` is returned.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_bool</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">find</span>(<span class="ident">key</span>).<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">as_bool</span>())
+    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_bool()` on it.
+    /// If the key does not exist, `false` is returned.
+    </span><span class="kw">pub fn </span>get_bool(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; bool {
+        <span class="self">self</span>.find(key).map_or(<span class="bool-val">false</span>, |v| v.as_bool())
     }
 
-    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_count()` on it.</span>
-    <span class="doccomment">/// If the key does not exist, `0` is returned.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">u64</span> {
-        <span class="self">self</span>.<span class="ident">find</span>(<span class="ident">key</span>).<span class="ident">map_or</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">as_count</span>())
+    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_count()` on it.
+    /// If the key does not exist, `0` is returned.
+    </span><span class="kw">pub fn </span>get_count(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; u64 {
+        <span class="self">self</span>.find(key).map_or(<span class="number">0</span>, |v| v.as_count())
     }
 
-    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_str()` on it.</span>
-    <span class="doccomment">/// If the key does not exist, `&quot;&quot;` is returned.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
-        <span class="self">self</span>.<span class="ident">find</span>(<span class="ident">key</span>).<span class="ident">map_or</span>(<span class="string">&quot;&quot;</span>, <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">as_str</span>())
+    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_str()` on it.
+    /// If the key does not exist, `&quot;&quot;` is returned.
+    </span><span class="kw">pub fn </span>get_str(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="self">self</span>.find(key).map_or(<span class="string">&quot;&quot;</span>, |v| v.as_str())
     }
 
-    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_vec()` on it.</span>
-    <span class="doccomment">/// If the key does not exist, `vec!()` is returned.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">find</span>(<span class="ident">key</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">as_vec</span>()).<span class="ident">unwrap_or</span>(<span class="macro">vec!</span>())
+    <span class="doccomment">/// Finds the value corresponding to `key` and calls `as_vec()` on it.
+    /// If the key does not exist, `vec!()` is returned.
+    </span><span class="kw">pub fn </span>get_vec(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; Vec&lt;<span class="kw-2">&amp;</span>str&gt; {
+        <span class="self">self</span>.find(key).map(|v| v.as_vec()).unwrap_or(<span class="macro">vec!</span>())
     }
 
-    <span class="doccomment">/// Return the raw value corresponding to some `key`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// `key` should be a string in the traditional Docopt format. e.g.,</span>
-    <span class="doccomment">/// `&lt;arg&gt;` or `--flag`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Value</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">into</span>())
+    <span class="doccomment">/// Return the raw value corresponding to some `key`.
+    ///
+    /// `key` should be a string in the traditional Docopt format. e.g.,
+    /// `&lt;arg&gt;` or `--flag`.
+    </span><span class="kw">pub fn </span>find(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Value&gt; {
+        <span class="self">self</span>.map.find(<span class="kw-2">&amp;</span>key.into())
     }
 
-    <span class="doccomment">/// Return the number of values, not including synonyms.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">len</span>()
+    <span class="doccomment">/// Return the number of values, not including synonyms.
+    </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.map.len()
     }
 
-    <span class="doccomment">/// Converts a Docopt key to a struct field name.</span>
-    <span class="doccomment">/// This makes a half-hearted attempt at making the key a valid struct</span>
-    <span class="doccomment">/// field name (like replacing `-` with `_`), but it does not otherwise</span>
-    <span class="doccomment">/// guarantee that the result is a valid struct field name.</span>
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">key_to_struct_field</span>(<span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-        <span class="macro">lazy_static!</span> {
-            <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">RE</span>: <span class="ident">Regex</span> <span class="op">=</span> <span class="macro">regex!</span>(
-                <span class="string">r&quot;^(?:--?(?P&lt;flag&gt;\S+)|(?:(?P&lt;argu&gt;\p{Lu}+)|&lt;(?P&lt;argb&gt;[^&gt;]+)&gt;)|(?P&lt;cmd&gt;\S+))$&quot;</span>
-            );
+    <span class="doccomment">/// Converts a Docopt key to a struct field name.
+    /// This makes a half-hearted attempt at making the key a valid struct
+    /// field name (like replacing `-` with `_`), but it does not otherwise
+    /// guarantee that the result is a valid struct field name.
+    </span><span class="attribute">#[doc(hidden)]
+    </span><span class="kw">pub fn </span>key_to_struct_field(name: <span class="kw-2">&amp;</span>str) -&gt; String {
+        <span class="macro">lazy_static! </span>{
+            <span class="kw">static </span><span class="kw-2">ref </span>RE: Regex = <span class="macro">regex!</span>(
+                <span class="string">r&quot;^(?:--?(?P&lt;flag&gt;\S+)|(?:(?P&lt;argu&gt;\p{Lu}+)|&lt;(?P&lt;argb&gt;[^&gt;]+)&gt;)|(?P&lt;cmd&gt;\S+))$&quot;
+            </span>);
         }
-        <span class="kw">fn</span> <span class="ident">sanitize</span>(<span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-            <span class="ident">name</span>.<span class="ident">replace</span>(<span class="string">&quot;-&quot;</span>, <span class="string">&quot;_&quot;</span>)
+        <span class="kw">fn </span>sanitize(name: <span class="kw-2">&amp;</span>str) -&gt; String {
+            name.replace(<span class="string">&quot;-&quot;</span>, <span class="string">&quot;_&quot;</span>)
         }
 
-        <span class="ident">RE</span>.<span class="ident">replace</span>(<span class="ident">name</span>, <span class="op">|</span><span class="ident">cap</span>: <span class="kw-2">&amp;</span><span class="ident">Captures</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">|</span> {
-            <span class="kw">let</span> (<span class="ident">flag</span>, <span class="ident">cmd</span>) <span class="op">=</span> (
-                <span class="ident">cap_or_empty</span>(<span class="ident">cap</span>, <span class="string">&quot;flag&quot;</span>),
-                <span class="ident">cap_or_empty</span>(<span class="ident">cap</span>, <span class="string">&quot;cmd&quot;</span>),
+        RE.replace(name, |cap: <span class="kw-2">&amp;</span>Captures&lt;<span class="lifetime">&#39;_</span>&gt;| {
+            <span class="kw">let </span>(flag, cmd) = (
+                cap_or_empty(cap, <span class="string">&quot;flag&quot;</span>),
+                cap_or_empty(cap, <span class="string">&quot;cmd&quot;</span>),
             );
-            <span class="kw">let</span> (<span class="ident">argu</span>, <span class="ident">argb</span>) <span class="op">=</span> (
-                <span class="ident">cap_or_empty</span>(<span class="ident">cap</span>, <span class="string">&quot;argu&quot;</span>),
-                <span class="ident">cap_or_empty</span>(<span class="ident">cap</span>, <span class="string">&quot;argb&quot;</span>),
+            <span class="kw">let </span>(argu, argb) = (
+                cap_or_empty(cap, <span class="string">&quot;argu&quot;</span>),
+                cap_or_empty(cap, <span class="string">&quot;argb&quot;</span>),
             );
-            <span class="kw">let</span> (<span class="ident">prefix</span>, <span class="ident">name</span>) <span class="op">=</span>
-                <span class="kw">if</span> <span class="op">!</span><span class="ident">flag</span>.<span class="ident">is_empty</span>() {
-                    (<span class="string">&quot;flag_&quot;</span>, <span class="ident">flag</span>)
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">argu</span>.<span class="ident">is_empty</span>() {
-                    (<span class="string">&quot;arg_&quot;</span>, <span class="ident">argu</span>)
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">argb</span>.<span class="ident">is_empty</span>() {
-                    (<span class="string">&quot;arg_&quot;</span>, <span class="ident">argb</span>)
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">cmd</span>.<span class="ident">is_empty</span>() {
-                    (<span class="string">&quot;cmd_&quot;</span>, <span class="ident">cmd</span>)
-                } <span class="kw">else</span> {
-                    <span class="macro">panic!</span>(<span class="string">&quot;Unknown ArgvMap key: &#39;{}&#39;&quot;</span>, <span class="ident">name</span>)
+            <span class="kw">let </span>(prefix, name) =
+                <span class="kw">if </span>!flag.is_empty() {
+                    (<span class="string">&quot;flag_&quot;</span>, flag)
+                } <span class="kw">else if </span>!argu.is_empty() {
+                    (<span class="string">&quot;arg_&quot;</span>, argu)
+                } <span class="kw">else if </span>!argb.is_empty() {
+                    (<span class="string">&quot;arg_&quot;</span>, argb)
+                } <span class="kw">else if </span>!cmd.is_empty() {
+                    (<span class="string">&quot;cmd_&quot;</span>, cmd)
+                } <span class="kw">else </span>{
+                    <span class="macro">panic!</span>(<span class="string">&quot;Unknown ArgvMap key: &#39;{}&#39;&quot;</span>, name)
                 };
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">prefix</span> <span class="op">=</span> <span class="ident">prefix</span>.<span class="ident">to_owned</span>();
-            <span class="ident">prefix</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">sanitize</span>(<span class="ident">name</span>));
-            <span class="ident">prefix</span>
-        }).<span class="ident">into_owned</span>()
+            <span class="kw">let </span><span class="kw-2">mut </span>prefix = prefix.to_owned();
+            prefix.push_str(<span class="kw-2">&amp;</span>sanitize(name));
+            prefix
+        }).into_owned()
     }
 
-    <span class="doccomment">/// Converts a struct field name to a Docopt key.</span>
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">struct_field_to_key</span>(<span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-        <span class="macro">lazy_static!</span> {
-            <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">FLAG</span>: <span class="ident">Regex</span> <span class="op">=</span> <span class="macro">regex!</span>(<span class="string">r&quot;^flag_&quot;</span>);
-            <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">ARG</span>: <span class="ident">Regex</span> <span class="op">=</span> <span class="macro">regex!</span>(<span class="string">r&quot;^arg_&quot;</span>);
-            <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">LETTERS</span>: <span class="ident">Regex</span> <span class="op">=</span> <span class="macro">regex!</span>(<span class="string">r&quot;^\p{Lu}+$&quot;</span>);
-            <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">CMD</span>: <span class="ident">Regex</span> <span class="op">=</span> <span class="macro">regex!</span>(<span class="string">r&quot;^cmd_&quot;</span>);
+    <span class="doccomment">/// Converts a struct field name to a Docopt key.
+    </span><span class="attribute">#[doc(hidden)]
+    </span><span class="kw">pub fn </span>struct_field_to_key(field: <span class="kw-2">&amp;</span>str) -&gt; String {
+        <span class="macro">lazy_static! </span>{
+            <span class="kw">static </span><span class="kw-2">ref </span>FLAG: Regex = <span class="macro">regex!</span>(<span class="string">r&quot;^flag_&quot;</span>);
+            <span class="kw">static </span><span class="kw-2">ref </span>ARG: Regex = <span class="macro">regex!</span>(<span class="string">r&quot;^arg_&quot;</span>);
+            <span class="kw">static </span><span class="kw-2">ref </span>LETTERS: Regex = <span class="macro">regex!</span>(<span class="string">r&quot;^\p{Lu}+$&quot;</span>);
+            <span class="kw">static </span><span class="kw-2">ref </span>CMD: Regex = <span class="macro">regex!</span>(<span class="string">r&quot;^cmd_&quot;</span>);
         }
-        <span class="kw">fn</span> <span class="ident">desanitize</span>(<span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-            <span class="ident">name</span>.<span class="ident">replace</span>(<span class="string">&quot;_&quot;</span>, <span class="string">&quot;-&quot;</span>)
+        <span class="kw">fn </span>desanitize(name: <span class="kw-2">&amp;</span>str) -&gt; String {
+            name.replace(<span class="string">&quot;_&quot;</span>, <span class="string">&quot;-&quot;</span>)
         }
-        <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span>
-            <span class="kw">if</span> <span class="ident">field</span>.<span class="ident">starts_with</span>(<span class="string">&quot;flag_&quot;</span>) {
-                <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">FLAG</span>.<span class="ident">replace</span>(<span class="ident">field</span>, <span class="string">&quot;&quot;</span>);
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pre_name</span> <span class="op">=</span> (<span class="kw">if</span> <span class="ident">name</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">1</span> { <span class="string">&quot;-&quot;</span> } <span class="kw">else</span> { <span class="string">&quot;--&quot;</span> })
-                                   .<span class="ident">to_owned</span>();
-                <span class="ident">pre_name</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">name</span>);
-                <span class="ident">pre_name</span>
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">field</span>.<span class="ident">starts_with</span>(<span class="string">&quot;arg_&quot;</span>) {
-                <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">ARG</span>.<span class="ident">replace</span>(<span class="ident">field</span>, <span class="string">&quot;&quot;</span>).<span class="ident">into_owned</span>();
-                <span class="kw">if</span> <span class="ident">LETTERS</span>.<span class="ident">is_match</span>(<span class="kw-2">&amp;</span><span class="ident">name</span>) {
-                    <span class="ident">name</span>
-                } <span class="kw">else</span> {
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pre_name</span> <span class="op">=</span> <span class="string">&quot;&lt;&quot;</span>.<span class="ident">to_owned</span>();
-                    <span class="ident">pre_name</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">name</span>);
-                    <span class="ident">pre_name</span>.<span class="ident">push</span>(<span class="string">&#39;&gt;&#39;</span>);
-                    <span class="ident">pre_name</span>
+        <span class="kw">let </span>name =
+            <span class="kw">if </span>field.starts_with(<span class="string">&quot;flag_&quot;</span>) {
+                <span class="kw">let </span>name = FLAG.replace(field, <span class="string">&quot;&quot;</span>);
+                <span class="kw">let </span><span class="kw-2">mut </span>pre_name = (<span class="kw">if </span>name.len() == <span class="number">1 </span>{ <span class="string">&quot;-&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;--&quot; </span>})
+                                   .to_owned();
+                pre_name.push_str(<span class="kw-2">&amp;*</span>name);
+                pre_name
+            } <span class="kw">else if </span>field.starts_with(<span class="string">&quot;arg_&quot;</span>) {
+                <span class="kw">let </span>name = ARG.replace(field, <span class="string">&quot;&quot;</span>).into_owned();
+                <span class="kw">if </span>LETTERS.is_match(<span class="kw-2">&amp;</span>name) {
+                    name
+                } <span class="kw">else </span>{
+                    <span class="kw">let </span><span class="kw-2">mut </span>pre_name = <span class="string">&quot;&lt;&quot;</span>.to_owned();
+                    pre_name.push_str(<span class="kw-2">&amp;*</span>name);
+                    pre_name.push(<span class="string">&#39;&gt;&#39;</span>);
+                    pre_name
                 }
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">field</span>.<span class="ident">starts_with</span>(<span class="string">&quot;cmd_&quot;</span>) {
-                <span class="ident">CMD</span>.<span class="ident">replace</span>(<span class="ident">field</span>, <span class="string">&quot;&quot;</span>).<span class="ident">into_owned</span>()
-            } <span class="kw">else</span> {
-                <span class="macro">panic!</span>(<span class="string">&quot;Unrecognized struct field: &#39;{}&#39;&quot;</span>, <span class="ident">field</span>)
+            } <span class="kw">else if </span>field.starts_with(<span class="string">&quot;cmd_&quot;</span>) {
+                CMD.replace(field, <span class="string">&quot;&quot;</span>).into_owned()
+            } <span class="kw">else </span>{
+                <span class="macro">panic!</span>(<span class="string">&quot;Unrecognized struct field: &#39;{}&#39;&quot;</span>, field)
             };
-        <span class="ident">desanitize</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">name</span>)
+        desanitize(<span class="kw-2">&amp;*</span>name)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">ArgvMap</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> {
-            <span class="kw">return</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{{EMPTY}}&quot;</span>);
+<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>ArgvMap {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+        <span class="kw">if </span><span class="self">self</span>.len() == <span class="number">0 </span>{
+            <span class="kw">return </span><span class="macro">write!</span>(f, <span class="string">&quot;{{EMPTY}}&quot;</span>);
         }
 
-        <span class="comment">// This is a little crazy, but we want to group synonyms with</span>
-        <span class="comment">// their keys and sort them for predictable output.</span>
-        <span class="kw">let</span> <span class="ident">reverse</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span>
-            <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">synonyms</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">from</span>, <span class="ident">to</span>)<span class="op">|</span> (<span class="ident">to</span>, <span class="ident">from</span>)).<span class="ident">collect</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">keys</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">keys</span>().<span class="ident">collect</span>();
-        <span class="ident">keys</span>.<span class="ident">sort</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">first</span> <span class="op">=</span> <span class="bool-val">true</span>;
-        <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">k</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">keys</span> {
-            <span class="kw">if</span> <span class="op">!</span><span class="ident">first</span> { <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;\n&quot;</span>)<span class="question-mark">?</span>; } <span class="kw">else</span> { <span class="ident">first</span> <span class="op">=</span> <span class="bool-val">false</span>; }
-            <span class="kw">match</span> <span class="ident">reverse</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">k</span>) {
-                <span class="prelude-val">None</span> =&gt; {
-                    <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{} =&gt; {:?}&quot;</span>, <span class="ident">k</span>, <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">k</span>))<span class="question-mark">?</span>
-                }
-                <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; {
-                    <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}, {} =&gt; {:?}&quot;</span>, <span class="ident">s</span>, <span class="ident">k</span>, <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">k</span>))<span class="question-mark">?</span>
-                }
+        <span class="comment">// This is a little crazy, but we want to group synonyms with
+        // their keys and sort them for predictable output.
+        </span><span class="kw">let </span>reverse: HashMap&lt;<span class="kw-2">&amp;</span>String, <span class="kw-2">&amp;</span>String&gt; =
+            <span class="self">self</span>.map.synonyms().map(|(from, to)| (to, from)).collect();
+        <span class="kw">let </span><span class="kw-2">mut </span>keys: Vec&lt;<span class="kw-2">&amp;</span>String&gt; = <span class="self">self</span>.map.keys().collect();
+        keys.sort();
+        <span class="kw">let </span><span class="kw-2">mut </span>first = <span class="bool-val">true</span>;
+        <span class="kw">for </span><span class="kw-2">&amp;</span>k <span class="kw">in </span><span class="kw-2">&amp;</span>keys {
+            <span class="kw">if </span>!first { <span class="macro">write!</span>(f, <span class="string">&quot;\n&quot;</span>)<span class="question-mark">?</span>; } <span class="kw">else </span>{ first = <span class="bool-val">false</span>; }
+            <span class="kw">match </span>reverse.get(<span class="kw-2">&amp;</span>k) {
+                <span class="prelude-val">None </span>=&gt; {
+                    <span class="macro">write!</span>(f, <span class="string">&quot;{} =&gt; {:?}&quot;</span>, k, <span class="self">self</span>.map.get(k))<span class="question-mark">?
+                </span>}
+                <span class="prelude-val">Some</span>(s) =&gt; {
+                    <span class="macro">write!</span>(f, <span class="string">&quot;{}, {} =&gt; {:?}&quot;</span>, s, k, <span class="self">self</span>.map.get(k))<span class="question-mark">?
+                </span>}
             }
         }
         <span class="prelude-val">Ok</span>(())
     }
 }
 
-<span class="doccomment">/// A matched command line value.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The value can be a boolean, counted repetition, a plain string or a list</span>
-<span class="doccomment">/// of strings.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The various `as_{bool,count,str,vec}` methods provide convenient access</span>
-<span class="doccomment">/// to values without destructuring manually.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Value</span> {
-    <span class="doccomment">/// A boolean value from a flag that has no argument.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// The presence of a flag means `true` and the absence of a flag</span>
-    <span class="doccomment">/// means `false`.</span>
-    <span class="ident">Switch</span>(<span class="ident">bool</span>),
+<span class="doccomment">/// A matched command line value.
+///
+/// The value can be a boolean, counted repetition, a plain string or a list
+/// of strings.
+///
+/// The various `as_{bool,count,str,vec}` methods provide convenient access
+/// to values without destructuring manually.
+</span><span class="attribute">#[derive(Clone, Debug, PartialEq)]
+</span><span class="kw">pub enum </span>Value {
+    <span class="doccomment">/// A boolean value from a flag that has no argument.
+    ///
+    /// The presence of a flag means `true` and the absence of a flag
+    /// means `false`.
+    </span>Switch(bool),
 
-    <span class="doccomment">/// The number of occurrences of a repeated flag.</span>
-    <span class="ident">Counted</span>(<span class="ident">u64</span>),
+    <span class="doccomment">/// The number of occurrences of a repeated flag.
+    </span>Counted(u64),
 
-    <span class="doccomment">/// A positional or flag argument.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This is `None` when the positional argument or flag is not present.</span>
-    <span class="doccomment">/// Note that it is possible to have `Some(&quot;&quot;)` for a present but empty</span>
-    <span class="doccomment">/// argument.</span>
-    <span class="ident">Plain</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>),
+    <span class="doccomment">/// A positional or flag argument.
+    ///
+    /// This is `None` when the positional argument or flag is not present.
+    /// Note that it is possible to have `Some(&quot;&quot;)` for a present but empty
+    /// argument.
+    </span>Plain(<span class="prelude-ty">Option</span>&lt;String&gt;),
 
-    <span class="doccomment">/// A List of positional or flag arguments.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This list may be empty when no arguments or flags are present.</span>
-    <span class="ident">List</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>),
+    <span class="doccomment">/// A List of positional or flag arguments.
+    ///
+    /// This list may be empty when no arguments or flags are present.
+    </span>List(Vec&lt;String&gt;),
 }
 
-<span class="kw">impl</span> <span class="ident">Value</span> {
-    <span class="doccomment">/// Returns the value as a bool.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Counted repetitions are `false` if `0` and `true` otherwise.</span>
-    <span class="doccomment">/// Plain strings are `true` if present and `false` otherwise.</span>
-    <span class="doccomment">/// Lists are `true` if non-empty and `false` otherwise.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_bool</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Switch</span>(<span class="ident">b</span>) =&gt; <span class="ident">b</span>,
-            <span class="ident">Counted</span>(<span class="ident">n</span>) =&gt; <span class="ident">n</span> <span class="op">&gt;</span> <span class="number">0</span>,
-            <span class="ident">Plain</span>(<span class="prelude-val">None</span>) =&gt; <span class="bool-val">false</span>,
-            <span class="ident">Plain</span>(<span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; <span class="bool-val">true</span>,
-            <span class="ident">List</span>(<span class="kw-2">ref</span> <span class="ident">vs</span>) =&gt; <span class="op">!</span><span class="ident">vs</span>.<span class="ident">is_empty</span>(),
+<span class="kw">impl </span>Value {
+    <span class="doccomment">/// Returns the value as a bool.
+    ///
+    /// Counted repetitions are `false` if `0` and `true` otherwise.
+    /// Plain strings are `true` if present and `false` otherwise.
+    /// Lists are `true` if non-empty and `false` otherwise.
+    </span><span class="kw">pub fn </span>as_bool(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            Switch(b) =&gt; b,
+            Counted(n) =&gt; n &gt; <span class="number">0</span>,
+            Plain(<span class="prelude-val">None</span>) =&gt; <span class="bool-val">false</span>,
+            Plain(<span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; <span class="bool-val">true</span>,
+            List(<span class="kw-2">ref </span>vs) =&gt; !vs.is_empty(),
         }
     }
 
-    <span class="doccomment">/// Returns the value as a count of the number of times it occurred.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Booleans are `1` if `true` and `0` otherwise.</span>
-    <span class="doccomment">/// Plain strings are `1` if present and `0` otherwise.</span>
-    <span class="doccomment">/// Lists correspond to its length.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Switch</span>(<span class="ident">b</span>) =&gt; <span class="kw">if</span> <span class="ident">b</span> { <span class="number">1</span> } <span class="kw">else</span> { <span class="number">0</span> },
-            <span class="ident">Counted</span>(<span class="ident">n</span>) =&gt; <span class="ident">n</span>,
-            <span class="ident">Plain</span>(<span class="prelude-val">None</span>) =&gt; <span class="number">0</span>,
-            <span class="ident">Plain</span>(<span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; <span class="number">1</span>,
-            <span class="ident">List</span>(<span class="kw-2">ref</span> <span class="ident">vs</span>) =&gt; <span class="ident">vs</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>,
+    <span class="doccomment">/// Returns the value as a count of the number of times it occurred.
+    ///
+    /// Booleans are `1` if `true` and `0` otherwise.
+    /// Plain strings are `1` if present and `0` otherwise.
+    /// Lists correspond to its length.
+    </span><span class="kw">pub fn </span>as_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            Switch(b) =&gt; <span class="kw">if </span>b { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>},
+            Counted(n) =&gt; n,
+            Plain(<span class="prelude-val">None</span>) =&gt; <span class="number">0</span>,
+            Plain(<span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; <span class="number">1</span>,
+            List(<span class="kw-2">ref </span>vs) =&gt; vs.len() <span class="kw">as </span>u64,
         }
     }
 
-    <span class="doccomment">/// Returns the value as a string.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// All values return an empty string except for a non-empty plain string.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Switch</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">Counted</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">Plain</span>(<span class="prelude-val">None</span>) <span class="op">|</span> <span class="ident">List</span>(<span class="kw">_</span>) =&gt; <span class="string">&quot;&quot;</span>,
-            <span class="ident">Plain</span>(<span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">s</span>)) =&gt; <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">s</span>,
+    <span class="doccomment">/// Returns the value as a string.
+    ///
+    /// All values return an empty string except for a non-empty plain string.
+    </span><span class="kw">pub fn </span>as_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            Switch(<span class="kw">_</span>) | Counted(<span class="kw">_</span>) | Plain(<span class="prelude-val">None</span>) | List(<span class="kw">_</span>) =&gt; <span class="string">&quot;&quot;</span>,
+            Plain(<span class="prelude-val">Some</span>(<span class="kw-2">ref </span>s)) =&gt; <span class="kw-2">&amp;**</span>s,
         }
     }
 
-    <span class="doccomment">/// Returns the value as a list of strings.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Booleans, repetitions and empty strings correspond to an empty list.</span>
-    <span class="doccomment">/// Plain strings correspond to a list of length `1`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Switch</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">Counted</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">Plain</span>(<span class="prelude-val">None</span>) =&gt; <span class="macro">vec!</span>[],
-            <span class="ident">Plain</span>(<span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">s</span>)) =&gt; <span class="macro">vec!</span>[<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">s</span>],
-            <span class="ident">List</span>(<span class="kw-2">ref</span> <span class="ident">vs</span>) =&gt; <span class="ident">vs</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>(),
+    <span class="doccomment">/// Returns the value as a list of strings.
+    ///
+    /// Booleans, repetitions and empty strings correspond to an empty list.
+    /// Plain strings correspond to a list of length `1`.
+    </span><span class="kw">pub fn </span>as_vec(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;<span class="kw-2">&amp;</span>str&gt; {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            Switch(<span class="kw">_</span>) | Counted(<span class="kw">_</span>) | Plain(<span class="prelude-val">None</span>) =&gt; <span class="macro">vec!</span>[],
+            Plain(<span class="prelude-val">Some</span>(<span class="kw-2">ref </span>s)) =&gt; <span class="macro">vec!</span>[<span class="kw-2">&amp;**</span>s],
+            List(<span class="kw-2">ref </span>vs) =&gt; vs.iter().map(|s| <span class="kw-2">&amp;**</span>s).collect(),
         }
     }
 }
 
-<span class="doccomment">/// Deserializer for `ArgvMap` into your own `Deserialize`able types.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// In general, you shouldn&#39;t have to use this type directly. It is exposed</span>
-<span class="doccomment">/// in case you want to write a generic function that produces a deserializable</span>
-<span class="doccomment">/// value. For example, here&#39;s a function that takes a usage string, an argv</span>
-<span class="doccomment">/// and produces a deserializable value:</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// # extern crate docopt;</span>
-<span class="doccomment">/// extern crate serde;</span>
-<span class="doccomment">/// # fn main() {</span>
-<span class="doccomment">/// use docopt::Docopt;</span>
-<span class="doccomment">/// use serde::de::Deserialize;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// fn deserialize&lt;&#39;de, D: Deserialize&lt;&#39;de&gt;&gt;(usage: &amp;str, argv: &amp;[&amp;str])</span>
-<span class="doccomment">///                         -&gt; Result&lt;D, docopt::Error&gt; {</span>
-<span class="doccomment">///     Docopt::new(usage)</span>
-<span class="doccomment">///            .and_then(|d| d.argv(argv.iter()).deserialize())</span>
-<span class="doccomment">/// }</span>
-<span class="doccomment">/// # }</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="ident">vals</span>: <span class="ident">ArgvMap</span>,
-    <span class="ident">stack</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DeserializerItem</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+<span class="doccomment">/// Deserializer for `ArgvMap` into your own `Deserialize`able types.
+///
+/// In general, you shouldn&#39;t have to use this type directly. It is exposed
+/// in case you want to write a generic function that produces a deserializable
+/// value. For example, here&#39;s a function that takes a usage string, an argv
+/// and produces a deserializable value:
+///
+/// ```rust
+/// # extern crate docopt;
+/// extern crate serde;
+/// # fn main() {
+/// use docopt::Docopt;
+/// use serde::de::Deserialize;
+///
+/// fn deserialize&lt;&#39;de, D: Deserialize&lt;&#39;de&gt;&gt;(usage: &amp;str, argv: &amp;[&amp;str])
+///                         -&gt; Result&lt;D, docopt::Error&gt; {
+///     Docopt::new(usage)
+///            .and_then(|d| d.argv(argv.iter()).deserialize())
+/// }
+/// # }
+</span><span class="kw">pub struct </span>Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; {
+    vals: ArgvMap,
+    stack: Vec&lt;DeserializerItem&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">struct</span> <span class="ident">DeserializerItem</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="ident">key</span>: <span class="ident">String</span>,
-    <span class="ident">struct_field</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;de</span> <span class="ident">str</span>,
-    <span class="ident">val</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&gt;</span>,
+<span class="attribute">#[derive(Debug)]
+</span><span class="kw">struct </span>DeserializerItem&lt;<span class="lifetime">&#39;de</span>&gt; {
+    key: String,
+    struct_field: <span class="kw-2">&amp;</span><span class="lifetime">&#39;de </span>str,
+    val: <span class="prelude-ty">Option</span>&lt;Value&gt;,
 }
 
-<span class="macro">macro_rules!</span> <span class="ident">derr</span>(
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) =&gt; (<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Deserialize</span>(<span class="macro">format!</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>)<span class="kw-2">*</span>))))
+<span class="macro">macro_rules! </span>derr(
+    ($(<span class="macro-nonterminal">$arg</span>:tt)<span class="kw-2">*</span>) =&gt; (<span class="kw">return </span><span class="prelude-val">Err</span>(Deserialize(<span class="macro">format!</span>($(<span class="macro-nonterminal">$arg</span>)<span class="kw-2">*</span>))))
 );
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">struct_field</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;de</span> <span class="ident">str</span>) {
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">ArgvMap::struct_field_to_key</span>(<span class="ident">struct_field</span>);
-        <span class="self">self</span>.<span class="ident">stack</span>
-            .<span class="ident">push</span>(<span class="ident">DeserializerItem</span> {
-                      <span class="ident">key</span>: <span class="ident">key</span>.<span class="ident">clone</span>(),
-                      <span class="ident">struct_field</span>: <span class="ident">struct_field</span>,
-                      <span class="ident">val</span>: <span class="self">self</span>.<span class="ident">vals</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">key</span>).<span class="ident">cloned</span>(),
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; {
+    <span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, struct_field: <span class="kw-2">&amp;</span><span class="lifetime">&#39;de </span>str) {
+        <span class="kw">let </span>key = ArgvMap::struct_field_to_key(struct_field);
+        <span class="self">self</span>.stack
+            .push(DeserializerItem {
+                      key: key.clone(),
+                      struct_field: struct_field,
+                      val: <span class="self">self</span>.vals.find(<span class="kw-2">&amp;*</span>key).cloned(),
                   });
     }
 
-    <span class="kw">fn</span> <span class="ident">pop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">DeserializerItem</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">stack</span>.<span class="ident">pop</span>() {
-            <span class="prelude-val">None</span> =&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize value into unknown key.&quot;</span>),
-            <span class="prelude-val">Some</span>(<span class="ident">it</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">it</span>),
+    <span class="kw">fn </span>pop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DeserializerItem&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+        <span class="kw">match </span><span class="self">self</span>.stack.pop() {
+            <span class="prelude-val">None </span>=&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize value into unknown key.&quot;</span>),
+            <span class="prelude-val">Some</span>(it) =&gt; <span class="prelude-val">Ok</span>(it),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">pop_key_val</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">String</span>, <span class="ident">Value</span>)<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">it</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pop</span>()<span class="question-mark">?</span>;
-        <span class="kw">match</span> <span class="ident">it</span>.<span class="ident">val</span> {
-            <span class="prelude-val">None</span> =&gt; {
+    <span class="kw">fn </span>pop_key_val(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(String, Value)&gt; {
+        <span class="kw">let </span>it = <span class="self">self</span>.pop()<span class="question-mark">?</span>;
+        <span class="kw">match </span>it.val {
+            <span class="prelude-val">None </span>=&gt; {
                 <span class="macro">derr!</span>(<span class="string">&quot;Could not find argument &#39;{}&#39; (from struct field &#39;{}&#39;).
 Note that each struct field must have the right key prefix, which must
 be one of `cmd_`, `flag_` or `arg_`.&quot;</span>,
-                      <span class="ident">it</span>.<span class="ident">key</span>,
-                      <span class="ident">it</span>.<span class="ident">struct_field</span>)
+                      it.key,
+                      it.struct_field)
             }
-            <span class="prelude-val">Some</span>(<span class="ident">v</span>) =&gt; <span class="prelude-val">Ok</span>((<span class="ident">it</span>.<span class="ident">key</span>, <span class="ident">v</span>)),
+            <span class="prelude-val">Some</span>(v) =&gt; <span class="prelude-val">Ok</span>((it.key, v)),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">pop_val</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">v</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">pop_key_val</span>()<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">v</span>)
+    <span class="kw">fn </span>pop_val(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Value&gt; {
+        <span class="kw">let </span>(<span class="kw">_</span>, v) = <span class="self">self</span>.pop_key_val()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(v)
     }
 
-    <span class="kw">fn</span> <span class="ident">to_number</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">expect</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">FromStr</span> <span class="op">+</span> <span class="ident">ToString</span>,
-              <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">FromStr</span><span class="op">&gt;</span><span class="ident">::Err</span>: <span class="ident">Debug</span>
+    <span class="kw">fn </span>to_number&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, expect: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;T&gt;
+        <span class="kw">where </span>T: FromStr + ToString,
+              &lt;T <span class="kw">as </span>FromStr&gt;::Err: Debug
     {
-        <span class="kw">let</span> (<span class="ident">k</span>, <span class="ident">v</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">pop_key_val</span>()<span class="question-mark">?</span>;
-        <span class="kw">match</span> <span class="ident">v</span> {
-            <span class="ident">Counted</span>(<span class="ident">n</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">n</span>.<span class="ident">to_string</span>().<span class="ident">parse</span>().<span class="ident">unwrap</span>()), <span class="comment">// lol</span>
-            <span class="kw">_</span> =&gt; {
-                <span class="kw">if</span> <span class="ident">v</span>.<span class="ident">as_str</span>().<span class="ident">trim</span>().<span class="ident">is_empty</span>() {
-                    <span class="prelude-val">Ok</span>(<span class="string">&quot;0&quot;</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>()) <span class="comment">// lol</span>
-                } <span class="kw">else</span> {
-                    <span class="kw">match</span> <span class="ident">v</span>.<span class="ident">as_str</span>().<span class="ident">parse</span>() {
+        <span class="kw">let </span>(k, v) = <span class="self">self</span>.pop_key_val()<span class="question-mark">?</span>;
+        <span class="kw">match </span>v {
+            Counted(n) =&gt; <span class="prelude-val">Ok</span>(n.to_string().parse().unwrap()), <span class="comment">// lol
+            </span><span class="kw">_ </span>=&gt; {
+                <span class="kw">if </span>v.as_str().trim().is_empty() {
+                    <span class="prelude-val">Ok</span>(<span class="string">&quot;0&quot;</span>.parse().unwrap()) <span class="comment">// lol
+                </span>} <span class="kw">else </span>{
+                    <span class="kw">match </span>v.as_str().parse() {
                         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
                             <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize &#39;{}&#39; to {} for &#39;{}&#39;.&quot;</span>,
-                                  <span class="ident">v</span>.<span class="ident">as_str</span>(),
-                                  <span class="ident">expect</span>,
-                                  <span class="ident">k</span>)
+                                  v.as_str(),
+                                  expect,
+                                  k)
                         }
-                        <span class="prelude-val">Ok</span>(<span class="ident">v</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">v</span>),
+                        <span class="prelude-val">Ok</span>(v) =&gt; <span class="prelude-val">Ok</span>(v),
                     }
                 }
             }
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">to_float</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">expect</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> (<span class="ident">k</span>, <span class="ident">v</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">pop_key_val</span>()<span class="question-mark">?</span>;
-        <span class="kw">match</span> <span class="ident">v</span> {
-            <span class="ident">Counted</span>(<span class="ident">n</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">f64</span>),
-            <span class="kw">_</span> =&gt; {
-                <span class="kw">match</span> <span class="ident">v</span>.<span class="ident">as_str</span>().<span class="ident">parse</span>() {
+    <span class="kw">fn </span>to_float(<span class="kw-2">&amp;mut </span><span class="self">self</span>, expect: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;f64&gt; {
+        <span class="kw">let </span>(k, v) = <span class="self">self</span>.pop_key_val()<span class="question-mark">?</span>;
+        <span class="kw">match </span>v {
+            Counted(n) =&gt; <span class="prelude-val">Ok</span>(n <span class="kw">as </span>f64),
+            <span class="kw">_ </span>=&gt; {
+                <span class="kw">match </span>v.as_str().parse() {
                     <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
                         <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize &#39;{}&#39; to {} for &#39;{}&#39;.&quot;</span>,
-                              <span class="ident">v</span>.<span class="ident">as_str</span>(),
-                              <span class="ident">expect</span>,
-                              <span class="ident">k</span>)
+                              v.as_str(),
+                              expect,
+                              k)
                     }
-                    <span class="prelude-val">Ok</span>(<span class="ident">v</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">v</span>),
+                    <span class="prelude-val">Ok</span>(v) =&gt; <span class="prelude-val">Ok</span>(v),
                 }
             }
         }
     }
 }
 
-<span class="macro">macro_rules!</span> <span class="ident">deserialize_num</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>) =&gt; (
-        <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-            <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+<span class="macro">macro_rules! </span>deserialize_num {
+    (<span class="macro-nonterminal">$name</span>:ident, <span class="macro-nonterminal">$method</span>:ident, <span class="macro-nonterminal">$ty</span>:ty) =&gt; (
+        <span class="kw">fn </span><span class="macro-nonterminal">$name</span>&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+            <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
         {
-            <span class="ident">visitor</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>(<span class="self">self</span>.<span class="ident">to_number</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span><span class="op">&gt;</span>(<span class="macro">stringify!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>)<span class="question-mark">?</span>)
+            visitor.<span class="macro-nonterminal">$method</span>(<span class="self">self</span>.to_number::&lt;<span class="macro-nonterminal">$ty</span>&gt;(<span class="macro">stringify!</span>(<span class="macro-nonterminal">$ty</span>)).map(|n| n <span class="kw">as </span><span class="macro-nonterminal">$ty</span>)<span class="question-mark">?</span>)
         }
     );
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">::serde::Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">Error</span>;
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; ::serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; {
+    <span class="kw">type </span>Error = Error;
 
-    <span class="kw">fn</span> <span class="ident">deserialize_any</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, _visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_bool</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_bool&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="ident">visitor</span>.<span class="ident">visit_bool</span>(<span class="self">self</span>.<span class="ident">pop_val</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">as_bool</span>())<span class="question-mark">?</span>)
+        visitor.visit_bool(<span class="self">self</span>.pop_val().map(|v| v.as_bool())<span class="question-mark">?</span>)
     }
 
-    <span class="comment">// wish for stable macro concat_idents!</span>
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_i8</span>, <span class="ident">visit_i8</span>, <span class="ident">i8</span>);
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_i16</span>, <span class="ident">visit_i16</span>, <span class="ident">i16</span>);
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_i32</span>, <span class="ident">visit_i32</span>, <span class="ident">i32</span>);
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_i64</span>, <span class="ident">visit_i64</span>, <span class="ident">i64</span>);
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_u8</span>, <span class="ident">visit_u8</span>, <span class="ident">u8</span>);
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_u16</span>, <span class="ident">visit_u16</span>, <span class="ident">u16</span>);
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_u32</span>, <span class="ident">visit_u32</span>, <span class="ident">u32</span>);
-    <span class="macro">deserialize_num!</span>(<span class="ident">deserialize_u64</span>, <span class="ident">visit_u64</span>, <span class="ident">u64</span>);
+    <span class="comment">// wish for stable macro concat_idents!
+    </span><span class="macro">deserialize_num!</span>(deserialize_i8, visit_i8, i8);
+    <span class="macro">deserialize_num!</span>(deserialize_i16, visit_i16, i16);
+    <span class="macro">deserialize_num!</span>(deserialize_i32, visit_i32, i32);
+    <span class="macro">deserialize_num!</span>(deserialize_i64, visit_i64, i64);
+    <span class="macro">deserialize_num!</span>(deserialize_u8, visit_u8, u8);
+    <span class="macro">deserialize_num!</span>(deserialize_u16, visit_u16, u16);
+    <span class="macro">deserialize_num!</span>(deserialize_u32, visit_u32, u32);
+    <span class="macro">deserialize_num!</span>(deserialize_u64, visit_u64, u64);
 
-    <span class="kw">fn</span> <span class="ident">deserialize_f32</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_f32&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="ident">visitor</span>.<span class="ident">visit_f32</span>(<span class="self">self</span>.<span class="ident">to_float</span>(<span class="string">&quot;f32&quot;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span> <span class="kw">as</span> <span class="ident">f32</span>)<span class="question-mark">?</span>)
+        visitor.visit_f32(<span class="self">self</span>.to_float(<span class="string">&quot;f32&quot;</span>).map(|n| n <span class="kw">as </span>f32)<span class="question-mark">?</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_f64</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_f64&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="ident">visitor</span>.<span class="ident">visit_f64</span>(<span class="self">self</span>.<span class="ident">to_float</span>(<span class="string">&quot;f64&quot;</span>)<span class="question-mark">?</span>)
+        visitor.visit_f64(<span class="self">self</span>.to_float(<span class="string">&quot;f64&quot;</span>)<span class="question-mark">?</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_char</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_char&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="kw">let</span> (<span class="ident">k</span>, <span class="ident">v</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">pop_key_val</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">vstr</span> <span class="op">=</span> <span class="ident">v</span>.<span class="ident">as_str</span>();
-        <span class="kw">match</span> <span class="ident">vstr</span>.<span class="ident">chars</span>().<span class="ident">count</span>() {
-            <span class="number">1</span> =&gt; <span class="ident">visitor</span>.<span class="ident">visit_char</span>(<span class="ident">vstr</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>()),
-            <span class="kw">_</span> =&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize &#39;{}&#39; into char for &#39;{}&#39;.&quot;</span>, <span class="ident">vstr</span>, <span class="ident">k</span>),
+        <span class="kw">let </span>(k, v) = <span class="self">self</span>.pop_key_val()<span class="question-mark">?</span>;
+        <span class="kw">let </span>vstr = v.as_str();
+        <span class="kw">match </span>vstr.chars().count() {
+            <span class="number">1 </span>=&gt; visitor.visit_char(vstr.chars().next().unwrap()),
+            <span class="kw">_ </span>=&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize &#39;{}&#39; into char for &#39;{}&#39;.&quot;</span>, vstr, k),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_str</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_str&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pop_val</span>()<span class="question-mark">?</span>;
-        <span class="ident">visitor</span>.<span class="ident">visit_str</span>(<span class="ident">s</span>.<span class="ident">as_str</span>())
+        <span class="kw">let </span>s = <span class="self">self</span>.pop_val()<span class="question-mark">?</span>;
+        visitor.visit_str(s.as_str())
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_string</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>:<span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_string&lt;V&gt;(<span class="self">self</span>, visitor:V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="self">self</span>.<span class="ident">deserialize_str</span>(<span class="ident">visitor</span>)
+        <span class="self">self</span>.deserialize_str(visitor)
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_bytes</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_bytes&lt;V&gt;(<span class="self">self</span>, _visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_byte_buf</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_byte_buf&lt;V&gt;(<span class="self">self</span>, _visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span>  <span class="ident">deserialize_option</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn  </span>deserialize_option&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="kw">let</span> <span class="ident">is_some</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">stack</span>.<span class="ident">last</span>() {
-            <span class="prelude-val">None</span> =&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize value into unknown key.&quot;</span>),
-            <span class="prelude-val">Some</span>(<span class="ident">it</span>) =&gt; <span class="ident">it</span>.<span class="ident">val</span>.<span class="ident">as_ref</span>().<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">as_bool</span>()),
+        <span class="kw">let </span>is_some = <span class="kw">match </span><span class="self">self</span>.stack.last() {
+            <span class="prelude-val">None </span>=&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize value into unknown key.&quot;</span>),
+            <span class="prelude-val">Some</span>(it) =&gt; it.val.as_ref().map_or(<span class="bool-val">false</span>, |v| v.as_bool()),
         };
-        <span class="kw">if</span> <span class="ident">is_some</span> {
-            <span class="ident">visitor</span>.<span class="ident">visit_some</span>(<span class="self">self</span>)
-        } <span class="kw">else</span> {
-            <span class="ident">visitor</span>.<span class="ident">visit_none</span>()
+        <span class="kw">if </span>is_some {
+            visitor.visit_some(<span class="self">self</span>)
+        } <span class="kw">else </span>{
+            visitor.visit_none()
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_unit</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_unit&lt;V&gt;(<span class="self">self</span>, _visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="comment">// I don&#39;t know what the right thing is here, so just fail for now.</span>
-        <span class="macro">panic!</span>(<span class="string">&quot;I don&#39;t know how to read into a nil value.&quot;</span>)
+        <span class="comment">// I don&#39;t know what the right thing is here, so just fail for now.
+        </span><span class="macro">panic!</span>(<span class="string">&quot;I don&#39;t know how to read into a nil value.&quot;</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_unit_struct</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_unit_struct&lt;V&gt;(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="ident">visitor</span>.<span class="ident">visit_unit</span>()
+        visitor.visit_unit()
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_newtype_struct</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_newtype_struct&lt;V&gt;(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="ident">visitor</span>.<span class="ident">visit_newtype_struct</span>(<span class="self">self</span>)
+        visitor.visit_newtype_struct(<span class="self">self</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_tuple</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_len</span>: <span class="ident">usize</span>, <span class="ident">_visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_tuple&lt;V&gt;(<span class="self">self</span>, _len: usize, _visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_tuple_struct</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>,
-                                   <span class="ident">_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
-                                   <span class="ident">_len</span>: <span class="ident">usize</span>,
-                                   <span class="ident">_visitor</span>: <span class="ident">V</span>)
-                                   -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_tuple_struct&lt;V&gt;(<span class="self">self</span>,
+                                   _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+                                   _len: usize,
+                                   _visitor: V)
+                                   -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_map</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_map&lt;V&gt;(<span class="self">self</span>, _visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_seq</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_seq&lt;V&gt;(<span class="kw-2">mut </span><span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="kw">let</span> (<span class="ident">key</span>, <span class="ident">struct_field</span>, <span class="ident">val</span>) <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">stack</span>.<span class="ident">pop</span>() {
-            <span class="prelude-val">None</span> =&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize value into unknown key.&quot;</span>),
-            <span class="prelude-val">Some</span>(<span class="ident">DeserializerItem</span> {<span class="ident">key</span>, <span class="ident">struct_field</span>, <span class="ident">val</span>}) =&gt; (<span class="ident">key</span>, <span class="ident">struct_field</span>, <span class="ident">val</span>),
+        <span class="kw">let </span>(key, struct_field, val) = <span class="kw">match </span><span class="self">self</span>.stack.pop() {
+            <span class="prelude-val">None </span>=&gt; <span class="macro">derr!</span>(<span class="string">&quot;Could not deserialize value into unknown key.&quot;</span>),
+            <span class="prelude-val">Some</span>(DeserializerItem {key, struct_field, val}) =&gt; (key, struct_field, val),
         };
-        <span class="kw">let</span> <span class="ident">list</span> <span class="op">=</span> <span class="ident">val</span>.<span class="ident">unwrap_or</span>(<span class="ident">List</span>(<span class="macro">vec!</span>[]));
-        <span class="kw">let</span> <span class="ident">vals</span> <span class="op">=</span> <span class="ident">list</span>.<span class="ident">as_vec</span>();
-        <span class="kw">for</span> <span class="ident">val</span> <span class="kw">in</span> <span class="ident">vals</span>.<span class="ident">iter</span>().<span class="ident">rev</span>() {
-            <span class="self">self</span>.<span class="ident">stack</span>
-                .<span class="ident">push</span>(<span class="ident">DeserializerItem</span> {
-                          <span class="ident">key</span>: <span class="ident">key</span>.<span class="ident">clone</span>(),
-                          <span class="ident">struct_field</span>: <span class="ident">struct_field</span>,
-                          <span class="ident">val</span>: <span class="prelude-val">Some</span>(<span class="ident">Plain</span>(<span class="prelude-val">Some</span>((<span class="kw-2">*</span><span class="ident">val</span>).<span class="ident">into</span>()))),
+        <span class="kw">let </span>list = val.unwrap_or(List(<span class="macro">vec!</span>[]));
+        <span class="kw">let </span>vals = list.as_vec();
+        <span class="kw">for </span>val <span class="kw">in </span>vals.iter().rev() {
+            <span class="self">self</span>.stack
+                .push(DeserializerItem {
+                          key: key.clone(),
+                          struct_field: struct_field,
+                          val: <span class="prelude-val">Some</span>(Plain(<span class="prelude-val">Some</span>((<span class="kw-2">*</span>val).into()))),
                       });
         }
-        <span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="ident">SeqDeserializer::new</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">vals</span>.<span class="ident">len</span>()))
+        visitor.visit_seq(SeqDeserializer::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>, vals.len()))
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_struct</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>,
-                             <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
-                             <span class="ident">fields</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>],
-                             <span class="ident">visitor</span>: <span class="ident">V</span>)
-                             -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_struct&lt;V&gt;(<span class="kw-2">mut </span><span class="self">self</span>,
+                             <span class="kw">_</span>: <span class="kw-2">&amp;</span>str,
+                             fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+                             visitor: V)
+                             -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="ident">StructDeserializer::new</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">fields</span>))
+        visitor.visit_seq(StructDeserializer::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>, fields))
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_enum</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">variants</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">str</span>], <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_enum&lt;V&gt;(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span>str, variants: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str], visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pop_val</span>()<span class="question-mark">?</span>.<span class="ident">as_str</span>().<span class="ident">to_lowercase</span>();
-        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">variants</span>.<span class="ident">iter</span>().<span class="ident">find</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>.<span class="ident">to_lowercase</span>() <span class="op">==</span> <span class="ident">v</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="ident">s</span>,
-            <span class="prelude-val">None</span> =&gt; {
+        <span class="kw">let </span>v = <span class="self">self</span>.pop_val()<span class="question-mark">?</span>.as_str().to_lowercase();
+        <span class="kw">let </span>s = <span class="kw">match </span>variants.iter().find(|<span class="kw-2">&amp;</span>n| n.to_lowercase() == v) {
+            <span class="prelude-val">Some</span>(s) =&gt; s,
+            <span class="prelude-val">None </span>=&gt; {
                 <span class="macro">derr!</span>(<span class="string">&quot;Could not match &#39;{}&#39; with any of \
                            the allowed variants: {:?}&quot;</span>,
-                      <span class="ident">v</span>,
-                      <span class="ident">variants</span>)
+                      v,
+                      variants)
             }
         };
-        <span class="ident">visitor</span>.<span class="ident">visit_enum</span>(<span class="ident">s</span>.<span class="ident">into_deserializer</span>())
+        visitor.visit_enum(s.into_deserializer())
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_identifier</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_identifier&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="self">self</span>.<span class="ident">deserialize_str</span>(<span class="ident">visitor</span>)
+        <span class="self">self</span>.deserialize_str(visitor)
     }
 
-    <span class="kw">fn</span> <span class="ident">deserialize_ignored_any</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>deserialize_ignored_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value&gt;
+        <span class="kw">where </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="self">self</span>.<span class="ident">deserialize_any</span>(<span class="ident">visitor</span>)
+        <span class="self">self</span>.deserialize_any(visitor)
     }
 }
 
-<span class="kw">struct</span> <span class="ident">SeqDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">de</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
-    <span class="ident">len</span>: <span class="ident">usize</span>,
+<span class="kw">struct </span>SeqDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>: <span class="lifetime">&#39;a</span>&gt; {
+    de: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+    len: usize,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">SeqDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">de</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>, <span class="ident">len</span>: <span class="ident">usize</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">SeqDeserializer</span> { <span class="ident">de</span>: <span class="ident">de</span>, <span class="ident">len</span>: <span class="ident">len</span> }
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; SeqDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; {
+    <span class="kw">fn </span>new(de: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;, len: usize) -&gt; <span class="self">Self </span>{
+        SeqDeserializer { de: de, len: len }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">de::SeqAccess</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SeqDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">Error</span>;
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; {
+    <span class="kw">type </span>Error = Error;
 
-    <span class="kw">fn</span> <span class="ident">next_element_seed</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">seed</span>: <span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T::Value</span><span class="op">&gt;</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">de::DeserializeSeed</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>next_element_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;&gt;
+        <span class="kw">where </span>T: de::DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
-            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+        <span class="kw">if </span><span class="self">self</span>.len == <span class="number">0 </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
         }
-        <span class="self">self</span>.<span class="ident">len</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
-        <span class="ident">seed</span>.<span class="ident">deserialize</span>(<span class="kw-2">&amp;mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">de</span>).<span class="ident">map</span>(<span class="prelude-val">Some</span>)
+        <span class="self">self</span>.len -= <span class="number">1</span>;
+        seed.deserialize(<span class="kw-2">&amp;mut *</span><span class="self">self</span>.de).map(<span class="prelude-val">Some</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">len</span>);
+    <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="self">self</span>.len);
     }
 }
 
-<span class="kw">struct</span> <span class="ident">StructDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">de</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
-    <span class="ident">fields</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>],
+<span class="kw">struct </span>StructDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>: <span class="lifetime">&#39;a</span>&gt; {
+    de: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+    fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">StructDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">de</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>, <span class="ident">fields</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>]) -&gt; <span class="self">Self</span> {
-        <span class="ident">StructDeserializer</span> {
-            <span class="ident">de</span>: <span class="ident">de</span>,
-            <span class="ident">fields</span>: <span class="ident">fields</span>,
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; StructDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; {
+    <span class="kw">fn </span>new(de: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;, fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str]) -&gt; <span class="self">Self </span>{
+        StructDeserializer {
+            de: de,
+            fields: fields,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">de::SeqAccess</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">StructDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">Error</span>;
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>StructDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; {
+    <span class="kw">type </span>Error = Error;
 
-    <span class="kw">fn</span> <span class="ident">next_element_seed</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">seed</span>: <span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T::Value</span><span class="op">&gt;</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">de::DeserializeSeed</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">fn </span>next_element_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;&gt;
+        <span class="kw">where </span>T: de::DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;
     {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">fields</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> {
-            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+        <span class="kw">if </span><span class="self">self</span>.fields.len() == <span class="number">0 </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
         }
-        <span class="self">self</span>.<span class="ident">de</span>.<span class="ident">push</span>(<span class="self">self</span>.<span class="ident">fields</span>[<span class="number">0</span>]);
-        <span class="self">self</span>.<span class="ident">fields</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">fields</span>[<span class="number">1</span>..];
-        <span class="ident">seed</span>.<span class="ident">deserialize</span>(<span class="kw-2">&amp;mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">de</span>).<span class="ident">map</span>(<span class="prelude-val">Some</span>)
+        <span class="self">self</span>.de.push(<span class="self">self</span>.fields[<span class="number">0</span>]);
+        <span class="self">self</span>.fields = <span class="kw-2">&amp;</span><span class="self">self</span>.fields[<span class="number">1</span>..];
+        seed.deserialize(<span class="kw-2">&amp;mut *</span><span class="self">self</span>.de).map(<span class="prelude-val">Some</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">fields</span>.<span class="ident">len</span>());
+    <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="self">self</span>.fields.len());
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="docopt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="docopt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

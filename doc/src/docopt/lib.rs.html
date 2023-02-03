@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/docopt-1.1.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../docopt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../docopt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../docopt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/docopt-1.1.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../docopt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -207,214 +207,214 @@
 <span id="207">207</span>
 <span id="208">208</span>
 <span id="209">209</span>
-</pre><pre class="rust"><code><span class="doccomment">//! Docopt for Rust. This implementation conforms to the</span>
-<span class="doccomment">//! [official description of Docopt](http://docopt.org/) and</span>
-<span class="doccomment">//! [passes its test suite](https://github.com/docopt/docopt/pull/201).</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! This library is [on GitHub](https://github.com/docopt/docopt.rs).</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Fundamentally, Docopt is a command line argument parser. The detail that</span>
-<span class="doccomment">//! distinguishes it from most parsers is that the parser is derived from the</span>
-<span class="doccomment">//! usage string. Here&#39;s a simple example:</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use docopt::Docopt;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // Write the Docopt usage string.</span>
-<span class="doccomment">//! const USAGE: &amp;&#39;static str = &quot;</span>
-<span class="doccomment">//! Usage: cp [-a] &lt;source&gt; &lt;dest&gt;</span>
-<span class="doccomment">//!        cp [-a] &lt;source&gt;... &lt;dir&gt;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Options:</span>
-<span class="doccomment">//!     -a, --archive  Copy everything.</span>
-<span class="doccomment">//! &quot;;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // The argv. Normally you&#39;d just use `parse` which will automatically</span>
-<span class="doccomment">//! // use `std::env::args()`.</span>
-<span class="doccomment">//! let argv = || vec![&quot;cp&quot;, &quot;-a&quot;, &quot;file1&quot;, &quot;file2&quot;, &quot;dest/&quot;];</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // Parse argv and exit the program with an error message if it fails.</span>
-<span class="doccomment">//! let args = Docopt::new(USAGE)</span>
-<span class="doccomment">//!                   .and_then(|d| d.argv(argv().into_iter()).parse())</span>
-<span class="doccomment">//!                   .unwrap_or_else(|e| e.exit());</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // Now access your argv values. Synonyms work just fine!</span>
-<span class="doccomment">//! assert!(args.get_bool(&quot;-a&quot;) &amp;&amp; args.get_bool(&quot;--archive&quot;));</span>
-<span class="doccomment">//! assert_eq!(args.get_vec(&quot;&lt;source&gt;&quot;), vec![&quot;file1&quot;, &quot;file2&quot;]);</span>
-<span class="doccomment">//! assert_eq!(args.get_str(&quot;&lt;dir&gt;&quot;), &quot;dest/&quot;);</span>
-<span class="doccomment">//! assert_eq!(args.get_str(&quot;&lt;dest&gt;&quot;), &quot;&quot;);</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # Type based decoding</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Often, command line values aren&#39;t just strings or booleans---sometimes</span>
-<span class="doccomment">//! they are integers, or enums, or something more elaborate. Using the</span>
-<span class="doccomment">//! standard Docopt interface can be inconvenient for this purpose, because</span>
-<span class="doccomment">//! you&#39;ll need to convert all of the values explicitly. Instead, this crate</span>
-<span class="doccomment">//! provides a `Decoder` that converts an `ArgvMap` to your custom struct.</span>
-<span class="doccomment">//! Here is the same example as above using type based decoding:</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! # fn main() {</span>
-<span class="doccomment">//! use docopt::Docopt;</span>
-<span class="doccomment">//! use serde::Deserialize;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // Write the Docopt usage string.</span>
-<span class="doccomment">//! const USAGE: &amp;&#39;static str = &quot;</span>
-<span class="doccomment">//! Usage: cp [-a] &lt;source&gt; &lt;dest&gt;</span>
-<span class="doccomment">//!        cp [-a] &lt;source&gt;... &lt;dir&gt;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Options:</span>
-<span class="doccomment">//!     -a, --archive  Copy everything.</span>
-<span class="doccomment">//! &quot;;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #[derive(Deserialize)]</span>
-<span class="doccomment">//! struct Args {</span>
-<span class="doccomment">//!     arg_source: Vec&lt;String&gt;,</span>
-<span class="doccomment">//!     arg_dest: String,</span>
-<span class="doccomment">//!     arg_dir: String,</span>
-<span class="doccomment">//!     flag_archive: bool,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let argv = || vec![&quot;cp&quot;, &quot;-a&quot;, &quot;file1&quot;, &quot;file2&quot;, &quot;dest/&quot;];</span>
-<span class="doccomment">//! let args: Args = Docopt::new(USAGE)</span>
-<span class="doccomment">//!     .and_then(|d| d.argv(argv().into_iter()).deserialize())</span>
-<span class="doccomment">//!     .unwrap_or_else(|e| e.exit());</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // Now access your argv values.</span>
-<span class="doccomment">//! fn s(x: &amp;str) -&gt; String { x.to_string() }</span>
-<span class="doccomment">//! assert!(args.flag_archive);</span>
-<span class="doccomment">//! assert_eq!(args.arg_source, vec![s(&quot;file1&quot;), s(&quot;file2&quot;)]);</span>
-<span class="doccomment">//! assert_eq!(args.arg_dir, s(&quot;dest/&quot;));</span>
-<span class="doccomment">//! assert_eq!(args.arg_dest, s(&quot;&quot;));</span>
-<span class="doccomment">//! # }</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # Command line arguments for `rustc`</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Here&#39;s an example with a subset of `rustc`&#39;s command line arguments that</span>
-<span class="doccomment">//! shows more of Docopt and some of the benefits of type based decoding.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! # fn main() {</span>
-<span class="doccomment">//! # #![allow(non_snake_case)]</span>
-<span class="doccomment">//! use std::fmt;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! use serde::Deserialize;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! use docopt::Docopt;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // Write the Docopt usage string.</span>
-<span class="doccomment">//! const USAGE: &amp;&#39;static str = &quot;</span>
-<span class="doccomment">//! Usage: rustc [options] [--cfg SPEC... -L PATH...] INPUT</span>
-<span class="doccomment">//!        rustc (--help | --version)</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Options:</span>
-<span class="doccomment">//!     -h, --help         Show this message.</span>
-<span class="doccomment">//!     --version          Show the version of rustc.</span>
-<span class="doccomment">//!     --cfg SPEC         Configure the compilation environment.</span>
-<span class="doccomment">//!     -L PATH            Add a directory to the library search path.</span>
-<span class="doccomment">//!     --emit TYPE        Configure the output that rustc will produce.</span>
-<span class="doccomment">//!                        Valid values: asm, ir, bc, obj, link.</span>
-<span class="doccomment">//!     --opt-level LEVEL  Optimize with possible levels 0-3.</span>
-<span class="doccomment">//! &quot;;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #[derive(Deserialize)]</span>
-<span class="doccomment">//! struct Args {</span>
-<span class="doccomment">//!     arg_INPUT: String,</span>
-<span class="doccomment">//!     flag_emit: Option&lt;Emit&gt;,</span>
-<span class="doccomment">//!     flag_opt_level: Option&lt;OptLevel&gt;,</span>
-<span class="doccomment">//!     flag_cfg: Vec&lt;String&gt;,</span>
-<span class="doccomment">//!     flag_L: Vec&lt;String&gt;,</span>
-<span class="doccomment">//!     flag_help: bool,</span>
-<span class="doccomment">//!     flag_version: bool,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // This is easy. The decoder will automatically restrict values to</span>
-<span class="doccomment">//! // strings that match one of the enum variants.</span>
-<span class="doccomment">//! #[derive(Deserialize)]</span>
-<span class="doccomment">//! # #[derive(Debug, PartialEq)]</span>
-<span class="doccomment">//! enum Emit { Asm, Ir, Bc, Obj, Link }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // This one is harder because we want the user to specify an integer,</span>
-<span class="doccomment">//! // but restrict it to a specific range. So we implement `Deserialize`</span>
-<span class="doccomment">//! // ourselves.</span>
-<span class="doccomment">//! # #[derive(Debug, PartialEq)]</span>
-<span class="doccomment">//! enum OptLevel { Zero, One, Two, Three }</span>
-<span class="doccomment">//! struct OptLevelVisitor;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! impl&lt;&#39;de&gt; serde::de::Visitor&lt;&#39;de&gt; for OptLevelVisitor {</span>
-<span class="doccomment">//!     type Value = OptLevel;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     fn expecting(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {</span>
-<span class="doccomment">//!         formatter.write_str(&quot;a number from range 0..3&quot;)</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     fn visit_u8&lt;E&gt;(self, n: u8) -&gt; Result&lt;Self::Value, E&gt;</span>
-<span class="doccomment">//!         where E: serde::de::Error</span>
-<span class="doccomment">//!     {</span>
-<span class="doccomment">//!         Ok(match n {</span>
-<span class="doccomment">//!             0 =&gt; OptLevel::Zero, 1 =&gt; OptLevel::One,</span>
-<span class="doccomment">//!             2 =&gt; OptLevel::Two, 3 =&gt; OptLevel::Three,</span>
-<span class="doccomment">//!             n =&gt; {</span>
-<span class="doccomment">//!                 let err = format!(</span>
-<span class="doccomment">//!                     &quot;Could not deserialize &#39;{}&#39; as opt-level.&quot;, n);</span>
-<span class="doccomment">//!                 return Err(E::custom(err));</span>
-<span class="doccomment">//!             }</span>
-<span class="doccomment">//!         })</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! impl&lt;&#39;de&gt; serde::de::Deserialize&lt;&#39;de&gt; for OptLevel {</span>
-<span class="doccomment">//!     fn deserialize&lt;D&gt;(d: D) -&gt; Result&lt;OptLevel, D::Error&gt;</span>
-<span class="doccomment">//!         where D: serde::de::Deserializer&lt;&#39;de&gt;</span>
-<span class="doccomment">//!     {</span>
-<span class="doccomment">//!         d.deserialize_u8(OptLevelVisitor)</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let argv = || vec![&quot;rustc&quot;, &quot;-L&quot;, &quot;.&quot;, &quot;-L&quot;, &quot;..&quot;, &quot;--cfg&quot;, &quot;a&quot;,</span>
-<span class="doccomment">//!                             &quot;--opt-level&quot;, &quot;2&quot;, &quot;--emit=ir&quot;, &quot;docopt.rs&quot;];</span>
-<span class="doccomment">//! let args: Args = Docopt::new(USAGE)</span>
-<span class="doccomment">//!                         .and_then(|d| d.argv(argv().into_iter()).deserialize())</span>
-<span class="doccomment">//!                         .unwrap_or_else(|e| e.exit());</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // Now access your argv values.</span>
-<span class="doccomment">//! fn s(x: &amp;str) -&gt; String { x.to_string() }</span>
-<span class="doccomment">//! assert_eq!(args.arg_INPUT, &quot;docopt.rs&quot;.to_string());</span>
-<span class="doccomment">//! assert_eq!(args.flag_L, vec![s(&quot;.&quot;), s(&quot;..&quot;)]);</span>
-<span class="doccomment">//! assert_eq!(args.flag_cfg, vec![s(&quot;a&quot;)]);</span>
-<span class="doccomment">//! assert_eq!(args.flag_opt_level, Some(OptLevel::Two));</span>
-<span class="doccomment">//! assert_eq!(args.flag_emit, Some(Emit::Ir));</span>
-<span class="doccomment">//! # }</span>
-<span class="doccomment">//! ```</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Docopt for Rust. This implementation conforms to the
+//! [official description of Docopt](http://docopt.org/) and
+//! [passes its test suite](https://github.com/docopt/docopt/pull/201).
+//!
+//! This library is [on GitHub](https://github.com/docopt/docopt.rs).
+//!
+//! Fundamentally, Docopt is a command line argument parser. The detail that
+//! distinguishes it from most parsers is that the parser is derived from the
+//! usage string. Here&#39;s a simple example:
+//!
+//! ```rust
+//! use docopt::Docopt;
+//!
+//! // Write the Docopt usage string.
+//! const USAGE: &amp;&#39;static str = &quot;
+//! Usage: cp [-a] &lt;source&gt; &lt;dest&gt;
+//!        cp [-a] &lt;source&gt;... &lt;dir&gt;
+//!
+//! Options:
+//!     -a, --archive  Copy everything.
+//! &quot;;
+//!
+//! // The argv. Normally you&#39;d just use `parse` which will automatically
+//! // use `std::env::args()`.
+//! let argv = || vec![&quot;cp&quot;, &quot;-a&quot;, &quot;file1&quot;, &quot;file2&quot;, &quot;dest/&quot;];
+//!
+//! // Parse argv and exit the program with an error message if it fails.
+//! let args = Docopt::new(USAGE)
+//!                   .and_then(|d| d.argv(argv().into_iter()).parse())
+//!                   .unwrap_or_else(|e| e.exit());
+//!
+//! // Now access your argv values. Synonyms work just fine!
+//! assert!(args.get_bool(&quot;-a&quot;) &amp;&amp; args.get_bool(&quot;--archive&quot;));
+//! assert_eq!(args.get_vec(&quot;&lt;source&gt;&quot;), vec![&quot;file1&quot;, &quot;file2&quot;]);
+//! assert_eq!(args.get_str(&quot;&lt;dir&gt;&quot;), &quot;dest/&quot;);
+//! assert_eq!(args.get_str(&quot;&lt;dest&gt;&quot;), &quot;&quot;);
+//! ```
+//!
+//! # Type based decoding
+//!
+//! Often, command line values aren&#39;t just strings or booleans---sometimes
+//! they are integers, or enums, or something more elaborate. Using the
+//! standard Docopt interface can be inconvenient for this purpose, because
+//! you&#39;ll need to convert all of the values explicitly. Instead, this crate
+//! provides a `Decoder` that converts an `ArgvMap` to your custom struct.
+//! Here is the same example as above using type based decoding:
+//!
+//! ```rust
+//! # fn main() {
+//! use docopt::Docopt;
+//! use serde::Deserialize;
+//!
+//! // Write the Docopt usage string.
+//! const USAGE: &amp;&#39;static str = &quot;
+//! Usage: cp [-a] &lt;source&gt; &lt;dest&gt;
+//!        cp [-a] &lt;source&gt;... &lt;dir&gt;
+//!
+//! Options:
+//!     -a, --archive  Copy everything.
+//! &quot;;
+//!
+//! #[derive(Deserialize)]
+//! struct Args {
+//!     arg_source: Vec&lt;String&gt;,
+//!     arg_dest: String,
+//!     arg_dir: String,
+//!     flag_archive: bool,
+//! }
+//!
+//! let argv = || vec![&quot;cp&quot;, &quot;-a&quot;, &quot;file1&quot;, &quot;file2&quot;, &quot;dest/&quot;];
+//! let args: Args = Docopt::new(USAGE)
+//!     .and_then(|d| d.argv(argv().into_iter()).deserialize())
+//!     .unwrap_or_else(|e| e.exit());
+//!
+//! // Now access your argv values.
+//! fn s(x: &amp;str) -&gt; String { x.to_string() }
+//! assert!(args.flag_archive);
+//! assert_eq!(args.arg_source, vec![s(&quot;file1&quot;), s(&quot;file2&quot;)]);
+//! assert_eq!(args.arg_dir, s(&quot;dest/&quot;));
+//! assert_eq!(args.arg_dest, s(&quot;&quot;));
+//! # }
+//! ```
+//!
+//! # Command line arguments for `rustc`
+//!
+//! Here&#39;s an example with a subset of `rustc`&#39;s command line arguments that
+//! shows more of Docopt and some of the benefits of type based decoding.
+//!
+//! ```rust
+//! # fn main() {
+//! # #![allow(non_snake_case)]
+//! use std::fmt;
+//!
+//! use serde::Deserialize;
+//!
+//! use docopt::Docopt;
+//!
+//! // Write the Docopt usage string.
+//! const USAGE: &amp;&#39;static str = &quot;
+//! Usage: rustc [options] [--cfg SPEC... -L PATH...] INPUT
+//!        rustc (--help | --version)
+//!
+//! Options:
+//!     -h, --help         Show this message.
+//!     --version          Show the version of rustc.
+//!     --cfg SPEC         Configure the compilation environment.
+//!     -L PATH            Add a directory to the library search path.
+//!     --emit TYPE        Configure the output that rustc will produce.
+//!                        Valid values: asm, ir, bc, obj, link.
+//!     --opt-level LEVEL  Optimize with possible levels 0-3.
+//! &quot;;
+//!
+//! #[derive(Deserialize)]
+//! struct Args {
+//!     arg_INPUT: String,
+//!     flag_emit: Option&lt;Emit&gt;,
+//!     flag_opt_level: Option&lt;OptLevel&gt;,
+//!     flag_cfg: Vec&lt;String&gt;,
+//!     flag_L: Vec&lt;String&gt;,
+//!     flag_help: bool,
+//!     flag_version: bool,
+//! }
+//!
+//! // This is easy. The decoder will automatically restrict values to
+//! // strings that match one of the enum variants.
+//! #[derive(Deserialize)]
+//! # #[derive(Debug, PartialEq)]
+//! enum Emit { Asm, Ir, Bc, Obj, Link }
+//!
+//! // This one is harder because we want the user to specify an integer,
+//! // but restrict it to a specific range. So we implement `Deserialize`
+//! // ourselves.
+//! # #[derive(Debug, PartialEq)]
+//! enum OptLevel { Zero, One, Two, Three }
+//! struct OptLevelVisitor;
+//!
+//! impl&lt;&#39;de&gt; serde::de::Visitor&lt;&#39;de&gt; for OptLevelVisitor {
+//!     type Value = OptLevel;
+//!
+//!     fn expecting(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+//!         formatter.write_str(&quot;a number from range 0..3&quot;)
+//!     }
+//!
+//!     fn visit_u8&lt;E&gt;(self, n: u8) -&gt; Result&lt;Self::Value, E&gt;
+//!         where E: serde::de::Error
+//!     {
+//!         Ok(match n {
+//!             0 =&gt; OptLevel::Zero, 1 =&gt; OptLevel::One,
+//!             2 =&gt; OptLevel::Two, 3 =&gt; OptLevel::Three,
+//!             n =&gt; {
+//!                 let err = format!(
+//!                     &quot;Could not deserialize &#39;{}&#39; as opt-level.&quot;, n);
+//!                 return Err(E::custom(err));
+//!             }
+//!         })
+//!     }
+//! }
+//!
+//! impl&lt;&#39;de&gt; serde::de::Deserialize&lt;&#39;de&gt; for OptLevel {
+//!     fn deserialize&lt;D&gt;(d: D) -&gt; Result&lt;OptLevel, D::Error&gt;
+//!         where D: serde::de::Deserializer&lt;&#39;de&gt;
+//!     {
+//!         d.deserialize_u8(OptLevelVisitor)
+//!     }
+//! }
+//!
+//! let argv = || vec![&quot;rustc&quot;, &quot;-L&quot;, &quot;.&quot;, &quot;-L&quot;, &quot;..&quot;, &quot;--cfg&quot;, &quot;a&quot;,
+//!                             &quot;--opt-level&quot;, &quot;2&quot;, &quot;--emit=ir&quot;, &quot;docopt.rs&quot;];
+//! let args: Args = Docopt::new(USAGE)
+//!                         .and_then(|d| d.argv(argv().into_iter()).deserialize())
+//!                         .unwrap_or_else(|e| e.exit());
+//!
+//! // Now access your argv values.
+//! fn s(x: &amp;str) -&gt; String { x.to_string() }
+//! assert_eq!(args.arg_INPUT, &quot;docopt.rs&quot;.to_string());
+//! assert_eq!(args.flag_L, vec![s(&quot;.&quot;), s(&quot;..&quot;)]);
+//! assert_eq!(args.flag_cfg, vec![s(&quot;a&quot;)]);
+//! assert_eq!(args.flag_opt_level, Some(OptLevel::Two));
+//! assert_eq!(args.flag_emit, Some(Emit::Ir));
+//! # }
+//! ```
 
-<span class="attribute">#![<span class="ident">crate_name</span> <span class="op">=</span> <span class="string">&quot;docopt&quot;</span>]</span>
-<span class="attribute">#![<span class="ident">doc</span>(<span class="ident">html_root_url</span> <span class="op">=</span> <span class="string">&quot;http://burntsushi.net/rustdoc/docopt&quot;</span>)]</span>
-<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+</span><span class="attribute">#![crate_name = <span class="string">&quot;docopt&quot;</span>]
+#![doc(html_root_url = <span class="string">&quot;http://burntsushi.net/rustdoc/docopt&quot;</span>)]
+#![deny(missing_docs)]
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::dopt</span>::{<span class="ident">ArgvMap</span>, <span class="ident">Deserializer</span>, <span class="ident">Docopt</span>, <span class="ident">Error</span>, <span class="ident">Value</span>};
+</span><span class="kw">pub use </span><span class="kw">crate</span>::dopt::{ArgvMap, Deserializer, Docopt, Error, Value};
 
-<span class="macro">macro_rules!</span> <span class="ident">werr</span>(
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) =&gt; ({
-        <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Write</span>, <span class="ident">stderr</span>};
-        <span class="macro">write!</span>(<span class="kw-2">&amp;mut</span> <span class="ident">stderr</span>(), $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>)<span class="kw-2">*</span>).<span class="ident">unwrap</span>();
+<span class="macro">macro_rules! </span>werr(
+    ($(<span class="macro-nonterminal">$arg</span>:tt)<span class="kw-2">*</span>) =&gt; ({
+        <span class="kw">use </span>std::io::{Write, stderr};
+        <span class="macro">write!</span>(<span class="kw-2">&amp;mut </span>stderr(), $(<span class="macro-nonterminal">$arg</span>)<span class="kw-2">*</span>).unwrap();
     })
 );
 
-<span class="macro">macro_rules!</span> <span class="ident">regex</span>(
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">s</span>:<span class="ident">expr</span>) =&gt; (<span class="ident">regex::Regex::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">s</span>).<span class="ident">unwrap</span>());
+<span class="macro">macro_rules! </span>regex(
+    (<span class="macro-nonterminal">$s</span>:expr) =&gt; (regex::Regex::new(<span class="macro-nonterminal">$s</span>).unwrap());
 );
 
-<span class="kw">fn</span> <span class="ident">cap_or_empty</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span><span class="op">&gt;</span>(<span class="ident">caps</span>: <span class="kw-2">&amp;</span><span class="ident">regex::Captures</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span><span class="op">&gt;</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;t</span> <span class="ident">str</span> {
-    <span class="ident">caps</span>.<span class="ident">name</span>(<span class="ident">name</span>).<span class="ident">map_or</span>(<span class="string">&quot;&quot;</span>, <span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="ident">m</span>.<span class="ident">as_str</span>())
+<span class="kw">fn </span>cap_or_empty&lt;<span class="lifetime">&#39;t</span>&gt;(caps: <span class="kw-2">&amp;</span>regex::Captures&lt;<span class="lifetime">&#39;t</span>&gt;, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span>str {
+    caps.name(name).map_or(<span class="string">&quot;&quot;</span>, |m| m.as_str())
 }
 
-<span class="kw">mod</span> <span class="ident">dopt</span>;
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">parse</span>;
-<span class="kw">mod</span> <span class="ident">synonym</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">test</span>;
+<span class="kw">mod </span>dopt;
+<span class="attribute">#[doc(hidden)]
+</span><span class="kw">pub mod </span>parse;
+<span class="kw">mod </span>synonym;
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>test;
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="docopt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="docopt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

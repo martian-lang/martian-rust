@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/strfmt-0.2.2/src/fmtstr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fmtstr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../strfmt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../strfmt/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../strfmt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/strfmt-0.2.2/src/fmtstr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fmtstr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../strfmt/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -235,242 +235,242 @@
 <span id="235">235</span>
 <span id="236">236</span>
 <span id="237">237</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fmt::Write</span>;
-<span class="kw">use</span> <span class="ident">std::string::String</span>;
+</pre><pre class="rust"><code><span class="kw">use </span>std::fmt::Write;
+<span class="kw">use </span>std::string::String;
 
-<span class="kw">use</span> <span class="ident">formatter::Formatter</span>;
-<span class="kw">use</span> <span class="ident">types</span>::<span class="kw-2">*</span>;
+<span class="kw">use </span>formatter::Formatter;
+<span class="kw">use </span>types::<span class="kw-2">*</span>;
 
-<span class="kw">fn</span> <span class="ident">write_char</span>(<span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Formatter</span>, <span class="ident">c</span>: <span class="ident">char</span>, <span class="ident">n</span>: <span class="ident">usize</span>) {
-    <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">n</span> {
-        <span class="ident">f</span>.<span class="ident">write_char</span>(<span class="ident">c</span>).<span class="ident">unwrap</span>();
+<span class="kw">fn </span>write_char(f: <span class="kw-2">&amp;mut </span>Formatter, c: char, n: usize) {
+    <span class="kw">for _ in </span><span class="number">0</span>..n {
+        f.write_char(c).unwrap();
     }
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">test_write_char</span>() {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String::new</span>();
-    <span class="ident">s</span>.<span class="ident">write_str</span>(<span class="string">&quot;h &quot;</span>).<span class="ident">unwrap</span>();
+<span class="attribute">#[test]
+</span><span class="kw">fn </span>test_write_char() {
+    <span class="kw">let </span><span class="kw-2">mut </span>s = String::new();
+    s.write_str(<span class="string">&quot;h &quot;</span>).unwrap();
     {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">Formatter::from_str</span>(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut</span> <span class="ident">s</span>).<span class="ident">unwrap</span>();
-        <span class="ident">write_char</span>(<span class="kw-2">&amp;mut</span> <span class="ident">f</span>, <span class="string">&#39;f&#39;</span>, <span class="number">3</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = Formatter::from_str(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut </span>s).unwrap();
+        write_char(<span class="kw-2">&amp;mut </span>f, <span class="string">&#39;f&#39;</span>, <span class="number">3</span>);
     }
-    <span class="macro">assert!</span>(<span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;h fff&quot;</span>);
+    <span class="macro">assert!</span>(s == <span class="string">&quot;h fff&quot;</span>);
 }
 
-<span class="kw">fn</span> <span class="ident">write_from</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>(<span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Formatter</span>, <span class="ident">f</span>: <span class="ident">I</span>, <span class="ident">n</span>: <span class="ident">usize</span>) -&gt; <span class="ident">usize</span>
-<span class="kw">where</span>
-    <span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">char</span><span class="op">&gt;</span>,
+<span class="kw">fn </span>write_from&lt;I&gt;(fmt: <span class="kw-2">&amp;mut </span>Formatter, f: I, n: usize) -&gt; usize
+<span class="kw">where
+    </span>I: Iterator&lt;Item = char&gt;,
 {
-    <span class="comment">// eexaust f or run out of n, return chars written</span>
-    <span class="kw">if</span> <span class="ident">n</span> <span class="op">==</span> <span class="number">0</span> {
-        <span class="kw">return</span> <span class="number">0</span>;
+    <span class="comment">// eexaust f or run out of n, return chars written
+    </span><span class="kw">if </span>n == <span class="number">0 </span>{
+        <span class="kw">return </span><span class="number">0</span>;
     }
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n_written</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">f</span> {
-        <span class="ident">fmt</span>.<span class="ident">write_char</span>(<span class="ident">c</span>).<span class="ident">unwrap</span>();
-        <span class="ident">n_written</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-        <span class="kw">if</span> <span class="ident">n_written</span> <span class="op">==</span> <span class="ident">n</span> {
-            <span class="kw">return</span> <span class="ident">n_written</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>n_written: usize = <span class="number">0</span>;
+    <span class="kw">for </span>c <span class="kw">in </span>f {
+        fmt.write_char(c).unwrap();
+        n_written += <span class="number">1</span>;
+        <span class="kw">if </span>n_written == n {
+            <span class="kw">return </span>n_written;
         }
     }
-    <span class="ident">n_written</span>
+    n_written
 }
 
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">test_write_from</span>() {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String::new</span>();
-    <span class="ident">s</span>.<span class="ident">write_str</span>(<span class="string">&quot;h &quot;</span>).<span class="ident">unwrap</span>();
+<span class="attribute">#[test]
+</span><span class="kw">fn </span>test_write_from() {
+    <span class="kw">let </span><span class="kw-2">mut </span>s = String::new();
+    s.write_str(<span class="string">&quot;h &quot;</span>).unwrap();
     {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">Formatter::from_str</span>(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut</span> <span class="ident">s</span>).<span class="ident">unwrap</span>();
-        <span class="ident">write_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">f</span>, <span class="string">&quot;fff&quot;</span>.<span class="ident">chars</span>(), <span class="number">5</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = Formatter::from_str(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut </span>s).unwrap();
+        write_from(<span class="kw-2">&amp;mut </span>f, <span class="string">&quot;fff&quot;</span>.chars(), <span class="number">5</span>);
     }
-    <span class="macro">assert!</span>(<span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;h fff&quot;</span>);
+    <span class="macro">assert!</span>(s == <span class="string">&quot;h fff&quot;</span>);
     {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">Formatter::from_str</span>(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut</span> <span class="ident">s</span>).<span class="ident">unwrap</span>();
-        <span class="ident">write_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">f</span>, <span class="string">&quot;xxxx&quot;</span>.<span class="ident">chars</span>(), <span class="number">2</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = Formatter::from_str(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut </span>s).unwrap();
+        write_from(<span class="kw-2">&amp;mut </span>f, <span class="string">&quot;xxxx&quot;</span>.chars(), <span class="number">2</span>);
     }
-    <span class="macro">assert!</span>(<span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;h fffxx&quot;</span>);
+    <span class="macro">assert!</span>(s == <span class="string">&quot;h fffxx&quot;</span>);
     {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">Formatter::from_str</span>(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut</span> <span class="ident">s</span>).<span class="ident">unwrap</span>();
-        <span class="ident">write_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">f</span>, <span class="string">&quot;333&quot;</span>.<span class="ident">chars</span>(), <span class="number">3</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = Formatter::from_str(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut </span>s).unwrap();
+        write_from(<span class="kw-2">&amp;mut </span>f, <span class="string">&quot;333&quot;</span>.chars(), <span class="number">3</span>);
     }
-    <span class="macro">assert!</span>(<span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;h fffxx333&quot;</span>);
-    <span class="ident">s</span>.<span class="ident">clear</span>();
+    <span class="macro">assert!</span>(s == <span class="string">&quot;h fffxx333&quot;</span>);
+    s.clear();
     {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">Formatter::from_str</span>(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut</span> <span class="ident">s</span>).<span class="ident">unwrap</span>();
-        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;hello&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let </span><span class="kw-2">mut </span>f = Formatter::from_str(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;mut </span>s).unwrap();
+        <span class="macro">write!</span>(f, <span class="string">&quot;hello&quot;</span>).unwrap();
     }
-    <span class="macro">assert!</span>(<span class="ident">s</span> <span class="op">==</span> <span class="string">&quot;hello&quot;</span>);
+    <span class="macro">assert!</span>(s == <span class="string">&quot;hello&quot;</span>);
 }
 
-<span class="doccomment">/// implement formatting of strings</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// format the given string onto the buffer</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">str</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">set_default_align</span>(<span class="ident">Alignment::Left</span>);
-        <span class="kw">if</span> <span class="op">!</span>(<span class="self">self</span>.<span class="ident">ty</span>() <span class="op">==</span> <span class="prelude-val">None</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">ty</span>() <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="string">&#39;s&#39;</span>)) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">msg</span> <span class="op">=</span> <span class="ident">String::new</span>();
+<span class="doccomment">/// implement formatting of strings
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt; Formatter&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt; {
+    <span class="doccomment">/// format the given string onto the buffer
+    </span><span class="kw">pub fn </span>str(<span class="kw-2">&amp;mut </span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="self">self</span>.set_default_align(Alignment::Left);
+        <span class="kw">if </span>!(<span class="self">self</span>.ty() == <span class="prelude-val">None </span>|| <span class="self">self</span>.ty() == <span class="prelude-val">Some</span>(<span class="string">&#39;s&#39;</span>)) {
+            <span class="kw">let </span><span class="kw-2">mut </span>msg = String::new();
             <span class="macro">write!</span>(
-                <span class="ident">msg</span>,
+                msg,
                 <span class="string">&quot;Unknown format code {:?} for object of type &#39;str&#39;&quot;</span>,
-                <span class="self">self</span>.<span class="ident">ty</span>()
+                <span class="self">self</span>.ty()
             )
-            .<span class="ident">unwrap</span>();
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::TypeError</span>(<span class="ident">msg</span>));
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">alternate</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::TypeError</span>(
+            .unwrap();
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::TypeError(msg));
+        } <span class="kw">else if </span><span class="self">self</span>.alternate() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::TypeError(
                 <span class="string">&quot;Alternate form (#) not allowed in string \
-                                            format specifier&quot;</span>
-                    .<span class="ident">to_string</span>(),
+                                            format specifier&quot;
+                    </span>.to_string(),
             ));
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">thousands</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::TypeError</span>(
-                <span class="string">&quot;Cannot specify &#39;,&#39; with &#39;s&#39;&quot;</span>.<span class="ident">to_string</span>(),
+        } <span class="kw">else if </span><span class="self">self</span>.thousands() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::TypeError(
+                <span class="string">&quot;Cannot specify &#39;,&#39; with &#39;s&#39;&quot;</span>.to_string(),
             ));
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">sign</span>().<span class="ident">is_unspecified</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::TypeError</span>(
-                <span class="string">&quot;Sign not allowed in string format specifier&quot;</span>.<span class="ident">to_string</span>(),
+        } <span class="kw">else if </span><span class="self">self</span>.sign().is_unspecified() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::TypeError(
+                <span class="string">&quot;Sign not allowed in string format specifier&quot;</span>.to_string(),
             ));
         }
-        <span class="self">self</span>.<span class="ident">str_unchecked</span>(<span class="ident">s</span>)
+        <span class="self">self</span>.str_unchecked(s)
     }
 
-    <span class="doccomment">/// UNSTABLE+UNTESTED: do not use in your own code (yet)</span>
-    <span class="doccomment">/// Do the same as `str` but do not check the format string for errors.</span>
-    <span class="doccomment">/// This gives a moderate performance boost.</span>
-    <span class="doccomment">/// This isn&#39;t exactly unsafe, it just ends up ignoring extranious format</span>
-    <span class="doccomment">/// specifiers</span>
-    <span class="doccomment">/// For example, {x:&lt;-#10} should technically be formatting an int, but ignoring the</span>
-    <span class="doccomment">/// integer specific formatting is probably not the end of the world</span>
-    <span class="doccomment">/// This can also be used by the `u64` etc methods to finish their formatting while</span>
-    <span class="doccomment">/// still using the str formatter for width and alignment</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">str_unchecked</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">fill</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fill</span>();
-        <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">width</span>();
-        <span class="kw">let</span> <span class="ident">precision</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">precision</span>();
-        <span class="kw">let</span> <span class="ident">chars_count</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">chars</span>().<span class="ident">count</span>();
-        <span class="comment">// precision will limit length</span>
-        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">precision</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">p</span>) =&gt; {
-                <span class="kw">if</span> <span class="ident">p</span> <span class="op">&lt;</span> <span class="ident">chars_count</span> {
-                    <span class="ident">p</span>
-                } <span class="kw">else</span> {
-                    <span class="ident">chars_count</span>
+    <span class="doccomment">/// UNSTABLE+UNTESTED: do not use in your own code (yet)
+    /// Do the same as `str` but do not check the format string for errors.
+    /// This gives a moderate performance boost.
+    /// This isn&#39;t exactly unsafe, it just ends up ignoring extranious format
+    /// specifiers
+    /// For example, {x:&lt;-#10} should technically be formatting an int, but ignoring the
+    /// integer specific formatting is probably not the end of the world
+    /// This can also be used by the `u64` etc methods to finish their formatting while
+    /// still using the str formatter for width and alignment
+    </span><span class="kw">pub fn </span>str_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="kw">let </span>fill = <span class="self">self</span>.fill();
+        <span class="kw">let </span>width = <span class="self">self</span>.width();
+        <span class="kw">let </span>precision = <span class="self">self</span>.precision();
+        <span class="kw">let </span>chars_count = s.chars().count();
+        <span class="comment">// precision will limit length
+        </span><span class="kw">let </span>len = <span class="kw">match </span>precision {
+            <span class="prelude-val">Some</span>(p) =&gt; {
+                <span class="kw">if </span>p &lt; chars_count {
+                    p
+                } <span class="kw">else </span>{
+                    chars_count
                 }
             }
-            <span class="prelude-val">None</span> =&gt; <span class="ident">chars_count</span>,
+            <span class="prelude-val">None </span>=&gt; chars_count,
         };
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chars</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">chars</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pad</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">width</span>) <span class="op">=</span> <span class="ident">width</span> {
-            <span class="kw">if</span> <span class="ident">width</span> <span class="op">&gt;</span> <span class="ident">len</span> {
-                <span class="kw">let</span> <span class="ident">align</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">align</span>();
-                <span class="kw">match</span> <span class="ident">align</span> {
-                    <span class="ident">Alignment::Left</span> =&gt; <span class="ident">pad</span> <span class="op">=</span> <span class="ident">width</span> <span class="op">-</span> <span class="ident">len</span>,
-                    <span class="ident">Alignment::Center</span> =&gt; {
-                        <span class="ident">width</span> <span class="op">-</span><span class="op">=</span> <span class="ident">len</span>;
-                        <span class="ident">pad</span> <span class="op">=</span> <span class="ident">width</span> <span class="op">/</span> <span class="number">2</span>;
-                        <span class="ident">write_char</span>(<span class="self">self</span>, <span class="ident">fill</span>, <span class="ident">pad</span>);
-                        <span class="ident">pad</span> <span class="op">+</span><span class="op">=</span> <span class="ident">width</span> <span class="op">%</span> <span class="number">2</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>chars = s.chars();
+        <span class="kw">let </span><span class="kw-2">mut </span>pad: usize = <span class="number">0</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>width) = width {
+            <span class="kw">if </span>width &gt; len {
+                <span class="kw">let </span>align = <span class="self">self</span>.align();
+                <span class="kw">match </span>align {
+                    Alignment::Left =&gt; pad = width - len,
+                    Alignment::Center =&gt; {
+                        width -= len;
+                        pad = width / <span class="number">2</span>;
+                        write_char(<span class="self">self</span>, fill, pad);
+                        pad += width % <span class="number">2</span>;
                     }
-                    <span class="ident">Alignment::Right</span> =&gt; {
-                        <span class="ident">write_char</span>(<span class="self">self</span>, <span class="ident">fill</span>, <span class="ident">width</span> <span class="op">-</span> <span class="ident">len</span>);
+                    Alignment::Right =&gt; {
+                        write_char(<span class="self">self</span>, fill, width - len);
                     }
-                    <span class="ident">Alignment::Equal</span> =&gt; {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(
-                            <span class="string">&quot;sign aware zero padding and Align &#39;=&#39; not yet supported&quot;</span>.<span class="ident">to_string</span>(),
+                    Alignment::Equal =&gt; {
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(
+                            <span class="string">&quot;sign aware zero padding and Align &#39;=&#39; not yet supported&quot;</span>.to_string(),
                         ))
                     }
-                    <span class="ident">Alignment::Unspecified</span> =&gt; <span class="macro">unreachable!</span>(),
+                    Alignment::Unspecified =&gt; <span class="macro">unreachable!</span>(),
                 }
             }
         }
-        <span class="ident">write_from</span>(<span class="self">self</span>, <span class="kw-2">&amp;mut</span> <span class="ident">chars</span>, <span class="ident">len</span>);
-        <span class="ident">write_char</span>(<span class="self">self</span>, <span class="ident">fill</span>, <span class="ident">pad</span>);
+        write_from(<span class="self">self</span>, <span class="kw-2">&amp;mut </span>chars, len);
+        write_char(<span class="self">self</span>, fill, pad);
         <span class="prelude-val">Ok</span>(())
     }
 }
 
-<span class="doccomment">/// UNSTABLE: the Formatter object is still considered unstable</span>
-<span class="doccomment">/// Do not use this function if you aren&#39;t willing to have changes</span>
-<span class="doccomment">/// forced on you!</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// format a string given the string and a closure that uses</span>
-<span class="doccomment">/// a Formatter</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">strfmt_map</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">fmtstr</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="ident">F</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="ident">Formatter</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>,
+<span class="doccomment">/// UNSTABLE: the Formatter object is still considered unstable
+/// Do not use this function if you aren&#39;t willing to have changes
+/// forced on you!
+///
+/// format a string given the string and a closure that uses
+/// a Formatter
+</span><span class="kw">pub fn </span>strfmt_map&lt;F&gt;(fmtstr: <span class="kw-2">&amp;</span>str, f: <span class="kw-2">&amp;</span>F) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt;
+<span class="kw">where
+    </span>F: Fn(Formatter) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt;,
 {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">String::with_capacity</span>(<span class="ident">fmtstr</span>.<span class="ident">len</span>() <span class="op">*</span> <span class="number">2</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes_read</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">opening_brace</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">closing_brace</span>: <span class="ident">bool</span> <span class="op">=</span> <span class="bool-val">false</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reading_fmt</span> <span class="op">=</span> <span class="bool-val">false</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remaining</span> <span class="op">=</span> <span class="ident">fmtstr</span>;
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">fmtstr</span>.<span class="ident">chars</span>() {
-        <span class="ident">bytes_read</span> <span class="op">+</span><span class="op">=</span> <span class="ident">c</span>.<span class="ident">len_utf8</span>();
-        <span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;{&#39;</span> {
-            <span class="kw">if</span> <span class="ident">reading_fmt</span> <span class="op">&amp;&amp;</span> <span class="ident">opening_brace</span> <span class="op">==</span> <span class="ident">bytes_read</span> <span class="op">-</span> <span class="number">2</span> {
-                <span class="comment">// found {{</span>
-                <span class="ident">out</span>.<span class="ident">push</span>(<span class="ident">c</span>);
-                <span class="ident">reading_fmt</span> <span class="op">=</span> <span class="bool-val">false</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">reading_fmt</span> {
-                <span class="comment">// found a first {</span>
-                <span class="ident">reading_fmt</span> <span class="op">=</span> <span class="bool-val">true</span>;
-                <span class="ident">opening_brace</span> <span class="op">=</span> <span class="ident">bytes_read</span> <span class="op">-</span> <span class="number">1</span>;
-            } <span class="kw">else</span> {
-                <span class="comment">// found a { after finding an opening brace, error!</span>
-                <span class="ident">out</span>.<span class="ident">clear</span>();
-                <span class="ident">out</span>.<span class="ident">write_str</span>(<span class="string">&quot;extra { found&quot;</span>).<span class="ident">unwrap</span>();
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(<span class="ident">out</span>));
+    <span class="kw">let </span><span class="kw-2">mut </span>out = String::with_capacity(fmtstr.len() * <span class="number">2</span>);
+    <span class="kw">let </span><span class="kw-2">mut </span>bytes_read: usize = <span class="number">0</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>opening_brace: usize = <span class="number">0</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>closing_brace: bool = <span class="bool-val">false</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>reading_fmt = <span class="bool-val">false</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>remaining = fmtstr;
+    <span class="kw">for </span>c <span class="kw">in </span>fmtstr.chars() {
+        bytes_read += c.len_utf8();
+        <span class="kw">if </span>c == <span class="string">&#39;{&#39; </span>{
+            <span class="kw">if </span>reading_fmt &amp;&amp; opening_brace == bytes_read - <span class="number">2 </span>{
+                <span class="comment">// found {{
+                </span>out.push(c);
+                reading_fmt = <span class="bool-val">false</span>;
+            } <span class="kw">else if </span>!reading_fmt {
+                <span class="comment">// found a first {
+                </span>reading_fmt = <span class="bool-val">true</span>;
+                opening_brace = bytes_read - <span class="number">1</span>;
+            } <span class="kw">else </span>{
+                <span class="comment">// found a { after finding an opening brace, error!
+                </span>out.clear();
+                out.write_str(<span class="string">&quot;extra { found&quot;</span>).unwrap();
+                <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(out));
             }
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;}&#39;</span> {
-            <span class="kw">if</span> <span class="op">!</span><span class="ident">reading_fmt</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">closing_brace</span> {
-                <span class="comment">// found a &#39;}&#39; that isn&#39;t after a &#39;{&#39;</span>
-                <span class="ident">closing_brace</span> <span class="op">=</span> <span class="bool-val">true</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">closing_brace</span> {
-                <span class="comment">// found &quot;}}&quot;</span>
-                <span class="ident">out</span>.<span class="ident">push</span>(<span class="ident">c</span>);
-                <span class="ident">closing_brace</span> <span class="op">=</span> <span class="bool-val">false</span>;
-            } <span class="kw">else</span> {
-                <span class="comment">// found a format string</span>
-                <span class="comment">// discard before opening brace</span>
-                <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">r</span>) <span class="op">=</span> <span class="ident">remaining</span>.<span class="ident">split_at</span>(<span class="ident">opening_brace</span>);
+        } <span class="kw">else if </span>c == <span class="string">&#39;}&#39; </span>{
+            <span class="kw">if </span>!reading_fmt &amp;&amp; !closing_brace {
+                <span class="comment">// found a &#39;}&#39; that isn&#39;t after a &#39;{&#39;
+                </span>closing_brace = <span class="bool-val">true</span>;
+            } <span class="kw">else if </span>closing_brace {
+                <span class="comment">// found &quot;}}&quot;
+                </span>out.push(c);
+                closing_brace = <span class="bool-val">false</span>;
+            } <span class="kw">else </span>{
+                <span class="comment">// found a format string
+                // discard before opening brace
+                </span><span class="kw">let </span>(<span class="kw">_</span>, r) = remaining.split_at(opening_brace);
 
-                <span class="comment">// get the fmt pattern and remaining</span>
-                <span class="kw">let</span> (<span class="ident">fmt_pattern</span>, <span class="ident">r</span>) <span class="op">=</span> <span class="ident">r</span>.<span class="ident">split_at</span>(<span class="ident">bytes_read</span> <span class="op">-</span> <span class="ident">opening_brace</span>);
-                <span class="ident">remaining</span> <span class="op">=</span> <span class="ident">r</span>;
+                <span class="comment">// get the fmt pattern and remaining
+                </span><span class="kw">let </span>(fmt_pattern, r) = r.split_at(bytes_read - opening_brace);
+                remaining = r;
 
-                <span class="comment">// discard the braces</span>
-                <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">fmt_pattern</span>) <span class="op">=</span> <span class="ident">fmt_pattern</span>.<span class="ident">split_at</span>(<span class="number">1</span>);
-                <span class="kw">let</span> (<span class="ident">fmt_pattern</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">fmt_pattern</span>.<span class="ident">split_at</span>(<span class="ident">fmt_pattern</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>);
-                <span class="comment">// use the closure to write the formatted string</span>
-                <span class="kw">let</span> <span class="ident">fmt</span> <span class="op">=</span> <span class="ident">Formatter::from_str</span>(<span class="ident">fmt_pattern</span>, <span class="kw-2">&amp;mut</span> <span class="ident">out</span>)<span class="question-mark">?</span>;
-                <span class="ident">f</span>(<span class="ident">fmt</span>)<span class="question-mark">?</span>;
-                <span class="ident">reading_fmt</span> <span class="op">=</span> <span class="bool-val">false</span>;
-                <span class="ident">bytes_read</span> <span class="op">=</span> <span class="number">0</span>;
+                <span class="comment">// discard the braces
+                </span><span class="kw">let </span>(<span class="kw">_</span>, fmt_pattern) = fmt_pattern.split_at(<span class="number">1</span>);
+                <span class="kw">let </span>(fmt_pattern, <span class="kw">_</span>) = fmt_pattern.split_at(fmt_pattern.len() - <span class="number">1</span>);
+                <span class="comment">// use the closure to write the formatted string
+                </span><span class="kw">let </span>fmt = Formatter::from_str(fmt_pattern, <span class="kw-2">&amp;mut </span>out)<span class="question-mark">?</span>;
+                f(fmt)<span class="question-mark">?</span>;
+                reading_fmt = <span class="bool-val">false</span>;
+                bytes_read = <span class="number">0</span>;
             }
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">closing_brace</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(
-                <span class="string">&quot;Single &#39;}&#39; encountered in format string&quot;</span>.<span class="ident">to_string</span>(),
+        } <span class="kw">else if </span>closing_brace {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(
+                <span class="string">&quot;Single &#39;}&#39; encountered in format string&quot;</span>.to_string(),
             ));
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">reading_fmt</span> {
-            <span class="ident">out</span>.<span class="ident">push</span>(<span class="ident">c</span>)
-        } <span class="comment">// else we are currently reading a format string, so don&#39;t push</span>
-    }
-    <span class="kw">if</span> <span class="ident">closing_brace</span> {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(
-            <span class="string">&quot;Single &#39;}&#39; encountered in format string&quot;</span>.<span class="ident">to_string</span>(),
+        } <span class="kw">else if </span>!reading_fmt {
+            out.push(c)
+        } <span class="comment">// else we are currently reading a format string, so don&#39;t push
+    </span>}
+    <span class="kw">if </span>closing_brace {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(
+            <span class="string">&quot;Single &#39;}&#39; encountered in format string&quot;</span>.to_string(),
         ));
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">reading_fmt</span> {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FmtError::Invalid</span>(
-            <span class="string">&quot;Expected &#39;}&#39; before end of string&quot;</span>.<span class="ident">to_string</span>(),
+    } <span class="kw">else if </span>reading_fmt {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(FmtError::Invalid(
+            <span class="string">&quot;Expected &#39;}&#39; before end of string&quot;</span>.to_string(),
         ));
     }
-    <span class="ident">out</span>.<span class="ident">shrink_to_fit</span>();
-    <span class="prelude-val">Ok</span>(<span class="ident">out</span>)
+    out.shrink_to_fit();
+    <span class="prelude-val">Ok</span>(out)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="strfmt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="strfmt" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

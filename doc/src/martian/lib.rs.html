@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -383,375 +383,375 @@
 <span id="383">383</span>
 <span id="384">384</span>
 <span id="385">385</span>
-</pre><pre class="rust"><code><span class="doccomment">//! # Martian-Rust</span>
-<span class="doccomment">//! This crate provides a strongly typed high level API for implementing martian stages in Rust.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Documentation</span>
-<span class="doccomment">//! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)</span>
-<span class="doccomment">//!</span>
+</pre><pre class="rust"><code><span class="doccomment">//! # Martian-Rust
+//! This crate provides a strongly typed high level API for implementing martian stages in Rust.
+//!
+//! ## Documentation
+//! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
+//!
 
-<span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
-<span class="kw">use</span> <span class="ident">std::fmt::Write</span> <span class="kw">as</span> <span class="ident">FmtWrite</span>;
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::io::Write</span> <span class="kw">as</span> <span class="ident">IoWrite</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>};
-<span class="kw">use</span> <span class="ident">std::panic</span>;
-<span class="kw">use</span> <span class="ident">std::path::Path</span>;
+</span><span class="kw">use </span>std::collections::HashMap;
+<span class="kw">use </span>std::fmt::Write <span class="kw">as </span>FmtWrite;
+<span class="kw">use </span>std::fs::File;
+<span class="kw">use </span>std::io;
+<span class="kw">use </span>std::io::Write <span class="kw">as </span>IoWrite;
+<span class="kw">use </span>std::os::unix::io::{FromRawFd, IntoRawFd};
+<span class="kw">use </span>std::panic;
+<span class="kw">use </span>std::path::Path;
 
-<span class="kw">use</span> <span class="ident">backtrace::Backtrace</span>;
-<span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">error</span>, <span class="ident">info</span>};
-<span class="kw">use</span> <span class="ident">time::format_description</span>::{
-    <span class="ident">modifier</span>::{<span class="ident">Day</span>, <span class="ident">Hour</span>, <span class="ident">Minute</span>, <span class="ident">Month</span>, <span class="ident">Second</span>, <span class="ident">Year</span>},
-    <span class="ident">Component</span>, <span class="ident">FormatItem</span>,
-    <span class="ident">FormatItem::Literal</span>,
+<span class="kw">use </span>backtrace::Backtrace;
+<span class="kw">use </span>log::{error, info};
+<span class="kw">use </span>time::format_description::{
+    modifier::{Day, Hour, Minute, Month, Second, Year},
+    Component, FormatItem,
+    FormatItem::Literal,
 };
-<span class="kw">use</span> <span class="ident">time::OffsetDateTime</span>;
+<span class="kw">use </span>time::OffsetDateTime;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">anyhow::Error</span>;
-<span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">format_err</span>, <span class="ident">Context</span>};
+<span class="kw">pub use </span>anyhow::Error;
+<span class="kw">use </span>anyhow::{format_err, Context};
 
-<span class="kw">mod</span> <span class="ident">metadata</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">metadata</span>::<span class="kw-2">*</span>;
+<span class="kw">mod </span>metadata;
+<span class="kw">pub use </span>metadata::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">mod</span> <span class="ident">macros</span>;
+<span class="attribute">#[macro_use]
+</span><span class="kw">mod </span>macros;
 
-<span class="kw">mod</span> <span class="ident">stage</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">utils</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">stage</span>::<span class="kw-2">*</span>;
+<span class="kw">mod </span>stage;
+<span class="kw">pub mod </span>utils;
+<span class="kw">pub use </span>stage::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">mro</span>;
-<span class="doccomment">/// For convenience</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">mro</span>::<span class="kw-2">*</span>;
+<span class="kw">pub mod </span>mro;
+<span class="doccomment">/// For convenience
+</span><span class="kw">pub use </span>mro::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">log::LevelFilter</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">prelude</span>;
+<span class="kw">pub use </span>log::LevelFilter;
+<span class="kw">pub mod </span>prelude;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">initialize</span>(<span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Metadata</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">md</span> <span class="op">=</span> <span class="ident">Metadata::new</span>(<span class="ident">args</span>);
-    <span class="ident">md</span>.<span class="ident">update_jobinfo</span>()<span class="question-mark">?</span>;
+<span class="kw">pub fn </span>initialize(args: Vec&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Metadata, Error&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>md = Metadata::new(args);
+    md.update_jobinfo()<span class="question-mark">?</span>;
 
-    <span class="prelude-val">Ok</span>(<span class="ident">md</span>)
+    <span class="prelude-val">Ok</span>(md)
 }
 
-<span class="attribute">#[<span class="ident">cold</span>]</span>
-<span class="kw">fn</span> <span class="ident">write_errors</span>(<span class="ident">msg</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">is_assert</span>: <span class="ident">bool</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">err_file</span>: <span class="ident">File</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">File::from_raw_fd</span>(<span class="number">4</span>) };
+<span class="attribute">#[cold]
+</span><span class="kw">fn </span>write_errors(msg: <span class="kw-2">&amp;</span>str, is_assert: bool) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>err_file: File = <span class="kw">unsafe </span>{ File::from_raw_fd(<span class="number">4</span>) };
 
-    <span class="comment">// We want to aggressively avoid allocations here if we can, since one</span>
-    <span class="comment">// common source of errors is running out of memory.</span>
-    <span class="kw">let</span> <span class="ident">msg_alloc</span>: <span class="ident">String</span>;
-    <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">is_assert</span> {
-        <span class="ident">msg_alloc</span> <span class="op">=</span> [<span class="string">&quot;ASSERT:&quot;</span>, <span class="ident">msg</span>].<span class="ident">concat</span>();
-        <span class="ident">msg_alloc</span>.<span class="ident">as_str</span>()
-    } <span class="kw">else</span> {
-        <span class="ident">msg</span>
+    <span class="comment">// We want to aggressively avoid allocations here if we can, since one
+    // common source of errors is running out of memory.
+    </span><span class="kw">let </span>msg_alloc: String;
+    <span class="kw">let </span>msg = <span class="kw">if </span>is_assert {
+        msg_alloc = [<span class="string">&quot;ASSERT:&quot;</span>, msg].concat();
+        msg_alloc.as_str()
+    } <span class="kw">else </span>{
+        msg
     };
 
-    <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">err_file</span>.<span class="ident">write_all</span>(<span class="ident">msg</span>.<span class="ident">as_bytes</span>());
+    <span class="kw">let _ </span>= err_file.write_all(msg.as_bytes());
 
-    <span class="comment">// Avoid closing err_file</span>
-    <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">err_file</span>.<span class="ident">into_raw_fd</span>();
+    <span class="comment">// Avoid closing err_file
+    </span><span class="kw">let _ </span>= err_file.into_raw_fd();
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="comment">// e.g. 2006-01-02 15:04:05.  Note that this is only crate-public, not fully</span>
-<span class="comment">// public, because this is a bad date format that is used only to retain</span>
-<span class="comment">// backwards compatibility.  For use cases where that is not a concern, use</span>
-<span class="comment">// Rfc3339, which looks similar but won&#39;t cause strange bugs if not every</span>
-<span class="comment">// compute node in your cluster is using the same time zone.</span>
-<span class="comment">//</span>
-<span class="comment">// We could use the proc macro, but then we&#39;d need</span>
-<span class="comment">// to compile the proc macro crate, which would slow down build times</span>
-<span class="comment">// significantly for very little benefit in readability.</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const</span> <span class="ident">DATE_FORMAT</span>: <span class="kw-2">&amp;</span>[<span class="ident">FormatItem</span>] <span class="op">=</span> <span class="kw-2">&amp;</span>[
-    <span class="ident">FormatItem::Component</span>(<span class="ident">Component::Year</span>(<span class="ident">Year::default</span>())),
-    <span class="ident">Literal</span>(<span class="string">b&quot;-&quot;</span>),
-    <span class="ident">FormatItem::Component</span>(<span class="ident">Component::Month</span>(<span class="ident">Month::default</span>())),
-    <span class="ident">Literal</span>(<span class="string">b&quot;-&quot;</span>),
-    <span class="ident">FormatItem::Component</span>(<span class="ident">Component::Day</span>(<span class="ident">Day::default</span>())),
-    <span class="ident">Literal</span>(<span class="string">b&quot; &quot;</span>),
-    <span class="ident">FormatItem::Component</span>(<span class="ident">Component::Hour</span>(<span class="ident">Hour::default</span>())),
-    <span class="ident">Literal</span>(<span class="string">b&quot;:&quot;</span>),
-    <span class="ident">FormatItem::Component</span>(<span class="ident">Component::Minute</span>(<span class="ident">Minute::default</span>())),
-    <span class="ident">Literal</span>(<span class="string">b&quot;:&quot;</span>),
-    <span class="ident">FormatItem::Component</span>(<span class="ident">Component::Second</span>(<span class="ident">Second::default</span>())),
+<span class="comment">// e.g. 2006-01-02 15:04:05.  Note that this is only crate-public, not fully
+// public, because this is a bad date format that is used only to retain
+// backwards compatibility.  For use cases where that is not a concern, use
+// Rfc3339, which looks similar but won&#39;t cause strange bugs if not every
+// compute node in your cluster is using the same time zone.
+//
+// We could use the proc macro, but then we&#39;d need
+// to compile the proc macro crate, which would slow down build times
+// significantly for very little benefit in readability.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>DATE_FORMAT: <span class="kw-2">&amp;</span>[FormatItem] = <span class="kw-2">&amp;</span>[
+    FormatItem::Component(Component::Year(Year::default())),
+    Literal(<span class="string">b&quot;-&quot;</span>),
+    FormatItem::Component(Component::Month(Month::default())),
+    Literal(<span class="string">b&quot;-&quot;</span>),
+    FormatItem::Component(Component::Day(Day::default())),
+    Literal(<span class="string">b&quot; &quot;</span>),
+    FormatItem::Component(Component::Hour(Hour::default())),
+    Literal(<span class="string">b&quot;:&quot;</span>),
+    FormatItem::Component(Component::Minute(Minute::default())),
+    Literal(<span class="string">b&quot;:&quot;</span>),
+    FormatItem::Component(Component::Second(Second::default())),
 ];
 
-<span class="kw">fn</span> <span class="ident">setup_logging</span>(<span class="ident">log_file</span>: <span class="ident">File</span>, <span class="ident">level</span>: <span class="ident">LevelFilter</span>) {
-    <span class="kw">let</span> <span class="ident">base_config</span> <span class="op">=</span> <span class="ident">fern::Dispatch::new</span>().<span class="ident">level</span>(<span class="ident">level</span>);
+<span class="kw">fn </span>setup_logging(log_file: File, level: LevelFilter) {
+    <span class="kw">let </span>base_config = fern::Dispatch::new().level(level);
 
-    <span class="kw">let</span> <span class="ident">logger_config</span> <span class="op">=</span> <span class="ident">fern::Dispatch::new</span>()
-        .<span class="ident">format</span>(<span class="op">|</span><span class="ident">out</span>, <span class="ident">msg</span>, <span class="ident">record</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">time_str</span> <span class="op">=</span> <span class="ident">OffsetDateTime::now_local</span>()
-                .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">OffsetDateTime::now_utc</span>())
-                .<span class="ident">format</span>(<span class="ident">DATE_FORMAT</span>)
-                .<span class="ident">unwrap</span>();
-            <span class="ident">out</span>.<span class="ident">finish</span>(<span class="macro">format_args!</span>(<span class="string">&quot;{} [{}] {}&quot;</span>, <span class="ident">time_str</span>, <span class="ident">record</span>.<span class="ident">target</span>(), <span class="ident">msg</span>))
+    <span class="kw">let </span>logger_config = fern::Dispatch::new()
+        .format(|out, msg, record| {
+            <span class="kw">let </span>time_str = OffsetDateTime::now_local()
+                .unwrap_or_else(|<span class="kw">_</span>| OffsetDateTime::now_utc())
+                .format(DATE_FORMAT)
+                .unwrap();
+            out.finish(<span class="macro">format_args!</span>(<span class="string">&quot;{time_str} [{}] {msg}&quot;</span>, record.target()))
         })
-        .<span class="ident">chain</span>(<span class="ident">log_file</span>)
-        .<span class="ident">chain</span>(<span class="ident">io::stdout</span>());
+        .chain(log_file)
+        .chain(io::stdout());
 
-    <span class="kw">let</span> <span class="ident">cfg</span> <span class="op">=</span> <span class="ident">base_config</span>.<span class="ident">chain</span>(<span class="ident">logger_config</span>).<span class="ident">apply</span>();
+    <span class="kw">let </span>cfg = base_config.chain(logger_config).apply();
 
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">cfg</span> {
-        <span class="macro">panic!</span>(<span class="string">&quot;Failed to initialize global logger: {}&quot;</span>, <span class="ident">e</span>);
+    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = cfg {
+        <span class="macro">panic!</span>(<span class="string">&quot;Failed to initialize global logger: {e}&quot;</span>);
     }
 }
 
-<span class="doccomment">/// Configure the Martian adapter for executing stage code</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="ident">stage_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">RawMartianStage</span><span class="op">&gt;</span>, <span class="ident">S</span><span class="op">&gt;</span>,
-    <span class="ident">log_level</span>: <span class="ident">LevelFilter</span>,
-    <span class="ident">is_error_assert</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> (<span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) -&gt; <span class="ident">bool</span>) <span class="op">+</span> <span class="lifetime">&#39;static</span><span class="op">&gt;</span>,
+<span class="doccomment">/// Configure the Martian adapter for executing stage code
+</span><span class="kw">pub struct </span>MartianAdapter&lt;S&gt; {
+    stage_map: HashMap&lt;String, Box&lt;<span class="kw">dyn </span>RawMartianStage&gt;, S&gt;,
+    log_level: LevelFilter,
+    is_error_assert: Box&lt;<span class="kw">dyn </span>(Fn(<span class="kw-2">&amp;</span>Error) -&gt; bool) + <span class="lifetime">&#39;static</span>&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">std::hash::BuildHasher</span><span class="op">&gt;</span> <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Build a new Martian adapter with the given registry of Martian stages</span>
-    <span class="doccomment">/// Arguments:</span>
-    <span class="doccomment">///  - `stage_map`: names and implementations of the Martian stages that can be run by this binary.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">stage_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">RawMartianStage</span><span class="op">&gt;</span>, <span class="ident">S</span><span class="op">&gt;</span>) -&gt; <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-        <span class="ident">MartianAdapter</span> {
-            <span class="ident">stage_map</span>,
-            <span class="ident">log_level</span>: <span class="ident">LevelFilter::Warn</span>,
-            <span class="ident">is_error_assert</span>: <span class="ident">Box::new</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="bool-val">false</span>),
+<span class="kw">impl</span>&lt;S: std::hash::BuildHasher&gt; MartianAdapter&lt;S&gt; {
+    <span class="doccomment">/// Build a new Martian adapter with the given registry of Martian stages
+    /// Arguments:
+    ///  - `stage_map`: names and implementations of the Martian stages that can be run by this binary.
+    </span><span class="kw">pub fn </span>new(stage_map: HashMap&lt;String, Box&lt;<span class="kw">dyn </span>RawMartianStage&gt;, S&gt;) -&gt; MartianAdapter&lt;S&gt; {
+        MartianAdapter {
+            stage_map,
+            log_level: LevelFilter::Warn,
+            is_error_assert: Box::new(|<span class="kw">_</span>| <span class="bool-val">false</span>),
         }
     }
 
-    <span class="doccomment">/// Set the minimum severity level of log messages that are emitted to the Martian</span>
-    <span class="doccomment">/// _log file.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">log_level</span>(<span class="self">self</span>, <span class="ident">log_level</span>: <span class="ident">LevelFilter</span>) -&gt; <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-        <span class="ident">MartianAdapter</span> { <span class="ident">log_level</span>, ..<span class="self">self</span> }
+    <span class="doccomment">/// Set the minimum severity level of log messages that are emitted to the Martian
+    /// _log file.
+    </span><span class="kw">pub fn </span>log_level(<span class="self">self</span>, log_level: LevelFilter) -&gt; MartianAdapter&lt;S&gt; {
+        MartianAdapter { log_level, ..<span class="self">self </span>}
     }
 
-    <span class="doccomment">///  Set `is_error_assert`, predicate determining whether to emit an error as an ASSERT</span>
-    <span class="doccomment">///  to Martian. ASSERT errors indicate an unrecoverable configuration error, and will</span>
-    <span class="doccomment">///  prevent the user from restarting the pipeline. The is_error_assert function should</span>
-    <span class="doccomment">///  use downcasting to match the error against a set of error types that should generate an assert.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assert_if</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) -&gt; <span class="ident">bool</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">predicate</span>: <span class="ident">F</span>) -&gt; <span class="ident">MartianAdapter</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-        <span class="ident">MartianAdapter</span> {
-            <span class="ident">is_error_assert</span>: <span class="ident">Box::new</span>(<span class="ident">predicate</span>),
-            ..<span class="self">self</span>
-        }
+    <span class="doccomment">///  Set `is_error_assert`, predicate determining whether to emit an error as an ASSERT
+    ///  to Martian. ASSERT errors indicate an unrecoverable configuration error, and will
+    ///  prevent the user from restarting the pipeline. The is_error_assert function should
+    ///  use downcasting to match the error against a set of error types that should generate an assert.
+    </span><span class="kw">pub fn </span>assert_if&lt;F: <span class="lifetime">&#39;static </span>+ Fn(<span class="kw-2">&amp;</span>Error) -&gt; bool&gt;(<span class="self">self</span>, predicate: F) -&gt; MartianAdapter&lt;S&gt; {
+        MartianAdapter {
+            is_error_assert: Box::new(predicate),
+            ..<span class="self">self
+        </span>}
     }
 
-    <span class="doccomment">/// Run the martian adapter using the given cmdline args</span>
-    <span class="doccomment">/// provided by the martian runtime. The caller should call sys::exit() witih</span>
-    <span class="doccomment">/// the returncode returned by this function.</span>
-    <span class="doccomment">/// Arguments:</span>
-    <span class="doccomment">///  - `args`: vector of command line arguments, typically supplied by Martian runtime.</span>
-    <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Martian stage binaries should call std::process::exit() on the return_code&quot;</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run</span>(<span class="self">self</span>, <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) -&gt; <span class="ident">i32</span> {
-        <span class="self">self</span>.<span class="ident">run_get_error</span>(<span class="ident">args</span>).<span class="number">0</span>
-    }
+    <span class="doccomment">/// Run the martian adapter using the given cmdline args
+    /// provided by the martian runtime. The caller should call sys::exit() witih
+    /// the returncode returned by this function.
+    /// Arguments:
+    ///  - `args`: vector of command line arguments, typically supplied by Martian runtime.
+    </span><span class="attribute">#[must_use = <span class="string">&quot;Martian stage binaries should call std::process::exit() on the return_code&quot;</span>]
+    </span><span class="kw">pub fn </span>run(<span class="self">self</span>, args: Vec&lt;String&gt;) -&gt; i32 {
+        <span class="self">self</span>.run_get_error(args).<span class="number">0
+    </span>}
 
-    <span class="doccomment">/// Like `run()` but also return an error thrown by the stage (if any). May be useful</span>
-    <span class="doccomment">/// for unit testing purposes.</span>
-    <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Martian stage binaries should call std::process::exit() on the return_code&quot;</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_get_error</span>(<span class="self">self</span>, <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) -&gt; (<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;</span>) {
-        <span class="ident">martian_entry_point</span>(<span class="ident">args</span>, <span class="self">self</span>.<span class="ident">stage_map</span>, <span class="self">self</span>.<span class="ident">log_level</span>, <span class="self">self</span>.<span class="ident">is_error_assert</span>)
+    <span class="doccomment">/// Like `run()` but also return an error thrown by the stage (if any). May be useful
+    /// for unit testing purposes.
+    </span><span class="attribute">#[must_use = <span class="string">&quot;Martian stage binaries should call std::process::exit() on the return_code&quot;</span>]
+    </span><span class="kw">pub fn </span>run_get_error(<span class="self">self</span>, args: Vec&lt;String&gt;) -&gt; (i32, <span class="prelude-ty">Option</span>&lt;Error&gt;) {
+        martian_entry_point(args, <span class="self">self</span>.stage_map, <span class="self">self</span>.log_level, <span class="self">self</span>.is_error_assert)
     }
 }
 
-<span class="doccomment">/// See docs on MartianAdapter methods for details.</span>
-<span class="kw">fn</span> <span class="ident">martian_entry_point</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">std::hash::BuildHasher</span><span class="op">&gt;</span>(
-    <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="ident">stage_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">RawMartianStage</span><span class="op">&gt;</span>, <span class="ident">S</span><span class="op">&gt;</span>,
-    <span class="ident">level</span>: <span class="ident">LevelFilter</span>,
-    <span class="ident">is_error_assert</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Error</span>) -&gt; <span class="ident">bool</span><span class="op">&gt;</span>,
-) -&gt; (<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;</span>) {
-    <span class="macro">info!</span>(<span class="string">&quot;got args: {:?}&quot;</span>, <span class="ident">args</span>);
+<span class="doccomment">/// See docs on MartianAdapter methods for details.
+</span><span class="kw">fn </span>martian_entry_point&lt;S: std::hash::BuildHasher&gt;(
+    args: Vec&lt;String&gt;,
+    stage_map: HashMap&lt;String, Box&lt;<span class="kw">dyn </span>RawMartianStage&gt;, S&gt;,
+    level: LevelFilter,
+    is_error_assert: Box&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Error) -&gt; bool&gt;,
+) -&gt; (i32, <span class="prelude-ty">Option</span>&lt;Error&gt;) {
+    <span class="macro">info!</span>(<span class="string">&quot;got args: {:?}&quot;</span>, args);
 
-    <span class="comment">// turn on backtrace capture</span>
-    <span class="ident">std::env::set_var</span>(<span class="string">&quot;RUST_BACKTRACE&quot;</span>, <span class="string">&quot;1&quot;</span>);
+    <span class="comment">// turn on backtrace capture
+    </span>std::env::set_var(<span class="string">&quot;RUST_BACKTRACE&quot;</span>, <span class="string">&quot;1&quot;</span>);
 
-    <span class="comment">// Hook rust logging up to Martian _log file</span>
-    <span class="kw">let</span> <span class="ident">log_file</span>: <span class="ident">File</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">File::from_raw_fd</span>(<span class="number">3</span>) };
-    <span class="ident">setup_logging</span>(<span class="ident">log_file</span>, <span class="ident">level</span>);
+    <span class="comment">// Hook rust logging up to Martian _log file
+    </span><span class="kw">let </span>log_file: File = <span class="kw">unsafe </span>{ File::from_raw_fd(<span class="number">3</span>) };
+    setup_logging(log_file, level);
 
-    <span class="comment">// setup Martian metadata (and an extra copy for use in the panic handler</span>
-    <span class="kw">let</span> <span class="ident">_md</span> <span class="op">=</span> <span class="ident">initialize</span>(<span class="ident">args</span>).<span class="ident">context</span>(<span class="string">&quot;IO Error initializing stage&quot;</span>);
+    <span class="comment">// setup Martian metadata (and an extra copy for use in the panic handler
+    </span><span class="kw">let </span>_md = initialize(args).context(<span class="string">&quot;IO Error initializing stage&quot;</span>);
 
-    <span class="comment">// special handler for error in stage setup</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">md</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">_md</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">m</span>) =&gt; <span class="ident">m</span>,
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">write_errors</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>), <span class="bool-val">false</span>);
-            <span class="kw">return</span> (<span class="number">1</span>, <span class="prelude-val">Some</span>(<span class="ident">e</span>));
+    <span class="comment">// special handler for error in stage setup
+    </span><span class="kw">let </span><span class="kw-2">mut </span>md = <span class="kw">match </span>_md {
+        <span class="prelude-val">Ok</span>(m) =&gt; m,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="kw">let _ </span>= write_errors(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{e:?}&quot;</span>), <span class="bool-val">false</span>);
+            <span class="kw">return </span>(<span class="number">1</span>, <span class="prelude-val">Some</span>(e));
         }
     };
 
-    <span class="comment">// Get the stage implementation</span>
-    <span class="kw">let</span> <span class="ident">_stage</span> <span class="op">=</span> <span class="ident">stage_map</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">md</span>.<span class="ident">stage_name</span>).<span class="ident">ok_or_else</span>(
-        <span class="attribute">#[<span class="ident">cold</span>]</span>
-        <span class="op">|</span><span class="op">|</span> <span class="macro">format_err!</span>(<span class="string">&quot;Couldn&#39;t find requested Martian stage: {}&quot;</span>, <span class="ident">md</span>.<span class="ident">stage_name</span>),
+    <span class="comment">// Get the stage implementation
+    </span><span class="kw">let </span>_stage = stage_map.get(<span class="kw-2">&amp;</span>md.stage_name).ok_or_else(
+        <span class="attribute">#[cold]
+        </span>|| <span class="macro">format_err!</span>(<span class="string">&quot;Couldn&#39;t find requested Martian stage: {}&quot;</span>, md.stage_name),
     );
 
-    <span class="comment">// special handler for non-existent stage</span>
-    <span class="kw">let</span> <span class="ident">stage</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">_stage</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">s</span>) =&gt; <span class="ident">s</span>,
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">write_errors</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>), <span class="bool-val">false</span>);
-            <span class="kw">return</span> (<span class="number">1</span>, <span class="prelude-val">Some</span>(<span class="ident">e</span>));
+    <span class="comment">// special handler for non-existent stage
+    </span><span class="kw">let </span>stage = <span class="kw">match </span>_stage {
+        <span class="prelude-val">Ok</span>(s) =&gt; s,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="kw">let _ </span>= write_errors(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{e:?}&quot;</span>), <span class="bool-val">false</span>);
+            <span class="kw">return </span>(<span class="number">1</span>, <span class="prelude-val">Some</span>(e));
         }
     };
 
-    <span class="comment">// will write to this from panic handler if needed.</span>
-    <span class="comment">// panic handler has separate write code to avoid locking.</span>
-    <span class="kw">let</span> <span class="ident">stackvars_path</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">make_path</span>(<span class="string">&quot;stackvars&quot;</span>);
+    <span class="comment">// will write to this from panic handler if needed.
+    // panic handler has separate write code to avoid locking.
+    </span><span class="kw">let </span>stackvars_path = md.make_path(<span class="string">&quot;stackvars&quot;</span>);
 
-    <span class="comment">// Setup panic hook. If a stage panics, we&#39;ll shutdown cleanly to martian</span>
-    <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">panic::take_hook</span>();
-    <span class="ident">panic::set_hook</span>(<span class="ident">Box::new</span>(
-        <span class="attribute">#[<span class="ident">cold</span>]</span>
-        <span class="kw">move</span> <span class="op">|</span><span class="ident">info</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">backtrace</span> <span class="op">=</span> <span class="ident">Backtrace::new</span>();
+    <span class="comment">// Setup panic hook. If a stage panics, we&#39;ll shutdown cleanly to martian
+    </span><span class="kw">let </span>p = panic::take_hook();
+    panic::set_hook(Box::new(
+        <span class="attribute">#[cold]
+        </span><span class="kw">move </span>|info| {
+            <span class="kw">let </span>backtrace = Backtrace::new();
 
-            <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">info</span>.<span class="ident">payload</span>().<span class="ident">downcast_ref</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span>() {
-                <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>) =&gt; <span class="ident">s</span>,
-                <span class="prelude-val">None</span> =&gt; <span class="kw">match</span> <span class="ident">info</span>.<span class="ident">payload</span>().<span class="ident">downcast_ref</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>() {
-                    <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; (<span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">as_str</span>(),
-                    <span class="prelude-val">None</span> =&gt; <span class="string">&quot;Box&lt;Any&gt;&quot;</span>,
+            <span class="kw">let </span>msg = <span class="kw">match </span>info.payload().downcast_ref::&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt;() {
+                <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>s) =&gt; s,
+                <span class="prelude-val">None </span>=&gt; <span class="kw">match </span>info.payload().downcast_ref::&lt;String&gt;() {
+                    <span class="prelude-val">Some</span>(s) =&gt; (<span class="kw-2">*</span>s).as_str(),
+                    <span class="prelude-val">None </span>=&gt; <span class="string">&quot;Box&lt;Any&gt;&quot;</span>,
                 },
             };
 
-            <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">info</span>.<span class="ident">location</span>() {
-                <span class="prelude-val">Some</span>(<span class="ident">location</span>) =&gt; <span class="macro">format!</span>(
+            <span class="kw">let </span>msg = <span class="kw">match </span>info.location() {
+                <span class="prelude-val">Some</span>(location) =&gt; <span class="macro">format!</span>(
                     <span class="string">&quot;stage failed unexpectedly: &#39;{}&#39; {}:{}:\n{:?}&quot;</span>,
-                    <span class="ident">msg</span>,
-                    <span class="ident">location</span>.<span class="ident">file</span>(),
-                    <span class="ident">location</span>.<span class="ident">line</span>(),
-                    <span class="ident">backtrace</span>
+                    msg,
+                    location.file(),
+                    location.line(),
+                    backtrace
                 ),
-                <span class="prelude-val">None</span> =&gt; <span class="macro">format!</span>(<span class="string">&quot;stage failed unexpectedly: &#39;{}&#39;:\n{:?}&quot;</span>, <span class="ident">msg</span>, <span class="ident">backtrace</span>),
+                <span class="prelude-val">None </span>=&gt; <span class="macro">format!</span>(<span class="string">&quot;stage failed unexpectedly: &#39;{msg}&#39;:\n{backtrace:?}&quot;</span>),
             };
 
-            <span class="comment">// write to _log</span>
-            <span class="macro">error!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">msg</span>);
+            <span class="comment">// write to _log
+            </span><span class="macro">error!</span>(<span class="string">&quot;{}&quot;</span>, msg);
 
-            <span class="comment">// write stack trace to to _stackvars.</span>
-            <span class="comment">// this will just give up if any errors are encountere</span>
-            <span class="kw">let</span> <span class="ident">bt_string</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">backtrace</span>);
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">File::create</span>(<span class="kw-2">&amp;</span><span class="ident">stackvars_path</span>).<span class="ident">map</span>(<span class="kw">move</span> <span class="op">|</span><span class="kw-2">mut</span> <span class="ident">f</span><span class="op">|</span> {
-                <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">write_all</span>(<span class="ident">bt_string</span>.<span class="ident">as_bytes</span>());
+            <span class="comment">// write stack trace to to _stackvars.
+            // this will just give up if any errors are encountere
+            </span><span class="kw">let </span>bt_string = <span class="macro">format!</span>(<span class="string">&quot;{backtrace:?}&quot;</span>);
+            <span class="kw">let _ </span>= File::create(<span class="kw-2">&amp;</span>stackvars_path).map(<span class="kw">move </span>|<span class="kw-2">mut </span>f| {
+                <span class="kw">let _ </span>= f.write_all(bt_string.as_bytes());
             });
 
-            <span class="comment">// write to _errors</span>
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">write_errors</span>(<span class="kw-2">&amp;</span><span class="ident">msg</span>, <span class="bool-val">false</span>);
+            <span class="comment">// write to _errors
+            </span><span class="kw">let _ </span>= write_errors(<span class="kw-2">&amp;</span>msg, <span class="bool-val">false</span>);
 
-            <span class="comment">// call default panic handler (not sure if this is a good idea or not)</span>
-            <span class="ident">p</span>(<span class="ident">info</span>);
+            <span class="comment">// call default panic handler (not sure if this is a good idea or not)
+            </span>p(info);
         },
     ));
 
-    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">==</span> <span class="string">&quot;split&quot;</span> {
-        <span class="ident">stage</span>.<span class="ident">split</span>(<span class="kw-2">&amp;mut</span> <span class="ident">md</span>)
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">==</span> <span class="string">&quot;main&quot;</span> {
-        <span class="ident">stage</span>.<span class="ident">main</span>(<span class="kw-2">&amp;mut</span> <span class="ident">md</span>)
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">md</span>.<span class="ident">stage_type</span> <span class="op">==</span> <span class="string">&quot;join&quot;</span> {
-        <span class="ident">stage</span>.<span class="ident">join</span>(<span class="kw-2">&amp;mut</span> <span class="ident">md</span>)
-    } <span class="kw">else</span> {
+    <span class="kw">let </span>result = <span class="kw">if </span>md.stage_type == <span class="string">&quot;split&quot; </span>{
+        stage.split(<span class="kw-2">&amp;mut </span>md)
+    } <span class="kw">else if </span>md.stage_type == <span class="string">&quot;main&quot; </span>{
+        stage.main(<span class="kw-2">&amp;mut </span>md)
+    } <span class="kw">else if </span>md.stage_type == <span class="string">&quot;join&quot; </span>{
+        stage.join(<span class="kw-2">&amp;mut </span>md)
+    } <span class="kw">else </span>{
         <span class="macro">panic!</span>(<span class="string">&quot;Unrecognized stage type&quot;</span>);
     };
 
-    <span class="kw">match</span> <span class="ident">result</span> {
-        <span class="comment">// exit code = 0</span>
-        <span class="prelude-val">Ok</span>(()) =&gt; (<span class="number">0</span>, <span class="prelude-val">None</span>),
+    <span class="kw">match </span>result {
+        <span class="comment">// exit code = 0
+        </span><span class="prelude-val">Ok</span>(()) =&gt; (<span class="number">0</span>, <span class="prelude-val">None</span>),
 
-        <span class="comment">// write message and stack trace, exit code = 1;</span>
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
-            <span class="ident">report_error</span>(<span class="kw-2">&amp;mut</span> <span class="ident">md</span>, <span class="kw-2">&amp;</span><span class="ident">e</span>, <span class="ident">is_error_assert</span>(<span class="kw-2">&amp;</span><span class="ident">e</span>));
-            (<span class="number">1</span>, <span class="prelude-val">Some</span>(<span class="ident">e</span>))
+        <span class="comment">// write message and stack trace, exit code = 1;
+        </span><span class="prelude-val">Err</span>(e) =&gt; {
+            report_error(<span class="kw-2">&amp;mut </span>md, <span class="kw-2">&amp;</span>e, is_error_assert(<span class="kw-2">&amp;</span>e));
+            (<span class="number">1</span>, <span class="prelude-val">Some</span>(e))
         }
     }
 }
 
-<span class="attribute">#[<span class="ident">cold</span>]</span>
-<span class="kw">fn</span> <span class="ident">report_error</span>(<span class="ident">md</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Metadata</span>, <span class="ident">e</span>: <span class="kw-2">&amp;</span><span class="ident">Error</span>, <span class="ident">is_assert</span>: <span class="ident">bool</span>) {
-    <span class="kw">let</span> <span class="ident">bt</span> <span class="op">=</span> <span class="ident">e</span>.<span class="ident">backtrace</span>();
-    <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">md</span>.<span class="ident">stackvars</span>(<span class="kw-2">&amp;</span><span class="ident">bt</span>.<span class="ident">to_string</span>());
-    <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">write_errors</span>(<span class="kw-2">&amp;</span><span class="ident">e</span>.<span class="ident">to_string</span>(), <span class="ident">is_assert</span>);
+<span class="attribute">#[cold]
+</span><span class="kw">fn </span>report_error(md: <span class="kw-2">&amp;mut </span>Metadata, e: <span class="kw-2">&amp;</span>Error, is_assert: bool) {
+    <span class="kw">let </span>bt = e.backtrace();
+    <span class="kw">let _ </span>= md.stackvars(<span class="kw-2">&amp;</span>bt.to_string());
+    <span class="kw">let _ </span>= write_errors(<span class="kw-2">&amp;</span>e.to_string(), is_assert);
 }
 
-<span class="kw">fn</span> <span class="ident">get_generator_name</span>() -&gt; <span class="ident">String</span> {
-    <span class="ident">std::env::var</span>(<span class="string">&quot;CARGO_BIN_NAME&quot;</span>)
-        .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">std::env::var</span>(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
-        .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">std::env::var</span>(<span class="string">&quot;CARGO_PKG_NAME&quot;</span>))
-        .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> {
+<span class="kw">fn </span>get_generator_name() -&gt; String {
+    std::env::var(<span class="string">&quot;CARGO_BIN_NAME&quot;</span>)
+        .or_else(|<span class="kw">_</span>| std::env::var(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
+        .or_else(|<span class="kw">_</span>| std::env::var(<span class="string">&quot;CARGO_PKG_NAME&quot;</span>))
+        .unwrap_or_else(|<span class="kw">_</span>| {
             <span class="macro">option_env!</span>(<span class="string">&quot;CARGO_BIN_NAME&quot;</span>)
-                .<span class="ident">or</span>(<span class="macro">option_env!</span>(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
-                .<span class="ident">unwrap_or</span>(<span class="string">&quot;martian-rust&quot;</span>)
-                .<span class="ident">into</span>()
+                .or(<span class="macro">option_env!</span>(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
+                .unwrap_or(<span class="string">&quot;martian-rust&quot;</span>)
+                .into()
         })
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">martian_make_mro</span>(
-    <span class="ident">header_comment</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
-    <span class="ident">file_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">rewrite</span>: <span class="ident">bool</span>,
-    <span class="ident">mro_registry</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">StageMro</span><span class="op">&gt;</span>,
-) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">f</span>) <span class="op">=</span> <span class="ident">file_name</span> {
-        <span class="kw">let</span> <span class="ident">file_path</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">as_ref</span>();
-        <span class="kw">if</span> <span class="ident">file_path</span>.<span class="ident">is_dir</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
+<span class="kw">pub fn </span>martian_make_mro(
+    header_comment: <span class="kw-2">&amp;</span>str,
+    file_name: <span class="prelude-ty">Option</span>&lt;<span class="kw">impl </span>AsRef&lt;Path&gt;&gt;,
+    rewrite: bool,
+    mro_registry: Vec&lt;StageMro&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>f) = file_name {
+        <span class="kw">let </span>file_path = f.as_ref();
+        <span class="kw">if </span>file_path.is_dir() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
                 <span class="string">&quot;Error! Path {} is a directory!&quot;</span>,
-                <span class="ident">file_path</span>.<span class="ident">display</span>()
+                file_path.display()
             ));
         }
-        <span class="kw">if</span> <span class="ident">file_path</span>.<span class="ident">exists</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">rewrite</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
+        <span class="kw">if </span>file_path.exists() &amp;&amp; !rewrite {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
                 <span class="string">&quot;File {} exists. You need to explicitly mention if it is okay to rewrite.&quot;</span>,
-                <span class="ident">file_path</span>.<span class="ident">display</span>()
+                file_path.display()
             ));
         }
     }
 
-    <span class="kw">let</span> <span class="ident">final_mro_string</span> <span class="op">=</span> <span class="ident">make_mro_string</span>(<span class="ident">header_comment</span>, <span class="kw-2">&amp;</span><span class="ident">mro_registry</span>);
-    <span class="kw">match</span> <span class="ident">file_name</span> {
-        <span class="prelude-val">Some</span>(<span class="ident">f</span>) =&gt; {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">File::create</span>(<span class="ident">f</span>)<span class="question-mark">?</span>;
-            <span class="ident">output</span>.<span class="ident">write_all</span>(<span class="ident">final_mro_string</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
+    <span class="kw">let </span>final_mro_string = make_mro_string(header_comment, <span class="kw-2">&amp;</span>mro_registry);
+    <span class="kw">match </span>file_name {
+        <span class="prelude-val">Some</span>(f) =&gt; {
+            <span class="kw">let </span><span class="kw-2">mut </span>output = File::create(f)<span class="question-mark">?</span>;
+            output.write_all(final_mro_string.as_bytes())<span class="question-mark">?</span>;
         }
-        <span class="prelude-val">None</span> =&gt; {
-            <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">final_mro_string</span>);
+        <span class="prelude-val">None </span>=&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{final_mro_string}&quot;</span>);
         }
     }
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_mro_string</span>(<span class="ident">header_comment</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">mro_registry</span>: <span class="kw-2">&amp;</span>[<span class="ident">StageMro</span>]) -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">filetype_header</span> <span class="op">=</span> <span class="ident">FiletypeHeader::default</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">struct_header</span> <span class="op">=</span> <span class="ident">StructHeader::default</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mro_string</span> <span class="op">=</span> <span class="ident">String::new</span>();
-    <span class="kw">for</span> <span class="ident">stage_mro</span> <span class="kw">in</span> <span class="ident">mro_registry</span> {
-        <span class="ident">filetype_header</span>.<span class="ident">add_stage</span>(<span class="ident">stage_mro</span>);
-        <span class="ident">struct_header</span>.<span class="ident">add_stage</span>(<span class="ident">stage_mro</span>);
-        <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mro_string</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">stage_mro</span>).<span class="ident">unwrap</span>();
+<span class="kw">pub fn </span>make_mro_string(header_comment: <span class="kw-2">&amp;</span>str, mro_registry: <span class="kw-2">&amp;</span>[StageMro]) -&gt; String {
+    <span class="kw">let </span><span class="kw-2">mut </span>filetype_header = FiletypeHeader::default();
+    <span class="kw">let </span><span class="kw-2">mut </span>struct_header = StructHeader::default();
+    <span class="kw">let </span><span class="kw-2">mut </span>mro_string = String::new();
+    <span class="kw">for </span>stage_mro <span class="kw">in </span>mro_registry {
+        filetype_header.add_stage(stage_mro);
+        struct_header.add_stage(stage_mro);
+        <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut </span>mro_string, <span class="string">&quot;{stage_mro}&quot;</span>).unwrap();
     }
-    <span class="ident">mro_string</span>.<span class="ident">pop</span>();
+    mro_string.pop();
 
-    <span class="kw">if</span> <span class="ident">header_comment</span>.<span class="ident">is_empty</span>() {
+    <span class="kw">if </span>header_comment.is_empty() {
         <span class="macro">format!</span>(
             <span class="string">&quot;#
 # Code generated by {}.  DO NOT EDIT.
 #
 
 {}{}{}&quot;</span>,
-            <span class="ident">get_generator_name</span>(),
-            <span class="ident">filetype_header</span>,
-            <span class="ident">struct_header</span>,
-            <span class="ident">mro_string</span>
+            get_generator_name(),
+            filetype_header,
+            struct_header,
+            mro_string
         )
-    } <span class="kw">else</span> {
+    } <span class="kw">else </span>{
         <span class="macro">assert!</span>(
-            <span class="ident">header_comment</span>
-                .<span class="ident">lines</span>()
-                .<span class="ident">into_iter</span>()
-                .<span class="ident">all</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">trim_end</span>().<span class="ident">is_empty</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">starts_with</span>(<span class="string">&#39;#&#39;</span>)),
+            header_comment
+                .lines()
+                .into_iter()
+                .all(|line| line.trim_end().is_empty() || line.starts_with(<span class="string">&#39;#&#39;</span>)),
             <span class="string">&quot;All non-empty header lines must start with &#39;#&#39;, but got\n{}&quot;</span>,
-            <span class="ident">header_comment</span>
+            header_comment
         );
         <span class="macro">format!</span>(
             <span class="string">&quot;{}
@@ -760,13 +760,13 @@
 #
 
 {}{}{}&quot;</span>,
-            <span class="ident">header_comment</span>,
-            <span class="ident">get_generator_name</span>(),
-            <span class="ident">filetype_header</span>,
-            <span class="ident">struct_header</span>,
-            <span class="ident">mro_string</span>
+            header_comment,
+            get_generator_name(),
+            filetype_header,
+            struct_header,
+            mro_string
         )
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

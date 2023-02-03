@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/tabular_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tabular_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `martian-filetypes/src/tabular_file.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tabular_file.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../martian_filetypes/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -425,432 +425,432 @@
 <span id="425">425</span>
 <span id="426">426</span>
 <span id="427">427</span>
-</pre><pre class="rust"><code><span class="doccomment">//!</span>
-<span class="doccomment">//! A delimited file such as a csv file or a tab file stores a list of</span>
-<span class="doccomment">//! items of type `T`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Simple read/write example</span>
-<span class="doccomment">//! `CsvFile` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use martian_filetypes::{FileTypeIO, tabular_file::CsvFile};</span>
-<span class="doccomment">//! use martian::Error;</span>
-<span class="doccomment">//! use serde::{Serialize, Deserialize};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! #[derive(Debug, PartialEq, Serialize, Deserialize)]</span>
-<span class="doccomment">//! struct BarcodeSummary {</span>
-<span class="doccomment">//!     umis: u32,</span>
-<span class="doccomment">//!     reads: u32,</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() -&gt; Result&lt;(), Error&gt; {</span>
-<span class="doccomment">//!     let csv_file = CsvFile::from(&quot;csv_example&quot;);</span>
-<span class="doccomment">//!     let summary = vec![</span>
-<span class="doccomment">//!         BarcodeSummary { umis: 10, reads: 15},</span>
-<span class="doccomment">//!         BarcodeSummary { umis: 200, reads: 1005},</span>
-<span class="doccomment">//!     ];</span>
-<span class="doccomment">//!     // The two function below are simple wrappers over csv crate</span>
-<span class="doccomment">//!     csv_file.write(&amp;summary)?;</span>
-<span class="doccomment">//!     assert_eq!(</span>
-<span class="doccomment">//!         std::fs::read_to_string(&amp;csv_file)?,</span>
-<span class="doccomment">//!         &quot;umis,reads\n10,15\n200,1005\n&quot;</span>
-<span class="doccomment">//!     );</span>
-<span class="doccomment">//!     let decoded: Vec&lt;BarcodeSummary&gt; = csv_file.read()?;</span>
-<span class="doccomment">//!     assert_eq!(summary, decoded);</span>
-<span class="doccomment">//!     # std::fs::remove_file(csv_file)?; // Remove the file (hidden from the doc)</span>
-<span class="doccomment">//!     Ok(())</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! ```</span>
+</pre><pre class="rust"><code><span class="doccomment">//!
+//! A delimited file such as a csv file or a tab file stores a list of
+//! items of type `T`.
+//!
+//! ## Simple read/write example
+//! `CsvFile` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.
+//! ```rust
+//! use martian_filetypes::{FileTypeIO, tabular_file::CsvFile};
+//! use martian::Error;
+//! use serde::{Serialize, Deserialize};
+//!
+//! #[derive(Debug, PartialEq, Serialize, Deserialize)]
+//! struct BarcodeSummary {
+//!     umis: u32,
+//!     reads: u32,
+//! }
+//!
+//! fn main() -&gt; Result&lt;(), Error&gt; {
+//!     let csv_file = CsvFile::from(&quot;csv_example&quot;);
+//!     let summary = vec![
+//!         BarcodeSummary { umis: 10, reads: 15},
+//!         BarcodeSummary { umis: 200, reads: 1005},
+//!     ];
+//!     // The two function below are simple wrappers over csv crate
+//!     csv_file.write(&amp;summary)?;
+//!     assert_eq!(
+//!         std::fs::read_to_string(&amp;csv_file)?,
+//!         &quot;umis,reads\n10,15\n200,1005\n&quot;
+//!     );
+//!     let decoded: Vec&lt;BarcodeSummary&gt; = csv_file.read()?;
+//!     assert_eq!(summary, decoded);
+//!     # std::fs::remove_file(csv_file)?; // Remove the file (hidden from the doc)
+//!     Ok(())
+//! }
+//! ```
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">FileStorage</span>, <span class="ident">FileTypeIO</span>, <span class="ident">LazyAgents</span>, <span class="ident">LazyRead</span>, <span class="ident">LazyWrite</span>};
-<span class="kw">use</span> <span class="ident">anyhow::format_err</span>;
-<span class="kw">use</span> <span class="ident">martian</span>::{<span class="ident">Error</span>, <span class="ident">MartianFileType</span>};
-<span class="kw">use</span> <span class="ident">martian_derive::martian_filetype</span>;
-<span class="kw">use</span> <span class="ident">serde::de::DeserializeOwned</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">std::fmt::Debug</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
-<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+</span><span class="kw">use crate</span>::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+<span class="kw">use </span>anyhow::format_err;
+<span class="kw">use </span>martian::{Error, MartianFileType};
+<span class="kw">use </span>martian_derive::martian_filetype;
+<span class="kw">use </span>serde::de::DeserializeOwned;
+<span class="kw">use </span>serde::{Deserialize, Serialize};
+<span class="kw">use </span>std::fmt::Debug;
+<span class="kw">use </span>std::io::{Read, Write};
+<span class="kw">use </span>std::marker::PhantomData;
+<span class="kw">use </span>std::path::{Path, PathBuf};
 
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">TableConfig</span> {
-    <span class="kw">fn</span> <span class="ident">delimiter</span>() -&gt; <span class="ident">u8</span>;
-    <span class="kw">fn</span> <span class="ident">format</span>() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>;
-    <span class="kw">fn</span> <span class="ident">header</span>() -&gt; <span class="ident">bool</span> {
-        <span class="bool-val">true</span>
-    }
+<span class="kw">pub trait </span>TableConfig {
+    <span class="kw">fn </span>delimiter() -&gt; u8;
+    <span class="kw">fn </span>format() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str;
+    <span class="kw">fn </span>header() -&gt; bool {
+        <span class="bool-val">true
+    </span>}
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="attribute">#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(transparent)]
+</span><span class="kw">pub struct </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
 {
-    <span class="ident">path</span>: <span class="ident">PathBuf</span>,
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">skip</span>)]</span>
-    <span class="ident">phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span>(<span class="ident">F</span>, <span class="ident">D</span>)<span class="op">&gt;</span>,
+    path: PathBuf,
+    <span class="attribute">#[serde(skip)]
+    </span>phantom: PhantomData&lt;(F, D)&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="ident">MartianFileType</span> <span class="kw">for</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="kw">impl</span>&lt;F, D&gt; MartianFileType <span class="kw">for </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
 {
-    <span class="kw">fn</span> <span class="ident">extension</span>() -&gt; <span class="ident">String</span> {
-        <span class="ident"><span class="kw">crate</span>::maybe_add_format</span>(<span class="ident">F::extension</span>(), <span class="ident">D::format</span>())
+    <span class="kw">fn </span>extension() -&gt; String {
+        <span class="kw">crate</span>::maybe_add_format(F::extension(), D::format())
     }
 
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">file_path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">std::path::Path</span><span class="op">&gt;</span>, <span class="ident">file_name</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">std::path::Path</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span>
-            <span class="ident">::martian::utils::make_path</span>(<span class="ident">file_path</span>.<span class="ident">as_ref</span>(), <span class="ident">file_name</span>.<span class="ident">as_ref</span>(), <span class="ident"><span class="self">Self</span>::extension</span>());
-        <span class="ident">DelimitedFormat</span> {
-            <span class="ident">phantom</span>: <span class="ident">::std::marker::PhantomData</span>,
-            <span class="ident">path</span>,
+    <span class="kw">fn </span>new(file_path: <span class="kw">impl </span>AsRef&lt;std::path::Path&gt;, file_name: <span class="kw">impl </span>AsRef&lt;std::path::Path&gt;) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>path =
+            ::martian::utils::make_path(file_path.as_ref(), file_name.as_ref(), <span class="self">Self</span>::extension());
+        DelimitedFormat {
+            phantom: ::std::marker::PhantomData,
+            path,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="kw">impl</span>&lt;F, D&gt; AsRef&lt;Path&gt; <span class="kw">for </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
 {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Path</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">path</span>
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Path {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.path
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="ident">std::ops::Deref</span> <span class="kw">for</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="kw">impl</span>&lt;F, D&gt; std::ops::Deref <span class="kw">for </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
 {
-    <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Path</span>;
-    <span class="doccomment">/// Dereferences this DelimitedFormat to a Path slice.</span>
-    <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Path</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">path</span>
+    <span class="kw">type </span>Target = Path;
+    <span class="doccomment">/// Dereferences this DelimitedFormat to a Path slice.
+    </span><span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Path {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.path
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">P</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">PathBuf</span>: <span class="ident">From</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span>,
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="kw">impl</span>&lt;F, D, P&gt; From&lt;P&gt; <span class="kw">for </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>PathBuf: From&lt;P&gt;,
+    F: MartianFileType,
+    D: TableConfig + Debug,
 {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">source</span>: <span class="ident">P</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">path_buf</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">source</span>);
-        <span class="ident">DelimitedFormat::from_path</span>(<span class="ident">path_buf</span>.<span class="ident">as_path</span>())
+    <span class="kw">fn </span>from(source: P) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>path_buf = PathBuf::from(source);
+        DelimitedFormat::from_path(path_buf.as_path())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="kw">impl</span>&lt;F, D, T&gt; FileStorage&lt;Vec&lt;T&gt;&gt; <span class="kw">for </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    D: TableConfig + Debug,
 {
 }
 
-<span class="macro">macro_rules!</span> <span class="ident">table_config</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">delim</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">format</span>: <span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">header</span>: <span class="ident">expr</span>) =&gt; {
-        <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-        <span class="kw">pub</span> <span class="kw">struct</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>;
-        <span class="kw">impl</span> <span class="ident">TableConfig</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span> {
-            <span class="kw">fn</span> <span class="ident">delimiter</span>() -&gt; <span class="ident">u8</span> {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">delim</span>
-            }
-            <span class="kw">fn</span> <span class="ident">format</span>() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">format</span>
-            }
-            <span class="kw">fn</span> <span class="ident">header</span>() -&gt; <span class="ident">bool</span> {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">header</span>
-            }
+<span class="macro">macro_rules! </span>table_config {
+    (<span class="macro-nonterminal">$name</span>:ident, <span class="macro-nonterminal">$delim</span>:expr, <span class="macro-nonterminal">$format</span>: expr, <span class="macro-nonterminal">$header</span>: expr) =&gt; {
+        <span class="attribute">#[derive(Debug, Clone, Copy)]
+        </span><span class="kw">pub struct </span><span class="macro-nonterminal">$name</span>;
+        <span class="kw">impl </span>TableConfig <span class="kw">for </span><span class="macro-nonterminal">$name </span>{
+            <span class="kw">fn </span>delimiter() -&gt; u8 {
+                <span class="macro-nonterminal">$delim
+            </span>}
+            <span class="kw">fn </span>format() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+                <span class="macro-nonterminal">$format
+            </span>}
+            <span class="kw">fn </span>header() -&gt; bool {
+                <span class="macro-nonterminal">$header
+            </span>}
         }
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">delim</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">format</span>: <span class="ident">expr</span>) =&gt; {
-        <span class="macro">table_config!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">delim</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">format</span>, <span class="bool-val">true</span>);
+    (<span class="macro-nonterminal">$name</span>:ident, <span class="macro-nonterminal">$delim</span>:expr, <span class="macro-nonterminal">$format</span>: expr) =&gt; {
+        <span class="macro">table_config!</span>(<span class="macro-nonterminal">$name</span>, <span class="macro-nonterminal">$delim</span>, <span class="macro-nonterminal">$format</span>, <span class="bool-val">true</span>);
     };
 }
 
-<span class="macro">martian_filetype!</span> {<span class="ident">Csv</span>, <span class="string">&quot;csv&quot;</span>}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Csv</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> {}
+<span class="macro">martian_filetype! </span>{Csv, <span class="string">&quot;csv&quot;</span>}
+<span class="kw">impl</span>&lt;T&gt; FileStorage&lt;Vec&lt;T&gt;&gt; <span class="kw">for </span>Csv <span class="kw">where </span>T: Serialize + DeserializeOwned {}
 
-<span class="macro">martian_filetype!</span> {<span class="ident">Tsv</span>, <span class="string">&quot;tsv&quot;</span>}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Tsv</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span> {}
+<span class="macro">martian_filetype! </span>{Tsv, <span class="string">&quot;tsv&quot;</span>}
+<span class="kw">impl</span>&lt;T&gt; FileStorage&lt;Vec&lt;T&gt;&gt; <span class="kw">for </span>Tsv <span class="kw">where </span>T: Serialize + DeserializeOwned {}
 
-<span class="macro">table_config!</span> { <span class="ident">CommaDelimiter</span>, <span class="string">b&#39;,&#39;</span>, <span class="string">&quot;csv&quot;</span> }
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CsvFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">CommaDelimiter</span><span class="op">&gt;</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CsvFile</span> <span class="op">=</span> <span class="ident">CsvFormat</span><span class="op">&lt;</span><span class="ident">Csv</span><span class="op">&gt;</span>;
+<span class="macro">table_config! </span>{ CommaDelimiter, <span class="string">b&#39;,&#39;</span>, <span class="string">&quot;csv&quot; </span>}
+<span class="kw">pub type </span>CsvFormat&lt;F&gt; = DelimitedFormat&lt;F, CommaDelimiter&gt;;
+<span class="kw">pub type </span>CsvFile = CsvFormat&lt;Csv&gt;;
 
-<span class="macro">table_config!</span> { <span class="ident">CommaDelimiterNoHeader</span>, <span class="string">b&#39;,&#39;</span>, <span class="string">&quot;csv&quot;</span>, <span class="bool-val">false</span> }
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CsvFormatNoHeader</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">CommaDelimiterNoHeader</span><span class="op">&gt;</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CsvFileNoHeader</span> <span class="op">=</span> <span class="ident">CsvFormatNoHeader</span><span class="op">&lt;</span><span class="ident">Csv</span><span class="op">&gt;</span>;
+<span class="macro">table_config! </span>{ CommaDelimiterNoHeader, <span class="string">b&#39;,&#39;</span>, <span class="string">&quot;csv&quot;</span>, <span class="bool-val">false </span>}
+<span class="kw">pub type </span>CsvFormatNoHeader&lt;F&gt; = DelimitedFormat&lt;F, CommaDelimiterNoHeader&gt;;
+<span class="kw">pub type </span>CsvFileNoHeader = CsvFormatNoHeader&lt;Csv&gt;;
 
-<span class="macro">table_config!</span> { <span class="ident">TabDelimiter</span>, <span class="string">b&#39;\t&#39;</span>, <span class="string">&quot;tsv&quot;</span> }
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TsvFormat</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">TabDelimiter</span><span class="op">&gt;</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TsvFile</span> <span class="op">=</span> <span class="ident">TsvFormat</span><span class="op">&lt;</span><span class="ident">Tsv</span><span class="op">&gt;</span>;
+<span class="macro">table_config! </span>{ TabDelimiter, <span class="string">b&#39;\t&#39;</span>, <span class="string">&quot;tsv&quot; </span>}
+<span class="kw">pub type </span>TsvFormat&lt;F&gt; = DelimitedFormat&lt;F, TabDelimiter&gt;;
+<span class="kw">pub type </span>TsvFile = TsvFormat&lt;Tsv&gt;;
 
-<span class="macro">table_config!</span> { <span class="ident">TabDelimiterNoHeader</span>, <span class="string">b&#39;\t&#39;</span>, <span class="string">&quot;tsv&quot;</span>, <span class="bool-val">false</span> }
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TsvFormatNoHeader</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">TabDelimiterNoHeader</span><span class="op">&gt;</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TsvFileNoHeader</span> <span class="op">=</span> <span class="ident">TsvFormatNoHeader</span><span class="op">&lt;</span><span class="ident">Tsv</span><span class="op">&gt;</span>;
+<span class="macro">table_config! </span>{ TabDelimiterNoHeader, <span class="string">b&#39;\t&#39;</span>, <span class="string">&quot;tsv&quot;</span>, <span class="bool-val">false </span>}
+<span class="kw">pub type </span>TsvFormatNoHeader&lt;F&gt; = DelimitedFormat&lt;F, TabDelimiterNoHeader&gt;;
+<span class="kw">pub type </span>TsvFileNoHeader = TsvFormatNoHeader&lt;Tsv&gt;;
 
-<span class="doccomment">/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`</span>
-<span class="doccomment">/// Any type `T` that can be serialized can be saved as a `JsonFile`.</span>
-<span class="doccomment">/// The saved JsonFile will be pretty formatted using 4 space indentation.</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FileTypeIO</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span> <span class="op">+</span> <span class="ident">FileStorage</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Debug</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="doccomment">/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
+/// Any type `T` that can be serialized can be saved as a `JsonFile`.
+/// The saved JsonFile will be pretty formatted using 4 space indentation.
+</span><span class="kw">impl</span>&lt;F, D, T&gt; FileTypeIO&lt;Vec&lt;T&gt;&gt; <span class="kw">for </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>T: Serialize + DeserializeOwned,
+    F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt; + Debug,
+    D: TableConfig + Debug,
 {
-    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">csv::ReaderBuilder::new</span>()
-            .<span class="ident">delimiter</span>(<span class="ident">D::delimiter</span>())
-            .<span class="ident">has_headers</span>(<span class="ident">D::header</span>())
-            .<span class="ident">from_reader</span>(<span class="ident">reader</span>);
-        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">deserialize</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
-        <span class="kw">let</span> <span class="ident">rows</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">csv::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">rows</span>)
+    <span class="kw">fn </span>read_from&lt;R: Read&gt;(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;T&gt;, Error&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>rdr = csv::ReaderBuilder::new()
+            .delimiter(D::delimiter())
+            .has_headers(D::header())
+            .from_reader(reader);
+        <span class="kw">let </span>iter = rdr.deserialize::&lt;T&gt;();
+        <span class="kw">let </span>rows = iter.collect::&lt;csv::Result&lt;Vec&lt;T&gt;&gt;&gt;()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(rows)
     }
 
-    <span class="kw">fn</span> <span class="ident">write_into</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="ident">writer</span>: <span class="ident">W</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">wtr</span> <span class="op">=</span> <span class="ident">csv::WriterBuilder::default</span>()
-            .<span class="ident">delimiter</span>(<span class="ident">D::delimiter</span>())
-            .<span class="ident">has_headers</span>(<span class="ident">D::header</span>())
-            .<span class="ident">from_writer</span>(<span class="ident">writer</span>);
+    <span class="kw">fn </span>write_into&lt;W: Write&gt;(writer: W, item: <span class="kw-2">&amp;</span>Vec&lt;T&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>wtr = csv::WriterBuilder::default()
+            .delimiter(D::delimiter())
+            .has_headers(D::header())
+            .from_writer(writer);
 
-        <span class="kw">for</span> <span class="ident">d</span> <span class="kw">in</span> <span class="ident">item</span> {
-            <span class="ident">wtr</span>.<span class="ident">serialize</span>(<span class="ident">d</span>)<span class="question-mark">?</span>;
+        <span class="kw">for </span>d <span class="kw">in </span>item {
+            wtr.serialize(d)<span class="question-mark">?</span>;
         }
 
         <span class="prelude-val">Ok</span>(())
     }
 }
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyTabularReader</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">DeserializeOwned</span>,
+<span class="kw">pub struct </span>LazyTabularReader&lt;F, D, T, R&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
+    R: Read,
+    T: DeserializeOwned,
 {
-    <span class="ident">reader</span>: <span class="ident">csv::DeserializeRecordsIntoIter</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span>(<span class="ident">F</span>, <span class="ident">D</span>)<span class="op">&gt;</span>,
+    reader: csv::DeserializeRecordsIntoIter&lt;R, T&gt;,
+    phantom: PhantomData&lt;(F, D)&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">LazyTabularReader</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">DeserializeOwned</span>,
+<span class="kw">impl</span>&lt;F, D, T, R&gt; Iterator <span class="kw">for </span>LazyTabularReader&lt;F, D, T, R&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
+    R: Read,
+    T: DeserializeOwned,
 {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Item</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">next</span>() {
-            <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">item</span>)) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">item</span>)),
-            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>())),
-            <span class="prelude-val">None</span> =&gt; <span class="prelude-val">None</span>,
+    <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;T, Error&gt;;
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+        <span class="kw">match </span><span class="self">self</span>.reader.next() {
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(item)) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(item)),
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(e)) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(e.into())),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyRead</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyTabularReader</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">DeserializeOwned</span>,
+<span class="kw">impl</span>&lt;F, D, T, R&gt; LazyRead&lt;T, R&gt; <span class="kw">for </span>LazyTabularReader&lt;F, D, T, R&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
+    R: Read,
+    T: DeserializeOwned,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_reader</span>(<span class="ident">reader</span>: <span class="ident">R</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">csv::ReaderBuilder::new</span>()
-            .<span class="ident">delimiter</span>(<span class="ident">D::delimiter</span>())
-            .<span class="ident">has_headers</span>(<span class="ident">D::header</span>())
-            .<span class="ident">from_reader</span>(<span class="ident">reader</span>);
-        <span class="prelude-val">Ok</span>(<span class="ident">LazyTabularReader</span> {
-            <span class="ident">reader</span>: <span class="ident">rdr</span>.<span class="ident">into_deserialize</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(),
-            <span class="ident">phantom</span>: <span class="ident">PhantomData</span>,
+    <span class="kw">type </span>FileType = DelimitedFormat&lt;F, D&gt;;
+    <span class="kw">fn </span>with_reader(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="kw">let </span>rdr = csv::ReaderBuilder::new()
+            .delimiter(D::delimiter())
+            .has_headers(D::header())
+            .from_reader(reader);
+        <span class="prelude-val">Ok</span>(LazyTabularReader {
+            reader: rdr.into_deserialize::&lt;T&gt;(),
+            phantom: PhantomData,
         })
     }
 }
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LazyTabularWriter</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
+<span class="kw">pub struct </span>LazyTabularWriter&lt;F, D, T, W&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    W: Write,
+    D: TableConfig + Debug,
 {
-    <span class="ident">writer</span>: <span class="ident">csv::Writer</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>,
-    <span class="ident">phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span>(<span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>)<span class="op">&gt;</span>,
+    writer: csv::Writer&lt;W&gt;,
+    phantom: PhantomData&lt;(F, D, T)&gt;,
 }
 
-<span class="doccomment">/// Hack because the csv crate does not expose this explicitly</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tabular_file_header</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">Default</span>,
+<span class="doccomment">/// Hack because the csv crate does not expose this explicitly
+</span><span class="kw">pub fn </span>tabular_file_header&lt;T&gt;() -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;String&gt;, Error&gt;
+<span class="kw">where
+    </span>T: Serialize + Default,
 {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">wtr</span> <span class="op">=</span> <span class="ident">csv::WriterBuilder::default</span>()
-        .<span class="ident">has_headers</span>(<span class="bool-val">true</span>)
-        .<span class="ident">from_writer</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buffer</span>);
-    <span class="comment">// The header row is written automatically.</span>
-    <span class="ident">wtr</span>.<span class="ident">serialize</span>(<span class="ident">T::default</span>())<span class="question-mark">?</span>;
-    <span class="ident">wtr</span>.<span class="ident">flush</span>()<span class="question-mark">?</span>;
-    <span class="ident">drop</span>(<span class="ident">wtr</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="ident">csv::ReaderBuilder::new</span>()
-        .<span class="ident">has_headers</span>(<span class="bool-val">true</span>)
-        .<span class="ident">from_reader</span>(<span class="ident">buffer</span>.<span class="ident">as_slice</span>());
-    <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">rdr</span>.<span class="ident">headers</span>()<span class="question-mark">?</span>;
-    <span class="prelude-val">Ok</span>(<span class="ident">headers</span>
-        .<span class="ident">iter</span>()
-        .<span class="ident">map</span>(<span class="ident">std::string::ToString::to_string</span>)
-        .<span class="ident">collect</span>())
+    <span class="kw">let </span><span class="kw-2">mut </span>buffer = Vec::new();
+    <span class="kw">let </span><span class="kw-2">mut </span>wtr = csv::WriterBuilder::default()
+        .has_headers(<span class="bool-val">true</span>)
+        .from_writer(<span class="kw-2">&amp;mut </span>buffer);
+    <span class="comment">// The header row is written automatically.
+    </span>wtr.serialize(T::default())<span class="question-mark">?</span>;
+    wtr.flush()<span class="question-mark">?</span>;
+    drop(wtr);
+    <span class="kw">let </span><span class="kw-2">mut </span>rdr = csv::ReaderBuilder::new()
+        .has_headers(<span class="bool-val">true</span>)
+        .from_reader(buffer.as_slice());
+    <span class="kw">let </span>headers = rdr.headers()<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(headers
+        .iter()
+        .map(std::string::ToString::to_string)
+        .collect())
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyTabularWriter</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
-    <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">Default</span>,
+<span class="kw">impl</span>&lt;F, D, T, W&gt; LazyTabularWriter&lt;F, D, T, W&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    W: Write,
+    D: TableConfig + Debug,
+    T: Serialize + Default,
 {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_header</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>
-            .<span class="ident">writer</span>
-            .<span class="ident">write_byte_record</span>(<span class="kw-2">&amp;</span><span class="ident">csv::ByteRecord::from</span>(<span class="ident">tabular_file_header</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()<span class="question-mark">?</span>))<span class="question-mark">?</span>)
+    <span class="kw">pub fn </span>write_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.writer
+            .write_byte_record(<span class="kw-2">&amp;</span>csv::ByteRecord::from(tabular_file_header::&lt;T&gt;()<span class="question-mark">?</span>))<span class="question-mark">?</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="ident">LazyWrite</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LazyTabularWriter</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
-    <span class="ident">T</span>: <span class="ident">Serialize</span>,
+<span class="kw">impl</span>&lt;F, D, T, W&gt; LazyWrite&lt;T, W&gt; <span class="kw">for </span>LazyTabularWriter&lt;F, D, T, W&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    W: Write,
+    D: TableConfig + Debug,
+    T: Serialize,
 {
-    <span class="kw">type</span> <span class="ident">FileType</span> <span class="op">=</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">with_writer</span>(<span class="ident">writer</span>: <span class="ident">W</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">LazyTabularWriter</span> {
-            <span class="ident">writer</span>: <span class="ident">csv::WriterBuilder::default</span>()
-                .<span class="ident">delimiter</span>(<span class="ident">D::delimiter</span>())
-                .<span class="ident">has_headers</span>(<span class="ident">D::header</span>())
-                .<span class="ident">from_writer</span>(<span class="ident">writer</span>),
-            <span class="ident">phantom</span>: <span class="ident">PhantomData</span>,
+    <span class="kw">type </span>FileType = DelimitedFormat&lt;F, D&gt;;
+    <span class="kw">fn </span>with_writer(writer: W) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="prelude-val">Ok</span>(LazyTabularWriter {
+            writer: csv::WriterBuilder::default()
+                .delimiter(D::delimiter())
+                .has_headers(D::header())
+                .from_writer(writer),
+            phantom: PhantomData,
         })
     }
-    <span class="kw">fn</span> <span class="ident">write_item</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">writer</span>.<span class="ident">serialize</span>(<span class="ident">item</span>)<span class="question-mark">?</span>)
+    <span class="kw">fn </span>write_item(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.writer.serialize(item)<span class="question-mark">?</span>)
     }
-    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">writer</span>.<span class="ident">into_inner</span>() {
-            <span class="prelude-val">Ok</span>(<span class="ident">w</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">w</span>),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(<span class="string">&quot;Error: {}&quot;</span>, <span class="ident">e</span>.<span class="ident">error</span>())),
+    <span class="kw">fn </span>finish(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;W, Error&gt; {
+        <span class="kw">match </span><span class="self">self</span>.writer.into_inner() {
+            <span class="prelude-val">Ok</span>(w) =&gt; <span class="prelude-val">Ok</span>(w),
+            <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(<span class="string">&quot;Error: {}&quot;</span>, e.error())),
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">LazyAgents</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">W</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">DelimitedFormat</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>: <span class="ident">MartianFileType</span>,
-    <span class="ident">D</span>: <span class="ident">TableConfig</span> <span class="op">+</span> <span class="ident">Debug</span>,
-    <span class="ident">T</span>: <span class="ident">Serialize</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
-    <span class="ident">W</span>: <span class="ident">Write</span>,
-    <span class="ident">R</span>: <span class="ident">Read</span>,
+<span class="kw">impl</span>&lt;F, D, T, W, R&gt; LazyAgents&lt;T, W, R&gt; <span class="kw">for </span>DelimitedFormat&lt;F, D&gt;
+<span class="kw">where
+    </span>F: MartianFileType,
+    D: TableConfig + Debug,
+    T: Serialize + DeserializeOwned,
+    W: Write,
+    R: Read,
 {
-    <span class="kw">type</span> <span class="ident">LazyWriter</span> <span class="op">=</span> <span class="ident">LazyTabularWriter</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">W</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">LazyReader</span> <span class="op">=</span> <span class="ident">LazyTabularReader</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">D</span>, <span class="ident">T</span>, <span class="ident">R</span><span class="op">&gt;</span>;
+    <span class="kw">type </span>LazyWriter = LazyTabularWriter&lt;F, D, T, W&gt;;
+    <span class="kw">type </span>LazyReader = LazyTabularReader&lt;F, D, T, R&gt;;
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::LazyFileTypeIO</span>;
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Default</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">Cell</span> {
-        <span class="ident">barcode</span>: <span class="ident">String</span>,
-        <span class="ident">genome</span>: <span class="ident">String</span>,
+    <span class="attribute">#[derive(Serialize, Deserialize, PartialEq, Default)]
+    </span><span class="kw">struct </span>Cell {
+        barcode: String,
+        genome: String,
     }
 
-    <span class="kw">fn</span> <span class="ident">cells</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cell</span><span class="op">&gt;</span> {
+    <span class="kw">fn </span>cells() -&gt; Vec&lt;Cell&gt; {
         <span class="macro">vec!</span>[
-            <span class="ident">Cell</span> {
-                <span class="ident">barcode</span>: <span class="string">&quot;ACGT&quot;</span>.<span class="ident">to_string</span>(),
-                <span class="ident">genome</span>: <span class="string">&quot;hg19&quot;</span>.<span class="ident">to_string</span>(),
+            Cell {
+                barcode: <span class="string">&quot;ACGT&quot;</span>.to_string(),
+                genome: <span class="string">&quot;hg19&quot;</span>.to_string(),
             },
-            <span class="ident">Cell</span> {
-                <span class="ident">barcode</span>: <span class="string">&quot;TCAT&quot;</span>.<span class="ident">to_string</span>(),
-                <span class="ident">genome</span>: <span class="string">&quot;mm10&quot;</span>.<span class="ident">to_string</span>(),
+            Cell {
+                barcode: <span class="string">&quot;TCAT&quot;</span>.to_string(),
+                genome: <span class="string">&quot;mm10&quot;</span>.to_string(),
             },
         ]
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_csv_write</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">cells_csv</span> <span class="op">=</span> <span class="ident">CsvFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;test&quot;</span>);
-        <span class="ident">cells_csv</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="ident">cells</span>())<span class="question-mark">?</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_csv_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>cells_csv = CsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        cells_csv.write(<span class="kw-2">&amp;</span>cells())<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(
-            <span class="ident">std::fs::read_to_string</span>(<span class="kw-2">&amp;</span><span class="ident">cells_csv</span>)<span class="question-mark">?</span>,
-            <span class="string">&quot;barcode,genome\nACGT,hg19\nTCAT,mm10\n&quot;</span>
-        );
+            std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_csv)<span class="question-mark">?</span>,
+            <span class="string">&quot;barcode,genome\nACGT,hg19\nTCAT,mm10\n&quot;
+        </span>);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_tsv_write</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">cells_tsv</span> <span class="op">=</span> <span class="ident">TsvFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;test&quot;</span>);
-        <span class="ident">cells_tsv</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="ident">cells</span>())<span class="question-mark">?</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_tsv_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>cells_tsv = TsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        cells_tsv.write(<span class="kw-2">&amp;</span>cells())<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(
-            <span class="ident">std::fs::read_to_string</span>(<span class="kw-2">&amp;</span><span class="ident">cells_tsv</span>)<span class="question-mark">?</span>,
-            <span class="string">&quot;barcode\tgenome\nACGT\thg19\nTCAT\tmm10\n&quot;</span>
-        );
+            std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_tsv)<span class="question-mark">?</span>,
+            <span class="string">&quot;barcode\tgenome\nACGT\thg19\nTCAT\tmm10\n&quot;
+        </span>);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_round_trip</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">CsvFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">cells</span>())<span class="question-mark">?</span>);
-        <span class="macro">assert!</span>(<span class="ident"><span class="kw">crate</span>::round_trip_check</span>::<span class="op">&lt;</span><span class="ident">TsvFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">cells</span>())<span class="question-mark">?</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_round_trip() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="macro">assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;CsvFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>cells())<span class="question-mark">?</span>);
+        <span class="macro">assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;TsvFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>cells())<span class="question-mark">?</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lazy_round_trip</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">assert!</span>(<span class="ident"><span class="kw">crate</span>::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">CsvFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">cells</span>(), <span class="bool-val">true</span>)<span class="question-mark">?</span>);
-        <span class="macro">assert!</span>(<span class="ident"><span class="kw">crate</span>::lazy_round_trip_check</span>::<span class="op">&lt;</span><span class="ident">TsvFile</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">cells</span>(), <span class="bool-val">true</span>)<span class="question-mark">?</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lazy_round_trip() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="macro">assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;CsvFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>cells(), <span class="bool-val">true</span>)<span class="question-mark">?</span>);
+        <span class="macro">assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;TsvFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>cells(), <span class="bool-val">true</span>)<span class="question-mark">?</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_clone</span>() {
-        <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">TsvFile::from</span>(<span class="string">&quot;test&quot;</span>);
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">t</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_clone() {
+        <span class="kw">let </span>t = TsvFile::from(<span class="string">&quot;test&quot;</span>);
+        <span class="kw">let _ </span>= t;
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lazy_header_only</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">cells_tsv</span> <span class="op">=</span> <span class="ident">TsvFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;test&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="ident">LazyTabularWriter</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="ident">Cell</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">cells_tsv</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="ident">writer</span>.<span class="ident">write_header</span>()<span class="question-mark">?</span>;
-        <span class="ident">writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">std::fs::read_to_string</span>(<span class="kw-2">&amp;</span><span class="ident">cells_tsv</span>)<span class="question-mark">?</span>, <span class="string">&quot;barcode\tgenome\n&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lazy_header_only() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>cells_tsv = TsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>writer: LazyTabularWriter&lt;<span class="kw">_</span>, <span class="kw">_</span>, Cell, <span class="kw">_</span>&gt; = cells_tsv.lazy_writer()<span class="question-mark">?</span>;
+        writer.write_header()<span class="question-mark">?</span>;
+        writer.finish()<span class="question-mark">?</span>;
+        <span class="macro">assert_eq!</span>(std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_tsv)<span class="question-mark">?</span>, <span class="string">&quot;barcode\tgenome\n&quot;</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lazy_no_header</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">tempfile::tempdir</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">cells_tsv</span> <span class="op">=</span> <span class="ident">TsvFile::new</span>(<span class="ident">dir</span>.<span class="ident">path</span>(), <span class="string">&quot;test&quot;</span>);
-        <span class="kw">let</span> <span class="ident">writer</span>: <span class="ident">LazyTabularWriter</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="ident">Cell</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">cells_tsv</span>.<span class="ident">lazy_writer</span>()<span class="question-mark">?</span>;
-        <span class="ident">writer</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">std::fs::read_to_string</span>(<span class="kw-2">&amp;</span><span class="ident">cells_tsv</span>)<span class="question-mark">?</span>, <span class="string">&quot;&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_lazy_no_header() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
+        <span class="kw">let </span>cells_tsv = TsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        <span class="kw">let </span>writer: LazyTabularWriter&lt;<span class="kw">_</span>, <span class="kw">_</span>, Cell, <span class="kw">_</span>&gt; = cells_tsv.lazy_writer()<span class="question-mark">?</span>;
+        writer.finish()<span class="question-mark">?</span>;
+        <span class="macro">assert_eq!</span>(std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_tsv)<span class="question-mark">?</span>, <span class="string">&quot;&quot;</span>);
         <span class="prelude-val">Ok</span>(())
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>
