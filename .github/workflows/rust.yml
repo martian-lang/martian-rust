@@ -30,7 +30,6 @@ jobs:
     - name: Martian Integration tests
       run: |
         cargo build --examples
-        export PATH=$GITHUB_WORKSPACE/deps/bin:$PATH
         cd martian-lab/tests/main_test
         ../martian_test.py main_test.json
         cd ../split_test

@@ -1,7 +1,17 @@
 {
-  "command": ["run_test.sh"],
+  "command": [
+    "run_test.sh"
+  ],
   "expected_return": 1,
   "output_dir": "pipeline_test",
-  "contains_only_files": ["*"],
-  "contents_match": ["*"]
+  "contains_only_files": [
+    "*"
+  ],
+  "contents_match": [],
+  "file_contains_string": [
+    {
+      "file": "SUM_SQUARES/SUM_SQUARES/fork0/chnk3/_stackvars",
+      "string": "martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:94"
+    }
+  ]
 }
