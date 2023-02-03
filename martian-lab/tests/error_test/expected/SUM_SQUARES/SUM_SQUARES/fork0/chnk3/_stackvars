@@ -1,46 +1,44 @@
-   0: anyhow::__private::format_err
-             at /home/brian.gianforcaro/.cargo/registry/src/github.com-1ecc6299db9ec823/anyhow-1.0.68/src/lib.rs:666:13
+   0: anyhow::private::format_err
+             at ./cargo/registry/src/github.com-1ecc6299db9ec823/anyhow-1.0.51/src/lib.rs:659:13
    1: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
-             at /home/brian.gianforcaro/pub-src/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:94:24
+             at ./martian-lab/examples/sum_sq/src/sum_squares.rs:94:24
    2: <T as martian::stage::RawMartianStage>::main
-             at /home/brian.gianforcaro/pub-src/martian-rust/martian/src/stage.rs:739:20
+             at ./martian/src/stage.rs:681:20
    3: martian::martian_entry_point
-             at /home/brian.gianforcaro/pub-src/martian-rust/martian/src/lib.rs:266:9
+             at ./martian/src/lib.rs:262:9
    4: martian::MartianAdapter<S>::run_get_error
-             at /home/brian.gianforcaro/pub-src/martian-rust/martian/src/lib.rs:168:9
+             at ./martian/src/lib.rs:164:9
    5: martian::MartianAdapter<S>::run
-             at /home/brian.gianforcaro/pub-src/martian-rust/martian/src/lib.rs:161:9
+             at ./martian/src/lib.rs:157:9
    6: sum_sq::main
-             at /home/brian.gianforcaro/pub-src/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48:23
+             at ./martian-lab/examples/sum_sq/src/main.rs:48:23
    7: core::ops::function::FnOnce::call_once
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/core/src/ops/function.rs:248:5
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:227:5
    8: std::sys_common::backtrace::__rust_begin_short_backtrace
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/sys_common/backtrace.rs:122:18
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/sys_common/backtrace.rs:125:18
    9: std::rt::lang_start::{{closure}}
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/rt.rs:166:18
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:63:18
   10: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/core/src/ops/function.rs:283:13
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:259:13
       std::panicking::try::do_call
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/panicking.rs:492:40
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:401:40
       std::panicking::try
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/panicking.rs:456:19
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:365:19
       std::panic::catch_unwind
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/panic.rs:137:14
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panic.rs:434:14
       std::rt::lang_start_internal::{{closure}}
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/rt.rs:148:48
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:45:48
       std::panicking::try::do_call
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/panicking.rs:492:40
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:401:40
       std::panicking::try
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/panicking.rs:456:19
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:365:19
       std::panic::catch_unwind
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/panic.rs:137:14
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panic.rs:434:14
       std::rt::lang_start_internal
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/rt.rs:148:20
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:45:20
   11: std::rt::lang_start
-             at /rustc/897e37553bba8b42751c67658967889d11ecd120/library/std/src/rt.rs:165:17
+             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:62:5
   12: main
-  13: __libc_start_call_main
-             at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
-  14: __libc_start_main_impl
-             at ./csu/../csu/libc-start.c:392:3
-  15: <unknown>
+  13: __libc_start_main
+  14: <unknown>
+             at /sysdeps/x86_64/elf/start.S:103
