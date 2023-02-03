@@ -489,6 +489,18 @@ def compare_content(output, expect, filename):
             return False
     return True
 
+def check_file_contains_string(filename, expected_string):
+    """Check that the file exists and it contains the expected_string"""
+    if not os.path.isfile(filename):
+        sys.stderr.write('Missing file %s\n' % filename)
+        return False
+    else:
+        with open(filename) as f:
+            contents = f.read()
+            if expected_string not in contents:
+                sys.stderr.write('"%s" was not found in %s file\n' % (expected_string, filename))
+                return False
+    return True
 
 def check_result(output_dir, expectation_dir, config):
     """Given an output directory and an expected output directory, and a config
@@ -514,6 +526,12 @@ def check_result(output_dir, expectation_dir, config):
             for fname in expand_glob(expectation_dir, pat):
                 result_ok = compare_content(
                     output_dir, expectation_dir, fname) and result_ok
+    if 'file_contains_string' in config:
+        for values in config['file_contains_string']:
+            fname = values['file']
+            result_ok = check_file_contains_string(
+                os.path.join(output_dir, fname), values["string"]) and result_ok
+
     return result_ok
 
 
