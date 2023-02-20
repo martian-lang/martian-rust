@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.5/src/sys/local_offset_at/unix.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>unix.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../time/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.19/src/sys/local_offset_at/unix.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>unix.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../time/index.html">
                         <img src="https://avatars0.githubusercontent.com/u/55999857" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
@@ -134,24 +134,12 @@
 <span id="133">133</span>
 <span id="134">134</span>
 <span id="135">135</span>
-<span id="136">136</span>
-<span id="137">137</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Get the system&#39;s UTC offset on Unix.
 
-</span><span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, unsound_local_offset))]
-</span><span class="kw">use </span>core::convert::TryInto;
-<span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, unsound_local_offset))]
 </span><span class="kw">use </span>core::mem::MaybeUninit;
 
+<span class="kw">use </span><span class="kw">crate</span>::util::local_offset::{<span class="self">self</span>, Soundness};
 <span class="kw">use crate</span>::{OffsetDateTime, UtcOffset};
-
-<span class="doccomment">/// Obtain the system&#39;s UTC offset.
-</span><span class="comment">// See #293 for details.
-</span><span class="attribute">#[cfg(not(any(target_os = <span class="string">&quot;linux&quot;</span>, unsound_local_offset)))]
-#[allow(clippy::missing_const_for_fn)]
-</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>local_offset_at(_datetime: OffsetDateTime) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
-    <span class="prelude-val">None
-</span>}
 
 <span class="doccomment">/// Convert the given Unix timestamp to a `libc::tm`. Returns `None` on any error.
 ///
@@ -162,7 +150,6 @@
 /// This method will remain `unsafe` until `std::env::set_var` is deprecated or has its behavior
 /// altered. This method is, on its own, safe. It is the presence of a safe, unsound way to set
 /// environment variables that makes it unsafe.
-</span><span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, unsound_local_offset))]
 </span><span class="kw">unsafe fn </span>timestamp_to_tm(timestamp: i64) -&gt; <span class="prelude-ty">Option</span>&lt;libc::tm&gt; {
     <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
         <span class="attribute">#[cfg_attr(target_os = <span class="string">&quot;netbsd&quot;</span>, link_name = <span class="string">&quot;__tzset50&quot;</span>)]
@@ -178,40 +165,64 @@
     <span class="comment">// Update timezone information from system. `localtime_r` does not do this for us.
     //
     // Safety: tzset is thread-safe.
-    </span>tzset();
+    </span><span class="kw">unsafe </span>{ tzset() };
 
     <span class="comment">// Safety: We are calling a system API, which mutates the `tm` variable. If a null
     // pointer is returned, an error occurred.
-    </span><span class="kw">let </span>tm_ptr = libc::localtime_r(<span class="kw-2">&amp;</span>timestamp, tm.as_mut_ptr());
+    </span><span class="kw">let </span>tm_ptr = <span class="kw">unsafe </span>{ libc::localtime_r(<span class="kw-2">&amp;</span>timestamp, tm.as_mut_ptr()) };
 
     <span class="kw">if </span>tm_ptr.is_null() {
         <span class="prelude-val">None
     </span>} <span class="kw">else </span>{
         <span class="comment">// Safety: The value was initialized, as we no longer have a null pointer.
-        </span><span class="prelude-val">Some</span>(tm.assume_init())
+        </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ tm.assume_init() })
     }
 }
 
 <span class="doccomment">/// Convert a `libc::tm` to a `UtcOffset`. Returns `None` on any error.
-</span><span class="comment">// `tm_gmtoff` extension
-</span><span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, unsound_local_offset))]
-#[cfg(not(any(target_os = <span class="string">&quot;solaris&quot;</span>, target_os = <span class="string">&quot;illumos&quot;</span>)))]
-</span><span class="kw">fn </span>tm_to_offset(tm: libc::tm) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
-    <span class="kw">let </span>seconds: i32 = tm.tm_gmtoff.try_into().ok()<span class="question-mark">?</span>;
-    UtcOffset::from_hms(
-        (seconds / <span class="number">3_600</span>) <span class="kw">as _</span>,
-        ((seconds / <span class="number">60</span>) % <span class="number">60</span>) <span class="kw">as _</span>,
-        (seconds % <span class="number">60</span>) <span class="kw">as _</span>,
-    )
-    .ok()
+</span><span class="comment">// This is available to any target known to have the `tm_gmtoff` extension.
+</span><span class="attribute">#[cfg(any(
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;linux&quot;</span>,
+    target_os = <span class="string">&quot;l4re&quot;</span>,
+    target_os = <span class="string">&quot;android&quot;</span>,
+    target_os = <span class="string">&quot;emscripten&quot;</span>,
+    target_os = <span class="string">&quot;macos&quot;</span>,
+    target_os = <span class="string">&quot;ios&quot;</span>,
+    target_os = <span class="string">&quot;watchos&quot;</span>,
+    target_os = <span class="string">&quot;freebsd&quot;</span>,
+    target_os = <span class="string">&quot;dragonfly&quot;</span>,
+    target_os = <span class="string">&quot;openbsd&quot;</span>,
+    target_os = <span class="string">&quot;netbsd&quot;</span>,
+    target_os = <span class="string">&quot;haiku&quot;</span>,
+))]
+</span><span class="kw">fn </span>tm_to_offset(_unix_timestamp: i64, tm: libc::tm) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
+    <span class="kw">let </span>seconds = tm.tm_gmtoff.try_into().ok()<span class="question-mark">?</span>;
+    UtcOffset::from_whole_seconds(seconds).ok()
 }
 
 <span class="doccomment">/// Convert a `libc::tm` to a `UtcOffset`. Returns `None` on any error.
-</span><span class="attribute">#[cfg(unsound_local_offset)]
-#[cfg(any(target_os = <span class="string">&quot;solaris&quot;</span>, target_os = <span class="string">&quot;illumos&quot;</span>))]
-</span><span class="kw">fn </span>tm_to_offset(tm: libc::tm) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
-    <span class="kw">use </span>core::convert::TryFrom;
-
+///
+/// This method can return an incorrect value, as it only approximates the `tm_gmtoff` field. The
+/// reason for this is that daylight saving time does not start on the same date every year, nor are
+/// the rules for daylight saving time the same for every year. This implementation assumes 1970 is
+/// equivalent to every other year, which is not always the case.
+</span><span class="attribute">#[cfg(not(any(
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;linux&quot;</span>,
+    target_os = <span class="string">&quot;l4re&quot;</span>,
+    target_os = <span class="string">&quot;android&quot;</span>,
+    target_os = <span class="string">&quot;emscripten&quot;</span>,
+    target_os = <span class="string">&quot;macos&quot;</span>,
+    target_os = <span class="string">&quot;ios&quot;</span>,
+    target_os = <span class="string">&quot;watchos&quot;</span>,
+    target_os = <span class="string">&quot;freebsd&quot;</span>,
+    target_os = <span class="string">&quot;dragonfly&quot;</span>,
+    target_os = <span class="string">&quot;openbsd&quot;</span>,
+    target_os = <span class="string">&quot;netbsd&quot;</span>,
+    target_os = <span class="string">&quot;haiku&quot;</span>,
+)))]
+</span><span class="kw">fn </span>tm_to_offset(unix_timestamp: i64, tm: libc::tm) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
     <span class="kw">use </span><span class="kw">crate</span>::Date;
 
     <span class="kw">let </span><span class="kw-2">mut </span>tm = tm;
@@ -232,46 +243,31 @@
             </span>.assume_utc()
             .unix_timestamp();
 
-    <span class="kw">let </span>diff_secs: i32 = (local_timestamp - datetime.unix_timestamp())
-        .try_into()
-        .ok()<span class="question-mark">?</span>;
+    <span class="kw">let </span>diff_secs = (local_timestamp - unix_timestamp).try_into().ok()<span class="question-mark">?</span>;
 
-    UtcOffset::from_hms(
-        (diff_secs / <span class="number">3_600</span>) <span class="kw">as _</span>,
-        ((diff_secs / <span class="number">60</span>) % <span class="number">60</span>) <span class="kw">as _</span>,
-        (diff_secs % <span class="number">60</span>) <span class="kw">as _</span>,
-    )
-    .ok()
-}
-
-<span class="doccomment">/// Determine if the current process is single-threaded. Returns `None` if this cannot be
-/// determined.
-</span><span class="attribute">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
-</span><span class="kw">fn </span>process_is_single_threaded() -&gt; <span class="prelude-ty">Option</span>&lt;bool&gt; {
-    std::fs::read_dir(<span class="string">&quot;/proc/self/task&quot;</span>)
-        <span class="comment">// If we can&#39;t read the directory, return `None`.
-        </span>.ok()
-        <span class="comment">// Check for the presence of multiple files in the directory. If there is exactly one then
-        // the process is single-threaded. This is indicated by the second element of the iterator
-        // (index 1) being `None`.
-        </span>.map(|<span class="kw-2">mut </span>tasks| tasks.nth(<span class="number">1</span>).is_none())
+    UtcOffset::from_whole_seconds(diff_secs).ok()
 }
 
 <span class="doccomment">/// Obtain the system&#39;s UTC offset.
-</span><span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, unsound_local_offset))]
 </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>local_offset_at(datetime: OffsetDateTime) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
     <span class="comment">// Ensure that the process is single-threaded unless the user has explicitly opted out of this
     // check. This is to prevent issues with the environment being mutated by a different thread in
     // the process while execution of this function is taking place, which can cause a segmentation
     // fault by dereferencing a dangling pointer.
-    </span><span class="kw">if </span>!<span class="macro">cfg!</span>(unsound_local_offset) &amp;&amp; !<span class="macro">matches!</span>(process_is_single_threaded(), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>)) {
-        <span class="kw">return </span><span class="prelude-val">None</span>;
-    }
+    // If the `num_threads` crate is incapable of determining the number of running threads, then
+    // we conservatively return `None` to avoid a soundness bug.
 
-    <span class="comment">// Safety: We have just confirmed that the process is single-threaded or the user has explicitly
-    // opted out of soundness.
-    </span><span class="kw">let </span>tm = <span class="kw">unsafe </span>{ timestamp_to_tm(datetime.unix_timestamp())<span class="question-mark">? </span>};
-    tm_to_offset(tm)
+    </span><span class="kw">if </span>local_offset::get_soundness() == Soundness::Unsound
+        || num_threads::is_single_threaded() == <span class="prelude-val">Some</span>(<span class="bool-val">true</span>)
+    {
+        <span class="kw">let </span>unix_timestamp = datetime.unix_timestamp();
+        <span class="comment">// Safety: We have just confirmed that the process is single-threaded or the user has
+        // explicitly opted out of soundness.
+        </span><span class="kw">let </span>tm = <span class="kw">unsafe </span>{ timestamp_to_tm(unix_timestamp) }<span class="question-mark">?</span>;
+        tm_to_offset(unix_timestamp, tm)
+    } <span class="kw">else </span>{
+        <span class="prelude-val">None
+    </span>}
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="time" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>

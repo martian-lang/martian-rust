@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.72/src/map.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../serde_json/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.93/src/map.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../serde_json/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -925,6 +925,19 @@
 <span id="925">925</span>
 <span id="926">926</span>
 <span id="927">927</span>
+<span id="928">928</span>
+<span id="929">929</span>
+<span id="930">930</span>
+<span id="931">931</span>
+<span id="932">932</span>
+<span id="933">933</span>
+<span id="934">934</span>
+<span id="935">935</span>
+<span id="936">936</span>
+<span id="937">937</span>
+<span id="938">938</span>
+<span id="939">939</span>
+<span id="940">940</span>
 </pre><pre class="rust"><code><span class="doccomment">//! A map of String to serde_json::Value.
 //!
 //! By default the map is backed by a [`BTreeMap`]. Enable the `preserve_order`
@@ -933,12 +946,19 @@
 //! [`BTreeMap`]: https://doc.rust-lang.org/std/collections/struct.BTreeMap.html
 //! [`IndexMap`]: https://docs.rs/indexmap/*/indexmap/map/struct.IndexMap.html
 
-</span><span class="kw">use </span><span class="kw">crate</span>::lib::borrow::Borrow;
-<span class="kw">use </span><span class="kw">crate</span>::lib::iter::FromIterator;
-<span class="kw">use </span><span class="kw">crate</span>::lib::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::value::Value;
+</span><span class="kw">use </span><span class="kw">crate</span>::value::Value;
+<span class="kw">use </span>alloc::string::String;
+<span class="kw">use </span>core::borrow::Borrow;
+<span class="kw">use </span>core::fmt::{<span class="self">self</span>, Debug};
+<span class="kw">use </span>core::hash::Hash;
+<span class="kw">use </span>core::iter::{FromIterator, FusedIterator};
+<span class="attribute">#[cfg(feature = <span class="string">&quot;preserve_order&quot;</span>)]
+</span><span class="kw">use </span>core::mem;
+<span class="kw">use </span>core::ops;
 <span class="kw">use </span>serde::de;
 
+<span class="attribute">#[cfg(not(feature = <span class="string">&quot;preserve_order&quot;</span>))]
+</span><span class="kw">use </span>alloc::collections::{btree_map, BTreeMap};
 <span class="attribute">#[cfg(feature = <span class="string">&quot;preserve_order&quot;</span>)]
 </span><span class="kw">use </span>indexmap::{<span class="self">self</span>, IndexMap};
 
@@ -1092,6 +1112,8 @@
             no_btreemap_get_key_value,
         ))]
         </span>{
+            <span class="kw">use </span>core::ops::{Bound, RangeBounds};
+
             <span class="kw">struct </span>Key&lt;<span class="lifetime">&#39;a</span>, Q: <span class="question-mark">?</span>Sized&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Q);
 
             <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Q: <span class="question-mark">?</span>Sized&gt; RangeBounds&lt;Q&gt; <span class="kw">for </span>Key&lt;<span class="lifetime">&#39;a</span>, Q&gt; {
@@ -1111,13 +1133,12 @@
         }
     }
 
-    <span class="doccomment">/// Moves all elements from other into Self, leaving other empty.
+    <span class="doccomment">/// Moves all elements from other into self, leaving other empty.
     </span><span class="attribute">#[inline]
     </span><span class="kw">pub fn </span>append(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;mut </span><span class="self">Self</span>) {
         <span class="attribute">#[cfg(feature = <span class="string">&quot;preserve_order&quot;</span>)]
-        </span><span class="kw">for </span>(k, v) <span class="kw">in </span>mem::replace(<span class="kw-2">&amp;mut </span>other.map, MapImpl::default()) {
-            <span class="self">self</span>.map.insert(k, v);
-        }
+        </span><span class="self">self</span>.map
+            .extend(mem::replace(<span class="kw-2">&amp;mut </span>other.map, MapImpl::default()));
         <span class="attribute">#[cfg(not(feature = <span class="string">&quot;preserve_order&quot;</span>))]
         </span><span class="self">self</span>.map.append(<span class="kw-2">&amp;mut </span>other.map);
     }
@@ -1129,7 +1150,7 @@
         </span>S: Into&lt;String&gt;,
     {
         <span class="attribute">#[cfg(not(feature = <span class="string">&quot;preserve_order&quot;</span>))]
-        </span><span class="kw">use </span><span class="kw">crate</span>::lib::btree_map::Entry <span class="kw">as </span>EntryImpl;
+        </span><span class="kw">use </span>alloc::collections::btree_map::Entry <span class="kw">as </span>EntryImpl;
         <span class="attribute">#[cfg(feature = <span class="string">&quot;preserve_order&quot;</span>)]
         </span><span class="kw">use </span>indexmap::map::Entry <span class="kw">as </span>EntryImpl;
 
@@ -1222,6 +1243,11 @@
             map: <span class="self">self</span>.map.clone(),
         }
     }
+
+    <span class="attribute">#[inline]
+    </span><span class="kw">fn </span>clone_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="self">self</span>.map.clone_from(<span class="kw-2">&amp;</span>source.map);
+    }
 }
 
 <span class="kw">impl </span>PartialEq <span class="kw">for </span>Map&lt;String, Value&gt; {
@@ -1241,10 +1267,10 @@
 /// #
 /// # let val = &amp;Value::String(&quot;&quot;.to_owned());
 /// # let _ =
-/// match *val {
-///     Value::String(ref s) =&gt; Some(s.as_str()),
-///     Value::Array(ref arr) =&gt; arr[0].as_str(),
-///     Value::Object(ref map) =&gt; map[&quot;type&quot;].as_str(),
+/// match val {
+///     Value::String(s) =&gt; Some(s.as_str()),
+///     Value::Array(arr) =&gt; arr[0].as_str(),
+///     Value::Object(map) =&gt; map[&quot;type&quot;].as_str(),
 ///     _ =&gt; None,
 /// }
 /// # ;
@@ -1448,9 +1474,9 @@
     /// assert_eq!(map.entry(&quot;serde&quot;).key(), &amp;&quot;serde&quot;);
     /// ```
     </span><span class="kw">pub fn </span>key(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>String {
-        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Entry::Vacant(<span class="kw-2">ref </span>e) =&gt; e.key(),
-            Entry::Occupied(<span class="kw-2">ref </span>e) =&gt; e.key(),
+        <span class="kw">match </span><span class="self">self </span>{
+            Entry::Vacant(e) =&gt; e.key(),
+            Entry::Occupied(e) =&gt; e.key(),
         }
     }
 

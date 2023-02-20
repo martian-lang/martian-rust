@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.5/src/instant.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>instant.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.19/src/instant.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>instant.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
                         <img src="https://avatars0.githubusercontent.com/u/55999857" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
@@ -263,11 +263,10 @@
 <span id="262">262</span>
 </pre><pre class="rust"><code><span class="doccomment">//! The [`Instant`] struct and its associated `impl`s.
 
-</span><span class="kw">use </span>core::cmp::{Ord, Ordering, PartialEq, PartialOrd};
-<span class="kw">use </span>core::convert::{TryFrom, TryInto};
+</span><span class="kw">use </span>core::borrow::Borrow;
+<span class="kw">use </span>core::cmp::{Ord, Ordering, PartialEq, PartialOrd};
 <span class="kw">use </span>core::ops::{Add, Sub};
 <span class="kw">use </span>core::time::Duration <span class="kw">as </span>StdDuration;
-<span class="kw">use </span>std::borrow::Borrow;
 <span class="kw">use </span>std::time::Instant <span class="kw">as </span>StdInstant;
 
 <span class="kw">use </span><span class="kw">crate</span>::Duration;
@@ -289,8 +288,7 @@
 ///
 /// This implementation allows for operations with signed [`Duration`]s, but is otherwise identical
 /// to [`std::time::Instant`].
-</span><span class="attribute">#[cfg_attr(__time_03_docs, doc(cfg(feature = <span class="string">&quot;std&quot;</span>)))]
-#[repr(transparent)]
+</span><span class="attribute">#[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 </span><span class="kw">pub struct </span>Instant(<span class="kw">pub </span>StdInstant);
 
@@ -336,10 +334,10 @@
         <span class="kw">if </span>duration.is_zero() {
             <span class="prelude-val">Some</span>(<span class="self">self</span>)
         } <span class="kw">else if </span>duration.is_positive() {
-            <span class="self">self</span>.<span class="number">0</span>.checked_add(duration.abs_std()).map(<span class="self">Self</span>)
+            <span class="self">self</span>.<span class="number">0</span>.checked_add(duration.unsigned_abs()).map(<span class="self">Self</span>)
         } <span class="kw">else </span>{
             <span class="macro">debug_assert!</span>(duration.is_negative());
-            <span class="self">self</span>.<span class="number">0</span>.checked_sub(duration.abs_std()).map(<span class="self">Self</span>)
+            <span class="self">self</span>.<span class="number">0</span>.checked_sub(duration.unsigned_abs()).map(<span class="self">Self</span>)
         }
     }
 
@@ -357,10 +355,10 @@
         <span class="kw">if </span>duration.is_zero() {
             <span class="prelude-val">Some</span>(<span class="self">self</span>)
         } <span class="kw">else if </span>duration.is_positive() {
-            <span class="self">self</span>.<span class="number">0</span>.checked_sub(duration.abs_std()).map(<span class="self">Self</span>)
+            <span class="self">self</span>.<span class="number">0</span>.checked_sub(duration.unsigned_abs()).map(<span class="self">Self</span>)
         } <span class="kw">else </span>{
             <span class="macro">debug_assert!</span>(duration.is_negative());
-            <span class="self">self</span>.<span class="number">0</span>.checked_add(duration.abs_std()).map(<span class="self">Self</span>)
+            <span class="self">self</span>.<span class="number">0</span>.checked_add(duration.unsigned_abs()).map(<span class="self">Self</span>)
         }
     }
     <span class="comment">// endregion checked arithmetic
@@ -426,10 +424,11 @@
 
     <span class="kw">fn </span>add(<span class="self">self</span>, duration: Duration) -&gt; <span class="self">Self</span>::Output {
         <span class="kw">if </span>duration.is_positive() {
-            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>+ duration.abs_std())
+            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>+ duration.unsigned_abs())
         } <span class="kw">else if </span>duration.is_negative() {
-            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>- duration.abs_std())
+            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>- duration.unsigned_abs())
         } <span class="kw">else </span>{
+            <span class="macro">debug_assert!</span>(duration.is_zero());
             <span class="self">self
         </span>}
     }
@@ -459,10 +458,11 @@
 
     <span class="kw">fn </span>sub(<span class="self">self</span>, duration: Duration) -&gt; <span class="self">Self</span>::Output {
         <span class="kw">if </span>duration.is_positive() {
-            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>- duration.abs_std())
+            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>- duration.unsigned_abs())
         } <span class="kw">else if </span>duration.is_negative() {
-            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>+ duration.abs_std())
+            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>+ duration.unsigned_abs())
         } <span class="kw">else </span>{
+            <span class="macro">debug_assert!</span>(duration.is_zero());
             <span class="self">self
         </span>}
     }

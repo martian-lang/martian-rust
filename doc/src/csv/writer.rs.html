@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.1.6/src/writer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../csv/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.2.0/src/writer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../csv/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -1410,24 +1410,22 @@
 <span id="1410">1410</span>
 <span id="1411">1411</span>
 <span id="1412">1412</span>
-<span id="1413">1413</span>
-<span id="1414">1414</span>
-<span id="1415">1415</span>
-</pre><pre class="rust"><code><span class="kw">use </span>std::fs::File;
-<span class="kw">use </span>std::io;
-<span class="kw">use </span>std::path::Path;
-<span class="kw">use </span>std::result;
+</pre><pre class="rust"><code><span class="kw">use </span>std::{fs::File, io, path::Path, result};
 
-<span class="kw">use </span>csv_core::{
-    <span class="self">self</span>, WriteResult, Writer <span class="kw">as </span>CoreWriter,
-    WriterBuilder <span class="kw">as </span>CoreWriterBuilder,
+<span class="kw">use </span>{
+    csv_core::{
+        <span class="self">self</span>, WriteResult, Writer <span class="kw">as </span>CoreWriter,
+        WriterBuilder <span class="kw">as </span>CoreWriterBuilder,
+    },
+    serde::Serialize,
 };
-<span class="kw">use </span>serde::Serialize;
 
-<span class="kw">use </span><span class="kw">crate</span>::byte_record::ByteRecord;
-<span class="kw">use </span><span class="kw">crate</span>::error::{Error, ErrorKind, IntoInnerError, <span class="prelude-ty">Result</span>};
-<span class="kw">use </span><span class="kw">crate</span>::serializer::{serialize, serialize_header};
-<span class="kw">use crate</span>::{QuoteStyle, Terminator};
+<span class="kw">use crate</span>::{
+    byte_record::ByteRecord,
+    error::{Error, ErrorKind, IntoInnerError, <span class="prelude-ty">Result</span>},
+    serializer::{serialize, serialize_header},
+    {QuoteStyle, Terminator},
+};
 
 <span class="doccomment">/// Builds a CSV writer with various configuration knobs.
 ///
@@ -1581,9 +1579,8 @@
     /// use std::error::Error;
     ///
     /// use csv::WriterBuilder;
-    /// use serde::Serialize;
     ///
-    /// #[derive(Serialize)]
+    /// #[derive(serde::Serialize)]
     /// struct Row&lt;&#39;a&gt; {
     ///     city: &amp;&#39;a str,
     ///     country: &amp;&#39;a str,
@@ -1893,7 +1890,7 @@
     </span>}
 }
 
-<span class="doccomment">/// A already configured CSV writer.
+<span class="doccomment">/// An already configured CSV writer.
 ///
 /// A CSV writer takes as input Rust values and writes those values in a valid
 /// CSV format as output.
@@ -1933,7 +1930,7 @@
     </span>header: HeaderState,
     <span class="doccomment">/// Whether inconsistent record lengths are allowed.
     </span>flexible: bool,
-    <span class="doccomment">/// The number of fields writtein in the first record. This is compared
+    <span class="doccomment">/// The number of fields written in the first record. This is compared
     /// with `fields_written` on all subsequent records to check for
     /// inconsistent record lengths.
     </span>first_field_count: <span class="prelude-ty">Option</span>&lt;u64&gt;,
@@ -1951,7 +1948,7 @@
 </span><span class="kw">enum </span>HeaderState {
     <span class="doccomment">/// Indicates that we should attempt to write a header.
     </span>Write,
-    <span class="doccomment">/// Indicates that writing a header was attempt, and a header was written.
+    <span class="doccomment">/// Indicates that writing a header was attempted, and a header was written.
     </span>DidWrite,
     <span class="doccomment">/// Indicates that writing a header was attempted, but no headers were
     /// written or the attempt failed.
@@ -2070,9 +2067,8 @@
     /// use std::error::Error;
     ///
     /// use csv::Writer;
-    /// use serde::Serialize;
     ///
-    /// #[derive(Serialize)]
+    /// #[derive(serde::Serialize)]
     /// struct Row&lt;&#39;a&gt; {
     ///     city: &amp;&#39;a str,
     ///     country: &amp;&#39;a str,
@@ -2153,15 +2149,14 @@
     /// use std::error::Error;
     ///
     /// use csv::Writer;
-    /// use serde::Serialize;
     ///
-    /// #[derive(Serialize)]
+    /// #[derive(serde::Serialize)]
     /// struct Row {
     ///     label: String,
     ///     value: Value,
     /// }
     ///
-    /// #[derive(Serialize)]
+    /// #[derive(serde::Serialize)]
     /// enum Value {
     ///     Integer(i64),
     ///     Float(f64),
@@ -2219,9 +2214,8 @@
     /// use std::error::Error;
     ///
     /// use csv::WriterBuilder;
-    /// use serde::Serialize;
     ///
-    /// #[derive(Serialize)]
+    /// #[derive(serde::Serialize)]
     /// struct Row {
     ///     label: String,
     ///     values: Vec&lt;f64&gt;,
@@ -2599,13 +2593,13 @@
 
 <span class="attribute">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span>serde::{serde_if_integer128, Serialize};
-
     <span class="kw">use </span>std::io::{<span class="self">self</span>, Write};
 
-    <span class="kw">use </span><span class="kw">crate</span>::byte_record::ByteRecord;
-    <span class="kw">use </span><span class="kw">crate</span>::error::ErrorKind;
-    <span class="kw">use </span><span class="kw">crate</span>::string_record::StringRecord;
+    <span class="kw">use </span>serde::{serde_if_integer128, Serialize};
+
+    <span class="kw">use crate</span>::{
+        byte_record::ByteRecord, error::ErrorKind, string_record::StringRecord,
+    };
 
     <span class="kw">use super</span>::{Writer, WriterBuilder};
 

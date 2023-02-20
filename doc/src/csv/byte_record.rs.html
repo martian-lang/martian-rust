@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.1.6/src/byte_record.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>byte_record.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../csv/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.2.0/src/byte_record.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>byte_record.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../csv/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -1160,18 +1160,49 @@
 <span id="1160">1160</span>
 <span id="1161">1161</span>
 <span id="1162">1162</span>
-</pre><pre class="rust"><code><span class="kw">use </span>std::cmp;
-<span class="kw">use </span>std::fmt;
-<span class="kw">use </span>std::iter::FromIterator;
-<span class="kw">use </span>std::ops::{<span class="self">self</span>, Range};
-<span class="kw">use </span>std::result;
+<span id="1163">1163</span>
+<span id="1164">1164</span>
+<span id="1165">1165</span>
+<span id="1166">1166</span>
+<span id="1167">1167</span>
+<span id="1168">1168</span>
+<span id="1169">1169</span>
+<span id="1170">1170</span>
+<span id="1171">1171</span>
+<span id="1172">1172</span>
+<span id="1173">1173</span>
+<span id="1174">1174</span>
+<span id="1175">1175</span>
+<span id="1176">1176</span>
+<span id="1177">1177</span>
+<span id="1178">1178</span>
+<span id="1179">1179</span>
+<span id="1180">1180</span>
+<span id="1181">1181</span>
+<span id="1182">1182</span>
+<span id="1183">1183</span>
+<span id="1184">1184</span>
+<span id="1185">1185</span>
+<span id="1186">1186</span>
+<span id="1187">1187</span>
+<span id="1188">1188</span>
+<span id="1189">1189</span>
+<span id="1190">1190</span>
+<span id="1191">1191</span>
+</pre><pre class="rust"><code><span class="kw">use </span>std::{
+    cmp, fmt,
+    iter::FromIterator,
+    ops::{<span class="self">self</span>, Range},
+    result,
+};
 
-<span class="kw">use </span>bstr::{BString, ByteSlice};
 <span class="kw">use </span>serde::de::Deserialize;
 
-<span class="kw">use </span><span class="kw">crate</span>::deserializer::deserialize_byte_record;
-<span class="kw">use </span><span class="kw">crate</span>::error::{new_utf8_error, <span class="prelude-ty">Result</span>, Utf8Error};
-<span class="kw">use </span><span class="kw">crate</span>::string_record::StringRecord;
+<span class="kw">use crate</span>::{
+    deserializer::deserialize_byte_record,
+    error::{new_utf8_error, <span class="prelude-ty">Result</span>, Utf8Error},
+    string_record::StringRecord,
+};
 
 <span class="doccomment">/// A single CSV record stored as raw bytes.
 ///
@@ -1230,11 +1261,12 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>ByteRecord {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="kw">let </span><span class="kw-2">mut </span>fields = <span class="macro">vec!</span>[];
-        <span class="kw">for </span>field <span class="kw">in </span><span class="self">self </span>{
-            fields.push(BString::from(field.to_vec()));
-        }
-        <span class="macro">write!</span>(f, <span class="string">&quot;ByteRecord({:?})&quot;</span>, fields)
+        <span class="macro">write!</span>(f, <span class="string">&quot;ByteRecord(&quot;</span>)<span class="question-mark">?</span>;
+        f.debug_list()
+            .entries(<span class="self">self</span>.iter().map(<span class="kw">crate</span>::debug::Bytes))
+            .finish()<span class="question-mark">?</span>;
+        <span class="macro">write!</span>(f, <span class="string">&quot;)&quot;</span>)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
     }
 }
 
@@ -1532,8 +1564,8 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>trimmed =
             ByteRecord::with_capacity(<span class="self">self</span>.as_slice().len(), <span class="self">self</span>.len());
         trimmed.set_position(<span class="self">self</span>.position().cloned());
-        <span class="kw">for </span>field <span class="kw">in </span><span class="kw-2">&amp;*</span><span class="self">self </span>{
-            trimmed.push_field(field.trim());
+        <span class="kw">for </span>field <span class="kw">in </span><span class="self">self</span>.iter() {
+            trimmed.push_field(trim_ascii(field));
         }
         <span class="kw-2">*</span><span class="self">self </span>= trimmed;
     }
@@ -1709,7 +1741,7 @@
         <span class="comment">// Otherwise, we must check each field individually to ensure that
         // it&#39;s valid UTF-8.
         </span><span class="kw">for </span>(i, field) <span class="kw">in </span><span class="self">self</span>.iter().enumerate() {
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = field.to_str() {
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = std::str::from_utf8(field) {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(new_utf8_error(i, err.valid_up_to()));
             }
         }
@@ -1843,7 +1875,7 @@
             <span class="prelude-val">None </span>=&gt; <span class="number">0</span>,
             <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>start) =&gt; start,
         };
-        <span class="prelude-val">Some</span>(ops::Range { start: start, end: end })
+        <span class="prelude-val">Some</span>(ops::Range { start, end })
     }
 
     <span class="doccomment">/// Returns a slice of ending positions of all fields.
@@ -2012,6 +2044,32 @@
             <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.r.<span class="number">0</span>.fields[start..end])
         }
     }
+}
+
+<span class="kw">fn </span>trim_ascii(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="kw-2">&amp;</span>[u8] {
+    trim_ascii_start(trim_ascii_end(bytes))
+}
+
+<span class="kw">fn </span>trim_ascii_start(<span class="kw-2">mut </span>bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="kw-2">&amp;</span>[u8] {
+    <span class="kw">while let </span>[first, rest @ ..] = bytes {
+        <span class="kw">if </span>first.is_ascii_whitespace() {
+            bytes = rest;
+        } <span class="kw">else </span>{
+            <span class="kw">break</span>;
+        }
+    }
+    bytes
+}
+
+<span class="kw">fn </span>trim_ascii_end(<span class="kw-2">mut </span>bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="kw-2">&amp;</span>[u8] {
+    <span class="kw">while let </span>[rest @ .., last] = bytes {
+        <span class="kw">if </span>last.is_ascii_whitespace() {
+            bytes = rest;
+        } <span class="kw">else </span>{
+            <span class="kw">break</span>;
+        }
+    }
+    bytes
 }
 
 <span class="attribute">#[cfg(test)]

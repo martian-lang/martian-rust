@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.1.6/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../csv/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/csv-1.2.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../csv/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -351,12 +351,6 @@
 <span id="351">351</span>
 <span id="352">352</span>
 <span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
 </pre><pre class="rust"><code><span class="doccomment">/*!
 The `csv` crate provides a fast and flexible CSV reader and writer, with
 support for Serde.
@@ -424,9 +418,7 @@ stdout.
 There are more examples in the [cookbook](cookbook/index.html).
 
 ```no_run
-use std::error::Error;
-use std::io;
-use std::process;
+use std::{error::Error, io, process};
 
 fn example() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {
     // Build the CSV reader and iterate over each record.
@@ -463,13 +455,9 @@ By default, the member names of the struct are matched with the values in the
 header record of your CSV data.
 
 ```no_run
-use std::error::Error;
-use std::io;
-use std::process;
+use std::{error::Error, io, process};
 
-use serde::Deserialize;
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 struct Record {
     city: String,
     region: String,
@@ -512,21 +500,24 @@ $ cargo run --example cookbook-read-serde &lt; examples/data/smallpop.csv
 
 <span class="kw">use </span>serde::{Deserialize, Deserializer};
 
-<span class="kw">pub use </span><span class="kw">crate</span>::byte_record::{ByteRecord, ByteRecordIter, Position};
-<span class="kw">pub use </span><span class="kw">crate</span>::deserializer::{DeserializeError, DeserializeErrorKind};
-<span class="kw">pub use </span><span class="kw">crate</span>::error::{
-    Error, ErrorKind, FromUtf8Error, IntoInnerError, <span class="prelude-ty">Result</span>, Utf8Error,
+<span class="kw">pub use crate</span>::{
+    byte_record::{ByteRecord, ByteRecordIter, Position},
+    deserializer::{DeserializeError, DeserializeErrorKind},
+    error::{
+        Error, ErrorKind, FromUtf8Error, IntoInnerError, <span class="prelude-ty">Result</span>, Utf8Error,
+    },
+    reader::{
+        ByteRecordsIntoIter, ByteRecordsIter, DeserializeRecordsIntoIter,
+        DeserializeRecordsIter, Reader, ReaderBuilder, StringRecordsIntoIter,
+        StringRecordsIter,
+    },
+    string_record::{StringRecord, StringRecordIter},
+    writer::{Writer, WriterBuilder},
 };
-<span class="kw">pub use </span><span class="kw">crate</span>::reader::{
-    ByteRecordsIntoIter, ByteRecordsIter, DeserializeRecordsIntoIter,
-    DeserializeRecordsIter, Reader, ReaderBuilder, StringRecordsIntoIter,
-    StringRecordsIter,
-};
-<span class="kw">pub use </span><span class="kw">crate</span>::string_record::{StringRecord, StringRecordIter};
-<span class="kw">pub use </span><span class="kw">crate</span>::writer::{Writer, WriterBuilder};
 
 <span class="kw">mod </span>byte_record;
 <span class="kw">pub mod </span>cookbook;
+<span class="kw">mod </span>debug;
 <span class="kw">mod </span>deserializer;
 <span class="kw">mod </span>error;
 <span class="kw">mod </span>reader;
@@ -680,10 +671,7 @@ $ cargo run --example cookbook-read-serde &lt; examples/data/smallpop.csv
 /// ```
 /// use std::error::Error;
 ///
-/// use csv::Reader;
-/// use serde::Deserialize;
-///
-/// #[derive(Debug, Deserialize, Eq, PartialEq)]
+/// #[derive(Debug, serde::Deserialize, Eq, PartialEq)]
 /// struct Row {
 ///     #[serde(deserialize_with = &quot;csv::invalid_option&quot;)]
 ///     a: Option&lt;i32&gt;,
@@ -699,7 +687,7 @@ $ cargo run --example cookbook-read-serde &lt; examples/data/smallpop.csv
 /// a,b,c
 /// 5,\&quot;\&quot;,xyz
 /// &quot;;
-///     let mut rdr = Reader::from_reader(data.as_bytes());
+///     let mut rdr = csv::Reader::from_reader(data.as_bytes());
 ///     if let Some(result) = rdr.deserialize().next() {
 ///         let record: Row = result?;
 ///         assert_eq!(record, Row { a: Some(5), b: None, c: None });

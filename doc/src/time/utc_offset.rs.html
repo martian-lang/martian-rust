@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.5/src/utc_offset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utc_offset.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.19/src/utc_offset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utc_offset.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
                         <img src="https://avatars0.githubusercontent.com/u/55999857" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
@@ -320,6 +320,31 @@
 <span id="319">319</span>
 <span id="320">320</span>
 <span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
 </pre><pre class="rust"><code><span class="doccomment">//! The [`UtcOffset`] struct and its associated `impl`s.
 
 </span><span class="kw">use </span>core::fmt;
@@ -342,7 +367,7 @@
 /// This struct can store values up to ±23:59:59. If you need support outside this range, please
 /// file an issue with your use case.
 </span><span class="comment">// All three components _must_ have the same sign.
-</span><span class="attribute">#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+</span><span class="attribute">#[derive(Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>UtcOffset {
     <span class="attribute">#[allow(clippy::missing_docs_in_private_items)]
     </span>hours: i8,
@@ -356,7 +381,8 @@
     <span class="doccomment">/// A `UtcOffset` that is UTC.
     ///
     /// ```rust
-    /// # use time::{UtcOffset, macros::offset};
+    /// # use time::UtcOffset;
+    /// # use time_macros::offset;
     /// assert_eq!(UtcOffset::UTC, offset!(UTC));
     /// ```
     </span><span class="kw">pub const </span>UTC: <span class="self">Self </span>= <span class="self">Self</span>::__from_hms_unchecked(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
@@ -367,6 +393,22 @@
     /// sign.
     </span><span class="attribute">#[doc(hidden)]
     </span><span class="kw">pub const fn </span>__from_hms_unchecked(hours: i8, minutes: i8, seconds: i8) -&gt; <span class="self">Self </span>{
+        <span class="kw">if </span>hours &lt; <span class="number">0 </span>{
+            <span class="macro">debug_assert!</span>(minutes &lt;= <span class="number">0</span>);
+            <span class="macro">debug_assert!</span>(seconds &lt;= <span class="number">0</span>);
+        } <span class="kw">else if </span>hours &gt; <span class="number">0 </span>{
+            <span class="macro">debug_assert!</span>(minutes &gt;= <span class="number">0</span>);
+            <span class="macro">debug_assert!</span>(seconds &gt;= <span class="number">0</span>);
+        }
+        <span class="kw">if </span>minutes &lt; <span class="number">0 </span>{
+            <span class="macro">debug_assert!</span>(seconds &lt;= <span class="number">0</span>);
+        } <span class="kw">else if </span>minutes &gt; <span class="number">0 </span>{
+            <span class="macro">debug_assert!</span>(seconds &gt;= <span class="number">0</span>);
+        }
+        <span class="macro">debug_assert!</span>(hours.unsigned_abs() &lt; <span class="number">24</span>);
+        <span class="macro">debug_assert!</span>(minutes.unsigned_abs() &lt; <span class="number">60</span>);
+        <span class="macro">debug_assert!</span>(seconds.unsigned_abs() &lt; <span class="number">60</span>);
+
         <span class="self">Self </span>{
             hours,
             minutes,
@@ -432,7 +474,7 @@
     /// will always match. A positive value indicates an offset to the east; a negative to the west.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert_eq!(offset!(+1:02:03).as_hms(), (1, 2, 3));
     /// assert_eq!(offset!(-1:02:03).as_hms(), (-1, -2, -3));
     /// ```
@@ -444,7 +486,7 @@
     /// offset to the east; a negative to the west.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert_eq!(offset!(+1:02:03).whole_hours(), 1);
     /// assert_eq!(offset!(-1:02:03).whole_hours(), -1);
     /// ```
@@ -456,7 +498,7 @@
     /// offset to the east; a negative to the west.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert_eq!(offset!(+1:02:03).whole_minutes(), 62);
     /// assert_eq!(offset!(-1:02:03).whole_minutes(), -62);
     /// ```
@@ -468,7 +510,7 @@
     /// indicates an offset to the east; a negative to the west.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert_eq!(offset!(+1:02:03).minutes_past_hour(), 2);
     /// assert_eq!(offset!(-1:02:03).minutes_past_hour(), -2);
     /// ```
@@ -480,7 +522,7 @@
     /// offset to the east; a negative to the west.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert_eq!(offset!(+1:02:03).whole_seconds(), 3723);
     /// assert_eq!(offset!(-1:02:03).whole_seconds(), -3723);
     /// ```
@@ -494,7 +536,7 @@
     /// indicates an offset to the east; a negative to the west.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert_eq!(offset!(+1:02:03).seconds_past_minute(), 3);
     /// assert_eq!(offset!(-1:02:03).seconds_past_minute(), -3);
     /// ```
@@ -508,7 +550,7 @@
     ///
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert!(!offset!(+1:02:03).is_utc());
     /// assert!(!offset!(-1:02:03).is_utc());
     /// assert!(offset!(UTC).is_utc());
@@ -520,7 +562,7 @@
     <span class="doccomment">/// Check if the offset is positive, or east of UTC.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert!(offset!(+1:02:03).is_positive());
     /// assert!(!offset!(-1:02:03).is_positive());
     /// assert!(!offset!(UTC).is_positive());
@@ -532,7 +574,7 @@
     <span class="doccomment">/// Check if the offset is negative, or west of UTC.
     ///
     /// ```rust
-    /// # use time::macros::offset;
+    /// # use time_macros::offset;
     /// assert!(!offset!(+1:02:03).is_negative());
     /// assert!(offset!(-1:02:03).is_negative());
     /// assert!(!offset!(UTC).is_negative());
@@ -591,7 +633,8 @@
     <span class="doccomment">/// Format the `UtcOffset` using the provided [format description](crate::format_description).
     ///
     /// ```rust
-    /// # use time::{format_description, macros::offset};
+    /// # use time::format_description;
+    /// # use time_macros::offset;
     /// let format = format_description::parse(&quot;[offset_hour sign:mandatory]:[offset_minute]&quot;)?;
     /// assert_eq!(offset!(+1).format(&amp;format)?, &quot;+01:00&quot;);
     /// # Ok::&lt;_, time::Error&gt;(())
@@ -607,8 +650,9 @@
     /// description](crate::format_description).
     ///
     /// ```rust
-    /// # use time::{format_description, macros::offset, UtcOffset};
-    /// let format = format_description::parse(&quot;[offset_hour]:[offset_minute]&quot;)?;
+    /// # use time::UtcOffset;
+    /// # use time_macros::{offset, format_description};
+    /// let format = format_description!(&quot;[offset_hour]:[offset_minute]&quot;);
     /// assert_eq!(UtcOffset::parse(&quot;-03:42&quot;, &amp;format)?, offset!(-3:42));
     /// # Ok::&lt;_, time::Error&gt;(())
     /// ```
@@ -630,6 +674,12 @@
             <span class="self">self</span>.minutes.abs(),
             <span class="self">self</span>.seconds.abs()
         )
+    }
+}
+
+<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>UtcOffset {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+        fmt::Display::fmt(<span class="self">self</span>, f)
     }
 }
 <span class="comment">// endregion formatting &amp; parsing
