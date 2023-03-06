@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.19/src/date_time.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>date_time.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.20/src/date_time.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>date_time.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
                         <img src="https://avatars0.githubusercontent.com/u/55999857" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
@@ -1113,6 +1113,50 @@
 <span id="1112">1112</span>
 <span id="1113">1113</span>
 <span id="1114">1114</span>
+<span id="1115">1115</span>
+<span id="1116">1116</span>
+<span id="1117">1117</span>
+<span id="1118">1118</span>
+<span id="1119">1119</span>
+<span id="1120">1120</span>
+<span id="1121">1121</span>
+<span id="1122">1122</span>
+<span id="1123">1123</span>
+<span id="1124">1124</span>
+<span id="1125">1125</span>
+<span id="1126">1126</span>
+<span id="1127">1127</span>
+<span id="1128">1128</span>
+<span id="1129">1129</span>
+<span id="1130">1130</span>
+<span id="1131">1131</span>
+<span id="1132">1132</span>
+<span id="1133">1133</span>
+<span id="1134">1134</span>
+<span id="1135">1135</span>
+<span id="1136">1136</span>
+<span id="1137">1137</span>
+<span id="1138">1138</span>
+<span id="1139">1139</span>
+<span id="1140">1140</span>
+<span id="1141">1141</span>
+<span id="1142">1142</span>
+<span id="1143">1143</span>
+<span id="1144">1144</span>
+<span id="1145">1145</span>
+<span id="1146">1146</span>
+<span id="1147">1147</span>
+<span id="1148">1148</span>
+<span id="1149">1149</span>
+<span id="1150">1150</span>
+<span id="1151">1151</span>
+<span id="1152">1152</span>
+<span id="1153">1153</span>
+<span id="1154">1154</span>
+<span id="1155">1155</span>
+<span id="1156">1156</span>
+<span id="1157">1157</span>
+<span id="1158">1158</span>
 </pre><pre class="rust"><code><span class="doccomment">//! The [`DateTime`] struct and its associated `impl`s.
 
 </span><span class="comment">// TODO(jhpratt) Document everything before making public.
@@ -1123,6 +1167,7 @@
 </span><span class="kw">use </span>core::cmp::Ordering;
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::hash::{Hash, Hasher};
+<span class="kw">use </span>core::mem::size_of;
 <span class="kw">use </span>core::ops::{Add, AddAssign, Sub, SubAssign};
 <span class="kw">use </span>core::time::Duration <span class="kw">as </span>StdDuration;
 <span class="attribute">#[cfg(feature = <span class="string">&quot;formatting&quot;</span>)]
@@ -1144,118 +1189,128 @@
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>sealed::MaybeOffset;
-<span class="kw">use </span>sealed::{FixedOffset, HasOffset, UnsafeBool, WithoutOffset};
+<span class="kw">use </span>sealed::<span class="kw-2">*</span>;
 <span class="kw">mod </span>sealed {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[allow(unreachable_pub)] </span><span class="comment">// intentional
+    <span class="doccomment">/// A type that is guaranteed to be either `()` or [`UtcOffset`].
+    ///
+    /// **Do not** add any additional implementations of this trait.
+    </span><span class="attribute">#[allow(unreachable_pub)] </span><span class="comment">// intentional
     </span><span class="kw">pub trait </span>MaybeOffsetType {}
     <span class="kw">impl </span>MaybeOffsetType <span class="kw">for </span>() {}
     <span class="kw">impl </span>MaybeOffsetType <span class="kw">for </span>UtcOffset {}
 
-    <span class="attribute">#[allow(missing_debug_implementations)] </span><span class="comment">// never stored as a field
-    </span><span class="attribute">#[allow(missing_copy_implementations)] </span><span class="comment">// only used in const contexts
-    </span><span class="kw">pub struct </span>UnsafeBool(bool);
-    <span class="kw">impl </span>UnsafeBool {
-        <span class="comment">// Skip code coverage because this is only used in const contexts. As such LLVM thinks it is
-        // never called.
-        </span><span class="attribute">#[cfg_attr(coverage_nightly, no_coverage)]
-        </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">const unsafe fn </span>new(value: bool) -&gt; <span class="self">Self </span>{
-            <span class="self">Self</span>(value)
-        }
-
-        <span class="comment">// TODO When const trait impls are stabilized, change this to `impl const Deref for
-        // UnsafeBool`.
-        </span><span class="attribute">#[allow(clippy::wrong_self_convention)] </span><span class="comment">// only used in const contexts
-        </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>as_bool(<span class="self">self</span>) -&gt; bool {
-            <span class="self">self</span>.<span class="number">0
-        </span>}
-    }
-
-    <span class="kw">pub trait </span>MaybeOffset {
-        <span class="comment">// Statically restrict the type to be `()` and `UtcOffset`.
+    <span class="kw">pub trait </span>MaybeOffset: Sized {
+        <span class="doccomment">/// The offset type as it is stored in memory.
         </span><span class="attribute">#[cfg(feature = <span class="string">&quot;quickcheck&quot;</span>)]
-        </span><span class="kw">type </span>OffsetType: Copy + MaybeOffsetType + quickcheck::Arbitrary;
+        </span><span class="kw">type </span>MemoryOffsetType: Copy + MaybeOffsetType + quickcheck::Arbitrary;
         <span class="attribute">#[cfg(not(feature = <span class="string">&quot;quickcheck&quot;</span>))]
-        </span><span class="kw">type </span>OffsetType: Copy + MaybeOffsetType;
+        </span><span class="kw">type </span>MemoryOffsetType: Copy + MaybeOffsetType;
+
+        <span class="doccomment">/// The offset type as it should be thought about.
+        ///
+        /// For example, a `DateTime&lt;Utc&gt;` has a logical offset type of [`UtcOffset`], but does not
+        /// actually store an offset in memory.
+        </span><span class="kw">type </span>LogicalOffsetType: Copy + MaybeOffsetType;
 
         <span class="doccomment">/// Required to be `Self`. Used for bound equality.
-        </span><span class="kw">type </span>OffsetKind;
+        </span><span class="kw">type </span>Self_;
 
-        <span class="comment">// True if and only if `Offset` is `UtcOffset`.
-        // Note that an incorrect value here will cause undefined behavior inside
-        // `maybe_offset_as_offset`.
-        </span><span class="kw">const </span>HAS_OFFSET: UnsafeBool;
+        <span class="doccomment">/// True if and only if `Self::LogicalOffsetType` is `UtcOffset`.
+        </span><span class="kw">const </span>HAS_LOGICAL_OFFSET: bool =
+            size_of::&lt;<span class="self">Self</span>::LogicalOffsetType&gt;() == size_of::&lt;UtcOffset&gt;();
+        <span class="doccomment">/// True if and only if `Self::MemoryOffsetType` is `UtcOffset`.
+        </span><span class="kw">const </span>HAS_MEMORY_OFFSET: bool =
+            size_of::&lt;<span class="self">Self</span>::MemoryOffsetType&gt;() == size_of::&lt;UtcOffset&gt;();
 
-        <span class="kw">fn </span>as_offset(offset: <span class="self">Self</span>::OffsetType) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt;;
+        <span class="doccomment">/// `Some` if and only if the logical UTC offset is statically known.
+        </span><span class="comment">// TODO(jhpratt) When const trait impls are stable, this can be removed in favor of
+        // `.as_offset_opt()`.
+        </span><span class="kw">const </span>STATIC_OFFSET: <span class="prelude-ty">Option</span>&lt;UtcOffset&gt;;
+
         <span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
-        </span><span class="kw">fn </span>try_from_parsed(parsed: Parsed) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::OffsetType, error::TryFromParsed&gt;;
-        <span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
-        </span><span class="kw">fn </span>from_offset(offset: UtcOffset) -&gt; <span class="self">Self</span>::OffsetType;
+        </span><span class="kw">fn </span>try_from_parsed(parsed: Parsed) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::MemoryOffsetType, error::TryFromParsed&gt;;
     }
 
-    <span class="kw">pub trait </span>HasOffset: MaybeOffset&lt;OffsetType = UtcOffset&gt; {}
-    <span class="kw">impl</span>&lt;T: MaybeOffset&lt;OffsetType = UtcOffset&gt;&gt; HasOffset <span class="kw">for </span>T {}
+    <span class="comment">// Traits to indicate whether a `MaybeOffset` has a logical offset type of `UtcOffset` or not.
 
-    <span class="kw">pub trait </span>WithoutOffset: MaybeOffset&lt;OffsetType = ()&gt; {}
-    <span class="kw">impl</span>&lt;T: MaybeOffset&lt;OffsetType = ()&gt;&gt; WithoutOffset <span class="kw">for </span>T {}
+    </span><span class="kw">pub trait </span>HasLogicalOffset: MaybeOffset&lt;LogicalOffsetType = UtcOffset&gt; {}
+    <span class="kw">impl</span>&lt;T: MaybeOffset&lt;LogicalOffsetType = UtcOffset&gt;&gt; HasLogicalOffset <span class="kw">for </span>T {}
 
-    <span class="kw">pub trait </span>FixedOffset: MaybeOffset&lt;OffsetKind = <span class="kw">super</span>::offset_kind::Fixed&gt; {}
-    <span class="kw">impl</span>&lt;T: MaybeOffset&lt;OffsetKind = <span class="kw">super</span>::offset_kind::Fixed&gt;&gt; FixedOffset <span class="kw">for </span>T {}
+    <span class="kw">pub trait </span>NoLogicalOffset: MaybeOffset&lt;LogicalOffsetType = ()&gt; {}
+    <span class="kw">impl</span>&lt;T: MaybeOffset&lt;LogicalOffsetType = ()&gt;&gt; NoLogicalOffset <span class="kw">for </span>T {}
+
+    <span class="comment">// Traits to indicate whether a `MaybeOffset` has a memory offset type of `UtcOffset` or not.
+
+    </span><span class="kw">pub trait </span>HasMemoryOffset: MaybeOffset&lt;MemoryOffsetType = UtcOffset&gt; {}
+    <span class="kw">impl</span>&lt;T: MaybeOffset&lt;MemoryOffsetType = UtcOffset&gt;&gt; HasMemoryOffset <span class="kw">for </span>T {}
+
+    <span class="kw">pub trait </span>NoMemoryOffset: MaybeOffset&lt;MemoryOffsetType = ()&gt; {}
+    <span class="kw">impl</span>&lt;T: MaybeOffset&lt;MemoryOffsetType = ()&gt;&gt; NoMemoryOffset <span class="kw">for </span>T {}
+
+    <span class="comment">// Traits to indicate backing type being implemented.
+
+    </span><span class="kw">pub trait </span>IsOffsetKindNone:
+        MaybeOffset&lt;Self_ = offset_kind::None, MemoryOffsetType = (), LogicalOffsetType = ()&gt;
+    {
+    }
+    <span class="kw">impl </span>IsOffsetKindNone <span class="kw">for </span>offset_kind::None {}
+
+    <span class="kw">pub trait </span>IsOffsetKindFixed:
+        MaybeOffset&lt;
+            Self_ = offset_kind::Fixed,
+            MemoryOffsetType = UtcOffset,
+            LogicalOffsetType = UtcOffset,
+        &gt;
+    {
+    }
+    <span class="kw">impl </span>IsOffsetKindFixed <span class="kw">for </span>offset_kind::Fixed {}
 }
 
 <span class="kw">impl </span>MaybeOffset <span class="kw">for </span>offset_kind::None {
-    <span class="kw">type </span>OffsetType = ();
-    <span class="kw">type </span>OffsetKind = <span class="self">Self</span>;
+    <span class="kw">type </span>MemoryOffsetType = ();
+    <span class="kw">type </span>LogicalOffsetType = ();
 
-    <span class="attribute">#[allow(clippy::undocumented_unsafe_blocks)] </span><span class="comment">// false positive
-    // SAFETY: `()` is not `UtcOffset`.
-    </span><span class="kw">const </span>HAS_OFFSET: UnsafeBool = <span class="kw">unsafe </span>{ UnsafeBool::new(<span class="bool-val">false</span>) };
+    <span class="kw">type </span>Self_ = <span class="self">Self</span>;
 
-    <span class="kw">fn </span>as_offset(<span class="kw">_</span>: ()) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
-        <span class="prelude-val">None
-    </span>}
+    <span class="kw">const </span>STATIC_OFFSET: <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; = <span class="prelude-val">None</span>;
 
     <span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
     </span><span class="kw">fn </span>try_from_parsed(<span class="kw">_</span>: Parsed) -&gt; <span class="prelude-ty">Result</span>&lt;(), error::TryFromParsed&gt; {
         <span class="prelude-val">Ok</span>(())
     }
-
-    <span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
-    </span><span class="kw">fn </span>from_offset(<span class="kw">_</span>: UtcOffset) -&gt; <span class="self">Self</span>::OffsetType {}
 }
 
 <span class="kw">impl </span>MaybeOffset <span class="kw">for </span>offset_kind::Fixed {
-    <span class="kw">type </span>OffsetType = UtcOffset;
-    <span class="kw">type </span>OffsetKind = <span class="self">Self</span>;
+    <span class="kw">type </span>MemoryOffsetType = UtcOffset;
+    <span class="kw">type </span>LogicalOffsetType = UtcOffset;
 
-    <span class="attribute">#[allow(clippy::undocumented_unsafe_blocks)] </span><span class="comment">// false positive
-    // Safety: `UtcOffset` is the offset type.
-    </span><span class="kw">const </span>HAS_OFFSET: UnsafeBool = <span class="kw">unsafe </span>{ UnsafeBool::new(<span class="bool-val">true</span>) };
+    <span class="kw">type </span>Self_ = <span class="self">Self</span>;
 
-    <span class="kw">fn </span>as_offset(offset: UtcOffset) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
-        <span class="prelude-val">Some</span>(offset)
-    }
+    <span class="kw">const </span>STATIC_OFFSET: <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; = <span class="prelude-val">None</span>;
 
     <span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
     </span><span class="kw">fn </span>try_from_parsed(parsed: Parsed) -&gt; <span class="prelude-ty">Result</span>&lt;UtcOffset, error::TryFromParsed&gt; {
         parsed.try_into()
     }
-
-    <span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
-    </span><span class="kw">fn </span>from_offset(offset: UtcOffset) -&gt; <span class="self">Self</span>::OffsetType {
-        offset
-    }
 }
 
-<span class="kw">const fn </span>maybe_offset_as_offset&lt;O: MaybeOffset&gt;(offset: O::OffsetType) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
-    <span class="kw">if </span>O::HAS_OFFSET.as_bool() {
+<span class="comment">// region: const trait method hacks
+// TODO(jhpratt) When const trait impls are stable, these methods can be removed in favor of methods
+// in `MaybeOffset`, which would then be made `const`.
+</span><span class="kw">const fn </span>maybe_offset_as_offset_opt&lt;O: MaybeOffset&gt;(
+    offset: O::MemoryOffsetType,
+) -&gt; <span class="prelude-ty">Option</span>&lt;UtcOffset&gt; {
+    <span class="kw">if </span>O::STATIC_OFFSET.is_some() {
+        O::STATIC_OFFSET
+    } <span class="kw">else if </span>O::HAS_MEMORY_OFFSET {
         <span class="kw">union </span>Convert&lt;O: MaybeOffset&gt; {
-            input: O::OffsetType,
+            input: O::MemoryOffsetType,
             output: UtcOffset,
         }
 
-        <span class="comment">// SAFETY: `O::HAS_OFFSET` indicates that `O::Offset` is `UtcOffset`. This code effectively
+        <span class="comment">// Safety: `O::HAS_OFFSET` indicates that `O::Offset` is `UtcOffset`. This code effectively
         // performs a transmute from `O::Offset` to `UtcOffset`, which we know is the same type.
         </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ Convert::&lt;O&gt; { input: offset }.output })
     } <span class="kw">else </span>{
@@ -1263,24 +1318,48 @@
     </span>}
 }
 
-<span class="doccomment">/// The Julian day of the Unix epoch.
+<span class="kw">const fn </span>maybe_offset_as_offset&lt;O: MaybeOffset + HasLogicalOffset&gt;(
+    offset: O::MemoryOffsetType,
+) -&gt; UtcOffset {
+    <span class="kw">match </span>maybe_offset_as_offset_opt::&lt;O&gt;(offset) {
+        <span class="prelude-val">Some</span>(offset) =&gt; offset,
+        <span class="prelude-val">None </span>=&gt; <span class="macro">bug!</span>(<span class="string">&quot;`MaybeOffset::as_offset` called on a type without an offset in memory&quot;</span>),
+    }
+}
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>maybe_offset_from_offset&lt;O: MaybeOffset&gt;(
+    offset: UtcOffset,
+) -&gt; O::MemoryOffsetType {
+    <span class="kw">union </span>Convert&lt;O: MaybeOffset&gt; {
+        input: UtcOffset,
+        output: O::MemoryOffsetType,
+    }
+
+    <span class="comment">// Safety: It is statically known that there are only two possibilities due to the trait bound
+    // of `O::MemoryOffsetType`, which ultimately relies on `MaybeOffsetType`. The two possibilities
+    // are:
+    //   1. UtcOffset -&gt; UtcOffset
+    //   2. UtcOffset -&gt; ()
+    // (1) is valid because it is an identity conversion, which is always valid. (2) is valid
+    // because `()` is a 1-ZST, so converting to it is always valid.
+    </span><span class="kw">unsafe </span>{ Convert::&lt;O&gt; { input: offset }.output }
+}
+<span class="comment">// endregion const trait methods hacks
+
+</span><span class="doccomment">/// The Julian day of the Unix epoch.
 </span><span class="kw">const </span>UNIX_EPOCH_JULIAN_DAY: i32 = Date::__from_ordinal_date_unchecked(<span class="number">1970</span>, <span class="number">1</span>).to_julian_day();
 
 <span class="kw">pub struct </span>DateTime&lt;O: MaybeOffset&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) date: Date,
     <span class="kw">pub</span>(<span class="kw">crate</span>) time: Time,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) offset: O::OffsetType,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) offset: O::MemoryOffsetType,
 }
 
 <span class="comment">// Manual impl to remove extraneous bounds.
 </span><span class="kw">impl</span>&lt;O: MaybeOffset&gt; Clone <span class="kw">for </span>DateTime&lt;O&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            date: <span class="self">self</span>.date,
-            time: <span class="self">self</span>.time,
-            offset: <span class="self">self</span>.offset,
-        }
-    }
+        <span class="kw-2">*</span><span class="self">self
+    </span>}
 }
 
 <span class="comment">// Manual impl to remove extraneous bounds.
@@ -1312,7 +1391,7 @@
 <span class="kw">impl</span>&lt;O: MaybeOffset&gt; DateTime&lt;O&gt; {
     <span class="kw">pub const fn </span>new(date: Date, time: Time) -&gt; <span class="self">Self
     </span><span class="kw">where
-        </span>O: WithoutOffset,
+        </span>O: IsOffsetKindNone,
     {
         <span class="self">Self </span>{
             date,
@@ -1323,7 +1402,7 @@
 
     <span class="kw">pub const fn </span>from_unix_timestamp(timestamp: i64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, error::ComponentRange&gt;
     <span class="kw">where
-        </span>O: HasOffset,
+        </span>O: HasLogicalOffset,
     {
         <span class="attribute">#[allow(clippy::missing_docs_in_private_items)]
         </span><span class="kw">const </span>MIN_TIMESTAMP: i64 = Date::MIN.midnight().assume_utc().unix_timestamp();
@@ -1351,13 +1430,13 @@
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             date,
             time,
-            offset: UtcOffset::UTC,
+            offset: maybe_offset_from_offset::&lt;O&gt;(UtcOffset::UTC),
         })
     }
 
     <span class="kw">pub const fn </span>from_unix_timestamp_nanos(timestamp: i128) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, error::ComponentRange&gt;
     <span class="kw">where
-        </span>O: HasOffset,
+        </span>O: HasLogicalOffset,
     {
         <span class="kw">let </span>datetime = <span class="macro">const_try!</span>(<span class="self">Self</span>::from_unix_timestamp(
             <span class="macro">div_floor!</span>(timestamp, <span class="number">1_000_000_000</span>) <span class="kw">as </span>i64
@@ -1371,7 +1450,7 @@
                 datetime.second(),
                 timestamp.rem_euclid(<span class="number">1_000_000_000</span>) <span class="kw">as </span>u32,
             ),
-            offset: UtcOffset::UTC,
+            offset: maybe_offset_from_offset::&lt;O&gt;(UtcOffset::UTC),
         })
     }
     <span class="comment">// endregion constructors
@@ -1382,7 +1461,7 @@
     </span><span class="attribute">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
     </span><span class="kw">pub fn </span>now_utc() -&gt; DateTime&lt;offset_kind::Fixed&gt;
     <span class="kw">where
-        </span>O: FixedOffset,
+        </span>O: IsOffsetKindFixed,
     {
         <span class="attribute">#[cfg(all(
             target_family = <span class="string">&quot;wasm&quot;</span>,
@@ -1406,7 +1485,7 @@
     </span><span class="attribute">#[cfg(feature = <span class="string">&quot;local-offset&quot;</span>)]
     </span><span class="kw">pub fn </span>now_local() -&gt; <span class="prelude-ty">Result</span>&lt;DateTime&lt;offset_kind::Fixed&gt;, error::IndeterminateOffset&gt;
     <span class="kw">where
-        </span>O: FixedOffset,
+        </span>O: IsOffsetKindFixed,
     {
         <span class="kw">let </span>t = DateTime::&lt;offset_kind::Fixed&gt;::now_utc();
         <span class="prelude-val">Ok</span>(t.to_offset(UtcOffset::local_offset_at(<span class="kw">crate</span>::OffsetDateTime(t))<span class="question-mark">?</span>))
@@ -1425,9 +1504,9 @@
 
     <span class="kw">pub const fn </span>offset(<span class="self">self</span>) -&gt; UtcOffset
     <span class="kw">where
-        </span>O: HasOffset,
+        </span>O: HasLogicalOffset,
     {
-        <span class="self">self</span>.offset
+        maybe_offset_as_offset::&lt;O&gt;(<span class="self">self</span>.offset)
     }
     <span class="comment">// endregion component getters
 
@@ -1526,9 +1605,9 @@
     // region: unix timestamp getters
     </span><span class="kw">pub const fn </span>unix_timestamp(<span class="self">self</span>) -&gt; i64
     <span class="kw">where
-        </span>O: HasOffset,
+        </span>O: HasLogicalOffset,
     {
-        <span class="kw">let </span>offset = <span class="self">self</span>.offset.whole_seconds() <span class="kw">as </span>i64;
+        <span class="kw">let </span>offset = maybe_offset_as_offset::&lt;O&gt;(<span class="self">self</span>.offset).whole_seconds() <span class="kw">as </span>i64;
 
         <span class="kw">let </span>days = (<span class="self">self</span>.to_julian_day() <span class="kw">as </span>i64 - UNIX_EPOCH_JULIAN_DAY <span class="kw">as </span>i64) * <span class="number">86_400</span>;
         <span class="kw">let </span>hours = <span class="self">self</span>.hour() <span class="kw">as </span>i64 * <span class="number">3_600</span>;
@@ -1539,7 +1618,7 @@
 
     <span class="kw">pub const fn </span>unix_timestamp_nanos(<span class="self">self</span>) -&gt; i128
     <span class="kw">where
-        </span>O: HasOffset,
+        </span>O: HasLogicalOffset,
     {
         <span class="self">self</span>.unix_timestamp() <span class="kw">as </span>i128 * <span class="number">1_000_000_000 </span>+ <span class="self">self</span>.nanosecond() <span class="kw">as </span>i128
     }
@@ -1549,7 +1628,7 @@
     // region: attach offset
     </span><span class="kw">pub const fn </span>assume_offset(<span class="self">self</span>, offset: UtcOffset) -&gt; DateTime&lt;offset_kind::Fixed&gt;
     <span class="kw">where
-        </span>O: WithoutOffset,
+        </span>O: NoLogicalOffset,
     {
         DateTime {
             date: <span class="self">self</span>.date,
@@ -1560,7 +1639,7 @@
 
     <span class="kw">pub const fn </span>assume_utc(<span class="self">self</span>) -&gt; DateTime&lt;offset_kind::Fixed&gt;
     <span class="kw">where
-        </span>O: WithoutOffset,
+        </span>O: NoLogicalOffset,
     {
         <span class="self">self</span>.assume_offset(UtcOffset::UTC)
     }
@@ -1569,11 +1648,13 @@
     // region: to offset
     </span><span class="kw">pub const fn </span>to_offset(<span class="self">self</span>, offset: UtcOffset) -&gt; DateTime&lt;offset_kind::Fixed&gt;
     <span class="kw">where
-        </span>O: HasOffset,
+        </span>O: HasLogicalOffset,
     {
-        <span class="kw">if </span><span class="self">self</span>.offset.whole_hours() == offset.whole_hours()
-            &amp;&amp; <span class="self">self</span>.offset.minutes_past_hour() == offset.minutes_past_hour()
-            &amp;&amp; <span class="self">self</span>.offset.seconds_past_minute() == offset.seconds_past_minute()
+        <span class="kw">let </span>self_offset = maybe_offset_as_offset::&lt;O&gt;(<span class="self">self</span>.offset);
+
+        <span class="kw">if </span>self_offset.whole_hours() == offset.whole_hours()
+            &amp;&amp; self_offset.minutes_past_hour() == offset.minutes_past_hour()
+            &amp;&amp; self_offset.seconds_past_minute() == offset.seconds_past_minute()
         {
             <span class="kw">return </span>DateTime {
                 date: <span class="self">self</span>.date,
@@ -1598,7 +1679,7 @@
     <span class="doccomment">/// Equivalent to `.to_offset(UtcOffset::UTC)`, but returning the year, ordinal, and time. This
     /// avoids constructing an invalid [`Date`] if the new value is out of range.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>to_offset_raw(<span class="self">self</span>, offset: UtcOffset) -&gt; (i32, u16, Time) {
-        <span class="macro">guard!</span>(<span class="kw">let </span><span class="prelude-val">Some</span>(from) = maybe_offset_as_offset::&lt;O&gt;(<span class="self">self</span>.offset) <span class="kw">else </span>{
+        <span class="macro">guard!</span>(<span class="kw">let </span><span class="prelude-val">Some</span>(from) = maybe_offset_as_offset_opt::&lt;O&gt;(<span class="self">self</span>.offset) <span class="kw">else </span>{
             <span class="comment">// No adjustment is needed because there is no offset.
             </span><span class="kw">return </span>(<span class="self">self</span>.year(), <span class="self">self</span>.ordinal(), <span class="self">self</span>.time);
         });
@@ -1734,7 +1815,7 @@
 
     <span class="kw">pub const fn </span>replace_date_time(<span class="self">self</span>, date_time: DateTime&lt;offset_kind::None&gt;) -&gt; <span class="self">Self
     </span><span class="kw">where
-        </span>O: HasOffset,
+        </span>O: HasLogicalOffset,
     {
         <span class="self">Self </span>{
             date: date_time.date,
@@ -1825,7 +1906,7 @@
     // offset.
     </span><span class="kw">pub const fn </span>replace_offset(<span class="self">self</span>, offset: UtcOffset) -&gt; DateTime&lt;offset_kind::Fixed&gt;
     <span class="kw">where
-        </span>O: FixedOffset,
+        </span>O: IsOffsetKindFixed,
     {
         DateTime {
             date: <span class="self">self</span>.date,
@@ -1847,13 +1928,17 @@
             output,
             <span class="prelude-val">Some</span>(<span class="self">self</span>.date),
             <span class="prelude-val">Some</span>(<span class="self">self</span>.time),
-            O::as_offset(<span class="self">self</span>.offset),
+            maybe_offset_as_offset_opt::&lt;O&gt;(<span class="self">self</span>.offset),
         )
     }
 
     <span class="attribute">#[cfg(feature = <span class="string">&quot;formatting&quot;</span>)]
     </span><span class="kw">pub fn </span>format(<span class="self">self</span>, format: <span class="kw-2">&amp;</span>(<span class="kw">impl </span>Formattable + <span class="question-mark">?</span>Sized)) -&gt; <span class="prelude-ty">Result</span>&lt;String, error::Format&gt; {
-        format.format(<span class="prelude-val">Some</span>(<span class="self">self</span>.date), <span class="prelude-val">Some</span>(<span class="self">self</span>.time), O::as_offset(<span class="self">self</span>.offset))
+        format.format(
+            <span class="prelude-val">Some</span>(<span class="self">self</span>.date),
+            <span class="prelude-val">Some</span>(<span class="self">self</span>.time),
+            maybe_offset_as_offset_opt::&lt;O&gt;(<span class="self">self</span>.offset),
+        )
     }
 
     <span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
@@ -1870,7 +1955,7 @@
     </span><span class="attribute">#[cfg(feature = <span class="string">&quot;parsing&quot;</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>is_valid_leap_second_stand_in(<span class="self">self</span>) -&gt; bool {
         <span class="comment">// Leap seconds aren&#39;t allowed if there is no offset.
-        </span><span class="kw">if </span>!O::HAS_OFFSET.as_bool() {
+        </span><span class="kw">if </span>!O::HAS_LOGICAL_OFFSET {
             <span class="kw">return </span><span class="bool-val">false</span>;
         }
 
@@ -1901,7 +1986,7 @@
     </span><span class="attribute">#[deprecated(since = <span class="string">&quot;0.3.18&quot;</span>, note = <span class="string">&quot;use `as_hms` instead&quot;</span>)]
     </span><span class="kw">pub const fn </span>to_hms(<span class="self">self</span>) -&gt; (u8, u8, u8)
     <span class="kw">where
-        </span>O: FixedOffset,
+        </span>O: IsOffsetKindFixed,
     {
         <span class="self">self</span>.time.as_hms()
     }
@@ -1910,7 +1995,7 @@
     </span><span class="attribute">#[deprecated(since = <span class="string">&quot;0.3.18&quot;</span>, note = <span class="string">&quot;use `as_hms_milli` instead&quot;</span>)]
     </span><span class="kw">pub const fn </span>to_hms_milli(<span class="self">self</span>) -&gt; (u8, u8, u8, u16)
     <span class="kw">where
-        </span>O: FixedOffset,
+        </span>O: IsOffsetKindFixed,
     {
         <span class="self">self</span>.time.as_hms_milli()
     }
@@ -1919,7 +2004,7 @@
     </span><span class="attribute">#[deprecated(since = <span class="string">&quot;0.3.18&quot;</span>, note = <span class="string">&quot;use `as_hms_micro` instead&quot;</span>)]
     </span><span class="kw">pub const fn </span>to_hms_micro(<span class="self">self</span>) -&gt; (u8, u8, u8, u32)
     <span class="kw">where
-        </span>O: FixedOffset,
+        </span>O: IsOffsetKindFixed,
     {
         <span class="self">self</span>.time.as_hms_micro()
     }
@@ -1928,7 +2013,7 @@
     </span><span class="attribute">#[deprecated(since = <span class="string">&quot;0.3.18&quot;</span>, note = <span class="string">&quot;use `as_hms_nano` instead&quot;</span>)]
     </span><span class="kw">pub const fn </span>to_hms_nano(<span class="self">self</span>) -&gt; (u8, u8, u8, u32)
     <span class="kw">where
-        </span>O: FixedOffset,
+        </span>O: IsOffsetKindFixed,
     {
         <span class="self">self</span>.time.as_hms_nano()
     }
@@ -1944,8 +2029,8 @@
 <span class="kw">impl</span>&lt;O: MaybeOffset&gt; fmt::Display <span class="kw">for </span>DateTime&lt;O&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         <span class="macro">write!</span>(f, <span class="string">&quot;{} {}&quot;</span>, <span class="self">self</span>.date, <span class="self">self</span>.time)<span class="question-mark">?</span>;
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(offset) = O::as_offset(<span class="self">self</span>.offset) {
-            <span class="macro">write!</span>(f, <span class="string">&quot; {}&quot;</span>, offset)<span class="question-mark">?</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(offset) = maybe_offset_as_offset_opt::&lt;O&gt;(<span class="self">self</span>.offset) {
+            <span class="macro">write!</span>(f, <span class="string">&quot; {offset}&quot;</span>)<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -1954,7 +2039,7 @@
 <span class="comment">// region: trait impls
 </span><span class="kw">impl</span>&lt;O: MaybeOffset&gt; PartialEq <span class="kw">for </span>DateTime&lt;O&gt; {
     <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
-        <span class="kw">if </span>O::HAS_OFFSET.as_bool() {
+        <span class="kw">if </span>O::HAS_LOGICAL_OFFSET {
             <span class="self">self</span>.to_offset_raw(UtcOffset::UTC) == rhs.to_offset_raw(UtcOffset::UTC)
         } <span class="kw">else </span>{
             (<span class="self">self</span>.date, <span class="self">self</span>.time) == (rhs.date, rhs.time)
@@ -1972,7 +2057,7 @@
 
 <span class="kw">impl</span>&lt;O: MaybeOffset&gt; Ord <span class="kw">for </span>DateTime&lt;O&gt; {
     <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; Ordering {
-        <span class="kw">if </span>O::HAS_OFFSET.as_bool() {
+        <span class="kw">if </span>O::HAS_LOGICAL_OFFSET {
             <span class="self">self</span>.to_offset_raw(UtcOffset::UTC)
                 .cmp(<span class="kw-2">&amp;</span>rhs.to_offset_raw(UtcOffset::UTC))
         } <span class="kw">else </span>{
@@ -1983,7 +2068,7 @@
 
 <span class="kw">impl</span>&lt;O: MaybeOffset&gt; Hash <span class="kw">for </span>DateTime&lt;O&gt; {
     <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, hasher: <span class="kw-2">&amp;mut </span>H) {
-        <span class="kw">if </span>O::HAS_OFFSET.as_bool() {
+        <span class="kw">if </span>O::HAS_LOGICAL_OFFSET {
             <span class="self">self</span>.to_offset_raw(UtcOffset::UTC).hash(hasher);
         } <span class="kw">else </span>{
             (<span class="self">self</span>.date, <span class="self">self</span>.time).hash(hasher);
@@ -2079,7 +2164,10 @@
     <span class="kw">fn </span>sub(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self</span>::Output {
         <span class="kw">let </span>base = (<span class="self">self</span>.date - rhs.date) + (<span class="self">self</span>.time - rhs.time);
 
-        <span class="kw">match </span>(O::as_offset(<span class="self">self</span>.offset), O::as_offset(rhs.offset)) {
+        <span class="kw">match </span>(
+            maybe_offset_as_offset_opt::&lt;O&gt;(<span class="self">self</span>.offset),
+            maybe_offset_as_offset_opt::&lt;O&gt;(rhs.offset),
+        ) {
             (<span class="prelude-val">Some</span>(self_offset), <span class="prelude-val">Some</span>(rhs_offset)) =&gt; {
                 <span class="kw">let </span>adjustment = Duration::seconds(
                     (self_offset.whole_seconds() - rhs_offset.whole_seconds()) <span class="kw">as </span>i64,
