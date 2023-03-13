@@ -181,9 +181,9 @@ header1,header2
 foo,bar
 quux,baz,foobar
 $ ./target/debug/csvtutor &lt; invalid
-StringRecord { position: Some(Position { byte: 16, line: 2, record: 1 }), fields: [&quot;foo&quot;, &quot;bar&quot;] }
-thread &#39;main&#39; panicked at &#39;called `Result::unwrap()` on an `Err` value: UnequalLengths { pos: Some(Position { byte: 24, line: 3, record: 2 }), expected_len: 2, len: 3 }&#39;, /checkout/src/libcore/result.rs:859
-note: Run with `RUST_BACKTRACE=1` for a backtrace.
+StringRecord([&quot;foo&quot;, &quot;bar&quot;])
+thread &#39;main&#39; panicked at &#39;a CSV record: Error(UnequalLengths { pos: Some(Position { byte: 24, line: 3, record: 2 }), expected_len: 2, len: 3 })&#39;, src/main.rs:13:29
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 </code></pre></div>
 <p>What happened here? First and foremost, we should talk about why the CSV data
 is invalid. The CSV data consists of three records: a header and two data
