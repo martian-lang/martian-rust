@@ -286,7 +286,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 fn report_error(md: &mut Metadata, e: &Error, is_assert: bool) {
     let bt = e.backtrace();
     let _ = md.stackvars(&bt.to_string());
-    let _ = write_errors(&e.to_string(), is_assert);
+    let _ = write_errors(&format!("{e:#}"), is_assert);
 }
 
 fn get_generator_name() -> String {
