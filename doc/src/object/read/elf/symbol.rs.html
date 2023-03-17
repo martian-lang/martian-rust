@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.29.0/src/read/elf/symbol.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>symbol.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../object/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.30.3/src/read/elf/symbol.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>symbol.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../object/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -577,13 +577,13 @@
 <span id="577">577</span>
 <span id="578">578</span>
 <span id="579">579</span>
+<span id="580">580</span>
 </pre><pre class="rust"><code><span class="kw">use </span>alloc::fmt;
 <span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>core::fmt::Debug;
 <span class="kw">use </span>core::slice;
 <span class="kw">use </span>core::str;
 
-<span class="kw">use </span><span class="kw">crate</span>::elf;
 <span class="kw">use </span><span class="kw">crate</span>::endian::{<span class="self">self</span>, Endianness};
 <span class="kw">use </span><span class="kw">crate</span>::pod::Pod;
 <span class="kw">use </span><span class="kw">crate</span>::read::util::StringTable;
@@ -591,6 +591,7 @@
     <span class="self">self</span>, ObjectSymbol, ObjectSymbolTable, ReadError, ReadRef, SectionIndex, SymbolFlags,
     SymbolIndex, SymbolKind, SymbolMap, SymbolMapEntry, SymbolScope, SymbolSection,
 };
+<span class="kw">use crate</span>::{elf, U32};
 
 <span class="kw">use super</span>::{FileHeader, SectionHeader, SectionTable};
 
@@ -607,7 +608,7 @@
     shndx_section: SectionIndex,
     symbols: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data </span>[Elf::Sym],
     strings: StringTable&lt;<span class="lifetime">&#39;data</span>, R&gt;,
-    shndx: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data </span>[u32],
+    shndx: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data </span>[U32&lt;Elf::Endian&gt;],
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;data</span>, Elf: FileHeader, R: ReadRef&lt;<span class="lifetime">&#39;data</span>&gt;&gt; Default <span class="kw">for </span>SymbolTable&lt;<span class="lifetime">&#39;data</span>, Elf, R&gt; {
@@ -724,8 +725,8 @@
 
     <span class="doccomment">/// Return the extended section index for the given symbol if present.
     </span><span class="attribute">#[inline]
-    </span><span class="kw">pub fn </span>shndx(<span class="kw-2">&amp;</span><span class="self">self</span>, index: usize) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-        <span class="self">self</span>.shndx.get(index).copied()
+    </span><span class="kw">pub fn </span>shndx(<span class="kw-2">&amp;</span><span class="self">self</span>, endian: Elf::Endian, index: usize) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
+        <span class="self">self</span>.shndx.get(index).map(|x| x.get(endian))
     }
 
     <span class="doccomment">/// Return the section index for the given symbol.
@@ -740,7 +741,7 @@
         <span class="kw">match </span>symbol.st_shndx(endian) {
             elf::SHN_UNDEF =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
             elf::SHN_XINDEX =&gt; <span class="self">self
-                </span>.shndx(index)
+                </span>.shndx(endian, index)
                 .read_error(<span class="string">&quot;Missing ELF symbol extended index&quot;</span>)
                 .map(|index| <span class="prelude-val">Some</span>(SectionIndex(index <span class="kw">as </span>usize))),
             shndx <span class="kw">if </span>shndx &lt; elf::SHN_LORESERVE =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(SectionIndex(shndx.into()))),
@@ -928,8 +929,9 @@
     <span class="kw">fn </span>kind(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SymbolKind {
         <span class="kw">match </span><span class="self">self</span>.symbol.st_type() {
             elf::STT_NOTYPE <span class="kw">if </span><span class="self">self</span>.index.<span class="number">0 </span>== <span class="number">0 </span>=&gt; SymbolKind::Null,
+            elf::STT_NOTYPE =&gt; SymbolKind::Label,
             elf::STT_OBJECT | elf::STT_COMMON =&gt; SymbolKind::Data,
-            elf::STT_FUNC =&gt; SymbolKind::Text,
+            elf::STT_FUNC | elf::STT_GNU_IFUNC =&gt; SymbolKind::Text,
             elf::STT_SECTION =&gt; SymbolKind::Section,
             elf::STT_FILE =&gt; SymbolKind::File,
             elf::STT_TLS =&gt; SymbolKind::Tls,
@@ -948,7 +950,7 @@
                 }
             }
             elf::SHN_COMMON =&gt; SymbolSection::Common,
-            elf::SHN_XINDEX =&gt; <span class="kw">match </span><span class="self">self</span>.symbols.shndx(<span class="self">self</span>.index.<span class="number">0</span>) {
+            elf::SHN_XINDEX =&gt; <span class="kw">match </span><span class="self">self</span>.symbols.shndx(<span class="self">self</span>.endian, <span class="self">self</span>.index.<span class="number">0</span>) {
                 <span class="prelude-val">Some</span>(index) =&gt; SymbolSection::Section(SectionIndex(index <span class="kw">as </span>usize)),
                 <span class="prelude-val">None </span>=&gt; SymbolSection::Unknown,
             },

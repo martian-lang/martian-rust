@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.29.0/src/read/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../object/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.30.3/src/read/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../object/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -708,6 +708,21 @@
 <span id="708">708</span>
 <span id="709">709</span>
 <span id="710">710</span>
+<span id="711">711</span>
+<span id="712">712</span>
+<span id="713">713</span>
+<span id="714">714</span>
+<span id="715">715</span>
+<span id="716">716</span>
+<span id="717">717</span>
+<span id="718">718</span>
+<span id="719">719</span>
+<span id="720">720</span>
+<span id="721">721</span>
+<span id="722">722</span>
+<span id="723">723</span>
+<span id="724">724</span>
+<span id="725">725</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Interface for reading object files.
 
 </span><span class="kw">use </span>alloc::borrow::Cow;
@@ -732,7 +747,8 @@
     feature = <span class="string">&quot;elf&quot;</span>,
     feature = <span class="string">&quot;macho&quot;</span>,
     feature = <span class="string">&quot;pe&quot;</span>,
-    feature = <span class="string">&quot;wasm&quot;
+    feature = <span class="string">&quot;wasm&quot;</span>,
+    feature = <span class="string">&quot;xcoff&quot;
 </span>))]
 </span><span class="kw">mod </span>any;
 <span class="attribute">#[cfg(any(
@@ -740,7 +756,8 @@
     feature = <span class="string">&quot;elf&quot;</span>,
     feature = <span class="string">&quot;macho&quot;</span>,
     feature = <span class="string">&quot;pe&quot;</span>,
-    feature = <span class="string">&quot;wasm&quot;
+    feature = <span class="string">&quot;wasm&quot;</span>,
+    feature = <span class="string">&quot;xcoff&quot;
 </span>))]
 </span><span class="kw">pub use </span>any::<span class="kw-2">*</span>;
 
@@ -759,11 +776,14 @@
 <span class="attribute">#[cfg(feature = <span class="string">&quot;pe&quot;</span>)]
 </span><span class="kw">pub mod </span>pe;
 
-<span class="kw">mod </span>traits;
-<span class="kw">pub use </span>traits::<span class="kw-2">*</span>;
-
 <span class="attribute">#[cfg(feature = <span class="string">&quot;wasm&quot;</span>)]
 </span><span class="kw">pub mod </span>wasm;
+
+<span class="attribute">#[cfg(feature = <span class="string">&quot;xcoff&quot;</span>)]
+</span><span class="kw">pub mod </span>xcoff;
+
+<span class="kw">mod </span>traits;
+<span class="kw">pub use </span>traits::<span class="kw-2">*</span>;
 
 <span class="kw">mod </span>private {
     <span class="kw">pub trait </span>Sealed {}
@@ -886,6 +906,12 @@
     <span class="doccomment">/// A Wasm file.
     </span><span class="attribute">#[cfg(feature = <span class="string">&quot;wasm&quot;</span>)]
     </span>Wasm,
+    <span class="doccomment">/// A 32-bit XCOFF file.
+    </span><span class="attribute">#[cfg(feature = <span class="string">&quot;xcoff&quot;</span>)]
+    </span>Xcoff32,
+    <span class="doccomment">/// A 64-bit XCOFF file.
+    </span><span class="attribute">#[cfg(feature = <span class="string">&quot;xcoff&quot;</span>)]
+    </span>Xcoff64,
 }
 
 <span class="kw">impl </span>FileKind {
@@ -946,6 +972,10 @@
             </span>| [<span class="number">0x4c</span>, <span class="number">0x01</span>, ..]
             <span class="comment">// COFF x86-64
             </span>| [<span class="number">0x64</span>, <span class="number">0x86</span>, ..] =&gt; FileKind::Coff,
+            <span class="attribute">#[cfg(feature = <span class="string">&quot;xcoff&quot;</span>)]
+            </span>[<span class="number">0x01</span>, <span class="number">0xDF</span>, ..] =&gt; FileKind::Xcoff32,
+            <span class="attribute">#[cfg(feature = <span class="string">&quot;xcoff&quot;</span>)]
+            </span>[<span class="number">0x01</span>, <span class="number">0xF7</span>, ..] =&gt; FileKind::Xcoff64,
             <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error(<span class="string">&quot;Unknown file magic&quot;</span>)),
         };
         <span class="prelude-val">Ok</span>(kind)

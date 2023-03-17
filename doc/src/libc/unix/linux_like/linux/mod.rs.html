@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.139/src/unix/linux_like/linux/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../../normalize.css"><link rel="stylesheet" href="../../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../../dark.css" disabled><link rel="stylesheet" href="../../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../../storage.js"></script><script defer src="../../../../../source-script.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../../libc/index.html"><img class="rust-logo" src="../../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.140/src/unix/linux_like/linux/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../../normalize.css"><link rel="stylesheet" href="../../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../../dark.css" disabled><link rel="stylesheet" href="../../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../../storage.js"></script><script defer src="../../../../../source-script.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../../libc/index.html"><img class="rust-logo" src="../../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -4493,6 +4493,295 @@
 <span id="4493">4493</span>
 <span id="4494">4494</span>
 <span id="4495">4495</span>
+<span id="4496">4496</span>
+<span id="4497">4497</span>
+<span id="4498">4498</span>
+<span id="4499">4499</span>
+<span id="4500">4500</span>
+<span id="4501">4501</span>
+<span id="4502">4502</span>
+<span id="4503">4503</span>
+<span id="4504">4504</span>
+<span id="4505">4505</span>
+<span id="4506">4506</span>
+<span id="4507">4507</span>
+<span id="4508">4508</span>
+<span id="4509">4509</span>
+<span id="4510">4510</span>
+<span id="4511">4511</span>
+<span id="4512">4512</span>
+<span id="4513">4513</span>
+<span id="4514">4514</span>
+<span id="4515">4515</span>
+<span id="4516">4516</span>
+<span id="4517">4517</span>
+<span id="4518">4518</span>
+<span id="4519">4519</span>
+<span id="4520">4520</span>
+<span id="4521">4521</span>
+<span id="4522">4522</span>
+<span id="4523">4523</span>
+<span id="4524">4524</span>
+<span id="4525">4525</span>
+<span id="4526">4526</span>
+<span id="4527">4527</span>
+<span id="4528">4528</span>
+<span id="4529">4529</span>
+<span id="4530">4530</span>
+<span id="4531">4531</span>
+<span id="4532">4532</span>
+<span id="4533">4533</span>
+<span id="4534">4534</span>
+<span id="4535">4535</span>
+<span id="4536">4536</span>
+<span id="4537">4537</span>
+<span id="4538">4538</span>
+<span id="4539">4539</span>
+<span id="4540">4540</span>
+<span id="4541">4541</span>
+<span id="4542">4542</span>
+<span id="4543">4543</span>
+<span id="4544">4544</span>
+<span id="4545">4545</span>
+<span id="4546">4546</span>
+<span id="4547">4547</span>
+<span id="4548">4548</span>
+<span id="4549">4549</span>
+<span id="4550">4550</span>
+<span id="4551">4551</span>
+<span id="4552">4552</span>
+<span id="4553">4553</span>
+<span id="4554">4554</span>
+<span id="4555">4555</span>
+<span id="4556">4556</span>
+<span id="4557">4557</span>
+<span id="4558">4558</span>
+<span id="4559">4559</span>
+<span id="4560">4560</span>
+<span id="4561">4561</span>
+<span id="4562">4562</span>
+<span id="4563">4563</span>
+<span id="4564">4564</span>
+<span id="4565">4565</span>
+<span id="4566">4566</span>
+<span id="4567">4567</span>
+<span id="4568">4568</span>
+<span id="4569">4569</span>
+<span id="4570">4570</span>
+<span id="4571">4571</span>
+<span id="4572">4572</span>
+<span id="4573">4573</span>
+<span id="4574">4574</span>
+<span id="4575">4575</span>
+<span id="4576">4576</span>
+<span id="4577">4577</span>
+<span id="4578">4578</span>
+<span id="4579">4579</span>
+<span id="4580">4580</span>
+<span id="4581">4581</span>
+<span id="4582">4582</span>
+<span id="4583">4583</span>
+<span id="4584">4584</span>
+<span id="4585">4585</span>
+<span id="4586">4586</span>
+<span id="4587">4587</span>
+<span id="4588">4588</span>
+<span id="4589">4589</span>
+<span id="4590">4590</span>
+<span id="4591">4591</span>
+<span id="4592">4592</span>
+<span id="4593">4593</span>
+<span id="4594">4594</span>
+<span id="4595">4595</span>
+<span id="4596">4596</span>
+<span id="4597">4597</span>
+<span id="4598">4598</span>
+<span id="4599">4599</span>
+<span id="4600">4600</span>
+<span id="4601">4601</span>
+<span id="4602">4602</span>
+<span id="4603">4603</span>
+<span id="4604">4604</span>
+<span id="4605">4605</span>
+<span id="4606">4606</span>
+<span id="4607">4607</span>
+<span id="4608">4608</span>
+<span id="4609">4609</span>
+<span id="4610">4610</span>
+<span id="4611">4611</span>
+<span id="4612">4612</span>
+<span id="4613">4613</span>
+<span id="4614">4614</span>
+<span id="4615">4615</span>
+<span id="4616">4616</span>
+<span id="4617">4617</span>
+<span id="4618">4618</span>
+<span id="4619">4619</span>
+<span id="4620">4620</span>
+<span id="4621">4621</span>
+<span id="4622">4622</span>
+<span id="4623">4623</span>
+<span id="4624">4624</span>
+<span id="4625">4625</span>
+<span id="4626">4626</span>
+<span id="4627">4627</span>
+<span id="4628">4628</span>
+<span id="4629">4629</span>
+<span id="4630">4630</span>
+<span id="4631">4631</span>
+<span id="4632">4632</span>
+<span id="4633">4633</span>
+<span id="4634">4634</span>
+<span id="4635">4635</span>
+<span id="4636">4636</span>
+<span id="4637">4637</span>
+<span id="4638">4638</span>
+<span id="4639">4639</span>
+<span id="4640">4640</span>
+<span id="4641">4641</span>
+<span id="4642">4642</span>
+<span id="4643">4643</span>
+<span id="4644">4644</span>
+<span id="4645">4645</span>
+<span id="4646">4646</span>
+<span id="4647">4647</span>
+<span id="4648">4648</span>
+<span id="4649">4649</span>
+<span id="4650">4650</span>
+<span id="4651">4651</span>
+<span id="4652">4652</span>
+<span id="4653">4653</span>
+<span id="4654">4654</span>
+<span id="4655">4655</span>
+<span id="4656">4656</span>
+<span id="4657">4657</span>
+<span id="4658">4658</span>
+<span id="4659">4659</span>
+<span id="4660">4660</span>
+<span id="4661">4661</span>
+<span id="4662">4662</span>
+<span id="4663">4663</span>
+<span id="4664">4664</span>
+<span id="4665">4665</span>
+<span id="4666">4666</span>
+<span id="4667">4667</span>
+<span id="4668">4668</span>
+<span id="4669">4669</span>
+<span id="4670">4670</span>
+<span id="4671">4671</span>
+<span id="4672">4672</span>
+<span id="4673">4673</span>
+<span id="4674">4674</span>
+<span id="4675">4675</span>
+<span id="4676">4676</span>
+<span id="4677">4677</span>
+<span id="4678">4678</span>
+<span id="4679">4679</span>
+<span id="4680">4680</span>
+<span id="4681">4681</span>
+<span id="4682">4682</span>
+<span id="4683">4683</span>
+<span id="4684">4684</span>
+<span id="4685">4685</span>
+<span id="4686">4686</span>
+<span id="4687">4687</span>
+<span id="4688">4688</span>
+<span id="4689">4689</span>
+<span id="4690">4690</span>
+<span id="4691">4691</span>
+<span id="4692">4692</span>
+<span id="4693">4693</span>
+<span id="4694">4694</span>
+<span id="4695">4695</span>
+<span id="4696">4696</span>
+<span id="4697">4697</span>
+<span id="4698">4698</span>
+<span id="4699">4699</span>
+<span id="4700">4700</span>
+<span id="4701">4701</span>
+<span id="4702">4702</span>
+<span id="4703">4703</span>
+<span id="4704">4704</span>
+<span id="4705">4705</span>
+<span id="4706">4706</span>
+<span id="4707">4707</span>
+<span id="4708">4708</span>
+<span id="4709">4709</span>
+<span id="4710">4710</span>
+<span id="4711">4711</span>
+<span id="4712">4712</span>
+<span id="4713">4713</span>
+<span id="4714">4714</span>
+<span id="4715">4715</span>
+<span id="4716">4716</span>
+<span id="4717">4717</span>
+<span id="4718">4718</span>
+<span id="4719">4719</span>
+<span id="4720">4720</span>
+<span id="4721">4721</span>
+<span id="4722">4722</span>
+<span id="4723">4723</span>
+<span id="4724">4724</span>
+<span id="4725">4725</span>
+<span id="4726">4726</span>
+<span id="4727">4727</span>
+<span id="4728">4728</span>
+<span id="4729">4729</span>
+<span id="4730">4730</span>
+<span id="4731">4731</span>
+<span id="4732">4732</span>
+<span id="4733">4733</span>
+<span id="4734">4734</span>
+<span id="4735">4735</span>
+<span id="4736">4736</span>
+<span id="4737">4737</span>
+<span id="4738">4738</span>
+<span id="4739">4739</span>
+<span id="4740">4740</span>
+<span id="4741">4741</span>
+<span id="4742">4742</span>
+<span id="4743">4743</span>
+<span id="4744">4744</span>
+<span id="4745">4745</span>
+<span id="4746">4746</span>
+<span id="4747">4747</span>
+<span id="4748">4748</span>
+<span id="4749">4749</span>
+<span id="4750">4750</span>
+<span id="4751">4751</span>
+<span id="4752">4752</span>
+<span id="4753">4753</span>
+<span id="4754">4754</span>
+<span id="4755">4755</span>
+<span id="4756">4756</span>
+<span id="4757">4757</span>
+<span id="4758">4758</span>
+<span id="4759">4759</span>
+<span id="4760">4760</span>
+<span id="4761">4761</span>
+<span id="4762">4762</span>
+<span id="4763">4763</span>
+<span id="4764">4764</span>
+<span id="4765">4765</span>
+<span id="4766">4766</span>
+<span id="4767">4767</span>
+<span id="4768">4768</span>
+<span id="4769">4769</span>
+<span id="4770">4770</span>
+<span id="4771">4771</span>
+<span id="4772">4772</span>
+<span id="4773">4773</span>
+<span id="4774">4774</span>
+<span id="4775">4775</span>
+<span id="4776">4776</span>
+<span id="4777">4777</span>
+<span id="4778">4778</span>
+<span id="4779">4779</span>
+<span id="4780">4780</span>
+<span id="4781">4781</span>
+<span id="4782">4782</span>
+<span id="4783">4783</span>
+<span id="4784">4784</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Linux-specific definitions for linux-like values
 
 </span><span class="kw">pub type </span>useconds_t = u32;
@@ -4542,6 +4831,9 @@
 <span class="kw">pub type </span>name_t = u64;
 
 <span class="kw">pub type </span>iconv_t = <span class="kw-2">*mut </span>::c_void;
+
+<span class="comment">// linux/sctp.h
+</span><span class="kw">pub type </span>sctp_assoc_t = ::__s32;
 
 <span class="attribute">#[cfg_attr(feature = <span class="string">&quot;extra_traits&quot;</span>, derive(Debug))]
 </span><span class="kw">pub enum </span>fpos64_t {} <span class="comment">// FIXME: fill this out with a struct
@@ -4963,9 +5255,9 @@
         __pgrp: ::pid_t,
         __sd: ::sigset_t,
         __ss: ::sigset_t,
-        <span class="attribute">#[cfg(target_env = <span class="string">&quot;musl&quot;</span>)]
+        <span class="attribute">#[cfg(any(target_env = <span class="string">&quot;musl&quot;</span>, target_env = <span class="string">&quot;ohos&quot;</span>))]
         </span>__prio: ::c_int,
-        <span class="attribute">#[cfg(not(target_env = <span class="string">&quot;musl&quot;</span>))]
+        <span class="attribute">#[cfg(not(any(target_env = <span class="string">&quot;musl&quot;</span>, target_env = <span class="string">&quot;ohos&quot;</span>)))]
         </span>__sp: ::sched_param,
         __policy: ::c_int,
         __pad: [::c_int; <span class="number">16</span>],
@@ -5119,6 +5411,63 @@
         <span class="kw">pub </span>has_arg: ::c_int,
         <span class="kw">pub </span>flag: <span class="kw-2">*mut </span>::c_int,
         <span class="kw">pub </span>val: ::c_int,
+    }
+
+    <span class="comment">// linux/sctp.h
+
+    </span><span class="kw">pub struct </span>sctp_initmsg {
+        <span class="kw">pub </span>sinit_num_ostreams: ::__u16,
+        <span class="kw">pub </span>sinit_max_instreams: ::__u16,
+        <span class="kw">pub </span>sinit_max_attempts: ::__u16,
+        <span class="kw">pub </span>sinit_max_init_timeo: ::__u16,
+    }
+
+    <span class="kw">pub struct </span>sctp_sndrcvinfo {
+        <span class="kw">pub </span>sinfo_stream: ::__u16,
+        <span class="kw">pub </span>sinfo_ssn: ::__u16,
+        <span class="kw">pub </span>sinfo_flags: ::__u16,
+        <span class="kw">pub </span>sinfo_ppid: ::__u32,
+        <span class="kw">pub </span>sinfo_context: ::__u32,
+        <span class="kw">pub </span>sinfo_timetolive: ::__u32,
+        <span class="kw">pub </span>sinfo_tsn: ::__u32,
+        <span class="kw">pub </span>sinfo_cumtsn: ::__u32,
+        <span class="kw">pub </span>sinfo_assoc_id: ::sctp_assoc_t,
+    }
+
+    <span class="kw">pub struct </span>sctp_sndinfo {
+        <span class="kw">pub </span>snd_sid: ::__u16,
+        <span class="kw">pub </span>snd_flags: ::__u16,
+        <span class="kw">pub </span>snd_ppid: ::__u32,
+        <span class="kw">pub </span>snd_context: ::__u32,
+        <span class="kw">pub </span>snd_assoc_id: ::sctp_assoc_t,
+    }
+
+    <span class="kw">pub struct </span>sctp_rcvinfo {
+        <span class="kw">pub </span>rcv_sid: ::__u16,
+        <span class="kw">pub </span>rcv_ssn: ::__u16,
+        <span class="kw">pub </span>rcv_flags: ::__u16,
+        <span class="kw">pub </span>rcv_ppid: ::__u32,
+        <span class="kw">pub </span>rcv_tsn: ::__u32,
+        <span class="kw">pub </span>rcv_cumtsn: ::__u32,
+        <span class="kw">pub </span>rcv_context: ::__u32,
+        <span class="kw">pub </span>rcv_assoc_id: ::sctp_assoc_t,
+    }
+
+    <span class="kw">pub struct </span>sctp_nxtinfo {
+        <span class="kw">pub </span>nxt_sid: ::__u16,
+        <span class="kw">pub </span>nxt_flags: ::__u16,
+        <span class="kw">pub </span>nxt_ppid: ::__u32,
+        <span class="kw">pub </span>nxt_length: ::__u32,
+        <span class="kw">pub </span>nxt_assoc_id: ::sctp_assoc_t,
+    }
+
+    <span class="kw">pub struct </span>sctp_prinfo {
+        <span class="kw">pub </span>pr_policy: ::__u16,
+        <span class="kw">pub </span>pr_value: ::__u32,
+    }
+
+    <span class="kw">pub struct </span>sctp_authinfo {
+        <span class="kw">pub </span>auth_keynumber: ::__u16,
     }
 }
 
@@ -5433,6 +5782,28 @@
             }
         }
 
+        <span class="kw">impl </span>PartialEq <span class="kw">for </span>pthread_barrier_t {
+            <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>pthread_barrier_t) -&gt; bool {
+                <span class="self">self</span>.size.iter().zip(other.size.iter()).all(|(a,b)| a == b)
+            }
+        }
+
+        <span class="kw">impl </span>Eq <span class="kw">for </span>pthread_barrier_t {}
+
+        <span class="kw">impl </span>::fmt::Debug <span class="kw">for </span>pthread_barrier_t {
+            <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>::fmt::Formatter) -&gt; ::fmt::Result {
+                f.debug_struct(<span class="string">&quot;pthread_barrier_t&quot;</span>)
+                    .field(<span class="string">&quot;size&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.size)
+                    .finish()
+            }
+        }
+
+        <span class="kw">impl </span>::hash::Hash <span class="kw">for </span>pthread_barrier_t {
+            <span class="kw">fn </span>hash&lt;H: ::hash::Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
+                <span class="self">self</span>.size.hash(state);
+            }
+        }
+
         <span class="kw">impl </span>PartialEq <span class="kw">for </span>sockaddr_alg {
             <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>sockaddr_alg) -&gt; bool {
                 <span class="self">self</span>.salg_family == other.salg_family
@@ -5638,7 +6009,7 @@
 }
 
 <span class="macro">cfg_if! </span>{
-    <span class="kw">if </span><span class="attribute">#[cfg(any(target_env = <span class="string">&quot;gnu&quot;</span>, target_env = <span class="string">&quot;musl&quot;</span>))] </span>{
+    <span class="kw">if </span><span class="attribute">#[cfg(any(target_env = <span class="string">&quot;gnu&quot;</span>, target_env = <span class="string">&quot;musl&quot;</span>, target_env = <span class="string">&quot;ohos&quot;</span>))] </span>{
         <span class="kw">pub const </span>ABDAY_1: ::nl_item = <span class="number">0x20000</span>;
         <span class="kw">pub const </span>ABDAY_2: ::nl_item = <span class="number">0x20001</span>;
         <span class="kw">pub const </span>ABDAY_3: ::nl_item = <span class="number">0x20002</span>;
@@ -6194,6 +6565,12 @@
 <span class="kw">pub const </span>IFLA_ALT_IFNAME: ::c_ushort = <span class="number">53</span>;
 <span class="kw">pub const </span>IFLA_PERM_ADDRESS: ::c_ushort = <span class="number">54</span>;
 <span class="kw">pub const </span>IFLA_PROTO_DOWN_REASON: ::c_ushort = <span class="number">55</span>;
+<span class="kw">pub const </span>IFLA_PARENT_DEV_NAME: ::c_ushort = <span class="number">56</span>;
+<span class="kw">pub const </span>IFLA_PARENT_DEV_BUS_NAME: ::c_ushort = <span class="number">57</span>;
+<span class="kw">pub const </span>IFLA_GRO_MAX_SIZE: ::c_ushort = <span class="number">58</span>;
+<span class="kw">pub const </span>IFLA_TSO_MAX_SIZE: ::c_ushort = <span class="number">59</span>;
+<span class="kw">pub const </span>IFLA_TSO_MAX_SEGS: ::c_ushort = <span class="number">60</span>;
+<span class="kw">pub const </span>IFLA_ALLMULTI: ::c_ushort = <span class="number">61</span>;
 
 <span class="kw">pub const </span>IFLA_INFO_UNSPEC: ::c_ushort = <span class="number">0</span>;
 <span class="kw">pub const </span>IFLA_INFO_KIND: ::c_ushort = <span class="number">1</span>;
@@ -6255,6 +6632,18 @@
 <span class="kw">pub const </span>MPOL_F_NUMA_BALANCING: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">13</span>;
 <span class="kw">pub const </span>MPOL_F_RELATIVE_NODES: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">14</span>;
 <span class="kw">pub const </span>MPOL_F_STATIC_NODES: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">15</span>;
+
+<span class="comment">// linux/membarrier.h
+</span><span class="kw">pub const </span>MEMBARRIER_CMD_QUERY: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_GLOBAL: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_GLOBAL_EXPEDITED: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_PRIVATE_EXPEDITED: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">3</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">4</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">5</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">6</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">7</span>;
+<span class="kw">pub const </span>MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">8</span>;
 
 <span class="macro">align_const! </span>{
     <span class="kw">pub const </span>PTHREAD_MUTEX_INITIALIZER: pthread_mutex_t = pthread_mutex_t {
@@ -6320,6 +6709,7 @@
 <span class="kw">pub const </span>IPC_INFO: ::c_int = <span class="number">3</span>;
 <span class="kw">pub const </span>MSG_STAT: ::c_int = <span class="number">11</span>;
 <span class="kw">pub const </span>MSG_INFO: ::c_int = <span class="number">12</span>;
+<span class="kw">pub const </span>MSG_NOTIFICATION: ::c_int = <span class="number">0x8000</span>;
 
 <span class="kw">pub const </span>MSG_NOERROR: ::c_int = <span class="number">0o10000</span>;
 <span class="kw">pub const </span>MSG_EXCEPT: ::c_int = <span class="number">0o20000</span>;
@@ -6508,6 +6898,7 @@
 <span class="kw">pub const </span>PR_SET_MM_MAP_SIZE: ::c_int = <span class="number">15</span>;
 
 <span class="kw">pub const </span>PR_SET_PTRACER: ::c_int = <span class="number">0x59616d61</span>;
+<span class="kw">pub const </span>PR_SET_PTRACER_ANY: ::c_ulong = <span class="number">0xffffffffffffffff</span>;
 
 <span class="kw">pub const </span>PR_SET_CHILD_SUBREAPER: ::c_int = <span class="number">36</span>;
 <span class="kw">pub const </span>PR_GET_CHILD_SUBREAPER: ::c_int = <span class="number">37</span>;
@@ -6536,6 +6927,16 @@
 
 <span class="kw">pub const </span>PR_SET_VMA: ::c_int = <span class="number">0x53564d41</span>;
 <span class="kw">pub const </span>PR_SET_VMA_ANON_NAME: ::c_int = <span class="number">0</span>;
+
+<span class="kw">pub const </span>PR_SCHED_CORE: ::c_int = <span class="number">62</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_GET: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_CREATE: ::c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_SHARE_TO: ::c_int = <span class="number">2</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_SHARE_FROM: ::c_int = <span class="number">3</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_MAX: ::c_int = <span class="number">4</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_SCOPE_THREAD: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_SCOPE_THREAD_GROUP: ::c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>PR_SCHED_CORE_SCOPE_PROCESS_GROUP: ::c_int = <span class="number">2</span>;
 
 <span class="kw">pub const </span>GRND_NONBLOCK: ::c_uint = <span class="number">0x0001</span>;
 <span class="kw">pub const </span>GRND_RANDOM: ::c_uint = <span class="number">0x0002</span>;
@@ -7627,6 +8028,10 @@
 <span class="kw">pub const </span>IN_CLOEXEC: ::c_int = O_CLOEXEC;
 <span class="kw">pub const </span>IN_NONBLOCK: ::c_int = O_NONBLOCK;
 
+<span class="comment">// uapi/linux/mount.h
+</span><span class="kw">pub const </span>OPEN_TREE_CLONE: ::c_uint = <span class="number">0x01</span>;
+<span class="kw">pub const </span>OPEN_TREE_CLOEXEC: ::c_uint = O_CLOEXEC <span class="kw">as </span>::c_uint;
+
 <span class="comment">// uapi/linux/netfilter/nf_tables.h
 </span><span class="kw">pub const </span>NFT_TABLE_MAXNAMELEN: ::c_int = <span class="number">256</span>;
 <span class="kw">pub const </span>NFT_CHAIN_MAXNAMELEN: ::c_int = <span class="number">256</span>;
@@ -7908,6 +8313,27 @@
 <span class="kw">pub const </span>FUTEX_CLOCK_REALTIME: ::c_int = <span class="number">256</span>;
 <span class="kw">pub const </span>FUTEX_CMD_MASK: ::c_int = !(FUTEX_PRIVATE_FLAG | FUTEX_CLOCK_REALTIME);
 
+<span class="kw">pub const </span>FUTEX_BITSET_MATCH_ANY: ::c_int = <span class="number">0xffffffff</span>;
+
+<span class="kw">pub const </span>FUTEX_OP_SET: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>FUTEX_OP_ADD: ::c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>FUTEX_OP_OR: ::c_int = <span class="number">2</span>;
+<span class="kw">pub const </span>FUTEX_OP_ANDN: ::c_int = <span class="number">3</span>;
+<span class="kw">pub const </span>FUTEX_OP_XOR: ::c_int = <span class="number">4</span>;
+
+<span class="kw">pub const </span>FUTEX_OP_OPARG_SHIFT: ::c_int = <span class="number">8</span>;
+
+<span class="kw">pub const </span>FUTEX_OP_CMP_EQ: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>FUTEX_OP_CMP_NE: ::c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>FUTEX_OP_CMP_LT: ::c_int = <span class="number">2</span>;
+<span class="kw">pub const </span>FUTEX_OP_CMP_LE: ::c_int = <span class="number">3</span>;
+<span class="kw">pub const </span>FUTEX_OP_CMP_GT: ::c_int = <span class="number">4</span>;
+<span class="kw">pub const </span>FUTEX_OP_CMP_GE: ::c_int = <span class="number">5</span>;
+
+<span class="kw">pub fn </span>FUTEX_OP(op: ::c_int, oparg: ::c_int, cmp: ::c_int, cmparg: ::c_int) -&gt; ::c_int {
+    ((op &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">28</span>) | ((cmp &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">24</span>) | ((oparg &amp; <span class="number">0xfff</span>) &lt;&lt; <span class="number">12</span>) | (cmparg &amp; <span class="number">0xfff</span>)
+}
+
 <span class="comment">// linux/reboot.h
 </span><span class="kw">pub const </span>LINUX_REBOOT_MAGIC1: ::c_int = <span class="number">0xfee1dead</span>;
 <span class="kw">pub const </span>LINUX_REBOOT_MAGIC2: ::c_int = <span class="number">672274793</span>;
@@ -8082,6 +8508,82 @@
 
 <span class="kw">pub const </span>J1939_FILTER_MAX: ::c_int = <span class="number">512</span>;
 
+<span class="comment">// linux/sctp.h
+</span><span class="kw">pub const </span>SCTP_FUTURE_ASSOC: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>SCTP_CURRENT_ASSOC: ::c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>SCTP_ALL_ASSOC: ::c_int = <span class="number">2</span>;
+<span class="kw">pub const </span>SCTP_RTOINFO: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>SCTP_ASSOCINFO: ::c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>SCTP_INITMSG: ::c_int = <span class="number">2</span>;
+<span class="kw">pub const </span>SCTP_NODELAY: ::c_int = <span class="number">3</span>;
+<span class="kw">pub const </span>SCTP_AUTOCLOSE: ::c_int = <span class="number">4</span>;
+<span class="kw">pub const </span>SCTP_SET_PEER_PRIMARY_ADDR: ::c_int = <span class="number">5</span>;
+<span class="kw">pub const </span>SCTP_PRIMARY_ADDR: ::c_int = <span class="number">6</span>;
+<span class="kw">pub const </span>SCTP_ADAPTATION_LAYER: ::c_int = <span class="number">7</span>;
+<span class="kw">pub const </span>SCTP_DISABLE_FRAGMENTS: ::c_int = <span class="number">8</span>;
+<span class="kw">pub const </span>SCTP_PEER_ADDR_PARAMS: ::c_int = <span class="number">9</span>;
+<span class="kw">pub const </span>SCTP_DEFAULT_SEND_PARAM: ::c_int = <span class="number">10</span>;
+<span class="kw">pub const </span>SCTP_EVENTS: ::c_int = <span class="number">11</span>;
+<span class="kw">pub const </span>SCTP_I_WANT_MAPPED_V4_ADDR: ::c_int = <span class="number">12</span>;
+<span class="kw">pub const </span>SCTP_MAXSEG: ::c_int = <span class="number">13</span>;
+<span class="kw">pub const </span>SCTP_STATUS: ::c_int = <span class="number">14</span>;
+<span class="kw">pub const </span>SCTP_GET_PEER_ADDR_INFO: ::c_int = <span class="number">15</span>;
+<span class="kw">pub const </span>SCTP_DELAYED_ACK_TIME: ::c_int = <span class="number">16</span>;
+<span class="kw">pub const </span>SCTP_DELAYED_ACK: ::c_int = SCTP_DELAYED_ACK_TIME;
+<span class="kw">pub const </span>SCTP_DELAYED_SACK: ::c_int = SCTP_DELAYED_ACK_TIME;
+<span class="kw">pub const </span>SCTP_CONTEXT: ::c_int = <span class="number">17</span>;
+<span class="kw">pub const </span>SCTP_FRAGMENT_INTERLEAVE: ::c_int = <span class="number">18</span>;
+<span class="kw">pub const </span>SCTP_PARTIAL_DELIVERY_POINT: ::c_int = <span class="number">19</span>;
+<span class="kw">pub const </span>SCTP_MAX_BURST: ::c_int = <span class="number">20</span>;
+<span class="kw">pub const </span>SCTP_AUTH_CHUNK: ::c_int = <span class="number">21</span>;
+<span class="kw">pub const </span>SCTP_HMAC_IDENT: ::c_int = <span class="number">22</span>;
+<span class="kw">pub const </span>SCTP_AUTH_KEY: ::c_int = <span class="number">23</span>;
+<span class="kw">pub const </span>SCTP_AUTH_ACTIVE_KEY: ::c_int = <span class="number">24</span>;
+<span class="kw">pub const </span>SCTP_AUTH_DELETE_KEY: ::c_int = <span class="number">25</span>;
+<span class="kw">pub const </span>SCTP_PEER_AUTH_CHUNKS: ::c_int = <span class="number">26</span>;
+<span class="kw">pub const </span>SCTP_LOCAL_AUTH_CHUNKS: ::c_int = <span class="number">27</span>;
+<span class="kw">pub const </span>SCTP_GET_ASSOC_NUMBER: ::c_int = <span class="number">28</span>;
+<span class="kw">pub const </span>SCTP_GET_ASSOC_ID_LIST: ::c_int = <span class="number">29</span>;
+<span class="kw">pub const </span>SCTP_AUTO_ASCONF: ::c_int = <span class="number">30</span>;
+<span class="kw">pub const </span>SCTP_PEER_ADDR_THLDS: ::c_int = <span class="number">31</span>;
+<span class="kw">pub const </span>SCTP_RECVRCVINFO: ::c_int = <span class="number">32</span>;
+<span class="kw">pub const </span>SCTP_RECVNXTINFO: ::c_int = <span class="number">33</span>;
+<span class="kw">pub const </span>SCTP_DEFAULT_SNDINFO: ::c_int = <span class="number">34</span>;
+<span class="kw">pub const </span>SCTP_AUTH_DEACTIVATE_KEY: ::c_int = <span class="number">35</span>;
+<span class="kw">pub const </span>SCTP_REUSE_PORT: ::c_int = <span class="number">36</span>;
+<span class="kw">pub const </span>SCTP_PEER_ADDR_THLDS_V2: ::c_int = <span class="number">37</span>;
+<span class="kw">pub const </span>SCTP_PR_SCTP_NONE: ::c_int = <span class="number">0x0000</span>;
+<span class="kw">pub const </span>SCTP_PR_SCTP_TTL: ::c_int = <span class="number">0x0010</span>;
+<span class="kw">pub const </span>SCTP_PR_SCTP_RTX: ::c_int = <span class="number">0x0020</span>;
+<span class="kw">pub const </span>SCTP_PR_SCTP_PRIO: ::c_int = <span class="number">0x0030</span>;
+<span class="kw">pub const </span>SCTP_PR_SCTP_MAX: ::c_int = SCTP_PR_SCTP_PRIO;
+<span class="kw">pub const </span>SCTP_PR_SCTP_MASK: ::c_int = <span class="number">0x0030</span>;
+<span class="kw">pub const </span>SCTP_ENABLE_RESET_STREAM_REQ: ::c_int = <span class="number">0x01</span>;
+<span class="kw">pub const </span>SCTP_ENABLE_RESET_ASSOC_REQ: ::c_int = <span class="number">0x02</span>;
+<span class="kw">pub const </span>SCTP_ENABLE_CHANGE_ASSOC_REQ: ::c_int = <span class="number">0x04</span>;
+<span class="kw">pub const </span>SCTP_ENABLE_STRRESET_MASK: ::c_int = <span class="number">0x07</span>;
+<span class="kw">pub const </span>SCTP_STREAM_RESET_INCOMING: ::c_int = <span class="number">0x01</span>;
+<span class="kw">pub const </span>SCTP_STREAM_RESET_OUTGOING: ::c_int = <span class="number">0x02</span>;
+
+<span class="kw">pub const </span>SCTP_INIT: ::c_int = <span class="number">0</span>;
+<span class="kw">pub const </span>SCTP_SNDRCV: ::c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>SCTP_SNDINFO: ::c_int = <span class="number">2</span>;
+<span class="kw">pub const </span>SCTP_RCVINFO: ::c_int = <span class="number">3</span>;
+<span class="kw">pub const </span>SCTP_NXTINFO: ::c_int = <span class="number">4</span>;
+<span class="kw">pub const </span>SCTP_PRINFO: ::c_int = <span class="number">5</span>;
+<span class="kw">pub const </span>SCTP_AUTHINFO: ::c_int = <span class="number">6</span>;
+<span class="kw">pub const </span>SCTP_DSTADDRV4: ::c_int = <span class="number">7</span>;
+<span class="kw">pub const </span>SCTP_DSTADDRV6: ::c_int = <span class="number">8</span>;
+
+<span class="kw">pub const </span>SCTP_UNORDERED: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+<span class="kw">pub const </span>SCTP_ADDR_OVER: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+<span class="kw">pub const </span>SCTP_ABORT: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
+<span class="kw">pub const </span>SCTP_SACK_IMMEDIATELY: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">3</span>;
+<span class="kw">pub const </span>SCTP_SENDALL: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">6</span>;
+<span class="kw">pub const </span>SCTP_PR_SCTP_ALL: ::c_int = <span class="number">1 </span>&lt;&lt; <span class="number">7</span>;
+<span class="kw">pub const </span>SCTP_NOTIFICATION: ::c_int = MSG_NOTIFICATION;
+<span class="kw">pub const </span>SCTP_EOF: ::c_int = ::MSG_FIN;
+
 <span class="macro">f! </span>{
     <span class="kw">pub fn </span>NLA_ALIGN(len: ::c_int) -&gt; ::c_int {
         <span class="kw">return </span>((len) + NLA_ALIGNTO - <span class="number">1</span>) &amp; !(NLA_ALIGNTO - <span class="number">1</span>)
@@ -8157,6 +8659,20 @@
         set1.bits == set2.bits
     }
 
+    <span class="kw">pub fn </span>SCTP_PR_INDEX(policy: ::c_int) -&gt; ::c_int {
+        policy &gt;&gt; <span class="number">4 </span>- <span class="number">1
+    </span>}
+
+    <span class="kw">pub fn </span>SCTP_PR_POLICY(policy: ::c_int) -&gt; ::c_int {
+        policy &amp; SCTP_PR_SCTP_MASK
+    }
+
+    <span class="kw">pub fn </span>SCTP_PR_SET_POLICY(flags: <span class="kw-2">&amp;mut </span>::c_int, policy: ::c_int) -&gt; () {
+        <span class="kw-2">*</span>flags &amp;= !SCTP_PR_SCTP_MASK;
+        <span class="kw-2">*</span>flags |= policy;
+        ()
+    }
+
     <span class="kw">pub fn </span>major(dev: ::dev_t) -&gt; ::c_uint {
         <span class="kw">let </span><span class="kw-2">mut </span>major = <span class="number">0</span>;
         major |= (dev &amp; <span class="number">0x00000000000fff00</span>) &gt;&gt; <span class="number">8</span>;
@@ -8223,10 +8739,22 @@
         dev |= (minor &amp; <span class="number">0xffffff00</span>) &lt;&lt; <span class="number">12</span>;
         dev
     }
+
+    <span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>SCTP_PR_TTL_ENABLED(policy: ::c_int) -&gt; bool {
+        policy == SCTP_PR_SCTP_TTL
+    }
+
+    <span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>SCTP_PR_RTX_ENABLED(policy: ::c_int) -&gt; bool {
+        policy == SCTP_PR_SCTP_RTX
+    }
+
+    <span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>SCTP_PR_PRIO_ENABLED(policy: ::c_int) -&gt; bool {
+        policy == SCTP_PR_SCTP_PRIO
+    }
 }
 
 <span class="macro">cfg_if! </span>{
-    <span class="kw">if </span><span class="attribute">#[cfg(not(target_env = <span class="string">&quot;uclibc&quot;</span>))] </span>{
+    <span class="kw">if </span><span class="attribute">#[cfg(all(not(target_env = <span class="string">&quot;uclibc&quot;</span>), not(target_env = <span class="string">&quot;ohos&quot;</span>)))] </span>{
         <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
             <span class="kw">pub fn </span>aio_read(aiocbp: <span class="kw-2">*mut </span>aiocb) -&gt; ::c_int;
             <span class="kw">pub fn </span>aio_write(aiocbp: <span class="kw-2">*mut </span>aiocb) -&gt; ::c_int;
@@ -8245,6 +8773,13 @@
                 nitems: ::c_int,
                 sevp: <span class="kw-2">*mut </span>::sigevent,
             ) -&gt; ::c_int;
+        }
+    }
+}
+
+<span class="macro">cfg_if! </span>{
+    <span class="kw">if </span><span class="attribute">#[cfg(not(target_env = <span class="string">&quot;uclibc&quot;</span>))] </span>{
+        <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
             <span class="kw">pub fn </span>pwritev(
                 fd: ::c_int,
                 iov: <span class="kw-2">*const </span>::iovec,
@@ -8294,8 +8829,79 @@
     }
 }
 
+<span class="comment">// These functions are not available on OpenHarmony
+</span><span class="macro">cfg_if! </span>{
+    <span class="kw">if </span><span class="attribute">#[cfg(not(target_env = <span class="string">&quot;ohos&quot;</span>))] </span>{
+        <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+            <span class="comment">// Only `getspnam_r` is implemented for musl, out of all of the reenterant
+            // functions from `shadow.h`.
+            // https://git.musl-libc.org/cgit/musl/tree/include/shadow.h
+            </span><span class="kw">pub fn </span>getspnam_r(
+                name: <span class="kw-2">*const </span>::c_char,
+                spbuf: <span class="kw-2">*mut </span>spwd,
+                buf: <span class="kw-2">*mut </span>::c_char,
+                buflen: ::size_t,
+                spbufp: <span class="kw-2">*mut *mut </span>spwd,
+            ) -&gt; ::c_int;
+
+            <span class="kw">pub fn </span>shm_open(name: <span class="kw-2">*const </span>c_char, oflag: ::c_int, mode: mode_t) -&gt; ::c_int;
+            <span class="kw">pub fn </span>shm_unlink(name: <span class="kw-2">*const </span>::c_char) -&gt; ::c_int;
+
+            <span class="kw">pub fn </span>mq_open(name: <span class="kw-2">*const </span>::c_char, oflag: ::c_int, ...) -&gt; ::mqd_t;
+            <span class="kw">pub fn </span>mq_close(mqd: ::mqd_t) -&gt; ::c_int;
+            <span class="kw">pub fn </span>mq_unlink(name: <span class="kw-2">*const </span>::c_char) -&gt; ::c_int;
+            <span class="kw">pub fn </span>mq_receive(
+                mqd: ::mqd_t,
+                msg_ptr: <span class="kw-2">*mut </span>::c_char,
+                msg_len: ::size_t,
+                msg_prio: <span class="kw-2">*mut </span>::c_uint,
+            ) -&gt; ::ssize_t;
+            <span class="kw">pub fn </span>mq_timedreceive(
+                mqd: ::mqd_t,
+                msg_ptr: <span class="kw-2">*mut </span>::c_char,
+                msg_len: ::size_t,
+                msg_prio: <span class="kw-2">*mut </span>::c_uint,
+                abs_timeout: <span class="kw-2">*const </span>::timespec,
+            ) -&gt; ::ssize_t;
+            <span class="kw">pub fn </span>mq_send(
+                mqd: ::mqd_t,
+                msg_ptr: <span class="kw-2">*const </span>::c_char,
+                msg_len: ::size_t,
+                msg_prio: ::c_uint,
+            ) -&gt; ::c_int;
+            <span class="kw">pub fn </span>mq_timedsend(
+                mqd: ::mqd_t,
+                msg_ptr: <span class="kw-2">*const </span>::c_char,
+                msg_len: ::size_t,
+                msg_prio: ::c_uint,
+                abs_timeout: <span class="kw-2">*const </span>::timespec,
+            ) -&gt; ::c_int;
+            <span class="kw">pub fn </span>mq_getattr(mqd: ::mqd_t, attr: <span class="kw-2">*mut </span>::mq_attr) -&gt; ::c_int;
+            <span class="kw">pub fn </span>mq_setattr(
+                mqd: ::mqd_t,
+                newattr: <span class="kw-2">*const </span>::mq_attr,
+                oldattr: <span class="kw-2">*mut </span>::mq_attr
+            ) -&gt; ::c_int;
+
+            <span class="kw">pub fn </span>pthread_mutex_consistent(mutex: <span class="kw-2">*mut </span>pthread_mutex_t) -&gt; ::c_int;
+            <span class="kw">pub fn </span>pthread_cancel(thread: ::pthread_t) -&gt; ::c_int;
+            <span class="kw">pub fn </span>pthread_mutexattr_getrobust(
+                attr: <span class="kw-2">*const </span>pthread_mutexattr_t,
+                robustness: <span class="kw-2">*mut </span>::c_int,
+            ) -&gt; ::c_int;
+            <span class="kw">pub fn </span>pthread_mutexattr_setrobust(
+                attr: <span class="kw-2">*mut </span>pthread_mutexattr_t,
+                robustness: ::c_int,
+            ) -&gt; ::c_int;
+        }
+    }
+}
+
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
-    <span class="attribute">#[cfg_attr(not(target_env = <span class="string">&quot;musl&quot;</span>), link_name = <span class="string">&quot;__xpg_strerror_r&quot;</span>)]
+    <span class="attribute">#[cfg_attr(
+        not(any(target_env = <span class="string">&quot;musl&quot;</span>, target_env = <span class="string">&quot;ohos&quot;</span>)),
+        link_name = <span class="string">&quot;__xpg_strerror_r&quot;
+    </span>)]
     </span><span class="kw">pub fn </span>strerror_r(errnum: ::c_int, buf: <span class="kw-2">*mut </span>c_char, buflen: ::size_t) -&gt; ::c_int;
 
     <span class="kw">pub fn </span>abs(i: ::c_int) -&gt; ::c_int;
@@ -8326,18 +8932,6 @@
     <span class="kw">pub fn </span>getspent() -&gt; <span class="kw-2">*mut </span>spwd;
 
     <span class="kw">pub fn </span>getspnam(name: <span class="kw-2">*const </span>::c_char) -&gt; <span class="kw-2">*mut </span>spwd;
-    <span class="comment">// Only `getspnam_r` is implemented for musl, out of all of the reenterant
-    // functions from `shadow.h`.
-    // https://git.musl-libc.org/cgit/musl/tree/include/shadow.h
-    </span><span class="kw">pub fn </span>getspnam_r(
-        name: <span class="kw-2">*const </span>::c_char,
-        spbuf: <span class="kw-2">*mut </span>spwd,
-        buf: <span class="kw-2">*mut </span>::c_char,
-        buflen: ::size_t,
-        spbufp: <span class="kw-2">*mut *mut </span>spwd,
-    ) -&gt; ::c_int;
-
-    <span class="kw">pub fn </span>shm_open(name: <span class="kw-2">*const </span>c_char, oflag: ::c_int, mode: mode_t) -&gt; ::c_int;
 
     <span class="comment">// System V IPC
     </span><span class="kw">pub fn </span>shmget(key: ::key_t, size: ::size_t, shmflg: ::c_int) -&gt; ::c_int;
@@ -8443,37 +9037,6 @@
         id: ::c_int,
         data: <span class="kw-2">*mut </span>::c_char,
     ) -&gt; ::c_int;
-    <span class="kw">pub fn </span>mq_open(name: <span class="kw-2">*const </span>::c_char, oflag: ::c_int, ...) -&gt; ::mqd_t;
-    <span class="kw">pub fn </span>mq_close(mqd: ::mqd_t) -&gt; ::c_int;
-    <span class="kw">pub fn </span>mq_unlink(name: <span class="kw-2">*const </span>::c_char) -&gt; ::c_int;
-    <span class="kw">pub fn </span>mq_receive(
-        mqd: ::mqd_t,
-        msg_ptr: <span class="kw-2">*mut </span>::c_char,
-        msg_len: ::size_t,
-        msg_prio: <span class="kw-2">*mut </span>::c_uint,
-    ) -&gt; ::ssize_t;
-    <span class="kw">pub fn </span>mq_timedreceive(
-        mqd: ::mqd_t,
-        msg_ptr: <span class="kw-2">*mut </span>::c_char,
-        msg_len: ::size_t,
-        msg_prio: <span class="kw-2">*mut </span>::c_uint,
-        abs_timeout: <span class="kw-2">*const </span>::timespec,
-    ) -&gt; ::ssize_t;
-    <span class="kw">pub fn </span>mq_send(
-        mqd: ::mqd_t,
-        msg_ptr: <span class="kw-2">*const </span>::c_char,
-        msg_len: ::size_t,
-        msg_prio: ::c_uint,
-    ) -&gt; ::c_int;
-    <span class="kw">pub fn </span>mq_timedsend(
-        mqd: ::mqd_t,
-        msg_ptr: <span class="kw-2">*const </span>::c_char,
-        msg_len: ::size_t,
-        msg_prio: ::c_uint,
-        abs_timeout: <span class="kw-2">*const </span>::timespec,
-    ) -&gt; ::c_int;
-    <span class="kw">pub fn </span>mq_getattr(mqd: ::mqd_t, attr: <span class="kw-2">*mut </span>::mq_attr) -&gt; ::c_int;
-    <span class="kw">pub fn </span>mq_setattr(mqd: ::mqd_t, newattr: <span class="kw-2">*const </span>::mq_attr, oldattr: <span class="kw-2">*mut </span>::mq_attr) -&gt; ::c_int;
     <span class="kw">pub fn </span>epoll_pwait(
         epfd: ::c_int,
         events: <span class="kw-2">*mut </span>::epoll_event,
@@ -8539,8 +9102,6 @@
     <span class="kw">pub fn </span>globfree(pglob: <span class="kw-2">*mut </span>::glob_t);
 
     <span class="kw">pub fn </span>posix_madvise(addr: <span class="kw-2">*mut </span>::c_void, len: ::size_t, advice: ::c_int) -&gt; ::c_int;
-
-    <span class="kw">pub fn </span>shm_unlink(name: <span class="kw-2">*const </span>::c_char) -&gt; ::c_int;
 
     <span class="kw">pub fn </span>seekdir(dirp: <span class="kw-2">*mut </span>::DIR, loc: ::c_long);
 
@@ -8645,11 +9206,28 @@
         attr: <span class="kw-2">*mut </span>pthread_mutexattr_t,
         protocol: ::c_int,
     ) -&gt; ::c_int;
-    <span class="kw">pub fn </span>pthread_mutex_consistent(mutex: <span class="kw-2">*mut </span>pthread_mutex_t) -&gt; ::c_int;
+
     <span class="kw">pub fn </span>pthread_mutex_timedlock(
         lock: <span class="kw-2">*mut </span>pthread_mutex_t,
         abstime: <span class="kw-2">*const </span>::timespec,
     ) -&gt; ::c_int;
+    <span class="kw">pub fn </span>pthread_barrierattr_init(attr: <span class="kw-2">*mut </span>::pthread_barrierattr_t) -&gt; ::c_int;
+    <span class="kw">pub fn </span>pthread_barrierattr_destroy(attr: <span class="kw-2">*mut </span>::pthread_barrierattr_t) -&gt; ::c_int;
+    <span class="kw">pub fn </span>pthread_barrierattr_getpshared(
+        attr: <span class="kw-2">*const </span>::pthread_barrierattr_t,
+        shared: <span class="kw-2">*mut </span>::c_int,
+    ) -&gt; ::c_int;
+    <span class="kw">pub fn </span>pthread_barrierattr_setpshared(
+        attr: <span class="kw-2">*mut </span>::pthread_barrierattr_t,
+        shared: ::c_int,
+    ) -&gt; ::c_int;
+    <span class="kw">pub fn </span>pthread_barrier_init(
+        barrier: <span class="kw-2">*mut </span>pthread_barrier_t,
+        attr: <span class="kw-2">*const </span>::pthread_barrierattr_t,
+        count: ::c_uint,
+    ) -&gt; ::c_int;
+    <span class="kw">pub fn </span>pthread_barrier_destroy(barrier: <span class="kw-2">*mut </span>pthread_barrier_t) -&gt; ::c_int;
+    <span class="kw">pub fn </span>pthread_barrier_wait(barrier: <span class="kw-2">*mut </span>pthread_barrier_t) -&gt; ::c_int;
     <span class="kw">pub fn </span>pthread_spin_init(lock: <span class="kw-2">*mut </span>::pthread_spinlock_t, pshared: ::c_int) -&gt; ::c_int;
     <span class="kw">pub fn </span>pthread_spin_destroy(lock: <span class="kw-2">*mut </span>::pthread_spinlock_t) -&gt; ::c_int;
     <span class="kw">pub fn </span>pthread_spin_lock(lock: <span class="kw-2">*mut </span>::pthread_spinlock_t) -&gt; ::c_int;
@@ -8726,7 +9304,6 @@
     <span class="kw">pub fn </span>pthread_sigmask(how: ::c_int, set: <span class="kw-2">*const </span>sigset_t, oldset: <span class="kw-2">*mut </span>sigset_t) -&gt; ::c_int;
     <span class="kw">pub fn </span>sem_open(name: <span class="kw-2">*const </span>::c_char, oflag: ::c_int, ...) -&gt; <span class="kw-2">*mut </span>sem_t;
     <span class="kw">pub fn </span>getgrnam(name: <span class="kw-2">*const </span>::c_char) -&gt; <span class="kw-2">*mut </span>::group;
-    <span class="kw">pub fn </span>pthread_cancel(thread: ::pthread_t) -&gt; ::c_int;
     <span class="kw">pub fn </span>pthread_kill(thread: ::pthread_t, sig: ::c_int) -&gt; ::c_int;
     <span class="kw">pub fn </span>sem_unlink(name: <span class="kw-2">*const </span>::c_char) -&gt; ::c_int;
     <span class="kw">pub fn </span>daemon(nochdir: ::c_int, noclose: ::c_int) -&gt; ::c_int;
@@ -8760,14 +9337,6 @@
     <span class="kw">pub fn </span>pthread_mutexattr_getpshared(
         attr: <span class="kw-2">*const </span>pthread_mutexattr_t,
         pshared: <span class="kw-2">*mut </span>::c_int,
-    ) -&gt; ::c_int;
-    <span class="kw">pub fn </span>pthread_mutexattr_getrobust(
-        attr: <span class="kw-2">*const </span>pthread_mutexattr_t,
-        robustness: <span class="kw-2">*mut </span>::c_int,
-    ) -&gt; ::c_int;
-    <span class="kw">pub fn </span>pthread_mutexattr_setrobust(
-        attr: <span class="kw-2">*mut </span>pthread_mutexattr_t,
-        robustness: ::c_int,
     ) -&gt; ::c_int;
     <span class="kw">pub fn </span>popen(command: <span class="kw-2">*const </span>c_char, mode: <span class="kw-2">*const </span>c_char) -&gt; <span class="kw-2">*mut </span>::FILE;
     <span class="kw">pub fn </span>faccessat(
@@ -8953,13 +9522,22 @@
         longopts: <span class="kw-2">*const </span>option,
         longindex: <span class="kw-2">*mut </span>::c_int,
     ) -&gt; ::c_int;
+
+    <span class="kw">pub fn </span>copy_file_range(
+        fd_in: ::c_int,
+        off_in: <span class="kw-2">*mut </span>::off64_t,
+        fd_out: ::c_int,
+        off_out: <span class="kw-2">*mut </span>::off64_t,
+        len: ::size_t,
+        flags: ::c_uint,
+    ) -&gt; ::ssize_t;
 }
 
 <span class="macro">cfg_if! </span>{
     <span class="kw">if </span><span class="attribute">#[cfg(target_env = <span class="string">&quot;uclibc&quot;</span>)] </span>{
         <span class="kw">mod </span>uclibc;
         <span class="kw">pub use </span><span class="self">self</span>::uclibc::<span class="kw-2">*</span>;
-    } <span class="kw">else if </span><span class="attribute">#[cfg(target_env = <span class="string">&quot;musl&quot;</span>)] </span>{
+    } <span class="kw">else if </span><span class="attribute">#[cfg(any(target_env = <span class="string">&quot;musl&quot;</span>, target_env = <span class="string">&quot;ohos&quot;</span>))] </span>{
         <span class="kw">mod </span>musl;
         <span class="kw">pub use </span><span class="self">self</span>::musl::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attribute">#[cfg(target_env = <span class="string">&quot;gnu&quot;</span>)] </span>{

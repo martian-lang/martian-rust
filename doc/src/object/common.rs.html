@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.29.0/src/common.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>common.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../object/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.30.3/src/common.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>common.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../object/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -448,6 +448,36 @@
 <span id="448">448</span>
 <span id="449">449</span>
 <span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
 </pre><pre class="rust"><code><span class="doccomment">/// A CPU architecture.
 </span><span class="attribute">#[allow(missing_docs)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -455,6 +485,8 @@
 </span><span class="kw">pub enum </span>Architecture {
     Unknown,
     Aarch64,
+    <span class="attribute">#[allow(non_camel_case_types)]
+    </span>Aarch64_Ilp32,
     Arm,
     Avr,
     Bpf,
@@ -472,8 +504,10 @@
     Riscv32,
     Riscv64,
     S390x,
+    Sbf,
     Sparc64,
     Wasm32,
+    Xtensa,
 }
 
 <span class="kw">impl </span>Architecture {
@@ -484,6 +518,7 @@
         <span class="kw">match </span><span class="self">self </span>{
             Architecture::Unknown =&gt; <span class="prelude-val">None</span>,
             Architecture::Aarch64 =&gt; <span class="prelude-val">Some</span>(AddressSize::U64),
+            Architecture::Aarch64_Ilp32 =&gt; <span class="prelude-val">Some</span>(AddressSize::U32),
             Architecture::Arm =&gt; <span class="prelude-val">Some</span>(AddressSize::U32),
             Architecture::Avr =&gt; <span class="prelude-val">Some</span>(AddressSize::U8),
             Architecture::Bpf =&gt; <span class="prelude-val">Some</span>(AddressSize::U64),
@@ -500,8 +535,10 @@
             Architecture::Riscv32 =&gt; <span class="prelude-val">Some</span>(AddressSize::U32),
             Architecture::Riscv64 =&gt; <span class="prelude-val">Some</span>(AddressSize::U64),
             Architecture::S390x =&gt; <span class="prelude-val">Some</span>(AddressSize::U64),
+            Architecture::Sbf =&gt; <span class="prelude-val">Some</span>(AddressSize::U64),
             Architecture::Sparc64 =&gt; <span class="prelude-val">Some</span>(AddressSize::U64),
             Architecture::Wasm32 =&gt; <span class="prelude-val">Some</span>(AddressSize::U32),
+            Architecture::Xtensa =&gt; <span class="prelude-val">Some</span>(AddressSize::U32),
         }
     }
 }
@@ -538,6 +575,7 @@
     MachO,
     Pe,
     Wasm,
+    Xcoff,
 }
 
 <span class="doccomment">/// The kind of a section.
@@ -564,6 +602,11 @@
     ///
     /// Example Mach-O sections: `__TEXT/__const`, `__DATA/__const`, `__TEXT/__literal4`
     </span>ReadOnlyData,
+    <span class="doccomment">/// A read only data section with relocations.
+    ///
+    /// This is the same as either `Data` or `ReadOnlyData`, depending on the file format.
+    /// This value is only used in the API for writing files. It is never returned when reading files.
+    </span>ReadOnlyDataWithRel,
     <span class="doccomment">/// A loadable string section.
     ///
     /// Example ELF sections: `.rodata.str`
@@ -755,6 +798,8 @@
     },
     <span class="doccomment">/// Some other COFF relocation. The value is dependent on the architecture.
     </span>Coff(u16),
+    <span class="doccomment">/// Some other XCOFF relocation.
+    </span>Xcoff(u8),
 }
 
 <span class="doccomment">/// Information about how the result of the relocation operation is encoded in the place.
@@ -793,6 +838,11 @@
     ///
     /// The `RelocationKind` must be PC relative.
     </span>AArch64Call,
+
+    <span class="doccomment">/// LoongArch branch offset with two trailing zeros.
+    ///
+    /// The `RelocationKind` must be PC relative.
+    </span>LoongArchBranch,
 }
 
 <span class="doccomment">/// File flags that are specific to each file format.
@@ -819,6 +869,11 @@
     </span>Coff {
         <span class="doccomment">/// `Characteristics` field in the COFF file header.
         </span>characteristics: u16,
+    },
+    <span class="doccomment">/// XCOFF file flags.
+    </span>Xcoff {
+        <span class="doccomment">/// `f_flags` field in the XCOFF file header.
+        </span>f_flags: u16,
     },
 }
 
@@ -869,6 +924,11 @@
     </span>Coff {
         <span class="doccomment">/// `Characteristics` field in the section header.
         </span>characteristics: u32,
+    },
+    <span class="doccomment">/// XCOFF section flags.
+    </span>Xcoff {
+        <span class="doccomment">/// `s_flags` field in the section header.
+        </span>s_flags: u32,
     },
 }
 

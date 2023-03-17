@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/addr2line-0.17.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../addr2line/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/addr2line-0.19.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../addr2line/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -1190,6 +1190,48 @@
 <span id="1190">1190</span>
 <span id="1191">1191</span>
 <span id="1192">1192</span>
+<span id="1193">1193</span>
+<span id="1194">1194</span>
+<span id="1195">1195</span>
+<span id="1196">1196</span>
+<span id="1197">1197</span>
+<span id="1198">1198</span>
+<span id="1199">1199</span>
+<span id="1200">1200</span>
+<span id="1201">1201</span>
+<span id="1202">1202</span>
+<span id="1203">1203</span>
+<span id="1204">1204</span>
+<span id="1205">1205</span>
+<span id="1206">1206</span>
+<span id="1207">1207</span>
+<span id="1208">1208</span>
+<span id="1209">1209</span>
+<span id="1210">1210</span>
+<span id="1211">1211</span>
+<span id="1212">1212</span>
+<span id="1213">1213</span>
+<span id="1214">1214</span>
+<span id="1215">1215</span>
+<span id="1216">1216</span>
+<span id="1217">1217</span>
+<span id="1218">1218</span>
+<span id="1219">1219</span>
+<span id="1220">1220</span>
+<span id="1221">1221</span>
+<span id="1222">1222</span>
+<span id="1223">1223</span>
+<span id="1224">1224</span>
+<span id="1225">1225</span>
+<span id="1226">1226</span>
+<span id="1227">1227</span>
+<span id="1228">1228</span>
+<span id="1229">1229</span>
+<span id="1230">1230</span>
+<span id="1231">1231</span>
+<span id="1232">1232</span>
+<span id="1233">1233</span>
+<span id="1234">1234</span>
 </pre><pre class="rust"><code><span class="doccomment">//! This crate provides a cross-platform library and binary for translating addresses into
 //! function names, file names and line numbers. Given an address in an executable or an
 //! offset in a section of a relocatable object, it uses the debugging information to
@@ -1373,6 +1415,7 @@
             ranges: gimli::RangeLists::new(debug_ranges, debug_rnglists),
             file_type: gimli::DwarfFileType::Main,
             sup: <span class="prelude-val">None</span>,
+            abbreviations_cache: gimli::AbbreviationsCache::new(),
         })
     }
 
@@ -1596,6 +1639,7 @@
             };
 
             <span class="kw">let </span><span class="kw-2">mut </span>lang = <span class="prelude-val">None</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>have_unit_range = <span class="bool-val">false</span>;
             {
                 <span class="kw">let </span><span class="kw-2">mut </span>entries = dw_unit.entries_raw(<span class="prelude-val">None</span>)<span class="question-mark">?</span>;
 
@@ -1608,13 +1652,18 @@
                 <span class="kw">for </span>spec <span class="kw">in </span>abbrev.attributes() {
                     <span class="kw">let </span>attr = entries.read_attribute(<span class="kw-2">*</span>spec)<span class="question-mark">?</span>;
                     <span class="kw">match </span>attr.name() {
-                        gimli::DW_AT_low_pc =&gt; {
-                            <span class="kw">if let </span>gimli::AttributeValue::Addr(val) = attr.value() {
-                                ranges.low_pc = <span class="prelude-val">Some</span>(val);
+                        gimli::DW_AT_low_pc =&gt; <span class="kw">match </span>attr.value() {
+                            gimli::AttributeValue::Addr(val) =&gt; ranges.low_pc = <span class="prelude-val">Some</span>(val),
+                            gimli::AttributeValue::DebugAddrIndex(index) =&gt; {
+                                ranges.low_pc = <span class="prelude-val">Some</span>(sections.address(<span class="kw-2">&amp;</span>dw_unit, index)<span class="question-mark">?</span>);
                             }
-                        }
+                            <span class="kw">_ </span>=&gt; {}
+                        },
                         gimli::DW_AT_high_pc =&gt; <span class="kw">match </span>attr.value() {
                             gimli::AttributeValue::Addr(val) =&gt; ranges.high_pc = <span class="prelude-val">Some</span>(val),
+                            gimli::AttributeValue::DebugAddrIndex(index) =&gt; {
+                                ranges.high_pc = <span class="prelude-val">Some</span>(sections.address(<span class="kw-2">&amp;</span>dw_unit, index)<span class="question-mark">?</span>);
+                            }
                             gimli::AttributeValue::Udata(val) =&gt; ranges.size = <span class="prelude-val">Some</span>(val),
                             <span class="kw">_ </span>=&gt; {}
                         },
@@ -1664,11 +1713,12 @@
                                     unit_id,
                                     max_end: <span class="number">0</span>,
                                 });
+                                have_unit_range = <span class="bool-val">true</span>;
                             }
                         }
                     }
                 } <span class="kw">else </span>{
-                    ranges.for_each_range(<span class="kw-2">&amp;</span>sections, <span class="kw-2">&amp;</span>dw_unit, |range| {
+                    have_unit_range |= ranges.for_each_range(<span class="kw-2">&amp;</span>sections, <span class="kw-2">&amp;</span>dw_unit, |range| {
                         unit_ranges.push(UnitRange {
                             range,
                             unit_id,
@@ -1678,11 +1728,34 @@
                 }
             }
 
+            <span class="kw">let </span>lines = LazyCell::new();
+            <span class="kw">if </span>!have_unit_range {
+                <span class="comment">// The unit did not declare any ranges.
+                // Try to get some ranges from the line program sequences.
+                </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>ilnp) = dw_unit.line_program {
+                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(lines) = lines
+                        .borrow_with(|| Lines::parse(<span class="kw-2">&amp;</span>dw_unit, ilnp.clone(), <span class="kw-2">&amp;*</span>sections))
+                        .as_ref()
+                    {
+                        <span class="kw">for </span>sequence <span class="kw">in </span>lines.sequences.iter() {
+                            unit_ranges.push(UnitRange {
+                                range: gimli::Range {
+                                    begin: sequence.start,
+                                    end: sequence.end,
+                                },
+                                unit_id,
+                                max_end: <span class="number">0</span>,
+                            })
+                        }
+                    }
+                }
+            }
+
             res_units.push(ResUnit {
                 offset,
                 dw_unit,
                 lang,
-                lines: LazyCell::new(),
+                lines,
                 funcs: LazyCell::new(),
             });
         }
@@ -1723,6 +1796,111 @@
     sequences: Box&lt;[LineSequence]&gt;,
 }
 
+<span class="kw">impl </span>Lines {
+    <span class="kw">fn </span>parse&lt;R: gimli::Reader&gt;(
+        dw_unit: <span class="kw-2">&amp;</span>gimli::Unit&lt;R&gt;,
+        ilnp: gimli::IncompleteLineProgram&lt;R, R::Offset&gt;,
+        sections: <span class="kw-2">&amp;</span>gimli::Dwarf&lt;R&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>sequences = Vec::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>sequence_rows = Vec::&lt;LineRow&gt;::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>rows = ilnp.rows();
+        <span class="kw">while let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, row)) = rows.next_row()<span class="question-mark">? </span>{
+            <span class="kw">if </span>row.end_sequence() {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(start) = sequence_rows.first().map(|x| x.address) {
+                    <span class="kw">let </span>end = row.address();
+                    <span class="kw">let </span><span class="kw-2">mut </span>rows = Vec::new();
+                    mem::swap(<span class="kw-2">&amp;mut </span>rows, <span class="kw-2">&amp;mut </span>sequence_rows);
+                    sequences.push(LineSequence {
+                        start,
+                        end,
+                        rows: rows.into_boxed_slice(),
+                    });
+                }
+                <span class="kw">continue</span>;
+            }
+
+            <span class="kw">let </span>address = row.address();
+            <span class="kw">let </span>file_index = row.file_index();
+            <span class="kw">let </span>line = row.line().map(NonZeroU64::get).unwrap_or(<span class="number">0</span>) <span class="kw">as </span>u32;
+            <span class="kw">let </span>column = <span class="kw">match </span>row.column() {
+                gimli::ColumnType::LeftEdge =&gt; <span class="number">0</span>,
+                gimli::ColumnType::Column(x) =&gt; x.get() <span class="kw">as </span>u32,
+            };
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(last_row) = sequence_rows.last_mut() {
+                <span class="kw">if </span>last_row.address == address {
+                    last_row.file_index = file_index;
+                    last_row.line = line;
+                    last_row.column = column;
+                    <span class="kw">continue</span>;
+                }
+            }
+
+            sequence_rows.push(LineRow {
+                address,
+                file_index,
+                line,
+                column,
+            });
+        }
+        sequences.sort_by_key(|x| x.start);
+
+        <span class="kw">let </span><span class="kw-2">mut </span>files = Vec::new();
+        <span class="kw">let </span>header = rows.header();
+        <span class="kw">match </span>header.file(<span class="number">0</span>) {
+            <span class="prelude-val">Some</span>(file) =&gt; files.push(render_file(dw_unit, file, header, sections)<span class="question-mark">?</span>),
+            <span class="prelude-val">None </span>=&gt; files.push(String::from(<span class="string">&quot;&quot;</span>)), <span class="comment">// DWARF version &lt;= 4 may not have 0th index
+        </span>}
+        <span class="kw">let </span><span class="kw-2">mut </span>index = <span class="number">1</span>;
+        <span class="kw">while let </span><span class="prelude-val">Some</span>(file) = header.file(index) {
+            files.push(render_file(dw_unit, file, header, sections)<span class="question-mark">?</span>);
+            index += <span class="number">1</span>;
+        }
+
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            files: files.into_boxed_slice(),
+            sequences: sequences.into_boxed_slice(),
+        })
+    }
+}
+
+<span class="kw">fn </span>render_file&lt;R: gimli::Reader&gt;(
+    dw_unit: <span class="kw-2">&amp;</span>gimli::Unit&lt;R&gt;,
+    file: <span class="kw-2">&amp;</span>gimli::FileEntry&lt;R, R::Offset&gt;,
+    header: <span class="kw-2">&amp;</span>gimli::LineProgramHeader&lt;R, R::Offset&gt;,
+    sections: <span class="kw-2">&amp;</span>gimli::Dwarf&lt;R&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;String, gimli::Error&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>path = <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>comp_dir) = dw_unit.comp_dir {
+        comp_dir.to_string_lossy()<span class="question-mark">?</span>.into_owned()
+    } <span class="kw">else </span>{
+        String::new()
+    };
+
+    <span class="comment">// The directory index 0 is defined to correspond to the compilation unit directory.
+    </span><span class="kw">if </span>file.directory_index() != <span class="number">0 </span>{
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(directory) = file.directory(header) {
+            path_push(
+                <span class="kw-2">&amp;mut </span>path,
+                sections
+                    .attr_string(dw_unit, directory)<span class="question-mark">?
+                    </span>.to_string_lossy()<span class="question-mark">?
+                    </span>.as_ref(),
+            );
+        }
+    }
+
+    path_push(
+        <span class="kw-2">&amp;mut </span>path,
+        sections
+            .attr_string(dw_unit, file.path_name())<span class="question-mark">?
+            </span>.to_string_lossy()<span class="question-mark">?
+            </span>.as_ref(),
+    );
+
+    <span class="prelude-val">Ok</span>(path)
+}
+
 <span class="kw">struct </span>LineSequence {
     start: u64,
     end: u64,
@@ -1751,68 +1929,7 @@
             <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
         };
         <span class="self">self</span>.lines
-            .borrow_with(|| {
-                <span class="kw">let </span><span class="kw-2">mut </span>sequences = Vec::new();
-                <span class="kw">let </span><span class="kw-2">mut </span>sequence_rows = Vec::&lt;LineRow&gt;::new();
-                <span class="kw">let </span><span class="kw-2">mut </span>rows = ilnp.clone().rows();
-                <span class="kw">while let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, row)) = rows.next_row()<span class="question-mark">? </span>{
-                    <span class="kw">if </span>row.end_sequence() {
-                        <span class="kw">if let </span><span class="prelude-val">Some</span>(start) = sequence_rows.first().map(|x| x.address) {
-                            <span class="kw">let </span>end = row.address();
-                            <span class="kw">let </span><span class="kw-2">mut </span>rows = Vec::new();
-                            mem::swap(<span class="kw-2">&amp;mut </span>rows, <span class="kw-2">&amp;mut </span>sequence_rows);
-                            sequences.push(LineSequence {
-                                start,
-                                end,
-                                rows: rows.into_boxed_slice(),
-                            });
-                        }
-                        <span class="kw">continue</span>;
-                    }
-
-                    <span class="kw">let </span>address = row.address();
-                    <span class="kw">let </span>file_index = row.file_index();
-                    <span class="kw">let </span>line = row.line().map(NonZeroU64::get).unwrap_or(<span class="number">0</span>) <span class="kw">as </span>u32;
-                    <span class="kw">let </span>column = <span class="kw">match </span>row.column() {
-                        gimli::ColumnType::LeftEdge =&gt; <span class="number">0</span>,
-                        gimli::ColumnType::Column(x) =&gt; x.get() <span class="kw">as </span>u32,
-                    };
-
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(last_row) = sequence_rows.last_mut() {
-                        <span class="kw">if </span>last_row.address == address {
-                            last_row.file_index = file_index;
-                            last_row.line = line;
-                            last_row.column = column;
-                            <span class="kw">continue</span>;
-                        }
-                    }
-
-                    sequence_rows.push(LineRow {
-                        address,
-                        file_index,
-                        line,
-                        column,
-                    });
-                }
-                sequences.sort_by_key(|x| x.start);
-
-                <span class="kw">let </span><span class="kw-2">mut </span>files = Vec::new();
-                <span class="kw">let </span>header = ilnp.header();
-                <span class="kw">match </span>header.file(<span class="number">0</span>) {
-                    <span class="prelude-val">Some</span>(file) =&gt; files.push(<span class="self">self</span>.render_file(file, header, sections)<span class="question-mark">?</span>),
-                    <span class="prelude-val">None </span>=&gt; files.push(String::from(<span class="string">&quot;&quot;</span>)), <span class="comment">// DWARF version &lt;= 4 may not have 0th index
-                </span>}
-                <span class="kw">let </span><span class="kw-2">mut </span>index = <span class="number">1</span>;
-                <span class="kw">while let </span><span class="prelude-val">Some</span>(file) = header.file(index) {
-                    files.push(<span class="self">self</span>.render_file(file, header, sections)<span class="question-mark">?</span>);
-                    index += <span class="number">1</span>;
-                }
-
-                <span class="prelude-val">Ok</span>(Lines {
-                    files: files.into_boxed_slice(),
-                    sequences: sequences.into_boxed_slice(),
-                })
-            })
+            .borrow_with(|| Lines::parse(<span class="kw-2">&amp;</span><span class="self">self</span>.dw_unit, ilnp.clone(), sections))
             .as_ref()
             .map(<span class="prelude-val">Some</span>)
             .map_err(Error::clone)
@@ -1879,39 +1996,6 @@
         };
         <span class="kw">let </span>location = <span class="self">self</span>.find_location(probe, <span class="kw-2">&amp;</span>dwarf.sections)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>((function, location))
-    }
-
-    <span class="kw">fn </span>render_file(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        file: <span class="kw-2">&amp;</span>gimli::FileEntry&lt;R, R::Offset&gt;,
-        header: <span class="kw-2">&amp;</span>gimli::LineProgramHeader&lt;R, R::Offset&gt;,
-        sections: <span class="kw-2">&amp;</span>gimli::Dwarf&lt;R&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;String, gimli::Error&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>path = <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>comp_dir) = <span class="self">self</span>.dw_unit.comp_dir {
-            comp_dir.to_string_lossy()<span class="question-mark">?</span>.into_owned()
-        } <span class="kw">else </span>{
-            String::new()
-        };
-
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(directory) = file.directory(header) {
-            path_push(
-                <span class="kw-2">&amp;mut </span>path,
-                sections
-                    .attr_string(<span class="kw-2">&amp;</span><span class="self">self</span>.dw_unit, directory)<span class="question-mark">?
-                    </span>.to_string_lossy()<span class="question-mark">?
-                    </span>.as_ref(),
-            );
-        }
-
-        path_push(
-            <span class="kw-2">&amp;mut </span>path,
-            sections
-                .attr_string(<span class="kw-2">&amp;</span><span class="self">self</span>.dw_unit, file.path_name())<span class="question-mark">?
-                </span>.to_string_lossy()<span class="question-mark">?
-                </span>.as_ref(),
-        );
-
-        <span class="prelude-val">Ok</span>(path)
     }
 }
 
@@ -2120,7 +2204,7 @@
             <span class="string">&#39;/&#39;
         </span>};
 
-        <span class="kw">if </span>!path.ends_with(dir_separator) {
+        <span class="kw">if </span>!path.is_empty() &amp;&amp; !path.ends_with(dir_separator) {
             path.push(dir_separator);
         }
         <span class="kw-2">*</span>path += p;

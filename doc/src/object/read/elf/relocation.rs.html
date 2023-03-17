@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.29.0/src/read/elf/relocation.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>relocation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../object/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/object-0.30.3/src/read/elf/relocation.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>relocation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../object/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -537,6 +537,38 @@
 <span id="537">537</span>
 <span id="538">538</span>
 <span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
 </pre><pre class="rust"><code><span class="kw">use </span>alloc::fmt;
 <span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>core::fmt::Debug;
@@ -779,19 +811,28 @@
     <span class="kw">let </span><span class="kw-2">mut </span>encoding = RelocationEncoding::Generic;
     <span class="kw">let </span>is_mips64el = header.is_mips64el(endian);
     <span class="kw">let </span>(kind, size) = <span class="kw">match </span>header.e_machine(endian) {
-        elf::EM_AARCH64 =&gt; <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
-            elf::R_AARCH64_ABS64 =&gt; (RelocationKind::Absolute, <span class="number">64</span>),
-            elf::R_AARCH64_ABS32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
-            elf::R_AARCH64_ABS16 =&gt; (RelocationKind::Absolute, <span class="number">16</span>),
-            elf::R_AARCH64_PREL64 =&gt; (RelocationKind::Relative, <span class="number">64</span>),
-            elf::R_AARCH64_PREL32 =&gt; (RelocationKind::Relative, <span class="number">32</span>),
-            elf::R_AARCH64_PREL16 =&gt; (RelocationKind::Relative, <span class="number">16</span>),
-            elf::R_AARCH64_CALL26 =&gt; {
-                encoding = RelocationEncoding::AArch64Call;
-                (RelocationKind::PltRelative, <span class="number">26</span>)
+        elf::EM_AARCH64 =&gt; {
+            <span class="kw">if </span>header.is_type_64() {
+                <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
+                    elf::R_AARCH64_ABS64 =&gt; (RelocationKind::Absolute, <span class="number">64</span>),
+                    elf::R_AARCH64_ABS32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
+                    elf::R_AARCH64_ABS16 =&gt; (RelocationKind::Absolute, <span class="number">16</span>),
+                    elf::R_AARCH64_PREL64 =&gt; (RelocationKind::Relative, <span class="number">64</span>),
+                    elf::R_AARCH64_PREL32 =&gt; (RelocationKind::Relative, <span class="number">32</span>),
+                    elf::R_AARCH64_PREL16 =&gt; (RelocationKind::Relative, <span class="number">16</span>),
+                    elf::R_AARCH64_CALL26 =&gt; {
+                        encoding = RelocationEncoding::AArch64Call;
+                        (RelocationKind::PltRelative, <span class="number">26</span>)
+                    }
+                    r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
+                }
+            } <span class="kw">else </span>{
+                <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
+                    elf::R_AARCH64_P32_ABS32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
+                    r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
+                }
             }
-            r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
-        },
+        }
         elf::EM_ARM =&gt; <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
             elf::R_ARM_ABS32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
             r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
@@ -843,6 +884,19 @@
         elf::EM_LOONGARCH =&gt; <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
             elf::R_LARCH_32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
             elf::R_LARCH_64 =&gt; (RelocationKind::Absolute, <span class="number">64</span>),
+            elf::R_LARCH_32_PCREL =&gt; (RelocationKind::Relative, <span class="number">32</span>),
+            elf::R_LARCH_B16 =&gt; {
+                encoding = RelocationEncoding::LoongArchBranch;
+                (RelocationKind::Relative, <span class="number">16</span>)
+            }
+            elf::R_LARCH_B21 =&gt; {
+                encoding = RelocationEncoding::LoongArchBranch;
+                (RelocationKind::Relative, <span class="number">21</span>)
+            }
+            elf::R_LARCH_B26 =&gt; {
+                encoding = RelocationEncoding::LoongArchBranch;
+                (RelocationKind::Relative, <span class="number">26</span>)
+            }
             r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
         },
         elf::EM_MIPS =&gt; <span class="kw">match </span>reloc.r_type(endian, is_mips64el) {
@@ -911,6 +965,11 @@
             }
             r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
         },
+        elf::EM_SBF =&gt; <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
+            elf::R_SBF_64_64 =&gt; (RelocationKind::Absolute, <span class="number">64</span>),
+            elf::R_SBF_64_32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
+            r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
+        },
         elf::EM_SPARC | elf::EM_SPARC32PLUS | elf::EM_SPARCV9 =&gt; {
             <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
                 elf::R_SPARC_32 | elf::R_SPARC_UA32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
@@ -918,6 +977,11 @@
                 r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
             }
         }
+        elf::EM_XTENSA =&gt; <span class="kw">match </span>reloc.r_type(endian, <span class="bool-val">false</span>) {
+            elf::R_XTENSA_32 =&gt; (RelocationKind::Absolute, <span class="number">32</span>),
+            elf::R_XTENSA_32_PCREL =&gt; (RelocationKind::Relative, <span class="number">32</span>),
+            r_type =&gt; (RelocationKind::Elf(r_type), <span class="number">0</span>),
+        },
         <span class="kw">_ </span>=&gt; (RelocationKind::Elf(reloc.r_type(endian, <span class="bool-val">false</span>)), <span class="number">0</span>),
     };
     <span class="kw">let </span>sym = reloc.r_sym(endian, is_mips64el) <span class="kw">as </span>usize;
