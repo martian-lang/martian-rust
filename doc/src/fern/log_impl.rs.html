@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/fern-0.6.1/src/log_impl.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>log_impl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../fern/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/fern-0.6.2/src/log_impl.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>log_impl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../fern/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -1044,15 +1044,6 @@
 <span id="1044">1044</span>
 <span id="1045">1045</span>
 <span id="1046">1046</span>
-<span id="1047">1047</span>
-<span id="1048">1048</span>
-<span id="1049">1049</span>
-<span id="1050">1050</span>
-<span id="1051">1051</span>
-<span id="1052">1052</span>
-<span id="1053">1053</span>
-<span id="1054">1054</span>
-<span id="1055">1055</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{
     borrow::Cow,
     collections::HashMap,
@@ -1073,13 +1064,9 @@
 <span class="kw">use crate</span>::{Filter, Formatter};
 
 <span class="attribute">#[cfg(all(not(windows), feature = <span class="string">&quot;syslog-4&quot;</span>))]
-</span><span class="kw">use crate</span>::{Syslog4Rfc3164Logger, Syslog4Rfc5424Logger};
+</span><span class="kw">use crate</span>::{Syslog4Rfc3164Logger, Syslog4Rfc5424Logger, Syslog4TransformFn};
 <span class="attribute">#[cfg(all(not(windows), feature = <span class="string">&quot;syslog-6&quot;</span>))]
-</span><span class="kw">use crate</span>::{Syslog6Rfc3164Logger, Syslog6Rfc5424Logger};
-<span class="attribute">#[cfg(all(not(windows), feature = <span class="string">&quot;reopen-03&quot;</span>))]
-</span><span class="kw">use </span>reopen03;
-<span class="attribute">#[cfg(all(not(windows), feature = <span class="string">&quot;reopen-1&quot;</span>))]
-</span><span class="kw">use </span>reopen1;
+</span><span class="kw">use crate</span>::{Syslog6Rfc3164Logger, Syslog6Rfc5424Logger, Syslog6TransformFn};
 
 <span class="kw">pub enum </span>LevelConfiguration {
     JustDefault,
@@ -1195,11 +1182,7 @@
 <span class="attribute">#[cfg(all(not(windows), feature = <span class="string">&quot;syslog-4&quot;</span>))]
 </span><span class="kw">pub struct </span>Syslog4Rfc5424 {
     <span class="kw">pub </span>inner: Mutex&lt;Syslog4Rfc5424Logger&gt;,
-    <span class="kw">pub </span>transform: Box&lt;
-        <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>log::Record) -&gt; (i32, HashMap&lt;String, HashMap&lt;String, String&gt;&gt;, String)
-            + Sync
-            + Send,
-    &gt;,
+    <span class="kw">pub </span>transform: Box&lt;Syslog4TransformFn&gt;,
 }
 
 <span class="attribute">#[cfg(all(not(windows), feature = <span class="string">&quot;syslog-6&quot;</span>))]
@@ -1210,11 +1193,7 @@
 <span class="attribute">#[cfg(all(not(windows), feature = <span class="string">&quot;syslog-6&quot;</span>))]
 </span><span class="kw">pub struct </span>Syslog6Rfc5424 {
     <span class="kw">pub </span>inner: Mutex&lt;Syslog6Rfc5424Logger&gt;,
-    <span class="kw">pub </span>transform: Box&lt;
-        <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>log::Record) -&gt; (u32, HashMap&lt;String, HashMap&lt;String, String&gt;&gt;, String)
-            + Sync
-            + Send,
-    &gt;,
+    <span class="kw">pub </span>transform: Box&lt;Syslog6TransformFn&gt;,
 }
 
 <span class="kw">pub struct </span>Panic;
@@ -1311,7 +1290,7 @@
     }
 
     <span class="kw">pub fn </span>open_current_log_file(<span class="kw-2">&amp;</span><span class="self">self</span>, suffix: <span class="kw-2">&amp;</span>str) -&gt; io::Result&lt;fs::File&gt; {
-        <span class="self">Self</span>::open_log_file(<span class="kw-2">&amp;</span><span class="self">self</span>.compute_file_path(<span class="kw-2">&amp;</span>suffix))
+        <span class="self">Self</span>::open_log_file(<span class="kw-2">&amp;</span><span class="self">self</span>.compute_file_path(suffix))
     }
 }
 
@@ -1372,8 +1351,8 @@
             LevelConfiguration::JustDefault =&gt; <span class="prelude-val">None</span>,
             LevelConfiguration::Minimal(<span class="kw-2">ref </span>levels) =&gt; levels
                 .iter()
-                .find(|&amp;&amp;(<span class="kw-2">ref </span>test_module, <span class="kw">_</span>)| test_module == module)
-                .map(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, level)| level),
+                .find(|(test_module, <span class="kw">_</span>)| test_module == module)
+                .map(|(<span class="kw">_</span>, level)| <span class="kw-2">*</span>level),
             LevelConfiguration::Many(<span class="kw-2">ref </span>levels) =&gt; levels.get(module).cloned(),
         }
     }
@@ -1699,7 +1678,10 @@
     <span class="kw">fn </span>flush(<span class="kw-2">&amp;</span><span class="self">self</span>) {}
 }
 
-<span class="attribute">#[cfg(all(not(windows), any(feature = <span class="string">&quot;syslog-3&quot;</span>, feature = <span class="string">&quot;syslog-4&quot;</span>, feature = <span class="string">&quot;syslog-6&quot;</span>)))]
+<span class="attribute">#[cfg(all(
+    not(windows),
+    any(feature = <span class="string">&quot;syslog-3&quot;</span>, feature = <span class="string">&quot;syslog-4&quot;</span>, feature = <span class="string">&quot;syslog-6&quot;</span>)
+))]
 </span><span class="macro">macro_rules! </span>send_syslog {
     (<span class="macro-nonterminal">$logger</span>:expr, <span class="macro-nonterminal">$level</span>:expr, <span class="macro-nonterminal">$message</span>:expr) =&gt; {
         <span class="kw">use </span>log::Level;
