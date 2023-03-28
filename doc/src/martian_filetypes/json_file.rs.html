@@ -510,8 +510,6 @@
 <span id="510">510</span>
 <span id="511">511</span>
 <span id="512">512</span>
-<span id="513">513</span>
-<span id="514">514</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines a `JsonFile` and implements `FileTypeIO&lt;T&gt;` and
 //! `LazyFileTypeIO&lt;T&gt;` trait for a json file.
@@ -593,13 +591,11 @@
 
 </span><span class="kw">use crate</span>::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 <span class="kw">use </span>anyhow::format_err;
-<span class="kw">use </span>martian::Error;
-<span class="kw">use </span>martian::MartianFileType;
+<span class="kw">use </span>martian::{Error, MartianFileType};
 <span class="kw">use </span>martian_derive::martian_filetype;
 <span class="kw">use </span>serde::de::DeserializeOwned;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
-<span class="kw">use </span>serde_json::de::Read <span class="kw">as </span>SerdeRead;
-<span class="kw">use </span>serde_json::de::{IoRead, StreamDeserializer};
+<span class="kw">use </span>serde_json::de::{IoRead, Read <span class="kw">as </span>SerdeRead, StreamDeserializer};
 <span class="kw">use </span>serde_json::ser::PrettyFormatter;
 <span class="kw">use </span>serde_json::Serializer;
 <span class="kw">use </span>std::fmt::Debug;

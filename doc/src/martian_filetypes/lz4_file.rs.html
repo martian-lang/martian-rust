@@ -436,7 +436,6 @@
 <span id="436">436</span>
 <span id="437">437</span>
 <span id="438">438</span>
-<span id="439">439</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines an `lz4` wrapper over other basic filetypes. Most basic
 //! filetypes automatically inherit this behavior through the trait heirarchy.
@@ -529,13 +528,12 @@
 //! }
 //! ```
 
-</span><span class="kw">use </span><span class="kw">crate</span>::martian_filetype_inner;
-<span class="kw">use crate</span>::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+</span><span class="kw">use crate</span>::{
+    martian_filetype_inner, ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite,
+};
 <span class="kw">use </span>martian::{Error, MartianFileType};
-
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>std::convert::From;
-
 <span class="kw">use </span>std::io::{Read, Write};
 <span class="kw">use </span>std::marker::PhantomData;
 

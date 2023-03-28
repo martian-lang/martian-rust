@@ -458,8 +458,6 @@
 <span id="458">458</span>
 <span id="459">459</span>
 <span id="460">460</span>
-<span id="461">461</span>
-<span id="462">462</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This crate serves two purposes:
 //! 1. Defines traits that let you associate filetypes to in memory objects.
@@ -603,12 +601,10 @@
 //! - BamIndexFile
 
 </span><span class="kw">use </span>martian::{Error, MartianFileType};
-
-<span class="kw">use </span>std::fmt;
 <span class="kw">use </span>std::fs::File;
-<span class="kw">use </span>std::io;
 <span class="kw">use </span>std::iter::FromIterator;
 <span class="kw">use </span>std::path::PathBuf;
+<span class="kw">use </span>std::{fmt, io};
 
 <span class="kw">pub mod </span>bin_file;
 <span class="kw">pub mod </span>gzip_file;

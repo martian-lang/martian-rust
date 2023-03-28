@@ -13,7 +13,6 @@
 <span id="13">13</span>
 <span id="14">14</span>
 <span id="15">15</span>
-<span id="16">16</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Re-export commonly used symbols in this crate
 //!
 //! It is a common practice in Rust crates to include a `prelude` module
@@ -26,8 +25,7 @@
     MartianFileType, MartianMain, MartianMakePath, MartianRover, MartianStage, MartianVoid,
     RawMartianStage, Resource, StageDef,
 };
-<span class="kw">pub use </span><span class="kw">crate</span>::Error;
-<span class="kw">pub use crate</span>::{martian_make_mro, MartianAdapter};
+<span class="kw">pub use crate</span>::{martian_make_mro, Error, MartianAdapter};
 <span class="kw">pub use </span>log::LevelFilter;
 <span class="kw">pub use </span>martian_stages;
 </code></pre></div>

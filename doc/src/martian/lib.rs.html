@@ -377,12 +377,6 @@
 <span id="377">377</span>
 <span id="378">378</span>
 <span id="379">379</span>
-<span id="380">380</span>
-<span id="381">381</span>
-<span id="382">382</span>
-<span id="383">383</span>
-<span id="384">384</span>
-<span id="385">385</span>
 </pre><pre class="rust"><code><span class="doccomment">//! # Martian-Rust
 //! This crate provides a strongly typed high level API for implementing martian stages in Rust.
 //!
@@ -390,26 +384,21 @@
 //! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
 //!
 
-</span><span class="kw">use </span>std::collections::HashMap;
-<span class="kw">use </span>std::fmt::Write <span class="kw">as </span>FmtWrite;
-<span class="kw">use </span>std::fs::File;
-<span class="kw">use </span>std::io;
-<span class="kw">use </span>std::io::Write <span class="kw">as </span>IoWrite;
-<span class="kw">use </span>std::os::unix::io::{FromRawFd, IntoRawFd};
-<span class="kw">use </span>std::panic;
-<span class="kw">use </span>std::path::Path;
-
+</span><span class="kw">pub use </span>anyhow::Error;
+<span class="kw">use </span>anyhow::{format_err, Context};
 <span class="kw">use </span>backtrace::Backtrace;
 <span class="kw">use </span>log::{error, info};
-<span class="kw">use </span>time::format_description::{
-    modifier::{Day, Hour, Minute, Month, Second, Year},
-    Component, FormatItem,
-    FormatItem::Literal,
-};
+<span class="kw">use </span>std::collections::HashMap;
+<span class="kw">use </span>std::fmt::Write <span class="kw">as </span>FmtWrite;
+<span class="kw">use </span>std::fs::File;
+<span class="kw">use </span>std::io::Write <span class="kw">as </span>IoWrite;
+<span class="kw">use </span>std::os::unix::io::{FromRawFd, IntoRawFd};
+<span class="kw">use </span>std::path::Path;
+<span class="kw">use </span>std::{io, panic};
+<span class="kw">use </span>time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
+<span class="kw">use </span>time::format_description::FormatItem::Literal;
+<span class="kw">use </span>time::format_description::{Component, FormatItem};
 <span class="kw">use </span>time::OffsetDateTime;
-
-<span class="kw">pub use </span>anyhow::Error;
-<span class="kw">use </span>anyhow::{format_err, Context};
 
 <span class="kw">mod </span>metadata;
 <span class="kw">pub use </span>metadata::<span class="kw-2">*</span>;
@@ -422,10 +411,9 @@
 <span class="kw">pub use </span>stage::<span class="kw-2">*</span>;
 
 <span class="kw">pub mod </span>mro;
+<span class="kw">pub use </span>log::LevelFilter;
 <span class="doccomment">/// For convenience
 </span><span class="kw">pub use </span>mro::<span class="kw-2">*</span>;
-
-<span class="kw">pub use </span>log::LevelFilter;
 <span class="kw">pub mod </span>prelude;
 
 <span class="kw">pub fn </span>initialize(args: Vec&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Metadata, Error&gt; {
