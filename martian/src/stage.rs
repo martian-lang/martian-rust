@@ -1,5 +1,4 @@
-use crate::metadata::Metadata;
-use crate::metadata::Version;
+use crate::metadata::{Metadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
 use crate::Error;

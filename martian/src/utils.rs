@@ -7,8 +7,7 @@ use heck::ToUpperCamelCase;
 use serde::Serialize;
 use serde_json::Value;
 use std::os::unix::prelude::OsStrExt;
-use std::path::Path;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 /// Shortcut function to encode an object as a Json dictionary
 pub fn obj_encode<T: Serialize>(v: &T) -> Result<JsonDict, Error> {

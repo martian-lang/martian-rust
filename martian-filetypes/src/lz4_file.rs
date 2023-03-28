@@ -90,13 +90,12 @@
 //! }
 //! ```
 
-use crate::martian_filetype_inner;
-use crate::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{
+    martian_filetype_inner, ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite,
+};
 use martian::{Error, MartianFileType};
-
 use serde::{Deserialize, Serialize};
 use std::convert::From;
-
 use std::io::{Read, Write};
 use std::marker::PhantomData;
 

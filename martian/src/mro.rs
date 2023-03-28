@@ -13,8 +13,7 @@
 use crate::{Error, MartianVoid};
 use anyhow::format_err;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt::Display;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
