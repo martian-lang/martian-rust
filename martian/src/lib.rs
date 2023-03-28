@@ -5,26 +5,21 @@
 //! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
 //!
 
+pub use anyhow::Error;
+use anyhow::{format_err, Context};
+use backtrace::Backtrace;
+use log::{error, info};
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
-use std::io;
 use std::io::Write as IoWrite;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
-use std::panic;
 use std::path::Path;
-
-use backtrace::Backtrace;
-use log::{error, info};
-use time::format_description::{
-    modifier::{Day, Hour, Minute, Month, Second, Year},
-    Component, FormatItem,
-    FormatItem::Literal,
-};
+use std::{io, panic};
+use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
+use time::format_description::FormatItem::Literal;
+use time::format_description::{Component, FormatItem};
 use time::OffsetDateTime;
-
-pub use anyhow::Error;
-use anyhow::{format_err, Context};
 
 mod metadata;
 pub use metadata::*;
@@ -37,10 +32,9 @@ pub mod utils;
 pub use stage::*;
 
 pub mod mro;
+pub use log::LevelFilter;
 /// For convenience
 pub use mro::*;
-
-pub use log::LevelFilter;
 pub mod prelude;
 
 pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {

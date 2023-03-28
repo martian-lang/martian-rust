@@ -141,12 +141,10 @@
 //! - BamIndexFile
 
 use martian::{Error, MartianFileType};
-
-use std::fmt;
 use std::fs::File;
-use std::io;
 use std::iter::FromIterator;
 use std::path::PathBuf;
+use std::{fmt, io};
 
 pub mod bin_file;
 pub mod gzip_file;

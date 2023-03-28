@@ -1,21 +1,17 @@
-use crate::DATE_FORMAT;
-use crate::{write_errors, Error};
-use time::{OffsetDateTime, UtcOffset};
-
+use crate::{write_errors, Error, DATE_FORMAT};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::map::Map;
 use serde_json::{self, Value};
-
 use std::any::type_name;
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
-use std::io::ErrorKind;
-use std::io::Write;
+use std::io::{ErrorKind, Write};
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
+use time::{OffsetDateTime, UtcOffset};
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
