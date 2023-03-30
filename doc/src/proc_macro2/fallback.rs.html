@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.53/src/fallback.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fallback.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../proc_macro2/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.54/src/fallback.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fallback.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../proc_macro2/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -1024,12 +1024,43 @@
 <span id="1024">1024</span>
 <span id="1025">1025</span>
 <span id="1026">1026</span>
+<span id="1027">1027</span>
+<span id="1028">1028</span>
+<span id="1029">1029</span>
+<span id="1030">1030</span>
+<span id="1031">1031</span>
+<span id="1032">1032</span>
+<span id="1033">1033</span>
+<span id="1034">1034</span>
+<span id="1035">1035</span>
+<span id="1036">1036</span>
+<span id="1037">1037</span>
+<span id="1038">1038</span>
+<span id="1039">1039</span>
+<span id="1040">1040</span>
+<span id="1041">1041</span>
+<span id="1042">1042</span>
+<span id="1043">1043</span>
+<span id="1044">1044</span>
+<span id="1045">1045</span>
+<span id="1046">1046</span>
+<span id="1047">1047</span>
+<span id="1048">1048</span>
+<span id="1049">1049</span>
+<span id="1050">1050</span>
+<span id="1051">1051</span>
+<span id="1052">1052</span>
+<span id="1053">1053</span>
+<span id="1054">1054</span>
+<span id="1055">1055</span>
+<span id="1056">1056</span>
+<span id="1057">1057</span>
 </pre><pre class="rust"><code><span class="attribute">#[cfg(span_locations)]
 </span><span class="kw">use </span><span class="kw">crate</span>::location::LineColumn;
 <span class="kw">use </span><span class="kw">crate</span>::parse::{<span class="self">self</span>, Cursor};
 <span class="kw">use </span><span class="kw">crate</span>::rcvec::{RcVec, RcVecBuilder, RcVecIntoIter, RcVecMut};
 <span class="kw">use crate</span>::{Delimiter, Spacing, TokenTree};
-<span class="attribute">#[cfg(span_locations)]
+<span class="attribute">#[cfg(all(span_locations, not(fuzzing)))]
 </span><span class="kw">use </span>core::cell::RefCell;
 <span class="attribute">#[cfg(span_locations)]
 </span><span class="kw">use </span>core::cmp;
@@ -1039,8 +1070,6 @@
 <span class="kw">use </span>core::ops::RangeBounds;
 <span class="kw">use </span>core::ptr;
 <span class="kw">use </span>core::str::FromStr;
-<span class="attribute">#[cfg(procmacro2_semver_exempt)]
-</span><span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::path::PathBuf;
 
 <span class="doccomment">/// Force use of proc-macro2&#39;s fallback implementation of the API for now, even
@@ -1188,11 +1217,14 @@
 
 <span class="attribute">#[cfg(span_locations)]
 </span><span class="kw">fn </span>get_cursor(src: <span class="kw-2">&amp;</span>str) -&gt; Cursor {
+    <span class="attribute">#[cfg(fuzzing)]
+    </span><span class="kw">return </span>Cursor { rest: src, off: <span class="number">1 </span>};
+
     <span class="comment">// Create a dummy file &amp; add it to the source map
+    </span><span class="attribute">#[cfg(not(fuzzing))]
     </span>SOURCE_MAP.with(|cm| {
         <span class="kw">let </span><span class="kw-2">mut </span>cm = cm.borrow_mut();
-        <span class="kw">let </span>name = <span class="macro">format!</span>(<span class="string">&quot;&lt;parsed string {}&gt;&quot;</span>, cm.files.len());
-        <span class="kw">let </span>span = cm.add_file(<span class="kw-2">&amp;</span>name, src);
+        <span class="kw">let </span>span = cm.add_file(src);
         Cursor {
             rest: src,
             off: span.lo,
@@ -1360,14 +1392,12 @@
     }
 }
 
-<span class="attribute">#[cfg(span_locations)]
+<span class="attribute">#[cfg(all(span_locations, not(fuzzing)))]
 </span><span class="macro">thread_local! </span>{
     <span class="kw">static </span>SOURCE_MAP: RefCell&lt;SourceMap&gt; = RefCell::new(SourceMap {
         <span class="comment">// NOTE: We start with a single dummy file which all call_site() and
         // def_site() spans reference.
         </span>files: <span class="macro">vec!</span>[FileInfo {
-            <span class="attribute">#[cfg(procmacro2_semver_exempt)]
-            </span>name: <span class="string">&quot;&lt;unspecified&gt;&quot;</span>.to_owned(),
             source_text: String::new(),
             span: Span { lo: <span class="number">0</span>, hi: <span class="number">0 </span>},
             lines: <span class="macro">vec!</span>[<span class="number">0</span>],
@@ -1375,16 +1405,14 @@
     });
 }
 
-<span class="attribute">#[cfg(span_locations)]
+<span class="attribute">#[cfg(all(span_locations, not(fuzzing)))]
 </span><span class="kw">struct </span>FileInfo {
-    <span class="attribute">#[cfg(procmacro2_semver_exempt)]
-    </span>name: String,
     source_text: String,
     span: Span,
     lines: Vec&lt;usize&gt;,
 }
 
-<span class="attribute">#[cfg(span_locations)]
+<span class="attribute">#[cfg(all(span_locations, not(fuzzing)))]
 </span><span class="kw">impl </span>FileInfo {
     <span class="kw">fn </span>offset_line_column(<span class="kw-2">&amp;</span><span class="self">self</span>, offset: usize) -&gt; LineColumn {
         <span class="macro">assert!</span>(<span class="self">self</span>.span_within(Span {
@@ -1417,7 +1445,7 @@
 
 <span class="doccomment">/// Computes the offsets of each line in the given source string
 /// and the total number of characters
-</span><span class="attribute">#[cfg(span_locations)]
+</span><span class="attribute">#[cfg(all(span_locations, not(fuzzing)))]
 </span><span class="kw">fn </span>lines_offsets(s: <span class="kw-2">&amp;</span>str) -&gt; (usize, Vec&lt;usize&gt;) {
     <span class="kw">let </span><span class="kw-2">mut </span>lines = <span class="macro">vec!</span>[<span class="number">0</span>];
     <span class="kw">let </span><span class="kw-2">mut </span>total = <span class="number">0</span>;
@@ -1432,12 +1460,12 @@
     (total, lines)
 }
 
-<span class="attribute">#[cfg(span_locations)]
+<span class="attribute">#[cfg(all(span_locations, not(fuzzing)))]
 </span><span class="kw">struct </span>SourceMap {
     files: Vec&lt;FileInfo&gt;,
 }
 
-<span class="attribute">#[cfg(span_locations)]
+<span class="attribute">#[cfg(all(span_locations, not(fuzzing)))]
 </span><span class="kw">impl </span>SourceMap {
     <span class="kw">fn </span>next_start_pos(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
         <span class="comment">// Add 1 so there&#39;s always space between files.
@@ -1447,7 +1475,7 @@
         </span><span class="self">self</span>.files.last().unwrap().span.hi + <span class="number">1
     </span>}
 
-    <span class="kw">fn </span>add_file(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str, src: <span class="kw-2">&amp;</span>str) -&gt; Span {
+    <span class="kw">fn </span>add_file(<span class="kw-2">&amp;mut </span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>str) -&gt; Span {
         <span class="kw">let </span>(len, lines) = lines_offsets(src);
         <span class="kw">let </span>lo = <span class="self">self</span>.next_start_pos();
         <span class="comment">// XXX(nika): Should we bother doing a checked cast or checked add here?
@@ -1457,17 +1485,26 @@
         };
 
         <span class="self">self</span>.files.push(FileInfo {
-            <span class="attribute">#[cfg(procmacro2_semver_exempt)]
-            </span>name: name.to_owned(),
             source_text: src.to_owned(),
             span,
             lines,
         });
 
-        <span class="attribute">#[cfg(not(procmacro2_semver_exempt))]
-        </span><span class="kw">let _ </span>= name;
-
         span
+    }
+
+    <span class="attribute">#[cfg(procmacro2_semver_exempt)]
+    </span><span class="kw">fn </span>filepath(<span class="kw-2">&amp;</span><span class="self">self</span>, span: Span) -&gt; PathBuf {
+        <span class="kw">for </span>(i, file) <span class="kw">in </span><span class="self">self</span>.files.iter().enumerate() {
+            <span class="kw">if </span>file.span_within(span) {
+                <span class="kw">return </span>PathBuf::from(<span class="kw">if </span>i == <span class="number">0 </span>{
+                    <span class="string">&quot;&lt;unspecified&gt;&quot;</span>.to_owned()
+                } <span class="kw">else </span>{
+                    <span class="macro">format!</span>(<span class="string">&quot;&lt;parsed string {}&gt;&quot;</span>, i)
+                });
+            }
+        }
+        <span class="macro">unreachable!</span>(<span class="string">&quot;Invalid span with no related FileInfo!&quot;</span>);
     }
 
     <span class="kw">fn </span>fileinfo(<span class="kw-2">&amp;</span><span class="self">self</span>, span: Span) -&gt; <span class="kw-2">&amp;</span>FileInfo {
@@ -1476,7 +1513,7 @@
                 <span class="kw">return </span>file;
             }
         }
-        <span class="macro">panic!</span>(<span class="string">&quot;Invalid span with no related FileInfo!&quot;</span>);
+        <span class="macro">unreachable!</span>(<span class="string">&quot;Invalid span with no related FileInfo!&quot;</span>);
     }
 }
 
@@ -1522,18 +1559,26 @@
 
     <span class="attribute">#[cfg(procmacro2_semver_exempt)]
     </span><span class="kw">pub fn </span>source_file(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SourceFile {
-        SOURCE_MAP.with(|cm| {
+        <span class="attribute">#[cfg(fuzzing)]
+        </span><span class="kw">return </span>SourceFile {
+            path: PathBuf::from(<span class="string">&quot;&lt;unspecified&gt;&quot;</span>),
+        };
+
+        <span class="attribute">#[cfg(not(fuzzing))]
+        </span>SOURCE_MAP.with(|cm| {
             <span class="kw">let </span>cm = cm.borrow();
-            <span class="kw">let </span>fi = cm.fileinfo(<span class="kw-2">*</span><span class="self">self</span>);
-            SourceFile {
-                path: Path::new(<span class="kw-2">&amp;</span>fi.name).to_owned(),
-            }
+            <span class="kw">let </span>path = cm.filepath(<span class="kw-2">*</span><span class="self">self</span>);
+            SourceFile { path }
         })
     }
 
     <span class="attribute">#[cfg(span_locations)]
     </span><span class="kw">pub fn </span>start(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LineColumn {
-        SOURCE_MAP.with(|cm| {
+        <span class="attribute">#[cfg(fuzzing)]
+        </span><span class="kw">return </span>LineColumn { line: <span class="number">0</span>, column: <span class="number">0 </span>};
+
+        <span class="attribute">#[cfg(not(fuzzing))]
+        </span>SOURCE_MAP.with(|cm| {
             <span class="kw">let </span>cm = cm.borrow();
             <span class="kw">let </span>fi = cm.fileinfo(<span class="kw-2">*</span><span class="self">self</span>);
             fi.offset_line_column(<span class="self">self</span>.lo <span class="kw">as </span>usize)
@@ -1542,7 +1587,11 @@
 
     <span class="attribute">#[cfg(span_locations)]
     </span><span class="kw">pub fn </span>end(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LineColumn {
-        SOURCE_MAP.with(|cm| {
+        <span class="attribute">#[cfg(fuzzing)]
+        </span><span class="kw">return </span>LineColumn { line: <span class="number">0</span>, column: <span class="number">0 </span>};
+
+        <span class="attribute">#[cfg(not(fuzzing))]
+        </span>SOURCE_MAP.with(|cm| {
             <span class="kw">let </span>cm = cm.borrow();
             <span class="kw">let </span>fi = cm.fileinfo(<span class="kw-2">*</span><span class="self">self</span>);
             fi.offset_line_column(<span class="self">self</span>.hi <span class="kw">as </span>usize)
@@ -1576,7 +1625,14 @@
 
     <span class="attribute">#[cfg(span_locations)]
     </span><span class="kw">pub fn </span>join(<span class="kw-2">&amp;</span><span class="self">self</span>, other: Span) -&gt; <span class="prelude-ty">Option</span>&lt;Span&gt; {
-        SOURCE_MAP.with(|cm| {
+        <span class="attribute">#[cfg(fuzzing)]
+        </span><span class="kw">return </span>{
+            <span class="kw">let _ </span>= other;
+            <span class="prelude-val">None
+        </span>};
+
+        <span class="attribute">#[cfg(not(fuzzing))]
+        </span>SOURCE_MAP.with(|cm| {
             <span class="kw">let </span>cm = cm.borrow();
             <span class="comment">// If `other` is not within the same FileInfo as us, return None.
             </span><span class="kw">if </span>!cm.fileinfo(<span class="kw-2">*</span><span class="self">self</span>).span_within(other) {
@@ -1596,10 +1652,16 @@
 
     <span class="attribute">#[cfg(span_locations)]
     </span><span class="kw">pub fn </span>source_text(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;String&gt; {
-        <span class="kw">if </span><span class="self">self</span>.is_call_site() {
-            <span class="prelude-val">None
-        </span>} <span class="kw">else </span>{
-            <span class="prelude-val">Some</span>(SOURCE_MAP.with(|cm| cm.borrow().fileinfo(<span class="kw-2">*</span><span class="self">self</span>).source_text(<span class="kw-2">*</span><span class="self">self</span>)))
+        <span class="attribute">#[cfg(fuzzing)]
+        </span><span class="kw">return </span><span class="prelude-val">None</span>;
+
+        <span class="attribute">#[cfg(not(fuzzing))]
+        </span>{
+            <span class="kw">if </span><span class="self">self</span>.is_call_site() {
+                <span class="prelude-val">None
+            </span>} <span class="kw">else </span>{
+                <span class="prelude-val">Some</span>(SOURCE_MAP.with(|cm| cm.borrow().fileinfo(<span class="kw-2">*</span><span class="self">self</span>).source_text(<span class="kw-2">*</span><span class="self">self</span>)))
+            }
         }
     }
 
