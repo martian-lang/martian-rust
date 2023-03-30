@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.36.9/src/io/pipe.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>pipe.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../rustix/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.4/src/io/pipe.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>pipe.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../rustix/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -128,14 +128,22 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
-</pre><pre class="rust"><code><span class="attribute">#![allow(unsafe_code)]
+<span id="131">131</span>
+<span id="132">132</span>
+</pre><pre class="rust"><code><span class="doccomment">//! `pipe` and related APIs.
+//!
+//! # Safety
+//!
+//! `vmsplice` is an unsafe function.
+
+</span><span class="attribute">#![allow(unsafe_code)]
 
 </span><span class="kw">use </span><span class="kw">crate</span>::fd::OwnedFd;
 <span class="kw">use crate</span>::{backend, io};
 <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
 </span><span class="kw">use </span>backend::fd::AsFd;
 
-<span class="attribute">#[cfg(not(any(target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>)))]
+<span class="attribute">#[cfg(not(apple))]
 </span><span class="kw">pub use </span>backend::io::types::PipeFlags;
 
 <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
@@ -150,11 +158,10 @@
 /// [Linux]: https://man7.org/linux/man-pages/man7/pipe.7.html
 /// [POSIX]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html
 </span><span class="attribute">#[cfg(not(any(
+    solarish,
     windows,
     target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;illumos&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;solaris&quot;</span>,
     target_os = <span class="string">&quot;wasi&quot;</span>,
 )))]
 </span><span class="kw">pub const </span>PIPE_BUF: usize = backend::io::types::PIPE_BUF;
@@ -184,22 +191,18 @@
 ///  - [Linux]
 ///
 /// [Linux]: https://man7.org/linux/man-pages/man2/pipe2.2.html
-</span><span class="attribute">#[cfg(not(any(
-    target_os = <span class="string">&quot;aix&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;ios&quot;</span>,
-    target_os = <span class="string">&quot;macos&quot;
-</span>)))]
+</span><span class="attribute">#[cfg(not(any(apple, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;haiku&quot;</span>)))]
 #[inline]
 #[doc(alias = <span class="string">&quot;pipe2&quot;</span>)]
 </span><span class="kw">pub fn </span>pipe_with(flags: PipeFlags) -&gt; io::Result&lt;(OwnedFd, OwnedFd)&gt; {
     backend::io::syscalls::pipe_with(flags)
 }
 
-<span class="doccomment">/// `splice(fd_in, off_in, fd_out, off_out, len, flags)`—Transfer data between a file and a pipe.
+<span class="doccomment">/// `splice(fd_in, off_in, fd_out, off_out, len, flags)`—Transfer data between
+/// a file and a pipe.
 ///
-/// This function transfers up to `len` bytes of data from the file descriptor `fd_in`
-/// to the file descriptor `fd_out`, where one of the file descriptors
+/// This function transfers up to `len` bytes of data from the file descriptor
+/// `fd_in` to the file descriptor `fd_out`, where one of the file descriptors
 /// must refer to a pipe.
 ///
 /// `off_*` must be `None` if the corresponding fd refers to a pipe.
@@ -237,8 +240,9 @@
 ///
 /// # Safety
 ///
-/// If the memory must not be mutated (such as when `bufs` were originally immutable slices),
-/// it is up to the caller to ensure that the write end of the pipe is placed in `fd`.
+/// If the memory must not be mutated (such as when `bufs` were originally
+/// immutable slices), it is up to the caller to ensure that the write end of
+/// the pipe is placed in `fd`.
 ///
 /// Additionally if `SpliceFlags::GIFT` is set, the caller must also ensure
 /// that the contents of `bufs` in never modified following the call,

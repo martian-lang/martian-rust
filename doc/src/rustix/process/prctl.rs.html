@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.36.9/src/process/prctl.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>prctl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../rustix/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.4/src/process/prctl.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>prctl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../rustix/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -1118,10 +1118,19 @@
 <span id="1118">1118</span>
 <span id="1119">1119</span>
 <span id="1120">1120</span>
+<span id="1121">1121</span>
+<span id="1122">1122</span>
+<span id="1123">1123</span>
+<span id="1124">1124</span>
+<span id="1125">1125</span>
+<span id="1126">1126</span>
+<span id="1127">1127</span>
+<span id="1128">1128</span>
+<span id="1129">1129</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Bindings for the Linux `prctl` system call.
 //!
-//! There are similarities (but also differences) with FreeBSD&#39;s `procctl` system call, whose
-//! interface is located in the `procctl.rs` file.
+//! There are similarities (but also differences) with FreeBSD&#39;s `procctl`
+//! system call, whose interface is located in the `procctl.rs` file.
 
 </span><span class="attribute">#![allow(unsafe_code)]
 
@@ -1266,13 +1275,14 @@
 
 <span class="kw">const </span>PR_SET_DUMPABLE: c_int = <span class="number">4</span>;
 
-<span class="doccomment">/// Set the state of the `dumpable` attribute, which determines whether the process can be traced
-/// and whether core dumps are produced for the calling process upon delivery of a signal whose
-/// default behavior is to produce a core dump.
+<span class="doccomment">/// Set the state of the `dumpable` attribute, which determines whether the
+/// process can be traced and whether core dumps are produced for the calling
+/// process upon delivery of a signal whose default behavior is to produce a
+/// core dump.
 ///
-/// A similar function with the same name is available on FreeBSD (as part of the `procctl`
-/// interface), but it has an extra argument which allows to select a process other then the
-/// current process.
+/// A similar function with the same name is available on FreeBSD (as part of
+/// the `procctl` interface), but it has an extra argument which allows to
+/// select a process other then the current process.
 ///
 /// # References
 /// - [`prctl(PR_SET_DUMPABLE,...)`]
@@ -1470,8 +1480,8 @@
 
 <span class="kw">const </span>PR_SET_TIMING: c_int = <span class="number">14</span>;
 
-<span class="doccomment">/// Set whether to use (normal, traditional) statistical process timing or accurate
-/// timestamp-based process timing.
+<span class="doccomment">/// Set whether to use (normal, traditional) statistical process timing or
+/// accurate timestamp-based process timing.
 ///
 /// # References
 /// - [`prctl(PR_SET_TIMING,...)`]
@@ -1590,7 +1600,8 @@
 
 <span class="kw">const </span>PR_SET_TSC: c_int = <span class="number">26</span>;
 
-<span class="doccomment">/// Set the state of the flag determining if the timestamp counter can be read by the process.
+<span class="doccomment">/// Set the state of the flag determining if the timestamp counter can be read
+/// by the process.
 ///
 /// # References
 /// - [`prctl(PR_SET_TSC,...)`]
@@ -1731,13 +1742,16 @@
     </span>CodeStart = PR_SET_MM_START_CODE,
     <span class="doccomment">/// Set the address below which the program text can run.
     </span>CodeEnd = PR_SET_MM_END_CODE,
-    <span class="doccomment">/// Set the address above which initialized and uninitialized (bss) data are placed.
+    <span class="doccomment">/// Set the address above which initialized and uninitialized (bss) data
+    /// are placed.
     </span>DataStart = PR_SET_MM_START_DATA,
-    <span class="doccomment">/// Set the address below which initialized and uninitialized (bss) data are placed.
+    <span class="doccomment">/// Set the address below which initialized and uninitialized (bss) data
+    /// are placed.
     </span>DataEnd = PR_SET_MM_END_DATA,
     <span class="doccomment">/// Set the start address of the stack.
     </span>StackStart = PR_SET_MM_START_STACK,
-    <span class="doccomment">/// Set the address above which the program heap can be expanded with `brk` call.
+    <span class="doccomment">/// Set the address above which the program heap can be expanded with `brk`
+    /// call.
     </span>BrkStart = PR_SET_MM_START_BRK,
     <span class="doccomment">/// Set the current `brk` value.
     </span>BrkCurrent = PR_SET_MM_BRK,
@@ -1751,7 +1765,8 @@
     </span>EnvironmentEnd = PR_SET_MM_ENV_END,
 }
 
-<span class="doccomment">/// Modify certain kernel memory map descriptor addresses of the calling process.
+<span class="doccomment">/// Modify certain kernel memory map descriptor addresses of the calling
+/// process.
 ///
 /// # References
 /// - [`prctl(PR_SET_MM,...)`]
@@ -1771,7 +1786,8 @@
     prctl_3args(PR_SET_MM, option <span class="kw">as </span>usize <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>, address).map(|_r| ())
 }
 
-<span class="doccomment">/// Supersede the `/proc/pid/exe` symbolic link with a new one pointing to a new executable file.
+<span class="doccomment">/// Supersede the `/proc/pid/exe` symbolic link with a new one pointing to a
+/// new executable file.
 ///
 /// # References
 /// - [`prctl(PR_SET_MM,PR_SET_MM_EXE_FILE,...)`]
@@ -1820,8 +1836,8 @@
     <span class="prelude-val">Ok</span>(value <span class="kw">as </span>usize)
 }
 
-<span class="doccomment">/// This structure provides new memory descriptor map which mostly modifies `/proc/pid/stat[m]`
-/// output for a task.
+<span class="doccomment">/// This structure provides new memory descriptor map which mostly modifies
+/// `/proc/pid/stat[m]` output for a task.
 /// This mostly done in a sake of checkpoint/restore functionality.
 </span><span class="attribute">#[repr(C)]
 #[derive(Debug, Clone)]
@@ -1852,11 +1868,13 @@
     </span><span class="kw">pub </span>auxv: <span class="kw-2">*mut </span>u64,
     <span class="doccomment">/// Auxiliary vector size.
     </span><span class="kw">pub </span>auxv_size: u32,
-    <span class="doccomment">/// File descriptor of executable file that was used to create this process.
+    <span class="doccomment">/// File descriptor of executable file that was used to create this
+    /// process.
     </span><span class="kw">pub </span>exe_fd: u32,
 }
 
-<span class="doccomment">/// Provides one-shot access to all the addresses by passing in a [`PrctlMmMap`].
+<span class="doccomment">/// Provides one-shot access to all the addresses by passing in a
+/// [`PrctlMmMap`].
 ///
 /// # References
 /// - [`prctl(PR_SET_MM,PR_SET_MM_MAP,...)`]
@@ -1898,8 +1916,8 @@
     </span>ProcessID(Pid),
 }
 
-<span class="doccomment">/// Declare that the ptracer process can `ptrace` the calling process as if it were a direct
-/// process ancestor.
+<span class="doccomment">/// Declare that the ptracer process can `ptrace` the calling process as if it
+/// were a direct process ancestor.
 ///
 /// # References
 /// - [`prctl(PR_SET_PTRACER,...)`]
@@ -2122,8 +2140,8 @@
 
 <span class="kw">const </span>PR_SET_IO_FLUSHER: c_int = <span class="number">57</span>;
 
-<span class="doccomment">/// Put the process in the `IO_FLUSHER` state, allowing it to make progress when
-/// allocating memory.
+<span class="doccomment">/// Put the process in the `IO_FLUSHER` state, allowing it to make progress
+/// when allocating memory.
 ///
 /// # References
 /// - [`prctl(PR_SET_IO_FLUSHER,...)`]

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.36.9/src/backend/linux_raw/conv.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>conv.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../rustix/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.4/src/backend/linux_raw/conv.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>conv.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../rustix/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -797,6 +797,45 @@
 <span id="797">797</span>
 <span id="798">798</span>
 <span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Convert values to [`ArgReg`] and from [`RetReg`].
 //!
 //! System call arguments and return values are all communicated with inline
@@ -942,7 +981,7 @@
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Num: ArgNumber&gt; From&lt;BorrowedFd&lt;<span class="lifetime">&#39;a</span>&gt;&gt; <span class="kw">for </span>ArgReg&lt;<span class="lifetime">&#39;a</span>, Num&gt; {
     <span class="attribute">#[inline]
     </span><span class="kw">fn </span>from(fd: BorrowedFd&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="self">Self </span>{
-        <span class="comment">// Safety: `BorrowedFd` ensures that the file descriptor is valid, and the
+        <span class="comment">// SAFETY: `BorrowedFd` ensures that the file descriptor is valid, and the
         // lifetime parameter on the resulting `ArgReg` ensures that the result is
         // bounded by the `BorrowedFd`&#39;s lifetime.
         </span><span class="kw">unsafe </span>{ raw_fd(fd.as_raw_fd()) }
@@ -1108,6 +1147,22 @@
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Num: ArgNumber&gt; From&lt;<span class="kw">crate</span>::fs::AtFlags&gt; <span class="kw">for </span>ArgReg&lt;<span class="lifetime">&#39;a</span>, Num&gt; {
     <span class="attribute">#[inline]
     </span><span class="kw">fn </span>from(flags: <span class="kw">crate</span>::fs::AtFlags) -&gt; <span class="self">Self </span>{
+        c_uint(flags.bits())
+    }
+}
+
+<span class="attribute">#[cfg(feature = <span class="string">&quot;fs&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Num: ArgNumber&gt; From&lt;<span class="kw">crate</span>::fs::inotify::CreateFlags&gt; <span class="kw">for </span>ArgReg&lt;<span class="lifetime">&#39;a</span>, Num&gt; {
+    <span class="attribute">#[inline]
+    </span><span class="kw">fn </span>from(flags: <span class="kw">crate</span>::fs::inotify::CreateFlags) -&gt; <span class="self">Self </span>{
+        c_uint(flags.bits())
+    }
+}
+
+<span class="attribute">#[cfg(feature = <span class="string">&quot;fs&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Num: ArgNumber&gt; From&lt;<span class="kw">crate</span>::fs::inotify::WatchFlags&gt; <span class="kw">for </span>ArgReg&lt;<span class="lifetime">&#39;a</span>, Num&gt; {
+    <span class="attribute">#[inline]
+    </span><span class="kw">fn </span>from(flags: <span class="kw">crate</span>::fs::inotify::WatchFlags) -&gt; <span class="self">Self </span>{
         c_uint(flags.bits())
     }
 }
@@ -1470,6 +1525,29 @@
     <span class="attribute">#[inline]
     </span><span class="kw">fn </span>from(flags: <span class="kw">crate</span>::backend::fs::types::MountFlagsArg) -&gt; <span class="self">Self </span>{
         c_uint(flags.<span class="number">0</span>)
+    }
+}
+
+<span class="attribute">#[cfg(feature = <span class="string">&quot;fs&quot;</span>)]
+#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Num: ArgNumber&gt; From&lt;<span class="kw">crate</span>::backend::fs::types::UnmountFlags&gt; <span class="kw">for </span>ArgReg&lt;<span class="lifetime">&#39;a</span>, Num&gt; {
+    <span class="attribute">#[inline]
+    </span><span class="kw">fn </span>from(flags: <span class="kw">crate</span>::backend::fs::types::UnmountFlags) -&gt; <span class="self">Self </span>{
+        c_uint(flags.bits())
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Num: ArgNumber&gt; From&lt;<span class="kw">crate</span>::process::Uid&gt; <span class="kw">for </span>ArgReg&lt;<span class="lifetime">&#39;a</span>, Num&gt; {
+    <span class="attribute">#[inline]
+    </span><span class="kw">fn </span>from(t: <span class="kw">crate</span>::process::Uid) -&gt; <span class="self">Self </span>{
+        c_uint(t.as_raw())
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Num: ArgNumber&gt; From&lt;<span class="kw">crate</span>::process::Gid&gt; <span class="kw">for </span>ArgReg&lt;<span class="lifetime">&#39;a</span>, Num&gt; {
+    <span class="attribute">#[inline]
+    </span><span class="kw">fn </span>from(t: <span class="kw">crate</span>::process::Gid) -&gt; <span class="self">Self </span>{
+        c_uint(t.as_raw())
     }
 }
 
