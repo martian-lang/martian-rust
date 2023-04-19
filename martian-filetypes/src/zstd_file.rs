@@ -139,7 +139,7 @@ where
     }
     fn write(&self, item: &T) -> Result<(), Error> {
         // Default compression level and configuration
-        let mut encoder = zstd::Encoder::new(self.buf_writer()?,0)?;
+        let mut encoder = zstd::Encoder::new(self.buf_writer()?, 0)?;
         <Self as FileTypeIO<T>>::write_into(&mut encoder, item).map_err(|e| {
             let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
             e.context(context)
@@ -170,7 +170,7 @@ where
 {
     type FileType = Zstd<L::FileType>;
     fn with_writer(writer: W) -> Result<Self, Error> {
-        let encoder = zstd::Encoder::new(writer,0)?;
+        let encoder = zstd::Encoder::new(writer, 0)?;
         let inner = L::with_writer(encoder)?;
         Ok(LazyZstdWriter {
             inner: Some(inner),
@@ -231,7 +231,7 @@ where
 
 impl<L, T, R> LazyRead<T, R> for LazyZstdReader<L, T, R>
 where
-    L: LazyRead<T, zstd::Decoder<'static,  BufReader<R>>>,
+    L: LazyRead<T, zstd::Decoder<'static, BufReader<R>>>,
     R: Read + BufRead,
 {
     type FileType = Zstd<L::FileType>;
@@ -247,7 +247,7 @@ where
 
 impl<'a, L, T, R> Iterator for LazyZstdReader<L, T, R>
 where
-    L: LazyRead<T, zstd::Decoder<'static,  BufReader<R>>>,
+    L: LazyRead<T, zstd::Decoder<'static, BufReader<R>>>,
     R: BufRead,
 {
     type Item = Result<T, Error>;
@@ -260,7 +260,7 @@ impl<F, T, W, R> LazyAgents<T, W, R> for Zstd<F>
 where
     R: BufRead,
     W: Write,
-    F: LazyAgents<T, zstd::Encoder<'static, W>, zstd::Decoder<'static,  BufReader<R>>>,
+    F: LazyAgents<T, zstd::Encoder<'static, W>, zstd::Decoder<'static, BufReader<R>>>,
 {
     type LazyWriter = LazyZstdWriter<F::LazyWriter, T, W>;
     type LazyReader = LazyZstdReader<F::LazyReader, T, R>;
