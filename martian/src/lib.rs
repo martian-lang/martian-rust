@@ -5,26 +5,21 @@
 //! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
 //!
 
+pub use anyhow::Error;
+use anyhow::{format_err, Context};
+use backtrace::Backtrace;
+use log::{error, info};
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
-use std::io;
 use std::io::Write as IoWrite;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
-use std::panic;
 use std::path::Path;
-
-use backtrace::Backtrace;
-use log::{error, info};
-use time::format_description::{
-    modifier::{Day, Hour, Minute, Month, Second, Year},
-    Component, FormatItem,
-    FormatItem::Literal,
-};
+use std::{io, panic};
+use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
+use time::format_description::FormatItem::Literal;
+use time::format_description::{Component, FormatItem};
 use time::OffsetDateTime;
-
-pub use anyhow::Error;
-use anyhow::{format_err, Context};
 
 mod metadata;
 pub use metadata::*;
@@ -37,10 +32,9 @@ pub mod utils;
 pub use stage::*;
 
 pub mod mro;
+pub use log::LevelFilter;
 /// For convenience
 pub use mro::*;
-
-pub use log::LevelFilter;
 pub mod prelude;
 
 pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
@@ -103,7 +97,7 @@ fn setup_logging(log_file: File, level: LevelFilter) {
                 .unwrap_or_else(|_| OffsetDateTime::now_utc())
                 .format(DATE_FORMAT)
                 .unwrap();
-            out.finish(format_args!("{} [{}] {}", time_str, record.target(), msg))
+            out.finish(format_args!("{time_str} [{}] {msg}", record.target()))
         })
         .chain(log_file)
         .chain(io::stdout());
@@ -111,7 +105,7 @@ fn setup_logging(log_file: File, level: LevelFilter) {
     let cfg = base_config.chain(logger_config).apply();
 
     if let Err(e) = cfg {
-        panic!("Failed to initialize global logger: {}", e);
+        panic!("Failed to initialize global logger: {e}");
     }
 }
 
@@ -192,7 +186,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let mut md = match _md {
         Ok(m) => m,
         Err(e) => {
-            let _ = write_errors(&format!("{:?}", e), false);
+            let _ = write_errors(&format!("{e:?}"), false);
             return (1, Some(e));
         }
     };
@@ -207,7 +201,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let stage = match _stage {
         Ok(s) => s,
         Err(e) => {
-            let _ = write_errors(&format!("{:?}", e), false);
+            let _ = write_errors(&format!("{e:?}"), false);
             return (1, Some(e));
         }
     };
@@ -239,7 +233,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
                     location.line(),
                     backtrace
                 ),
-                None => format!("stage failed unexpectedly: '{}':\n{:?}", msg, backtrace),
+                None => format!("stage failed unexpectedly: '{msg}':\n{backtrace:?}"),
             };
 
             // write to _log
@@ -247,7 +241,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
             // write stack trace to to _stackvars.
             // this will just give up if any errors are encountere
-            let bt_string = format!("{:?}", backtrace);
+            let bt_string = format!("{backtrace:?}");
             let _ = File::create(&stackvars_path).map(move |mut f| {
                 let _ = f.write_all(bt_string.as_bytes());
             });
@@ -286,7 +280,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 fn report_error(md: &mut Metadata, e: &Error, is_assert: bool) {
     let bt = e.backtrace();
     let _ = md.stackvars(&bt.to_string());
-    let _ = write_errors(&e.to_string(), is_assert);
+    let _ = write_errors(&format!("{e:#}"), is_assert);
 }
 
 fn get_generator_name() -> String {
@@ -330,7 +324,7 @@ pub fn martian_make_mro(
             output.write_all(final_mro_string.as_bytes())?;
         }
         None => {
-            print!("{}", final_mro_string);
+            print!("{final_mro_string}");
         }
     }
     Ok(())
@@ -343,7 +337,7 @@ pub fn make_mro_string(header_comment: &str, mro_registry: &[StageMro]) -> Strin
     for stage_mro in mro_registry {
         filetype_header.add_stage(stage_mro);
         struct_header.add_stage(stage_mro);
-        writeln!(&mut mro_string, "{}", stage_mro).unwrap();
+        writeln!(&mut mro_string, "{stage_mro}").unwrap();
     }
     mro_string.pop();
 

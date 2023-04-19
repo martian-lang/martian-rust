@@ -1,20 +1,24 @@
 on: pull_request
 name: Clippy check
+
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   clippy_check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions-rs/toolchain@v1
+    - uses: dtolnay/rust-toolchain@1.66.1
       with:
-        toolchain: 1.60.0
         components: clippy
-        default: true
     - uses: actions/checkout@v3
-    - uses: actions-rs/clippy-check@v1
+    - uses: Swatinem/rust-cache@v2
+    - uses: 10XGenomics/clippy-check@main
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
         args: |
           --all-features --all-targets --
+          -D clippy::perf
           -W clippy::wildcard_imports
           -W clippy::redundant_closure_for_method_calls
           -W clippy::enum_glob_use
@@ -25,3 +29,4 @@ jobs:
           -D rust_2021_compatibility
           -D unused
           -D clippy::unnecessary_mut_passed
+          -W clippy::uninlined_format_args

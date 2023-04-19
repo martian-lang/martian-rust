@@ -1,19 +1,17 @@
-use crate::DATE_FORMAT;
-use crate::{write_errors, Error};
-use time::{OffsetDateTime, UtcOffset};
-
+use crate::{write_errors, Error, DATE_FORMAT};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::map::Map;
-use serde_json::{self, json, Value};
-
+use serde_json::{self, Value};
 use std::any::type_name;
+use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fs::{rename, File, OpenOptions};
-use std::io::Write;
+use std::io::{ErrorKind, Write};
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
+use time::{OffsetDateTime, UtcOffset};
 
 pub type JsonDict = Map<String, Value>;
 pub type Json = Value;
@@ -121,6 +119,27 @@ pub fn make_timestamp_now() -> String {
     make_timestamp(SystemTime::now())
 }
 
+fn ignore_not_found(err: std::io::Error) -> std::io::Result<()> {
+    match err.kind() {
+        ErrorKind::NotFound => {
+            // Workaround for an issue on heavily loaded NFS servers.
+            // If a request is taking a long time, the client will
+            // re-send the request.  The server is supposed to note
+            // that the request is a duplicate and de-duplicate it,
+            // but if it's heavily loaded its duplicate request
+            // cache might have already been flushed, in which case
+            // the second request will see ENOENT and fail.
+            // There's no way to tell the difference between that
+            // not-actually-failure mode and something else deleting
+            // the file before rename, because after a successful
+            // rename it's expected that `mrp` may delete the file
+            // immediately.  So we have to just ignore this error.
+            Ok(())
+        }
+        _ => Err(err),
+    }
+}
+
 impl Metadata {
     pub fn new(mut args: Vec<String>) -> Metadata {
         // # Take options from command line.
@@ -165,22 +184,27 @@ impl Metadata {
 
     /// Update the Martian journal -- so that Martian knows what we've updated
     fn update_journal_main(&mut self, name: &str, force: bool) -> Result<()> {
-        let journal_name = if self.stage_type != "main" {
-            format!("{}_{}", self.stage_type, name)
+        let journal_name: Cow<str> = if self.stage_type != "main" {
+            format!("{}_{name}", self.stage_type).into()
         } else {
-            name.to_string()
+            name.into()
         };
 
-        if !self.cache.contains(name) || force {
-            let run_file = format!("{}.{}", self.run_file, journal_name);
-            let tmp_run_file = run_file.clone() + ".tmp";
+        if force || !self.cache.contains(name) {
+            let tmp_run_file = format!("{}.{journal_name}.tmp", self.run_file);
+            let run_file = &tmp_run_file[..tmp_run_file.len() - 4];
 
             {
                 let mut f = File::create(&tmp_run_file)?;
-                f.write_all(make_timestamp_now().as_bytes())?;
-            };
-            rename(&tmp_run_file, &run_file)?;
-            self.cache.insert(journal_name);
+                if let Err(err) = f.write_all(make_timestamp_now().as_bytes()) {
+                    // Pretty much ignore this error.  The only reason we need
+                    // any content at all in this file is because some
+                    // filesystems behave strangely with completely empty files.
+                    eprintln!("Writing journal file {tmp_run_file}: {err}");
+                }
+            }
+            rename(tmp_run_file.as_str(), run_file).or_else(ignore_not_found)?;
+            self.cache.insert(journal_name.into_owned());
         }
 
         Ok(())
@@ -192,10 +216,8 @@ impl Metadata {
 
     /// Write JSON to a chunk file
     pub(crate) fn write_json_obj(&mut self, name: &str, object: &JsonDict) -> Result<()> {
-        // Serialize using `json::encode`
-        let obj = json!(object.clone());
-        let encoded = serde_json::to_string_pretty(&obj)?;
-        self.write_raw(name, &encoded)?;
+        serde_json::to_writer_pretty(File::create(self.make_path(name))?, object)?;
+        self.update_journal(name)?;
         Ok(())
     }
 
@@ -212,10 +234,10 @@ impl Metadata {
     }
 
     fn _read_buf_err(file: &Path) -> Result<String> {
-        std::fs::read_to_string(&file).map_err(
+        std::fs::read_to_string(file).map_err(
             #[cold]
             |e| {
-                let context = format!("Failed to read file {:?} due to {}:", file, e);
+                let context = format!("Failed to read file {file:?} due to {e}:");
                 Error::new(e).context(context)
             },
         )
@@ -234,7 +256,7 @@ impl Metadata {
         let buf_lines: Vec<_> = buf
             .lines()
             .enumerate()
-            .map(|(i, line)| format!("{:>4}: {}", i + 1, line))
+            .map(|(i, line)| format!("{:>4}: {line}", i + 1))
             .collect();
         let context = format!(
             "The martian-rust adapter failed while deserializing the file {:?} as {} due to the \
@@ -271,7 +293,7 @@ impl Metadata {
         let mut log_file = unsafe { File::from_raw_fd(3) };
 
         log_file
-            .write(format!("{} [{}] {}", make_timestamp_now(), level, message).as_bytes())
+            .write(format!("{} [{level}] {message}", make_timestamp_now()).as_bytes())
             .and(log_file.flush())?;
 
         let _ = log_file.into_raw_fd();
@@ -283,7 +305,7 @@ impl Metadata {
     }
 
     pub fn alarm(&mut self, message: &str) -> Result<()> {
-        self._append("alarm", &format!("{} {}", make_timestamp_now(), message))
+        self._append("alarm", &format!("{} {message}", make_timestamp_now()))
     }
 
     #[cold]

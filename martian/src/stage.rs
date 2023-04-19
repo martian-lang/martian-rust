@@ -1,5 +1,4 @@
-use crate::metadata::Metadata;
-use crate::metadata::Version;
+use crate::metadata::{Metadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
 use crate::Error;
@@ -255,6 +254,23 @@ struct ChunkDef<T> {
     resource: Resource,
 }
 
+impl<T> From<T> for ChunkDef<T> {
+    // Create a ChunkDef from its inputs.
+    fn from(inputs: T) -> Self {
+        ChunkDef {
+            inputs,
+            resource: Resource::default(),
+        }
+    }
+}
+
+impl<T> From<(T, Resource)> for ChunkDef<T> {
+    // Create a ChunkDef from its inputs and resource.
+    fn from((inputs, resource): (T, Resource)) -> Self {
+        ChunkDef { inputs, resource }
+    }
+}
+
 /// All the chunks in the stage (with their inputs & resource)
 /// along with the join resource. This needs to be constructed
 /// in the `split()` function, so that martian can create chunks
@@ -325,9 +341,50 @@ impl<T> StageDef<T> {
         self.chunks.push(chunk_def);
     }
 
-    /// Set the join resource
+    /// Set the join resource.
+    pub fn join_resource(self, join_resource: Resource) -> Self {
+        Self {
+            join_resource,
+            ..self
+        }
+    }
+
+    /// Set the join resource.
+    #[deprecated(since = "0.26.0", note = "use `join_resource` instead")]
     pub fn set_join_resource(&mut self, join_resource: Resource) {
         self.join_resource = join_resource;
+    }
+}
+
+impl<T> Extend<T> for StageDef<T> {
+    /// Add chunks to this StageDef.
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        self.chunks.extend(iter.into_iter().map(ChunkDef::from))
+    }
+}
+
+impl<T> Extend<(T, Resource)> for StageDef<T> {
+    /// Add chunks with resources to this StageDef.
+    fn extend<I: IntoIterator<Item = (T, Resource)>>(&mut self, iter: I) {
+        self.chunks.extend(iter.into_iter().map(ChunkDef::from));
+    }
+}
+
+impl<T> FromIterator<T> for StageDef<T> {
+    /// Construct a StageDef from an iterator of chunks.
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> StageDef<T> {
+        let mut stagedef = StageDef::new();
+        stagedef.extend(iter);
+        stagedef
+    }
+}
+
+impl<T> FromIterator<(T, Resource)> for StageDef<T> {
+    /// Construct a StageDef from an iterator of chunks and resources.
+    fn from_iter<I: IntoIterator<Item = (T, Resource)>>(iter: I) -> StageDef<T> {
+        let mut stagedef = StageDef::new();
+        stagedef.extend(iter);
+        stagedef
     }
 }
 
@@ -462,7 +519,7 @@ fn split_prelude(
     let split_path = prep_path(run_directory, subdir)?;
     let rover = MartianRover::new(split_path.as_path(), default_resource);
     println!("{}", ["-"; 80].concat());
-    println!("{}", stage_name);
+    println!("{stage_name}");
     println!("{}", ["-"; 80].concat());
     Ok(rover)
 }
@@ -529,8 +586,8 @@ pub trait MartianStage: MroMaker {
                 #[cfg(not(feature = "rayon"))]
                 println!(" > [chunk ] running {}", chunk_idx,);
                 #[cfg(feature = "rayon")]
-                println!(" > [chunk ] running with rayon {}", chunk_idx,);
-                let chunk_path = prep_path(run_directory, &format!("chnk{}", chunk_idx))?;
+                println!(" > [chunk ] running with rayon {chunk_idx}",);
+                let chunk_path = prep_path(run_directory, &format!("chnk{chunk_idx}"))?;
                 Ok(MartianRover::new(
                     chunk_path.as_path(),
                     fill_defaults(resource),
@@ -721,4 +778,20 @@ fn fill_defaults(mut resource: Resource) -> Resource {
     }
 
     resource
+}
+
+#[cfg(test)]
+mod test {
+    use crate::{Resource, StageDef};
+
+    #[test]
+    fn test_stage_def_extend() {
+        let _stagedef = StageDef::from_iter([0, 1, 2]);
+        let _stagedef: StageDef<usize> = (0..3).into_iter().collect();
+        let _stagedef = (0..3)
+            .into_iter()
+            .zip(std::iter::repeat(Resource::default()))
+            .collect::<StageDef<usize>>()
+            .join_resource(Resource::default());
+    }
 }

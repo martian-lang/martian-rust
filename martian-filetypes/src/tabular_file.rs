@@ -53,7 +53,7 @@ pub trait TableConfig {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(transparent)]
 pub struct DelimitedFormat<F, D>
 where
@@ -90,7 +90,19 @@ where
     D: TableConfig + Debug,
 {
     fn as_ref(&self) -> &Path {
-        self.path.as_ref()
+        &self.path
+    }
+}
+
+impl<F, D> std::ops::Deref for DelimitedFormat<F, D>
+where
+    F: MartianFileType,
+    D: TableConfig + Debug,
+{
+    type Target = Path;
+    /// Dereferences this DelimitedFormat to a Path slice.
+    fn deref(&self) -> &Path {
+        &self.path
     }
 }
 

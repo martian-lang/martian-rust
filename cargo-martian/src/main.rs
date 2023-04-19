@@ -50,12 +50,7 @@ pub fn main() {
     if args.cmd_stage {
         let stage_name = args.arg_stagename.unwrap();
         let md = Metadata::read(&args.flag_pkg);
-        template::new_stage(
-            stage_name,
-            &md.workspace_root,
-            args.flag_pkg,
-            args.flag_main,
-        );
+        template::new_stage(stage_name, md.workspace_root, args.flag_pkg, args.flag_main);
         return;
     }
 

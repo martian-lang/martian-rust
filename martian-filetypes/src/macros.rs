@@ -3,7 +3,7 @@
 macro_rules! martian_filetype_inner {
     ($(#[$attr:meta])* pub struct $name:ident, $extension:expr) => (
         $(#[$attr])*
-        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
         // The following attribute ensures that the struct will serialize into a
         // String like a PathBuf would.
         #[serde(transparent)]
@@ -22,7 +22,7 @@ macro_rules! martian_filetype_inner {
             F: ::martian::MartianFileType,
         {
             fn extension() -> String {
-                crate::maybe_add_format(F::extension(), $extension)
+                $crate::maybe_add_format(F::extension(), $extension)
             }
 
             fn new(file_path: impl AsRef<std::path::Path>, file_name: impl AsRef<std::path::Path>) -> Self {
@@ -33,12 +33,25 @@ macro_rules! martian_filetype_inner {
                 }
             }
         }
+
         impl<F> AsRef<std::path::Path> for $name<F>
         where
             F: ::martian::MartianFileType
         {
+            /// Coerces this MartianFileType to a Path slice.
             fn as_ref(&self) -> &std::path::Path {
-                self.path.as_ref()
+                &self.path
+            }
+        }
+
+        impl<F> std::ops::Deref for $name<F>
+        where
+            F: ::martian::MartianFileType
+        {
+            type Target = ::std::path::Path;
+            /// Dereferences this MartianFileType to a Path slice.
+            fn deref(&self) -> &::std::path::Path {
+                &self.path
             }
         }
 

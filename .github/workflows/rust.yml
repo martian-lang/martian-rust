@@ -15,16 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions-rs/toolchain@v1
+    - uses: dtolnay/rust-toolchain@1.66.0
       with:
-        toolchain: 1.60.0
         components: rustfmt
-        default: true
-    - name: Print cargo version
-      run: cargo --version
     - uses: actions/checkout@v3
     - name: Check Rust formatting
       run: cargo fmt -- --check
+    - uses: Swatinem/rust-cache@v2
     - name: Build
       run: cargo build --verbose --all
     - uses: EmbarkStudios/cargo-deny-action@v1
@@ -33,7 +30,6 @@ jobs:
     - name: Martian Integration tests
       run: |
         cargo build --examples
-        export PATH=$GITHUB_WORKSPACE/deps/bin:$PATH
         cd martian-lab/tests/main_test
         ../martian_test.py main_test.json
         cd ../split_test

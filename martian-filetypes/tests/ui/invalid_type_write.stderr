@@ -1,17 +1,31 @@
 error[E0308]: mismatched types
-  --> $DIR/invalid_type_write.rs:27:25
-   |
-27 |         feat_file.write(&creature)?; // This is a compiler error
-   |                         ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
-   |
-   = note: expected reference `&Feature`
-              found reference `&Creature`
+   --> tests/ui/invalid_type_write.rs:27:25
+    |
+27  |         feat_file.write(&creature)?; // This is a compiler error
+    |                   ----- ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
+    |                   |
+    |                   arguments to this function are incorrect
+    |
+    = note: expected reference `&Feature`
+               found reference `&Creature`
+note: associated function defined here
+   --> src/lib.rs
+    |
+    |     fn write(&self, item: &T) -> Result<(), Error> {
+    |        ^^^^^
 
 error[E0308]: mismatched types
-  --> $DIR/invalid_type_write.rs:32:25
-   |
-32 |         feat_file.write(&creature)?; // This is a compiler error
-   |                         ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
-   |
-   = note: expected reference `&Feature`
-              found reference `&Creature`
+   --> tests/ui/invalid_type_write.rs:32:25
+    |
+32  |         feat_file.write(&creature)?; // This is a compiler error
+    |                   ----- ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
+    |                   |
+    |                   arguments to this function are incorrect
+    |
+    = note: expected reference `&Feature`
+               found reference `&Creature`
+note: associated function defined here
+   --> src/lib.rs
+    |
+    |     fn write(&self, item: &T) -> Result<(), Error> {
+    |        ^^^^^

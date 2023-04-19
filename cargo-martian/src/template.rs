@@ -1,5 +1,4 @@
-use heck::{CamelCase, SnakeCase};
-use std::collections::HashMap;
+use heck::{ToSnakeCase, ToUpperCamelCase};
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -172,12 +171,15 @@ pub fn new_stage(
     path.set_extension("rs");
 
     // Make sure the file does not exist already
-    assert!(!path.exists(), "File {:?} already exists", path);
+    assert!(!path.exists(), "File {path:?} already exists");
 
-    let mut vars = HashMap::new();
-    vars.insert("stage".into(), stage_name.to_camel_case());
-    vars.insert("open".into(), "{".into());
-    vars.insert("close".into(), "}".into());
+    let vars = [
+        ("stage".to_string(), stage_name.to_upper_camel_case()),
+        ("open".to_string(), "{".to_string()),
+        ("close".to_string(), "}".to_string()),
+    ]
+    .into_iter()
+    .collect();
 
     let stage_template = if main_only {
         strfmt(STAGE_TEMPLATE_MAIN, &vars).unwrap()
@@ -185,9 +187,9 @@ pub fn new_stage(
         strfmt(STAGE_TEMPLATE, &vars).unwrap()
     };
 
-    println!("Writing to file {:?}", path);
+    println!("Writing to file {path:?}");
     let mut f = File::create(path).expect("Failed to create file");
-    write!(f, "{}", stage_template).expect("Failed writing to file");
+    write!(f, "{stage_template}").expect("Failed writing to file");
 }
 
 const ADAPTER_MAIN_TEMPLATE: &str = r##"
@@ -278,10 +280,13 @@ pub fn new_adapter(adapter_name: impl AsRef<str>) {
     if exit_status.success() {
         {
             // Main file
-            let mut vars = HashMap::new();
-            vars.insert("adapter".into(), adapter_name.to_snake_case());
-            vars.insert("open".into(), "{".into());
-            vars.insert("close".into(), "}".into());
+            let vars = [
+                ("adapter".to_string(), adapter_name.to_snake_case()),
+                ("open".to_string(), "{".to_string()),
+                ("close".to_string(), "}".to_string()),
+            ]
+            .into_iter()
+            .collect();
 
             let mut path = PathBuf::from(&adapter_name);
             path.push("src");
@@ -298,9 +303,9 @@ pub fn new_adapter(adapter_name: impl AsRef<str>) {
             }
 
             let main_template = strfmt(ADAPTER_MAIN_TEMPLATE, &vars).unwrap();
-            eprintln!("Writing main template to {:?}", path);
+            eprintln!("Writing main template to {path:?}");
             let mut f = File::create(path).expect("Failed to create file");
-            write!(f, "{}", main_template).expect("Failed writing to main.rs file");
+            write!(f, "{main_template}").expect("Failed writing to main.rs file");
         }
 
         {
@@ -312,7 +317,7 @@ pub fn new_adapter(adapter_name: impl AsRef<str>) {
                 .append(true)
                 .open(path)
                 .expect("Couldn't open Cargo.toml for writing");
-            write!(f, "{}", CARGO_TOML_ADDITION).expect("Failed writing to Cargo.toml file");
+            write!(f, "{CARGO_TOML_ADDITION}").expect("Failed writing to Cargo.toml file");
         }
     }
 }

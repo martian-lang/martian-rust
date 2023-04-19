@@ -79,13 +79,11 @@
 
 use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
-use martian::Error;
-use martian::MartianFileType;
+use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use serde_json::de::Read as SerdeRead;
-use serde_json::de::{IoRead, StreamDeserializer};
+use serde_json::de::{IoRead, Read as SerdeRead, StreamDeserializer};
 use serde_json::ser::PrettyFormatter;
 use serde_json::Serializer;
 use std::fmt::Debug;

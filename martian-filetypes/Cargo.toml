@@ -16,13 +16,13 @@ serde_json = "*"
 bincode = "1.3"
 anyhow = { version = "1", features = ["backtrace"] }
 lz4 = "1.23"
-csv = "1.1.1"
+csv = "1.2.1"
 flate2 = "1"
 zstd = "0.12.3"
 
 [dev-dependencies]
 tempfile = "3"
-criterion = "0.3"
+criterion = "0.4"
 trybuild = "1.0"
 
 [[bench]]
@@ -30,7 +30,7 @@ name = "benchmarks"
 harness = false
 
 [dev-dependencies.proptest]
-version = "1.0"
+version = "1.1"
 default-features = false
 # Enable all default features not known to break code coverage builds
 features = ["default-code-coverage"]
