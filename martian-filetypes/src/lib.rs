@@ -152,6 +152,7 @@ pub mod bin_file;
 pub mod gzip_file;
 pub mod json_file;
 pub mod lz4_file;
+pub mod zstd_file;
 pub(crate) mod macros;
 pub mod tabular_file;
 
