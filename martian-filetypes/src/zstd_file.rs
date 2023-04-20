@@ -90,9 +90,7 @@
 //! }
 //! ```
 
-use crate::{
-    martian_filetype_inner, ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite,
-};
+use crate::{martian_filetype_inner, ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use martian::{Error, MartianFileType};
 use serde::{Deserialize, Serialize};
 use std::convert::From;
@@ -119,8 +117,6 @@ where
         Self::from(source.as_ref())
     }
 }
-
-impl<F, T> FileStorage<T> for Zstd<F> where F: FileStorage<T> {}
 
 impl<F, T> FileTypeIO<T> for Zstd<F>
 where

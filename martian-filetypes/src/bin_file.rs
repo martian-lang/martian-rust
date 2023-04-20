@@ -79,7 +79,7 @@
 //! }
 //! ```
 
-use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -93,7 +93,7 @@ use std::iter::Iterator;
 use std::marker::PhantomData;
 
 martian_filetype! {Bincode, "bincode"}
-impl<T> FileStorage<T> for Bincode where T: Serialize + DeserializeOwned {}
+
 pub type BincodeFile = BinaryFormat<Bincode>;
 
 crate::martian_filetype_inner! {
@@ -101,14 +101,12 @@ crate::martian_filetype_inner! {
     pub struct BinaryFormat, "bincode"
 }
 
-impl<F, T> FileStorage<T> for BinaryFormat<F> where F: MartianFileType + FileStorage<T> {}
-
 /// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
 /// TODO: Include the TypeId here?
 impl<T, F> FileTypeIO<T> for BinaryFormat<F>
 where
     T: Any + Serialize + DeserializeOwned,
-    F: FileStorage<T> + Debug,
+    F: Debug + MartianFileType,
 {
     fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
         fn check_type(
@@ -156,7 +154,7 @@ enum FileMode {
 /// stores a list of items.
 pub struct LazyBincodeReader<T, F = Bincode, R = BufReader<File>>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     T: Any + DeserializeOwned,
 {
@@ -169,7 +167,7 @@ where
 
 impl<T, F, R> LazyRead<T, R> for LazyBincodeReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     T: Any + Serialize + DeserializeOwned,
 {
@@ -213,7 +211,7 @@ where
 
 impl<T, F, R> Iterator for LazyBincodeReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     T: Any + DeserializeOwned,
 {
@@ -275,7 +273,7 @@ struct LazyMarker<T>(PhantomData<T>);
 /// stores a list of items
 pub struct LazyBincodeWriter<T, F = Bincode, W = BufWriter<File>>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     W: Write,
     T: Any + Serialize,
 {
@@ -287,7 +285,7 @@ where
 
 impl<T, F, W> LazyWrite<T, W> for LazyBincodeWriter<T, F, W>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     W: Write,
     T: Any + Serialize,
 {
@@ -314,7 +312,7 @@ where
 
 impl<T, F, W, R> LazyAgents<T, W, R> for BinaryFormat<F>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     W: Write,
     T: Any + Serialize + DeserializeOwned,

@@ -29,7 +29,7 @@
 //!     Ok(())
 //! }
 //! ```
-use crate::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use flate2::Compression;
@@ -58,8 +58,6 @@ where
         Self::from(source.as_ref())
     }
 }
-
-impl<F, T> FileStorage<T> for Gzip<F> where F: FileStorage<T> {}
 
 impl<F, T> FileTypeIO<T> for Gzip<F>
 where

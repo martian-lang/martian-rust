@@ -77,7 +77,7 @@
 //! }
 //! ```
 
-use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -92,7 +92,6 @@ use std::io::{BufReader, BufWriter, Read, Write};
 use std::marker::PhantomData;
 
 martian_filetype! {Json, "json"}
-impl<T> FileStorage<T> for Json where T: Serialize + DeserializeOwned {}
 
 pub type JsonFile = JsonFormat<Json>;
 
@@ -101,15 +100,13 @@ crate::martian_filetype_inner! {
     pub struct JsonFormat, "json"
 }
 
-impl<F, T> FileStorage<T> for JsonFormat<F> where F: MartianFileType + FileStorage<T> {}
-
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
 /// The saved JsonFile will be pretty formatted using 4 space indentation.
 impl<F, T> FileTypeIO<T> for JsonFormat<F>
 where
     T: Serialize + DeserializeOwned,
-    F: MartianFileType + FileStorage<T> + Debug,
+    F: MartianFileType + Debug,
 {
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
         Ok(serde_json::from_reader(reader)?)
@@ -127,7 +124,7 @@ where
 /// stores a list of items.
 pub struct LazyJsonReader<T, F = Json, R = BufReader<File>>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -138,7 +135,7 @@ where
 
 impl<T, F, R> LazyRead<T, R> for LazyJsonReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -161,7 +158,7 @@ where
 
 impl<T, F, R> Iterator for LazyJsonReader<T, F, R>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -212,7 +209,7 @@ enum WriterState {
 /// stores a list of items.
 pub struct LazyJsonWriter<T, F = Json, W = BufWriter<File>>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -225,7 +222,7 @@ where
 
 impl<T, F, W> LazyWrite<T, W> for LazyJsonWriter<T, F, W>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -271,7 +268,7 @@ where
 
 impl<T, F, W> LazyJsonWriter<T, F, W>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -291,7 +288,7 @@ where
 
 impl<F, T, W, R> LazyAgents<T, W, R> for JsonFormat<F>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     R: Read,
     W: Write,
     T: Serialize + DeserializeOwned,
@@ -302,7 +299,7 @@ where
 
 impl<T, F, W> Drop for LazyJsonWriter<T, F, W>
 where
-    F: MartianFileType + FileStorage<Vec<T>>,
+    F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
