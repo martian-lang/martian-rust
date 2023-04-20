@@ -189,7 +189,7 @@ where
     }
 }
 
-impl<'a, L, T, W> LazyZstdWriter<L, T, W>
+impl<L, T, W> LazyZstdWriter<L, T, W>
 where
     L: LazyWrite<T, zstd::Encoder<'static, W>>,
     W: Write,
@@ -244,7 +244,7 @@ where
     }
 }
 
-impl<'a, L, T, R> Iterator for LazyZstdReader<L, T, R>
+impl<L, T, R> Iterator for LazyZstdReader<L, T, R>
 where
     L: LazyRead<T, zstd::Decoder<'static, BufReader<R>>>,
     R: BufRead,
