@@ -399,6 +399,17 @@ mod tests {
         }
     }
 
+    #[test]
+    fn test_json_lazy_read_not_vec() -> Result<(), Error> {
+        let dir = tempfile::tempdir()?;
+        let json_file = JsonFile::new(dir.path(), "lazy_test");
+        let input = String::from("Hello");
+        json_file.write(&input)?;
+        let reader_wrong_type: JsonFile<Vec<i32>> = JsonFile::new(dir.path(), "lazy_test");
+        assert!(reader_wrong_type.lazy_reader().is_err());
+        Ok(())
+    }
+
     fn serde_lazy_roundtrip_check<T>(input: &[T]) -> Result<(), Error>
     where
         T: Serialize + DeserializeOwned + PartialEq,
