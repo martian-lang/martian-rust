@@ -404,8 +404,8 @@ mod tests {
     #[test]
     fn test_lazy_header_only() -> Result<(), Error> {
         let dir = tempfile::tempdir()?;
-        let cells_tsv = TsvFile::new(dir.path(), "test");
-        let mut writer: LazyTabularWriter<_, _, Cell, _> = cells_tsv.lazy_writer()?;
+        let cells_tsv: TsvFile<Cell> = TsvFile::new(dir.path(), "test");
+        let mut writer = cells_tsv.lazy_writer()?;
         writer.write_header()?;
         writer.finish()?;
         assert_eq!(std::fs::read_to_string(&cells_tsv)?, "barcode\tgenome\n");
@@ -415,8 +415,8 @@ mod tests {
     #[test]
     fn test_lazy_no_header() -> Result<(), Error> {
         let dir = tempfile::tempdir()?;
-        let cells_tsv = TsvFile::new(dir.path(), "test");
-        let writer: LazyTabularWriter<_, _, Cell, _> = cells_tsv.lazy_writer()?;
+        let cells_tsv: TsvFile<Cell> = TsvFile::new(dir.path(), "test");
+        let writer = cells_tsv.lazy_writer()?;
         writer.finish()?;
         assert_eq!(std::fs::read_to_string(&cells_tsv)?, "");
         Ok(())
