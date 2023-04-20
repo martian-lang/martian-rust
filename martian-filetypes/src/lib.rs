@@ -57,26 +57,15 @@
 //! generate a compiler error saying you are trying to deserialize from an incompatible file.
 //! This crate makes use of `MartianFiletype` trait in order to facilitate this.
 //!
-//! There are two concepts involved here:
-//! 1. **Representation**: How is the object represented on disk? E.g. json/bincode/csv etc.
-//! 2. **Validity**: Is it valid to deserialize this file as a type `T`?
-//!
-//! Let `F` be a `MartianFileType` and `T` be a type in rust which we want to store on-disk.
-//! ### Validity
-//! If `F: FileStorage<T>`, then it is **valid** to store some representation of the type `T`
-//! in the filetype `F`.
-//!
-//! ### Representation
 //! If `F: FileTypeIO<T>`, then a concrete representation of type `T` can be written to [read from]
 //! disk. `MartianFiletype`s which implement this trait are called `Formats`. For example, we can
-//! define a `JsonFormat<F>`, which can write out any type `T` onto disk as json as long as T is
-//! serializable and `F: FileStorage<T>`.
+//! define a `JsonFormat<F, T>`, which can write out the type `T` onto disk.
 //!
 //! ```
 //! # use anyhow ::Error;
 //! # use martian_derive::martian_filetype;
 //! # use martian_filetypes::json_file::JsonFormat;
-//! # use martian_filetypes::{FileStorage, FileTypeIO};
+//! # use martian_filetypes::{FileTypeIO};
 //! # use serde::{Deserialize, Serialize};
 //! # use serde_json;
 //! #[derive(Debug, Serialize, Deserialize)]
@@ -84,7 +73,6 @@
 //!     id: usize,
 //! }
 //! martian_filetype! {FeatureFile, "feat"}
-//! impl FileStorage<Feature> for FeatureFile {} // VALIDITY
 //!
 //! #[derive(Debug, Serialize, Deserialize)]
 //! struct Creature {
@@ -94,8 +82,7 @@
 //! # fn main() -> Result<(), Error> {
 //! let feature = Feature { id: 5 };
 //! let creature = Creature { id: 10 };
-//! // JsonFormat<_> is the REPRESENTATION
-//! let feat_file: JsonFormat<FeatureFile> = JsonFormat::from("feature"); // feature.feat.json
+//! let feat_file: JsonFormat<FeatureFile, Feature> = JsonFormat::from("feature"); // feature.feat.json
 //! feat_file.write(&feature)?;
 //! // feat_file.write(&creature)?; // This is a compiler error
 //! // let _: Creature = feat_file.read()?; // This is a compiler error
@@ -131,14 +118,6 @@
 //!
 //! ## Examples
 //! Look at the individual filetype modules for examples.
-//!
-//! ## TODO
-//! - FastaFile
-//! - FastaIndexFile
-//! - FastqFile
-//! - CsvFile
-//! - BamFile
-//! - BamIndexFile
 
 use martian::{Error, MartianFileType};
 use std::fs::File;

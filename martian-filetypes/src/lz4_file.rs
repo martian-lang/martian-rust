@@ -30,7 +30,7 @@
 //!     # std::fs::remove_file(lz4_json_file)?; // Remove the file (hidden from the doc)
 //!
 //!     // --------------------- Bincode ----------------------------------
-//!     let lz4_bin_file: Lz4<BincodeFile> = Lz4::from("example"); // example.bincode.lz4
+//!     let lz4_bin_file: Lz4<BincodeFile<_>> = Lz4::from("example"); // example.bincode.lz4
 //!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()
 //!     lz4_bin_file.write(&chem)?; // Writes lz4 compressed bincode file
 //!     let decoded: Chemistry = lz4_bin_file.read()?;
@@ -57,7 +57,7 @@
 //! use serde::{Serialize, Deserialize};
 //!
 //! fn main() -> Result<(), Error> {
-//!     let lz4_bin_file: Lz4<BincodeFile> = Lz4::from("example_lazy");
+//!     let lz4_bin_file: Lz4<BincodeFile<_>> = Lz4::from("example_lazy");
 //!     let mut lz4_writer = lz4_bin_file.lazy_writer()?;
 //!     // The type of the lz4_writer will be inferred by the compiler as:
 //!     // LazyLz4Writer<LazyBincodeWriter<i32, lz4::encoder::Encoder<BufWriter<File>>>, i32, BufWriter<File>>
@@ -90,14 +90,16 @@
 //! }
 //! ```
 
-use crate::{martian_filetype_inner, ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{
+    martian_filetype_decorator, ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite,
+};
 use martian::{Error, MartianFileType};
 use serde::{Deserialize, Serialize};
 use std::convert::From;
 use std::io::{Read, Write};
 use std::marker::PhantomData;
 
-martian_filetype_inner! {
+martian_filetype_decorator! {
     /// A struct that wraps a basic `MartianFileType` and adds lz4 compression
     /// capability.
     pub struct Lz4, "lz4"
@@ -110,7 +112,7 @@ where
     /// Create an Lz4 wrapped filetype from a basic filetype
     /// ```rust
     /// use martian_filetypes::{lz4_file::Lz4, bin_file::BincodeFile};
-    /// let lz4_bin_file = Lz4::from_filetype(BincodeFile::from("example"));
+    /// let lz4_bin_file = Lz4::from_filetype(BincodeFile::<()>::from("example"));
     /// assert_eq!(lz4_bin_file.as_ref(), std::path::Path::new("example.bincode.lz4"));
     /// ```
     pub fn from_filetype(source: F) -> Self {
@@ -274,7 +276,7 @@ mod tests {
     #[test]
     fn test_lz4_new() {
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file"),
+            Lz4::<JsonFile<()>>::new("/some/path/", "file"),
             Lz4 {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.lz4")
@@ -282,7 +284,7 @@ mod tests {
         );
 
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file.json"),
+            Lz4::<JsonFile<()>>::new("/some/path/", "file.json"),
             Lz4 {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.lz4")
@@ -290,7 +292,7 @@ mod tests {
         );
 
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file_json"),
+            Lz4::<JsonFile<()>>::new("/some/path/", "file_json"),
             Lz4 {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file_json.json.lz4")
@@ -298,7 +300,7 @@ mod tests {
         );
 
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file.json.lz4"),
+            Lz4::<JsonFile<()>>::new("/some/path/", "file.json.lz4"),
             Lz4 {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.lz4")
@@ -306,7 +308,7 @@ mod tests {
         );
 
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file.tmp"),
+            Lz4::<JsonFile<()>>::new("/some/path/", "file.tmp"),
             Lz4 {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.tmp.json.lz4")
@@ -314,7 +316,7 @@ mod tests {
         );
 
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file").as_ref(),
+            Lz4::<JsonFile<()>>::new("/some/path/", "file").as_ref(),
             Path::new("/some/path/file.json.lz4")
         );
     }
@@ -343,42 +345,42 @@ mod tests {
     #[test]
     fn test_lz4_from() {
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file"),
-            Lz4::<JsonFile>::from("/some/path/file")
+            Lz4::<JsonFile<()>>::new("/some/path/", "file"),
+            Lz4::<JsonFile<()>>::from("/some/path/file")
         );
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file"),
-            Lz4::<JsonFile>::from("/some/path/file.json")
+            Lz4::<JsonFile<()>>::new("/some/path/", "file"),
+            Lz4::<JsonFile<()>>::from("/some/path/file.json")
         );
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file"),
-            Lz4::<JsonFile>::from("/some/path/file.json.lz4")
+            Lz4::<JsonFile<()>>::new("/some/path/", "file"),
+            Lz4::<JsonFile<()>>::from("/some/path/file.json.lz4")
         );
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file.tmp"),
-            Lz4::<JsonFile>::from("/some/path/file.tmp.json.lz4")
+            Lz4::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Lz4::<JsonFile<()>>::from("/some/path/file.tmp.json.lz4")
         );
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file.tmp"),
-            Lz4::<JsonFile>::from("/some/path/file.tmp")
+            Lz4::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Lz4::<JsonFile<()>>::from("/some/path/file.tmp")
         );
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file.tmp.json"),
-            Lz4::<JsonFile>::from("/some/path/file.tmp")
+            Lz4::<JsonFile<()>>::new("/some/path/", "file.tmp.json"),
+            Lz4::<JsonFile<()>>::from("/some/path/file.tmp")
         );
     }
 
     #[test]
     fn test_lz4_from_filetype() {
         assert_eq!(
-            Lz4::<JsonFile>::new("/some/path/", "file"),
+            Lz4::<JsonFile<()>>::new("/some/path/", "file"),
             Lz4::from_filetype(JsonFile::new("/some/path/", "file"))
         );
     }
 
     #[test]
     fn test_lz4_extension() {
-        assert_eq!(Lz4::<JsonFile>::extension(), "json.lz4");
+        assert_eq!(Lz4::<JsonFile<()>>::extension(), "json.lz4");
     }
 
     #[test]
@@ -402,7 +404,7 @@ mod tests {
     #[test]
     fn test_json_lz4_lazy_write_no_finish() {
         let dir = tempfile::tempdir().unwrap();
-        let file = Lz4::<JsonFile>::new(dir.path(), "file");
+        let file = Lz4::<JsonFile<Vec<usize>>>::new(dir.path(), "file");
         let mut writer = file.lazy_writer().unwrap();
         for i in 0..10 {
             writer.write_item(&i).unwrap();
@@ -417,7 +419,7 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-        let lz4_file = Lz4::<JsonFile>::new("/some/path/", "file");
+        let lz4_file = Lz4::<JsonFile<()>>::new("/some/path/", "file");
         let path = PathBuf::from("/some/path/file.json.lz4");
         assert_eq!(
             serde_json::to_string(&lz4_file).unwrap(),
@@ -427,8 +429,8 @@ mod tests {
 
     #[test]
     fn test_deserialize() {
-        let lz4_file: Lz4<JsonFile> =
+        let lz4_file: Lz4<JsonFile<()>> =
             serde_json::from_str(r#""/some/path/file.json.lz4""#).unwrap();
-        assert_eq!(lz4_file, Lz4::<JsonFile>::new("/some/path/", "file"));
+        assert_eq!(lz4_file, Lz4::new("/some/path/", "file"));
     }
 }

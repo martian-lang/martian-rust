@@ -12,7 +12,7 @@
 //! can be used to collect all the items in a `Vec<T>`
 //!
 //! ## Simple read/write example
-//! `BincodeFile` implements `FileTypeIO<T>` for any serializable type `T`.
+//! `BincodeFile<T>` implements `FileTypeIO<T>` for any serializable type `T`.
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, bin_file::BincodeFile};
 //! use martian::Error;
@@ -29,7 +29,7 @@
 //!     let bin_file = BincodeFile::from("bin_example");
 //!     // The two functions below are simple wrappers over bincode crate functions
 //!     bin_file.write(&chem)?;
-//!     let decoded: Chemistry = bin_file.read()?;
+//!     let decoded = bin_file.read()?;
 //!     assert_eq!(chem, decoded);
 //!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
@@ -40,7 +40,7 @@
 //! If the bincode file stores a list of items of type `T`, then the items can be read
 //! one at a time without reading the whole file into memory. A list of items
 //! of type `T` can also be incrementally written to a bincode file.
-//! `BincodeFile` implements `LazyFileTypeIO<T>` for any serializable type `T`.
+//! `BincodeFile<Vec<T>>` implements `LazyFileTypeIO<T>` for any serializable type `T`.
 //!
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
@@ -50,7 +50,7 @@
 //!
 //! fn main() -> Result<(), Error> {
 //!     let bin_file = BincodeFile::from("bin_example_lazy");
-//!     let mut writer: LazyBincodeWriter<i32> = bin_file.lazy_writer()?;
+//!     let mut writer = bin_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite<i32>`
 //!     for val in 0..10_000i32 {
 //!         writer.write_item(&val)?;
@@ -63,9 +63,7 @@
 //!     // let vals: Vec<_> = (0..10_000).into_iter().collect()
 //!     // bin_file.write(&vals)?;
 //!
-//!     // Type inference engine should figure out the type automatically,
-//!     // but it is shown here for illustration.
-//!     let mut reader: LazyBincodeReader<i32> = bin_file.lazy_reader()?;
+//!     let mut reader = bin_file.lazy_reader()?;
 //!     let mut max_val = 0;
 //!     // reader is an `Iterator` over values of type Result<`i32`, Error>
 //!     for (i, val) in reader.enumerate() {
@@ -79,7 +77,7 @@
 //! }
 //! ```
 
-use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{martian_filetype_typed_decorator, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -94,16 +92,16 @@ use std::marker::PhantomData;
 
 martian_filetype! {Bincode, "bincode"}
 
-pub type BincodeFile = BinaryFormat<Bincode>;
-
-crate::martian_filetype_inner! {
-    /// Binary format
+martian_filetype_typed_decorator! {
+    /// A struct that adds typed bincode serialization.
     pub struct BinaryFormat, "bincode"
 }
 
+pub type BincodeFile<T> = BinaryFormat<Bincode, T>;
+
 /// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
 /// TODO: Include the TypeId here?
-impl<T, F> FileTypeIO<T> for BinaryFormat<F>
+impl<T, F> FileTypeIO<T> for BinaryFormat<F, T>
 where
     T: Any + Serialize + DeserializeOwned,
     F: Debug + MartianFileType,
@@ -171,7 +169,7 @@ where
     R: Read,
     T: Any + Serialize + DeserializeOwned,
 {
-    type FileType = BinaryFormat<F>;
+    type FileType = BinaryFormat<F, Vec<T>>;
     fn with_reader(mut reader: R) -> Result<Self, Error> {
         fn check_type(
             mut reader: impl Read,
@@ -289,7 +287,7 @@ where
     W: Write,
     T: Any + Serialize,
 {
-    type FileType = BinaryFormat<F>;
+    type FileType = BinaryFormat<F, Vec<T>>;
     fn with_writer(mut writer: W) -> Result<Self, Error> {
         let type_hash = type_name::<LazyMarker<Vec<T>>>(); // The file stores Vec<T>, not T
         bincode::serialize_into(&mut writer, &type_hash)?;
@@ -310,7 +308,7 @@ where
     }
 }
 
-impl<T, F, W, R> LazyAgents<T, W, R> for BinaryFormat<F>
+impl<T, F, W, R> LazyAgents<T, W, R> for BinaryFormat<F, Vec<T>>
 where
     F: MartianFileType,
     R: Read,
@@ -346,28 +344,28 @@ mod tests {
         fn prop_test_bincode_file_u8(
             ref seq in vec(any::<u8>(), 0usize..1000usize),
         ) {
-            prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq, false).unwrap());
+            prop_assert!(crate::round_trip_check::<BincodeFile<_>, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile<_>, _>(seq, false).unwrap());
         }
         #[test]
         fn prop_test_bincode_file_bool(
             ref seq in vec(any::<bool>(), 0usize..1000usize),
         ) {
-            prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq, false).unwrap());
+            prop_assert!(crate::round_trip_check::<BincodeFile<_>, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile<_>, _>(seq, false).unwrap());
         }
         #[test]
         fn prop_test_bincode_file_vec_string(
             ref seq in vec(any::<String>(), 0usize..20usize),
         ) {
-            prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(seq, false).unwrap());
+            prop_assert!(crate::round_trip_check::<BincodeFile<_>, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile<_>, _>(seq, false).unwrap());
         }
         #[test]
         fn prop_test_bincode_file_string(
             ref seq in any::<String>(),
         ) {
-            prop_assert!(crate::round_trip_check::<BincodeFile, _>(seq).unwrap());
+            prop_assert!(crate::round_trip_check::<BincodeFile<_>, _>(seq).unwrap());
         }
         #[test]
         fn prop_test_bincode_file_struct(
@@ -375,15 +373,15 @@ mod tests {
             ref v2 in any::<String>(),
         ) {
             let foo = Foo {v1: *v1, v2: v2.clone(), v3: Bar::Variant};
-            prop_assert!(crate::round_trip_check::<BincodeFile, _>(&foo).unwrap());
+            prop_assert!(crate::round_trip_check::<BincodeFile<_>, _>(&foo).unwrap());
 
             let input = vec![foo.clone(); 20];
-            prop_assert!(crate::round_trip_check::<BincodeFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input, false).unwrap());
+            prop_assert!(crate::round_trip_check::<BincodeFile<_>, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile<_>, _>(&input, false).unwrap());
 
             let input = vec![vec![foo; 2]; 4];
-            prop_assert!(crate::round_trip_check::<BincodeFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<BincodeFile, _>(&input, false).unwrap());
+            prop_assert!(crate::round_trip_check::<BincodeFile<_>, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<BincodeFile<_>, _>(&input, false).unwrap());
 
         }
     }
@@ -399,7 +397,7 @@ mod tests {
             name: "Bar".into(),
             id: 100,
         };
-        assert!(crate::round_trip_check::<BincodeFile, _>(&foo)?);
+        assert!(crate::round_trip_check::<BincodeFile<_>, _>(&foo)?);
         Ok(())
     }
 
@@ -418,13 +416,21 @@ mod tests {
         let _: Vec<u8> = fn1.read()?;
         let _: Vec<u64> = fn2.read()?;
 
-        assert!(FileTypeIO::<Vec<u64>>::read(&fn1).is_err());
-        assert!(FileTypeIO::<u8>::read(&fn1).is_err());
-        assert!(FileTypeIO::<String>::read(&fn1).is_err());
+        assert!(BincodeFile::<Vec<u64>>::new(dir.path(), "test1")
+            .read()
+            .is_err());
+        assert!(BincodeFile::<u8>::new(dir.path(), "test1").read().is_err());
+        assert!(BincodeFile::<String>::new(dir.path(), "test1")
+            .read()
+            .is_err());
 
-        assert!(FileTypeIO::<Vec<u8>>::read(&fn2).is_err());
-        assert!(FileTypeIO::<u8>::read(&fn2).is_err());
-        assert!(FileTypeIO::<String>::read(&fn2).is_err());
+        assert!(BincodeFile::<Vec<u8>>::new(dir.path(), "test2")
+            .read()
+            .is_err());
+        assert!(BincodeFile::<u8>::new(dir.path(), "test2").read().is_err());
+        assert!(BincodeFile::<String>::new(dir.path(), "test2")
+            .read()
+            .is_err());
 
         Ok(())
     }

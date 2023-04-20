@@ -38,7 +38,7 @@ use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::marker::PhantomData;
 
-crate::martian_filetype_inner! {
+crate::martian_filetype_decorator! {
     /// A struct that wraps a basic `MartianFileType` and adds gzip compression
     /// capability.
     pub struct Gzip, "gz"
@@ -51,7 +51,7 @@ where
     /// Create an Gzip wrapped filetype from a basic filetype
     /// ```rust
     /// use martian_filetypes::{gzip_file::Gzip, bin_file::BincodeFile};
-    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::from("example"));
+    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::<()>::from("example"));
     /// assert_eq!(gz_bin_file.as_ref(), std::path::Path::new("example.bincode.gz"));
     /// ```
     pub fn from_filetype(source: F) -> Self {
@@ -206,7 +206,7 @@ mod tests {
     #[test]
     fn test_gz_new() {
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.gz")
@@ -214,7 +214,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.json"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.json"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.gz")
@@ -222,7 +222,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file_json"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file_json"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file_json.json.gz")
@@ -230,7 +230,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.json.gz"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.json.gz"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.gz")
@@ -238,7 +238,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.tmp.json.gz")
@@ -246,7 +246,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file").as_ref(),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file").as_ref(),
             Path::new("/some/path/file.json.gz")
         );
     }
@@ -275,42 +275,42 @@ mod tests {
     #[test]
     fn test_gz_from() {
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
-            Gzip::<JsonFile>::from("/some/path/file")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::from("/some/path/file")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
-            Gzip::<JsonFile>::from("/some/path/file.json")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.json")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
-            Gzip::<JsonFile>::from("/some/path/file.json.gz")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.json.gz")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp"),
-            Gzip::<JsonFile>::from("/some/path/file.tmp.json.gz")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.tmp.json.gz")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp"),
-            Gzip::<JsonFile>::from("/some/path/file.tmp")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.tmp")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp.json"),
-            Gzip::<JsonFile>::from("/some/path/file.tmp")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp.json"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.tmp")
         );
     }
 
     #[test]
     fn test_gz_from_filetype() {
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
             Gzip::from_filetype(JsonFile::new("/some/path/", "file"))
         );
     }
 
     #[test]
     fn test_gz_extension() {
-        assert_eq!(Gzip::<JsonFile>::extension(), "json.gz");
+        assert_eq!(Gzip::<JsonFile<()>>::extension(), "json.gz");
     }
 
     #[test]
@@ -334,7 +334,7 @@ mod tests {
     #[test]
     fn test_json_gz_lazy_write_no_finish() {
         let dir = tempfile::tempdir().unwrap();
-        let file = Gzip::<JsonFile>::new(dir.path(), "file");
+        let file: Gzip<JsonFile<_>> = Gzip::new(dir.path(), "file");
         let mut writer = file.lazy_writer().unwrap();
         for i in 0..10 {
             writer.write_item(&i).unwrap();
@@ -349,7 +349,7 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-        let gz_file = Gzip::<JsonFile>::new("/some/path/", "file");
+        let gz_file: Gzip<JsonFile<()>> = Gzip::new("/some/path/", "file");
         let path = PathBuf::from("/some/path/file.json.gz");
         assert_eq!(
             serde_json::to_string(&gz_file).unwrap(),
@@ -359,7 +359,8 @@ mod tests {
 
     #[test]
     fn test_deserialize() {
-        let gz_file: Gzip<JsonFile> = serde_json::from_str(r#""/some/path/file.json.gz""#).unwrap();
-        assert_eq!(gz_file, Gzip::<JsonFile>::new("/some/path/", "file"));
+        let gz_file: Gzip<JsonFile<()>> =
+            serde_json::from_str(r#""/some/path/file.json.gz""#).unwrap();
+        assert_eq!(gz_file, Gzip::new("/some/path/", "file"));
     }
 }

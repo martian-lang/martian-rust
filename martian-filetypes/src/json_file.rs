@@ -21,7 +21,7 @@
 //!     let json_file = JsonFile::from("json_example");
 //!     // The two function below are simple wrappers over serde_json
 //!     json_file.write(&chem)?; // Writes pretty formatted with 4 space indent
-//!     let decoded: Chemistry = json_file.read()?;
+//!     let decoded = json_file.read()?;
 //!     assert_eq!(chem, decoded);
 //!     # std::fs::remove_file(json_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
@@ -51,7 +51,7 @@
 //!
 //! fn main() -> Result<(), Error> {
 //!     let json_file = JsonFile::from("json_example_lazy");
-//!     let mut writer: LazyJsonWriter<i32> = json_file.lazy_writer()?;
+//!     let mut writer = json_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite<i32>`
 //!     for val in 0..10_000i32 {
 //!         writer.write_item(&val)?;
@@ -63,7 +63,7 @@
 //!     // let vals: Vec<_> = (0..10_000).into_iter().collect()
 //!     // json_file.write(&vals)?;
 //!
-//!     let mut reader: LazyJsonReader<i32> = json_file.lazy_reader()?;
+//!     let mut reader = json_file.lazy_reader()?;
 //!     let mut max_val = 0;
 //!     // reader is an `Iterator` over values of type Result<`i32`, Error>
 //!     for (i, val) in reader.enumerate() {
@@ -77,7 +77,7 @@
 //! }
 //! ```
 
-use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{martian_filetype_typed_decorator, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -93,17 +93,17 @@ use std::marker::PhantomData;
 
 martian_filetype! {Json, "json"}
 
-pub type JsonFile = JsonFormat<Json>;
-
-crate::martian_filetype_inner! {
-    /// Json format
+martian_filetype_typed_decorator! {
+    /// A struct that adds typed JSON serialization.
     pub struct JsonFormat, "json"
 }
+
+pub type JsonFile<T> = JsonFormat<Json, T>;
 
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
 /// The saved JsonFile will be pretty formatted using 4 space indentation.
-impl<F, T> FileTypeIO<T> for JsonFormat<F>
+impl<F, T> FileTypeIO<T> for JsonFormat<F, T>
 where
     T: Serialize + DeserializeOwned,
     F: MartianFileType + Debug,
@@ -139,7 +139,7 @@ where
     R: Read,
     T: Serialize + DeserializeOwned,
 {
-    type FileType = JsonFormat<F>;
+    type FileType = JsonFormat<F, Vec<T>>;
     fn with_reader(mut reader: R) -> Result<Self, Error> {
         let mut char_buf = [0u8];
         reader.read_exact(&mut char_buf)?;
@@ -226,7 +226,7 @@ where
     W: Write,
     T: Serialize + DeserializeOwned,
 {
-    type FileType = JsonFormat<F>;
+    type FileType = JsonFormat<F, Vec<T>>;
     fn with_writer(writer: W) -> Result<Self, Error> {
         Ok(LazyJsonWriter {
             state: WriterState::Start,
@@ -286,7 +286,7 @@ where
     }
 }
 
-impl<F, T, W, R> LazyAgents<T, W, R> for JsonFormat<F>
+impl<F, T, W, R> LazyAgents<T, W, R> for JsonFormat<F, Vec<T>>
 where
     F: MartianFileType,
     R: Read,
@@ -335,7 +335,7 @@ mod tests {
         let dir = tempfile::tempdir()?;
         let bc_json = JsonFile::new(dir.path(), "barcodes");
         bc_json.write(&barcodes)?;
-        let actual: Vec<String> = bc_json.read()?;
+        let actual = bc_json.read()?;
         assert_eq!(barcodes, actual);
         assert_eq!(
             std::fs::read_to_string(bc_json)?,
@@ -349,33 +349,33 @@ mod tests {
         fn prop_test_json_file_u8(
             ref seq in vec(any::<u8>(), 0usize..100usize),
         ) {
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq, true).unwrap());
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(&vec![seq.clone(); 10]).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&vec![seq.clone(); 10], true).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile<_>, _>(seq, true).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(&vec![seq.clone(); 10]).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile<_>, _>(&vec![seq.clone(); 10], true).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         #[test]
         fn prop_test_json_file_bool(
             ref seq in vec(any::<bool>(), 0usize..1000usize),
         ) {
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq, true).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile<_>, _>(seq, true).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         #[test]
         fn prop_test_json_file_vec_string(
             ref seq in vec(any::<String>(), 0usize..20usize),
         ) {
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(seq, true).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(seq).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile<_>, _>(seq, true).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         #[test]
         fn prop_test_json_file_string(
             ref seq in any::<String>(),
         ) {
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(seq).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(seq).unwrap());
         }
 
         #[test]
@@ -384,30 +384,19 @@ mod tests {
             ref v2 in any::<String>(),
         ) {
             let foo = Foo {v1: *v1, v2: v2.clone(), v3: Bar::Variant};
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(&foo).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(&foo).unwrap());
 
             let input = vec![foo.clone(); 20];
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input, true).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile<_>, _>(&input, true).unwrap());
             serde_lazy_roundtrip_check(&input).unwrap();
 
             let input = vec![vec![foo; 2]; 4];
-            prop_assert!(crate::round_trip_check::<JsonFile, _>(&input).unwrap());
-            prop_assert!(crate::lazy_round_trip_check::<JsonFile, _>(&input, true).unwrap());
+            prop_assert!(crate::round_trip_check::<JsonFile<_>, _>(&input).unwrap());
+            prop_assert!(crate::lazy_round_trip_check::<JsonFile<_>, _>(&input, true).unwrap());
             serde_lazy_roundtrip_check(&input).unwrap();
 
         }
-    }
-
-    #[test]
-    fn test_json_lazy_read_not_vec() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "lazy_test");
-        let input = String::from("Hello");
-        json_file.write(&input)?;
-        let lazy_reader: Result<LazyJsonReader<i32>, _> = json_file.lazy_reader();
-        assert!(lazy_reader.is_err());
-        Ok(())
     }
 
     fn serde_lazy_roundtrip_check<T>(input: &[T]) -> Result<(), Error>
@@ -492,8 +481,8 @@ mod tests {
         drop(writer);
         let reader = json_file.lazy_reader().unwrap();
         for (i, val) in reader.enumerate() {
-            let val: usize = val.unwrap();
-            assert_eq!(val, i);
+            let val: i32 = val.unwrap();
+            assert_eq!(val, i as i32);
         }
     }
 

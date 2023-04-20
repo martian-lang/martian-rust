@@ -3,7 +3,7 @@
 //! items of type `T`.
 //!
 //! ## Simple read/write example
-//! `CsvFile` implements `FileTypeIO<T>` for any serializable type `T`.
+//! `CsvFile<T>` implements `FileTypeIO<Vec<T>>` for any serializable type `T`.
 //! ```rust
 //! use martian_filetypes::{FileTypeIO, tabular_file::CsvFile};
 //! use martian::Error;
@@ -27,7 +27,7 @@
 //!         std::fs::read_to_string(&csv_file)?,
 //!         "umis,reads\n10,15\n200,1005\n"
 //!     );
-//!     let decoded: Vec<BarcodeSummary> = csv_file.read()?;
+//!     let decoded = csv_file.read()?;
 //!     assert_eq!(summary, decoded);
 //!     # std::fs::remove_file(csv_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
@@ -159,9 +159,7 @@ table_config! { TabDelimiterNoHeader, b'\t', "tsv", false }
 pub type TsvFormatNoHeader<T, F> = DelimitedFormat<T, F, TabDelimiterNoHeader>;
 pub type TsvFileNoHeader<T> = TsvFormatNoHeader<T, Tsv>;
 
-/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
-/// Any type `T` that can be serialized can be saved as a `JsonFile`.
-/// The saved JsonFile will be pretty formatted using 4 space indentation.
+/// Enable writing and reading a vector of T from a tabular file.
 impl<F, D, T> FileTypeIO<Vec<T>> for DelimitedFormat<T, F, D>
 where
     T: Serialize + DeserializeOwned,
@@ -377,18 +375,18 @@ mod tests {
 
     #[test]
     fn test_round_trip() -> Result<(), Error> {
-        assert!(crate::round_trip_check::<CsvFile<Cell>, _>(&cells())?);
-        assert!(crate::round_trip_check::<TsvFile<Cell>, _>(&cells())?);
+        assert!(crate::round_trip_check::<CsvFile<_>, _>(&cells())?);
+        assert!(crate::round_trip_check::<TsvFile<_>, _>(&cells())?);
         Ok(())
     }
 
     #[test]
     fn test_lazy_round_trip() -> Result<(), Error> {
-        assert!(crate::lazy_round_trip_check::<CsvFile<Cell>, _>(
+        assert!(crate::lazy_round_trip_check::<CsvFile<_>, _>(
             &cells(),
             true
         )?);
-        assert!(crate::lazy_round_trip_check::<TsvFile<Cell>, _>(
+        assert!(crate::lazy_round_trip_check::<TsvFile<_>, _>(
             &cells(),
             true
         )?);
