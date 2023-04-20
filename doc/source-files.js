@@ -26,7 +26,7 @@ var sourcesIndex = JSON.parse('{\
 "lz4_sys":["",[],["lib.rs"]],\
 "martian":["",[],["lib.rs","macros.rs","metadata.rs","mro.rs","prelude.rs","stage.rs","utils.rs"]],\
 "martian_derive":["",[],["lib.rs"]],\
-"martian_filetypes":["",[],["bin_file.rs","gzip_file.rs","json_file.rs","lib.rs","lz4_file.rs","macros.rs","tabular_file.rs"]],\
+"martian_filetypes":["",[],["bin_file.rs","gzip_file.rs","json_file.rs","lib.rs","lz4_file.rs","macros.rs","tabular_file.rs","zstd_file.rs"]],\
 "martian_lab":["",[],["lib.rs"]],\
 "memchr":["",[["memchr",[["x86",[],["mod.rs","sse2.rs"]]],["fallback.rs","iter.rs","mod.rs","naive.rs"]],["memmem",[["prefilter",[["x86",[],["mod.rs","sse.rs"]]],["fallback.rs","genericsimd.rs","mod.rs"]],["x86",[],["avx.rs","mod.rs","sse.rs"]]],["byte_frequencies.rs","genericsimd.rs","mod.rs","rabinkarp.rs","rarebytes.rs","twoway.rs","util.rs","vector.rs"]]],["cow.rs","lib.rs"]],\
 "miniz_oxide":["",[["deflate",[],["buffer.rs","core.rs","mod.rs","stream.rs"]],["inflate",[],["core.rs","mod.rs","output_buffer.rs","stream.rs"]]],["lib.rs","shared.rs"]],\
@@ -50,6 +50,9 @@ var sourcesIndex = JSON.parse('{\
 "tempfile":["",[["file",[["imp",[],["mod.rs","unix.rs"]]],["mod.rs"]]],["dir.rs","error.rs","lib.rs","spooled.rs","util.rs"]],\
 "time":["",[["error",[],["component_range.rs","conversion_range.rs","different_variant.rs","format.rs","indeterminate_offset.rs","invalid_format_description.rs","invalid_variant.rs","mod.rs"]],["format_description",[["parse",[],["ast.rs","format_item.rs","lexer.rs","mod.rs"]],["well_known",[["iso8601",[],["adt_hack.rs"]]],["iso8601.rs","rfc2822.rs","rfc3339.rs"]]],["borrowed_format_item.rs","component.rs","mod.rs","modifier.rs","owned_format_item.rs"]],["formatting",[],["formattable.rs","iso8601.rs","mod.rs"]],["sys",[["local_offset_at",[],["mod.rs","unix.rs"]]],["mod.rs"]]],["date.rs","date_time.rs","duration.rs","ext.rs","instant.rs","lib.rs","month.rs","offset_date_time.rs","primitive_date_time.rs","shim.rs","time.rs","utc_offset.rs","util.rs","weekday.rs"]],\
 "time_core":["",[],["lib.rs","util.rs"]],\
-"unicode_ident":["",[],["lib.rs","tables.rs"]]\
+"unicode_ident":["",[],["lib.rs","tables.rs"]],\
+"zstd":["",[["bulk",[],["compressor.rs","decompressor.rs","mod.rs"]],["stream",[["read",[],["mod.rs"]],["write",[],["mod.rs"]],["zio",[],["mod.rs","reader.rs","writer.rs"]]],["functions.rs","mod.rs","raw.rs"]]],["dict.rs","lib.rs"]],\
+"zstd_safe":["",[],["constants.rs","lib.rs"]],\
+"zstd_sys":["",[],["bindings_zdict_std.rs","bindings_zstd_std.rs","lib.rs"]]\
 }');
 createSourceSidebar();

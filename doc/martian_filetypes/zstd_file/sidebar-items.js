@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["LazyZstdReader","Iterator over individual items  within an zstd file that stores a list of items."],["LazyZstdWriter","Helper struct to write items one by one into an Zstd file. Implements `LazyWrite` trait."],["Zstd","A struct that wraps a basic `MartianFileType` and adds zstd compression capability."]]};

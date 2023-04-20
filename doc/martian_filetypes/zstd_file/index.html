@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="This module defines an `zstd` wrapper over other basic filetypes. Most basic filetypes automatically inherit this behavior through the trait heirarchy."><meta name="keywords" content="rust, rustlang, rust-lang, zstd_file"><title>martian_filetypes::zstd_file - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../martian_filetypes/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"><a href="#">Module zstd_file</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1 class="fqn">Module <a href="../index.html">martian_filetypes</a>::<wbr><a class="mod" href="#">zstd_file</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../../src/martian_filetypes/zstd_file.rs.html#1-437">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This module defines an <code>zstd</code> wrapper over other basic filetypes. Most basic
+filetypes automatically inherit this behavior through the trait heirarchy.</p>
+<h3 id="simple-readwrite-example"><a href="#simple-readwrite-example">Simple read/write example</a></h3>
+<p>The example shown below creates an zstd compressed json and bincode file.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>martian_filetypes::FileTypeIO;
+<span class="kw">use </span>martian_filetypes::bin_file::BincodeFile;
+<span class="kw">use </span>martian_filetypes::json_file::JsonFile;
+<span class="kw">use </span>martian_filetypes::zstd_file::Zstd;
+<span class="kw">use </span>martian::Error;
+<span class="kw">use </span>serde::{Serialize, Deserialize};
+
+<span class="attribute">#[derive(Debug, PartialEq, Serialize, Deserialize)]
+</span><span class="kw">struct </span>Chemistry {
+    name: String,
+    paired_end: bool,
+}
+
+<span class="kw">fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+    <span class="kw">let </span>chem = Chemistry { name: <span class="string">&quot;SCVDJ&quot;</span>.into(), paired_end: <span class="bool-val">true </span>};
+    <span class="comment">// --------------------- Json ----------------------------------
+    </span><span class="kw">let </span>zstd_json_file = Zstd::from_filetype(JsonFile::from(<span class="string">&quot;example&quot;</span>)); <span class="comment">// example.json.zst
+    // zstd_json_file has the type Zstd&lt;JsonFile&gt;
+    </span>zstd_json_file.write(<span class="kw-2">&amp;</span>chem)<span class="question-mark">?</span>; <span class="comment">// Writes zstd compressed json file
+    </span><span class="kw">let </span>decoded: Chemistry = zstd_json_file.read()<span class="question-mark">?</span>;
+    <span class="macro">assert_eq!</span>(chem, decoded);
+
+    <span class="comment">// --------------------- Bincode ----------------------------------
+    </span><span class="kw">let </span>zstd_bin_file: Zstd&lt;BincodeFile&gt; = Zstd::from(<span class="string">&quot;example&quot;</span>); <span class="comment">// example.bincode.zst
+    // Need to explcitly annotate the type id you are using from() or MartianFileType::new()
+    </span>zstd_bin_file.write(<span class="kw-2">&amp;</span>chem)<span class="question-mark">?</span>; <span class="comment">// Writes zstd compressed bincode file
+    </span><span class="kw">let </span>decoded: Chemistry = zstd_bin_file.read()<span class="question-mark">?</span>;
+    <span class="macro">assert_eq!</span>(chem, decoded);
+
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<h3 id="lazy-readwrite-example"><a href="#lazy-readwrite-example">Lazy read/write example</a></h3>
+<p>The example below illustrates writing an integer one by one into an zstd compressed Bincode file</p>
+<h5 id="important"><a href="#important">IMPORTANT</a></h5>
+<p>You need to explicitly call <strong><code>finish()</code></strong> on a lazy writer to complete the writing and capture
+the resulting errors. When the writer is dropped, we attempt to complete the writing, but
+ignoring the errors.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+<span class="kw">use </span>martian_filetypes::bin_file::BincodeFile;
+<span class="kw">use </span>martian_filetypes::zstd_file::Zstd;
+<span class="kw">use </span>martian::Error;
+<span class="kw">use </span>serde::{Serialize, Deserialize};
+
+<span class="kw">fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+    <span class="kw">let </span>zstd_bin_file: Zstd&lt;BincodeFile&gt; = Zstd::from(<span class="string">&quot;example_lazy&quot;</span>);
+    <span class="kw">let </span><span class="kw-2">mut </span>zstd_writer = zstd_bin_file.lazy_writer()<span class="question-mark">?</span>;
+    <span class="comment">// The type of the zstd_writer will be inferred by the compiler as:
+    // LazyZstdWriter&lt;LazyBincodeWriter&lt;i32, zstd::encoder::Encoder&lt;BufWriter&lt;File&gt;&gt;&gt;, i32, BufWriter&lt;File&gt;&gt;
+    // Clearly you want the compiler to figure this out.
+
+    // writer implements the trait `LazyWrite&lt;_&gt;`
+    </span><span class="kw">for _ in </span><span class="number">0</span>..<span class="number">10_000 </span>{
+        zstd_writer.write_item(<span class="kw-2">&amp;</span><span class="number">0i32</span>)<span class="question-mark">?</span>;
+    }
+    zstd_writer.finish()<span class="question-mark">?</span>; <span class="comment">// The file writing is not completed until finish() is called.
+    // IF YOU DON&#39;T CALL finish(), THE FILE COULD BE INCOMPLETE UNTIL THE WRITER IS DROPPED
+
+    // For this extreme case of compression, the output file will be just 194 bytes, as opposed to
+    // 39KB uncompressed
+
+    </span><span class="kw">let </span><span class="kw-2">mut </span>zstd_reader = zstd_bin_file.lazy_reader()<span class="question-mark">?</span>;
+    <span class="comment">// The type of the zstd_reader will be inferred by the compiler as:
+    // LazyZstdReader&lt;LazyBincodeReader&lt;i32, zstd::decoder::Decoder&lt;BufReader&lt;File&gt;&gt;&gt;, i32, BufReader&lt;File&gt;&gt;
+    // Clearly you want the compiler to figure this out.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>n_val = <span class="number">0</span>;
+    <span class="comment">// zstd_reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;
+    </span><span class="kw">for </span>(i, val) <span class="kw">in </span>zstd_reader.enumerate() {
+        <span class="kw">let </span>val: i32 = val<span class="question-mark">?</span>; <span class="comment">// Helps with the type inference
+        </span><span class="macro">assert_eq!</span>(<span class="number">0i32</span>, val);
+        n_val += <span class="number">1</span>;
+    }
+    <span class="macro">assert_eq!</span>(n_val, <span class="number">10_000i32</span>);
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+</div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.LazyZstdReader.html" title="martian_filetypes::zstd_file::LazyZstdReader struct">LazyZstdReader</a></div><div class="item-right docblock-short">Iterator over individual items  within an zstd file that
+stores a list of items.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.LazyZstdWriter.html" title="martian_filetypes::zstd_file::LazyZstdWriter struct">LazyZstdWriter</a></div><div class="item-right docblock-short">Helper struct to write items one by one into an Zstd file.
+Implements <code>LazyWrite</code> trait.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Zstd.html" title="martian_filetypes::zstd_file::Zstd struct">Zstd</a></div><div class="item-right docblock-short">A struct that wraps a basic <code>MartianFileType</code> and adds zstd compression
+capability.</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="martian_filetypes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>
