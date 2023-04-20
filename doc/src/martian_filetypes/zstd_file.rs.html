@@ -626,7 +626,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, L, T, W&gt; LazyZstdWriter&lt;L, T, W&gt;
+<span class="kw">impl</span>&lt;L, T, W&gt; LazyZstdWriter&lt;L, T, W&gt;
 <span class="kw">where
     </span>L: LazyWrite&lt;T, zstd::Encoder&lt;<span class="lifetime">&#39;static</span>, W&gt;&gt;,
     W: Write,
@@ -681,7 +681,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, L, T, R&gt; Iterator <span class="kw">for </span>LazyZstdReader&lt;L, T, R&gt;
+<span class="kw">impl</span>&lt;L, T, R&gt; Iterator <span class="kw">for </span>LazyZstdReader&lt;L, T, R&gt;
 <span class="kw">where
     </span>L: LazyRead&lt;T, zstd::Decoder&lt;<span class="lifetime">&#39;static</span>, BufReader&lt;R&gt;&gt;&gt;,
     R: BufRead,
