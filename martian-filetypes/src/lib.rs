@@ -176,17 +176,17 @@ where
 /// If you want to implement this trait for a custom filetype, read
 /// the inline comments on which functions are provided and which
 /// are required.
-pub trait FileTypeIO<T>: MartianFileType {
+pub trait FileTypeIO: MartianFileType {
     /// Read the `MartianFileType` as type `T`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement
     /// `read_from()`
-    fn read(&self) -> Result<T, Error> {
+    fn read(&self) -> Result<Self::Contents, Error> {
         fn _fmt_err(e: Error, p: PathBuf) -> Error {
             let context = ErrorContext::ReadContext(p, e.to_string());
             e.context(context)
         }
-        <Self as FileTypeIO<T>>::read_from(self.buf_reader()?)
+        <Self as FileTypeIO>::read_from(self.buf_reader()?)
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
@@ -199,25 +199,25 @@ pub trait FileTypeIO<T>: MartianFileType {
     // `read()` function is so that we can extend the functionality by passing
     // in arbitrary readers (for e.g lz4 compressed). See the `lz4_file` for
     // a concrete example
-    fn read_from<R: io::Read>(reader: R) -> Result<T, Error>;
+    fn read_from<R: io::Read>(reader: R) -> Result<Self::Contents, Error>;
 
     /// Write type `T` into the `MartianFileType`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement
     /// `write_into()`.
-    fn write(&self, item: &T) -> Result<(), Error> {
+    fn write(&self, item: &Self::Contents) -> Result<(), Error> {
         fn _fmt_err(e: Error, p: PathBuf) -> Error {
             let context = ErrorContext::WriteContext(p, e.to_string());
             e.context(context)
         }
-        <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item)
+        <Self as FileTypeIO>::write_into(self.buf_writer()?, item)
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
     #[doc(hidden)]
     // In general, do not call this function directly. Use `write()` instead.
     // The comments provided in `read_from()` apply here as well.
-    fn write_into<W: io::Write>(writer: W, item: &T) -> Result<(), Error>;
+    fn write_into<W: io::Write>(writer: W, item: &Self::Contents) -> Result<(), Error>;
 }
 
 /// A trait that represents a `MartianFileType` which can be incrementally
@@ -303,7 +303,7 @@ pub(crate) fn maybe_add_format(extension: String, format: &str) -> String {
 #[cfg(test)]
 pub fn round_trip_check<F, T>(input: &T) -> Result<bool, Error>
 where
-    F: FileTypeIO<T>,
+    F: FileTypeIO,
     T: PartialEq,
 {
     // TEST 1: Write as F and read from F
@@ -339,8 +339,8 @@ where
 #[cfg(test)]
 pub fn lazy_round_trip_check<F, T>(input: &Vec<T>, require_read: bool) -> Result<bool, Error>
 where
-    F: LazyFileTypeIO<T> + FileTypeIO<Vec<T>>,
-    lz4_file::Lz4<F>: LazyFileTypeIO<T> + FileTypeIO<Vec<T>>,
+    F: LazyFileTypeIO<T> + FileTypeIO,
+    lz4_file::Lz4<F>: LazyFileTypeIO<T> + FileTypeIO,
     T: PartialEq,
 {
     // Write + Lazy read

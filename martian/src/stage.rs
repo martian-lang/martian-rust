@@ -31,6 +31,8 @@ fn split_file_name(p: &Path) -> (&Path, &Path) {
 /// A `MartianFiletype` is associated with a file of know non-empty
 /// extension. This encodes the concept of a `filepath` in martian.
 pub trait MartianFileType: AsRef<Path> + From<PathBuf> {
+    /// The Rust type that represents the content of this file.
+    type Contents;
     fn extension() -> String;
     fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self;
     /// This function is equivalent to calling `new(p.parent(), p.file_name())`

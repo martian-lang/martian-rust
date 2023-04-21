@@ -77,7 +77,7 @@
 //! }
 //! ```
 
-use crate::{martian_filetype_typed_decorator, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{martian_filetype_decorator, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -91,14 +91,10 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::marker::PhantomData;
 
-martian_filetype! {Json, "json"}
-
-martian_filetype_typed_decorator! {
+martian_filetype_decorator! {
     /// A struct that adds typed JSON serialization.
     pub struct JsonFormat, "json"
 }
-
-pub type JsonFile<T> = JsonFormat<Json, T>;
 
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
