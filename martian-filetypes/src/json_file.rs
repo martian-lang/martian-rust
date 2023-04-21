@@ -106,7 +106,7 @@ pub type JsonFile<T> = JsonFormat<Json, T>;
 impl<F, T> FileTypeIO<T> for JsonFormat<F, T>
 where
     T: Serialize + DeserializeOwned,
-    F: MartianFileType + Debug,
+    F: MartianFileType,
 {
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
         Ok(serde_json::from_reader(reader)?)

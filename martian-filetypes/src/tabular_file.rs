@@ -58,7 +58,7 @@ pub trait TableConfig {
 pub struct DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     path: PathBuf,
     #[serde(skip)]
@@ -68,7 +68,7 @@ where
 impl<T, F, D> MartianFileType for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     fn extension() -> String {
         crate::maybe_add_format(F::extension(), D::format())
@@ -87,7 +87,7 @@ where
 impl<T, F, D> AsRef<Path> for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     fn as_ref(&self) -> &Path {
         &self.path
@@ -97,7 +97,7 @@ where
 impl<T, F, D> std::ops::Deref for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     type Target = Path;
     /// Dereferences this DelimitedFormat to a Path slice.
@@ -110,7 +110,7 @@ impl<T, F, D, P> From<P> for DelimitedFormat<T, F, D>
 where
     PathBuf: From<P>,
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     fn from(source: P) -> Self {
         let path_buf = PathBuf::from(source);
@@ -120,7 +120,7 @@ where
 
 macro_rules! table_config {
     ($name:ident, $delim:expr, $format: expr, $header: expr) => {
-        #[derive(Debug, Clone, Copy)]
+        #[derive(Clone, Copy)]
         pub struct $name;
         impl TableConfig for $name {
             fn delimiter() -> u8 {
@@ -163,8 +163,8 @@ pub type TsvFileNoHeader<T> = TsvFormatNoHeader<T, Tsv>;
 impl<F, D, T> FileTypeIO<Vec<T>> for DelimitedFormat<T, F, D>
 where
     T: Serialize + DeserializeOwned,
-    F: MartianFileType + Debug,
-    D: TableConfig + Debug,
+    F: MartianFileType,
+    D: TableConfig,
 {
     fn read_from<R: Read>(reader: R) -> Result<Vec<T>, Error> {
         let mut rdr = csv::ReaderBuilder::new()
@@ -193,7 +193,7 @@ where
 pub struct LazyTabularReader<F, D, T, R>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     R: Read,
     T: DeserializeOwned,
 {
@@ -204,7 +204,7 @@ where
 impl<F, D, T, R> Iterator for LazyTabularReader<F, D, T, R>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     R: Read,
     T: DeserializeOwned,
 {
@@ -221,7 +221,7 @@ where
 impl<F, D, T, R> LazyRead<T, R> for LazyTabularReader<F, D, T, R>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     R: Read,
     T: DeserializeOwned,
 {
@@ -242,7 +242,7 @@ pub struct LazyTabularWriter<F, D, T, W>
 where
     F: MartianFileType,
     W: Write,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     writer: csv::Writer<W>,
     phantom: PhantomData<(F, D, T)>,
@@ -275,7 +275,7 @@ impl<F, D, T, W> LazyTabularWriter<F, D, T, W>
 where
     F: MartianFileType,
     W: Write,
-    D: TableConfig + Debug,
+    D: TableConfig,
     T: Serialize + Default,
 {
     pub fn write_header(&mut self) -> Result<(), Error> {
@@ -289,7 +289,7 @@ impl<F, D, T, W> LazyWrite<T, W> for LazyTabularWriter<F, D, T, W>
 where
     F: MartianFileType,
     W: Write,
-    D: TableConfig + Debug,
+    D: TableConfig,
     T: Serialize,
 {
     type FileType = DelimitedFormat<T, F, D>;
@@ -316,7 +316,7 @@ where
 impl<F, D, T, W, R> LazyAgents<T, W, R> for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     T: Serialize + DeserializeOwned,
     W: Write,
     R: Read,

@@ -104,7 +104,7 @@ pub type BincodeFile<T> = BinaryFormat<Bincode, T>;
 impl<T, F> FileTypeIO<T> for BinaryFormat<F, T>
 where
     T: Any + Serialize + DeserializeOwned,
-    F: Debug + MartianFileType,
+    F: MartianFileType,
 {
     fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
         fn check_type(
