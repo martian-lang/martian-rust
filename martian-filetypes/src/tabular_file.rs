@@ -399,6 +399,23 @@ mod tests {
             std::fs::read_to_string(&cells_tsv)?,
             "barcode\tgenome\nACGT\thg19\nTCAT\tmm10\n"
         );
+        assert_eq!(
+            cells_tsv.read_headers()?,
+            Some(vec!["barcode".to_string(), "genome".to_string()])
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_tsv_write_no_header() -> Result<(), Error> {
+        let dir = tempfile::tempdir()?;
+        let cells_tsv = TsvFileNoHeader::new(dir.path(), "test");
+        cells_tsv.write(&cells())?;
+        assert_eq!(
+            std::fs::read_to_string(&cells_tsv)?,
+            "ACGT\thg19\nTCAT\tmm10\n"
+        );
+        assert!(cells_tsv.read_headers()?.is_none());
         Ok(())
     }
 
