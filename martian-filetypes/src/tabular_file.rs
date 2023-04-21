@@ -51,6 +51,9 @@ pub trait TableConfig {
     fn header() -> bool {
         true
     }
+    fn comment() -> Option<u8> {
+        None
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -118,8 +121,9 @@ where
     }
 }
 
+#[macro_export]
 macro_rules! table_config {
-    ($name:ident, $delim:expr, $format: expr, $header: expr) => {
+    ($name:ident, $delim:expr, $format: expr, $header: expr, $comment:expr) => {
         #[derive(Clone, Copy)]
         pub struct $name;
         impl TableConfig for $name {
@@ -132,10 +136,13 @@ macro_rules! table_config {
             fn header() -> bool {
                 $header
             }
+            fn comment() -> Option<u8> {
+                $comment
+            }
         }
     };
     ($name:ident, $delim:expr, $format: expr) => {
-        table_config!($name, $delim, $format, true);
+        table_config!($name, $delim, $format, true, None);
     };
 }
 
@@ -147,7 +154,7 @@ table_config! { CommaDelimiter, b',', "csv" }
 pub type CsvFormat<T, F> = DelimitedFormat<T, F, CommaDelimiter>;
 pub type CsvFile<T> = CsvFormat<T, Csv>;
 
-table_config! { CommaDelimiterNoHeader, b',', "csv", false }
+table_config! { CommaDelimiterNoHeader, b',', "csv", false, None }
 pub type CsvFormatNoHeader<T, F> = DelimitedFormat<T, F, CommaDelimiterNoHeader>;
 pub type CsvFileNoHeader<T> = CsvFormatNoHeader<T, Csv>;
 
@@ -155,7 +162,7 @@ table_config! { TabDelimiter, b'\t', "tsv" }
 pub type TsvFormat<T, F> = DelimitedFormat<T, F, TabDelimiter>;
 pub type TsvFile<T> = TsvFormat<T, Tsv>;
 
-table_config! { TabDelimiterNoHeader, b'\t', "tsv", false }
+table_config! { TabDelimiterNoHeader, b'\t', "tsv", false, None }
 pub type TsvFormatNoHeader<T, F> = DelimitedFormat<T, F, TabDelimiterNoHeader>;
 pub type TsvFileNoHeader<T> = TsvFormatNoHeader<T, Tsv>;
 
@@ -169,6 +176,7 @@ where
     fn read_from<R: Read>(reader: R) -> Result<Vec<T>, Error> {
         let mut rdr = csv::ReaderBuilder::new()
             .delimiter(D::delimiter())
+            .comment(D::comment())
             .has_headers(D::header())
             .from_reader(reader);
         let iter = rdr.deserialize::<T>();
@@ -229,6 +237,7 @@ where
     fn with_reader(reader: R) -> Result<Self, Error> {
         let rdr = csv::ReaderBuilder::new()
             .delimiter(D::delimiter())
+            .comment(D::comment())
             .has_headers(D::header())
             .from_reader(reader);
         Ok(LazyTabularReader {
