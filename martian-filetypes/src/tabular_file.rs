@@ -68,6 +68,30 @@ where
     phantom: PhantomData<(T, F, D)>,
 }
 
+impl<T, F, D> DelimitedFormat<T, F, D>
+where
+    F: MartianFileType,
+    D: TableConfig,
+{
+    /// Build an appropriate CSV reader for this table format from the provided reader.
+    fn build_csv_reader<R: std::io::Read>(reader: R) -> csv::Reader<R> {
+        csv::ReaderBuilder::new()
+            .delimiter(D::delimiter())
+            .comment(D::comment())
+            .has_headers(D::header())
+            .from_reader(reader)
+    }
+
+    /// Read headers from the file, if this format has them.
+    pub fn read_headers(&self) -> Result<Option<Vec<String>>, Error> {
+        if !D::header() {
+            return Ok(None);
+        }
+        let mut rdr = Self::build_csv_reader(self.buf_reader()?);
+        Ok(Some(rdr.headers()?.iter().map(String::from).collect()))
+    }
+}
+
 impl<T, F, D> MartianFileType for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
@@ -174,11 +198,7 @@ where
     D: TableConfig,
 {
     fn read_from<R: Read>(reader: R) -> Result<Vec<T>, Error> {
-        let mut rdr = csv::ReaderBuilder::new()
-            .delimiter(D::delimiter())
-            .comment(D::comment())
-            .has_headers(D::header())
-            .from_reader(reader);
+        let mut rdr = Self::build_csv_reader(reader);
         let iter = rdr.deserialize::<T>();
         let rows = iter.collect::<csv::Result<Vec<T>>>()?;
         Ok(rows)
