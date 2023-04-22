@@ -3,7 +3,7 @@ use martian::MartianFileType;
 use martian_filetypes::bin_file::BincodeFile;
 use martian_filetypes::json_file::JsonFile;
 use martian_filetypes::lz4_file::Lz4;
-use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+use martian_filetypes::{FileTypeIO, FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Clone)]

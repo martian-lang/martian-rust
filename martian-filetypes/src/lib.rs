@@ -65,7 +65,7 @@
 //! # use anyhow ::Error;
 //! # use martian_derive::martian_filetype;
 //! # use martian_filetypes::json_file::JsonFormat;
-//! # use martian_filetypes::{FileTypeIO};
+//! # use martian_filetypes::{FileTypeRead, FileTypeWrite};
 //! # use serde::{Deserialize, Serialize};
 //! # use serde_json;
 //! #[derive(Debug, Serialize, Deserialize)]
@@ -170,13 +170,12 @@ where
 }
 
 /// A trait that represents a `MartianFileType` that can be read into
-/// memory as type `T` or written from type `T`. Use the `read()` and
-/// `write()` methods to achieve these.
+/// memory as type `T`. Use the `read()` method to achieve this.
 ///
 /// If you want to implement this trait for a custom filetype, read
 /// the inline comments on which functions are provided and which
 /// are required.
-pub trait FileTypeIO<T>: MartianFileType {
+pub trait FileTypeRead<T>: MartianFileType {
     /// Read the `MartianFileType` as type `T`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement
@@ -186,7 +185,7 @@ pub trait FileTypeIO<T>: MartianFileType {
             let context = ErrorContext::ReadContext(p, e.to_string());
             e.context(context)
         }
-        <Self as FileTypeIO<T>>::read_from(self.buf_reader()?)
+        <Self as FileTypeRead<T>>::read_from(self.buf_reader()?)
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
@@ -200,7 +199,15 @@ pub trait FileTypeIO<T>: MartianFileType {
     // in arbitrary readers (for e.g lz4 compressed). See the `lz4_file` for
     // a concrete example
     fn read_from<R: io::Read>(reader: R) -> Result<T, Error>;
+}
 
+/// A trait that represents a `MartianFileType` that can be written from type `T`.
+/// Use the `write()` method to achieve this.
+///
+/// If you want to implement this trait for a custom filetype, read
+/// the inline comments on which functions are provided and which
+/// are required.
+pub trait FileTypeWrite<T>: MartianFileType {
     /// Write type `T` into the `MartianFileType`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement
@@ -210,7 +217,7 @@ pub trait FileTypeIO<T>: MartianFileType {
             let context = ErrorContext::WriteContext(p, e.to_string());
             e.context(context)
         }
-        <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item)
+        <Self as FileTypeWrite<T>>::write_into(self.buf_writer()?, item)
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
@@ -219,6 +226,17 @@ pub trait FileTypeIO<T>: MartianFileType {
     // The comments provided in `read_from()` apply here as well.
     fn write_into<W: io::Write>(writer: W, item: &T) -> Result<(), Error>;
 }
+
+/// A trait that represents a `MartianFileType` that can be read into
+/// memory as type `T` or written from type `T`. Use the `read()` and
+/// `write()` methods to achieve these.
+///
+/// If you want to implement this trait for a custom filetype, read
+/// the inline comments on which functions are provided and which
+/// are required.
+pub trait FileTypeIO<T>: FileTypeRead<T> + FileTypeWrite<T> {}
+
+impl<T, F> FileTypeIO<T> for F where F: FileTypeRead<T> + FileTypeWrite<T> {}
 
 /// A trait that represents a `MartianFileType` which can be incrementally
 /// read or written. For example, you might have a fasta file and you might

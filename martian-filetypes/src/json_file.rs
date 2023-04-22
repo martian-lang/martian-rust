@@ -6,7 +6,7 @@
 //! ## Simple read/write example
 //! `JsonFile` implements `FileTypeIO<T>` for any serializable type `T`.
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, json_file::JsonFile};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, json_file::JsonFile};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
@@ -43,7 +43,7 @@
 //! If you don't do this, we will attempt to finish the writing in `drop()` ignoring all errors
 //!
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::json_file::{JsonFile, LazyJsonReader, LazyJsonWriter};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
@@ -77,7 +77,9 @@
 //! }
 //! ```
 
-use crate::{martian_filetype_typed_decorator, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{
+    martian_filetype_typed_decorator, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
+};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -103,15 +105,24 @@ pub type JsonFile<T> = JsonFormat<Json, T>;
 /// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
 /// The saved JsonFile will be pretty formatted using 4 space indentation.
-impl<F, T> FileTypeIO<T> for JsonFormat<F, T>
+impl<F, T> FileTypeRead<T> for JsonFormat<F, T>
 where
-    T: Serialize + DeserializeOwned,
+    T: DeserializeOwned,
     F: MartianFileType,
 {
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
         Ok(serde_json::from_reader(reader)?)
     }
+}
 
+/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
+/// Any type `T` that can be serialized can be saved as a `JsonFile`.
+/// The saved JsonFile will be pretty formatted using 4 space indentation.
+impl<F, T> FileTypeWrite<T> for JsonFormat<F, T>
+where
+    T: Serialize,
+    F: MartianFileType,
+{
     fn write_into<W: Write>(writer: W, item: &T) -> Result<(), Error> {
         let formatter = PrettyFormatter::with_indent(b"    ");
         let mut serializer = Serializer::with_formatter(writer, formatter);

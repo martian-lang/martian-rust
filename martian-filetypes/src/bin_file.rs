@@ -14,7 +14,7 @@
 //! ## Simple read/write example
 //! `BincodeFile<T>` implements `FileTypeIO<T>` for any serializable type `T`.
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, bin_file::BincodeFile};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, bin_file::BincodeFile};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
@@ -43,7 +43,7 @@
 //! `BincodeFile<Vec<T>>` implements `LazyFileTypeIO<T>` for any serializable type `T`.
 //!
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::bin_file::{BincodeFile, LazyBincodeReader, LazyBincodeWriter};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
@@ -77,7 +77,9 @@
 //! }
 //! ```
 
-use crate::{martian_filetype_typed_decorator, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{
+    martian_filetype_typed_decorator, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
+};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -101,9 +103,9 @@ pub type BincodeFile<T> = BinaryFormat<Bincode, T>;
 
 /// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
 /// TODO: Include the TypeId here?
-impl<T, F> FileTypeIO<T> for BinaryFormat<F, T>
+impl<T, F> FileTypeRead<T> for BinaryFormat<F, T>
 where
-    T: Any + Serialize + DeserializeOwned,
+    T: Any + DeserializeOwned,
     F: MartianFileType,
 {
     fn read_from<R: Read>(mut reader: R) -> Result<T, Error> {
@@ -134,7 +136,15 @@ where
         )?;
         Ok(bincode::deserialize_from(&mut reader)?)
     }
+}
 
+/// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
+/// TODO: Include the TypeId here?
+impl<T, F> FileTypeWrite<T> for BinaryFormat<F, T>
+where
+    T: Any + Serialize,
+    F: MartianFileType,
+{
     fn write_into<W: Write>(mut writer: W, input: &T) -> Result<(), Error> {
         let type_hash = type_name::<T>();
         bincode::serialize_into(&mut writer, &type_hash)?;

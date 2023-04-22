@@ -5,7 +5,7 @@
 //! ## Simple read/write example
 //! `CsvFile<T>` implements `FileTypeIO<Vec<T>>` for any serializable type `T`.
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, tabular_file::CsvFile};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, tabular_file::CsvFile};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
@@ -34,7 +34,7 @@
 //! }
 //! ```
 
-use crate::{FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -191,9 +191,9 @@ pub type TsvFormatNoHeader<T, F> = DelimitedFormat<T, F, TabDelimiterNoHeader>;
 pub type TsvFileNoHeader<T> = TsvFormatNoHeader<T, Tsv>;
 
 /// Enable writing and reading a vector of T from a tabular file.
-impl<F, D, T> FileTypeIO<Vec<T>> for DelimitedFormat<T, F, D>
+impl<F, D, T> FileTypeRead<Vec<T>> for DelimitedFormat<T, F, D>
 where
-    T: Serialize + DeserializeOwned,
+    T: DeserializeOwned,
     F: MartianFileType,
     D: TableConfig,
 {
@@ -203,7 +203,15 @@ where
         let rows = iter.collect::<csv::Result<Vec<T>>>()?;
         Ok(rows)
     }
+}
 
+/// Enable writing and reading a vector of T from a tabular file.
+impl<F, D, T> FileTypeWrite<Vec<T>> for DelimitedFormat<T, F, D>
+where
+    T: Serialize,
+    F: MartianFileType,
+    D: TableConfig,
+{
     fn write_into<W: Write>(writer: W, item: &Vec<T>) -> Result<(), Error> {
         let mut wtr = csv::WriterBuilder::default()
             .delimiter(D::delimiter())

@@ -5,7 +5,7 @@
 //! ## Simple read/write example
 //! The example shown below creates an gzip compressed json file.
 //! ```rust
-//! use martian_filetypes::FileTypeIO;
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite};
 //! use martian_filetypes::bin_file::BincodeFile;
 //! use martian_filetypes::json_file::JsonFile;
 //! use martian_filetypes::gzip_file::Gzip;
@@ -29,7 +29,9 @@
 //!     Ok(())
 //! }
 //! ```
-use crate::{ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{
+    ErrorContext, FileTypeIO, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
+};
 use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use flate2::Compression;
@@ -59,24 +61,30 @@ where
     }
 }
 
-impl<F, T> FileTypeIO<T> for Gzip<F>
+impl<F, T> FileTypeRead<T> for Gzip<F>
 where
     F: MartianFileType + FileTypeIO<T>,
 {
     fn read(&self) -> Result<T, Error> {
         let decoder = GzDecoder::new(self.buf_reader()?);
-        <Self as FileTypeIO<T>>::read_from(decoder).map_err(|e| {
+        <Self as FileTypeRead<T>>::read_from(decoder).map_err(|e| {
             let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })
     }
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
-        <F as FileTypeIO<T>>::read_from(reader)
+        <F as FileTypeRead<T>>::read_from(reader)
     }
+}
+
+impl<F, T> FileTypeWrite<T> for Gzip<F>
+where
+    F: MartianFileType + FileTypeIO<T>,
+{
     fn write(&self, item: &T) -> Result<(), Error> {
         // Default compression level and configuration
         let mut encoder = GzEncoder::new(self.buf_writer()?, Compression::default());
-        <Self as FileTypeIO<T>>::write_into(&mut encoder, item).map_err(|e| {
+        <Self as FileTypeWrite<T>>::write_into(&mut encoder, item).map_err(|e| {
             let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })?;
@@ -84,10 +92,9 @@ where
         Ok(())
     }
     fn write_into<W: Write>(writer: W, item: &T) -> Result<(), Error> {
-        <F as FileTypeIO<T>>::write_into(writer, item)
+        <F as FileTypeWrite<T>>::write_into(writer, item)
     }
 }
-
 /// Helper struct to write items one by one into an Gzip file.
 /// Implements `LazyWrite` trait.
 pub struct LazyGzipWriter<L, T, W>

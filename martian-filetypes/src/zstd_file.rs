@@ -6,7 +6,7 @@
 //! ## Simple read/write example
 //! The example shown below creates an zstd compressed json and bincode file.
 //! ```rust
-//! use martian_filetypes::FileTypeIO;
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite};
 //! use martian_filetypes::bin_file::BincodeFile;
 //! use martian_filetypes::json_file::JsonFile;
 //! use martian_filetypes::zstd_file::Zstd;
@@ -50,7 +50,7 @@
 //! ignoring the errors.
 //!
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::bin_file::BincodeFile;
 //! use martian_filetypes::zstd_file::Zstd;
 //! use martian::Error;
@@ -91,7 +91,8 @@
 //! ```
 
 use crate::{
-    martian_filetype_decorator, ErrorContext, FileTypeIO, LazyAgents, LazyRead, LazyWrite,
+    martian_filetype_decorator, ErrorContext, FileTypeIO, FileTypeRead, FileTypeWrite, LazyAgents,
+    LazyRead, LazyWrite,
 };
 use martian::{Error, MartianFileType};
 use serde::{Deserialize, Serialize};
@@ -120,24 +121,30 @@ where
     }
 }
 
-impl<F, T> FileTypeIO<T> for Zstd<F>
+impl<F, T> FileTypeRead<T> for Zstd<F>
 where
     F: MartianFileType + FileTypeIO<T>,
 {
     fn read(&self) -> Result<T, Error> {
         let decoder = zstd::Decoder::new(self.buf_reader()?)?;
-        <Self as FileTypeIO<T>>::read_from(decoder).map_err(|e| {
+        <Self as FileTypeRead<T>>::read_from(decoder).map_err(|e| {
             let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })
     }
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
-        <F as FileTypeIO<T>>::read_from(reader)
+        <F as FileTypeRead<T>>::read_from(reader)
     }
+}
+
+impl<F, T> FileTypeWrite<T> for Zstd<F>
+where
+    F: MartianFileType + FileTypeIO<T>,
+{
     fn write(&self, item: &T) -> Result<(), Error> {
         // Default compression level and configuration
         let mut encoder = zstd::Encoder::new(self.buf_writer()?, 0)?;
-        <Self as FileTypeIO<T>>::write_into(&mut encoder, item).map_err(|e| {
+        <Self as FileTypeWrite<T>>::write_into(&mut encoder, item).map_err(|e| {
             let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })?;
@@ -145,7 +152,7 @@ where
         Ok(())
     }
     fn write_into<W: Write>(writer: W, item: &T) -> Result<(), Error> {
-        <F as FileTypeIO<T>>::write_into(writer, item)
+        <F as FileTypeWrite<T>>::write_into(writer, item)
     }
 }
 

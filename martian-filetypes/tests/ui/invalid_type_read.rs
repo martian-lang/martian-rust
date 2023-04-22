@@ -2,7 +2,7 @@ use anyhow::Error;
 use martian_derive::martian_filetype;
 use martian_filetypes::bin_file::BinaryFormat;
 use martian_filetypes::json_file::JsonFormat;
-use martian_filetypes::FileTypeIO;
+use martian_filetypes::{FileTypeRead, FileTypeWrite};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
