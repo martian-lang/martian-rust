@@ -148,7 +148,7 @@ where
 #[macro_export]
 macro_rules! table_config {
     ($name:ident, $delim:expr, $format: expr, $header: expr, $comment:expr) => {
-        #[derive(Clone, Copy)]
+        #[derive(Debug, Clone, Copy)]
         pub struct $name;
         impl TableConfig for $name {
             fn delimiter() -> u8 {
