@@ -82,7 +82,7 @@ macro_rules! martian_filetype_decorator {
 macro_rules! martian_filetype_typed_decorator {
     ($(#[$attr:meta])* pub struct $name:ident, $extension:expr) => (
         $(#[$attr])*
-        #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+        #[derive(Serialize, Deserialize, PartialEq, Eq)]
         // The following attribute ensures that the struct will serialize into a
         // String like a PathBuf would.
         #[serde(transparent)]
@@ -105,6 +105,17 @@ macro_rules! martian_filetype_typed_decorator {
                     path: self.path.clone(),
                     inner: Default::default(),
                 }
+            }
+        }
+
+        impl<F, T> Debug for $name<F, T>
+        where
+            F: MartianFileType,
+        {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                f.debug_struct(stringify!($name))
+                    .field("path", &self.path)
+                    .finish()
             }
         }
 

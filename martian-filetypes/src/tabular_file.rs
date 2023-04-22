@@ -56,7 +56,7 @@ pub trait TableConfig {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, PartialEq, Eq)]
 #[serde(transparent)]
 pub struct DelimitedFormat<T, F, D>
 where
@@ -78,6 +78,19 @@ where
             path: self.path.clone(),
             phantom: Default::default(),
         }
+    }
+}
+
+impl<T, F, D> Debug for DelimitedFormat<T, F, D>
+where
+    F: MartianFileType,
+    D: TableConfig,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("DelimitedFormat")
+            .field("path", &self.path)
+            .field("table_config", &std::any::type_name::<D>())
+            .finish()
     }
 }
 
