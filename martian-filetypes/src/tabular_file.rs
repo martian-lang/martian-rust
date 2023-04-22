@@ -56,7 +56,7 @@ pub trait TableConfig {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(transparent)]
 pub struct DelimitedFormat<T, F, D>
 where
@@ -66,6 +66,19 @@ where
     path: PathBuf,
     #[serde(skip)]
     phantom: PhantomData<(T, F, D)>,
+}
+
+impl<T, F, D> Clone for DelimitedFormat<T, F, D>
+where
+    F: MartianFileType,
+    D: TableConfig,
+{
+    fn clone(&self) -> Self {
+        Self {
+            path: self.path.clone(),
+            phantom: Default::default(),
+        }
+    }
 }
 
 impl<T, F, D> DelimitedFormat<T, F, D>
