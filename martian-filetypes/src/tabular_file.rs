@@ -3,9 +3,9 @@
 //! items of type `T`.
 //!
 //! ## Simple read/write example
-//! `CsvFile` implements `FileTypeIO<T>` for any serializable type `T`.
+//! `CsvFile<T>` implements `FileTypeIO<Vec<T>>` for any serializable type `T`.
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, tabular_file::CsvFile};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, tabular_file::CsvFile};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
@@ -27,14 +27,14 @@
 //!         std::fs::read_to_string(&csv_file)?,
 //!         "umis,reads\n10,15\n200,1005\n"
 //!     );
-//!     let decoded: Vec<BarcodeSummary> = csv_file.read()?;
+//!     let decoded = csv_file.read()?;
 //!     assert_eq!(summary, decoded);
 //!     # std::fs::remove_file(csv_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
 //! }
 //! ```
 
-use crate::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite};
 use anyhow::format_err;
 use martian::{Error, MartianFileType};
 use martian_derive::martian_filetype;
@@ -51,24 +51,77 @@ pub trait TableConfig {
     fn header() -> bool {
         true
     }
+    fn comment() -> Option<u8> {
+        None
+    }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, PartialEq, Eq)]
 #[serde(transparent)]
-pub struct DelimitedFormat<F, D>
+pub struct DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     path: PathBuf,
     #[serde(skip)]
-    phantom: PhantomData<(F, D)>,
+    phantom: PhantomData<(T, F, D)>,
 }
 
-impl<F, D> MartianFileType for DelimitedFormat<F, D>
+impl<T, F, D> Clone for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
+{
+    fn clone(&self) -> Self {
+        Self {
+            path: self.path.clone(),
+            phantom: Default::default(),
+        }
+    }
+}
+
+impl<T, F, D> Debug for DelimitedFormat<T, F, D>
+where
+    F: MartianFileType,
+    D: TableConfig,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("DelimitedFormat")
+            .field("path", &self.path)
+            .field("table_config", &std::any::type_name::<D>())
+            .finish()
+    }
+}
+
+impl<T, F, D> DelimitedFormat<T, F, D>
+where
+    F: MartianFileType,
+    D: TableConfig,
+{
+    /// Build an appropriate CSV reader for this table format from the provided reader.
+    fn build_csv_reader<R: std::io::Read>(reader: R) -> csv::Reader<R> {
+        csv::ReaderBuilder::new()
+            .delimiter(D::delimiter())
+            .comment(D::comment())
+            .has_headers(D::header())
+            .from_reader(reader)
+    }
+
+    /// Read headers from the file, if this format has them.
+    pub fn read_headers(&self) -> Result<Option<Vec<String>>, Error> {
+        if !D::header() {
+            return Ok(None);
+        }
+        let mut rdr = Self::build_csv_reader(self.buf_reader()?);
+        Ok(Some(rdr.headers()?.iter().map(String::from).collect()))
+    }
+}
+
+impl<T, F, D> MartianFileType for DelimitedFormat<T, F, D>
+where
+    F: MartianFileType,
+    D: TableConfig,
 {
     fn extension() -> String {
         crate::maybe_add_format(F::extension(), D::format())
@@ -84,20 +137,20 @@ where
     }
 }
 
-impl<F, D> AsRef<Path> for DelimitedFormat<F, D>
+impl<T, F, D> AsRef<Path> for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     fn as_ref(&self) -> &Path {
         &self.path
     }
 }
 
-impl<F, D> std::ops::Deref for DelimitedFormat<F, D>
+impl<T, F, D> std::ops::Deref for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     type Target = Path;
     /// Dereferences this DelimitedFormat to a Path slice.
@@ -106,11 +159,11 @@ where
     }
 }
 
-impl<F, D, P> From<P> for DelimitedFormat<F, D>
+impl<T, F, D, P> From<P> for DelimitedFormat<T, F, D>
 where
     PathBuf: From<P>,
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     fn from(source: P) -> Self {
         let path_buf = PathBuf::from(source);
@@ -118,15 +171,9 @@ where
     }
 }
 
-impl<F, D, T> FileStorage<Vec<T>> for DelimitedFormat<F, D>
-where
-    F: MartianFileType + FileStorage<Vec<T>>,
-    D: TableConfig + Debug,
-{
-}
-
+#[macro_export]
 macro_rules! table_config {
-    ($name:ident, $delim:expr, $format: expr, $header: expr) => {
+    ($name:ident, $delim:expr, $format: expr, $header: expr, $comment:expr) => {
         #[derive(Debug, Clone, Copy)]
         pub struct $name;
         impl TableConfig for $name {
@@ -139,54 +186,58 @@ macro_rules! table_config {
             fn header() -> bool {
                 $header
             }
+            fn comment() -> Option<u8> {
+                $comment
+            }
         }
     };
     ($name:ident, $delim:expr, $format: expr) => {
-        table_config!($name, $delim, $format, true);
+        table_config!($name, $delim, $format, true, None);
     };
 }
 
 martian_filetype! {Csv, "csv"}
-impl<T> FileStorage<Vec<T>> for Csv where T: Serialize + DeserializeOwned {}
 
 martian_filetype! {Tsv, "tsv"}
-impl<T> FileStorage<Vec<T>> for Tsv where T: Serialize + DeserializeOwned {}
 
 table_config! { CommaDelimiter, b',', "csv" }
-pub type CsvFormat<F> = DelimitedFormat<F, CommaDelimiter>;
-pub type CsvFile = CsvFormat<Csv>;
+pub type CsvFormat<T, F> = DelimitedFormat<T, F, CommaDelimiter>;
+pub type CsvFile<T> = CsvFormat<T, Csv>;
 
-table_config! { CommaDelimiterNoHeader, b',', "csv", false }
-pub type CsvFormatNoHeader<F> = DelimitedFormat<F, CommaDelimiterNoHeader>;
-pub type CsvFileNoHeader = CsvFormatNoHeader<Csv>;
+table_config! { CommaDelimiterNoHeader, b',', "csv", false, None }
+pub type CsvFormatNoHeader<T, F> = DelimitedFormat<T, F, CommaDelimiterNoHeader>;
+pub type CsvFileNoHeader<T> = CsvFormatNoHeader<T, Csv>;
 
 table_config! { TabDelimiter, b'\t', "tsv" }
-pub type TsvFormat<F> = DelimitedFormat<F, TabDelimiter>;
-pub type TsvFile = TsvFormat<Tsv>;
+pub type TsvFormat<T, F> = DelimitedFormat<T, F, TabDelimiter>;
+pub type TsvFile<T> = TsvFormat<T, Tsv>;
 
-table_config! { TabDelimiterNoHeader, b'\t', "tsv", false }
-pub type TsvFormatNoHeader<F> = DelimitedFormat<F, TabDelimiterNoHeader>;
-pub type TsvFileNoHeader = TsvFormatNoHeader<Tsv>;
+table_config! { TabDelimiterNoHeader, b'\t', "tsv", false, None }
+pub type TsvFormatNoHeader<T, F> = DelimitedFormat<T, F, TabDelimiterNoHeader>;
+pub type TsvFileNoHeader<T> = TsvFormatNoHeader<T, Tsv>;
 
-/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
-/// Any type `T` that can be serialized can be saved as a `JsonFile`.
-/// The saved JsonFile will be pretty formatted using 4 space indentation.
-impl<F, D, T> FileTypeIO<Vec<T>> for DelimitedFormat<F, D>
+/// Enable writing and reading a vector of T from a tabular file.
+impl<F, D, T> FileTypeRead<Vec<T>> for DelimitedFormat<T, F, D>
 where
-    T: Serialize + DeserializeOwned,
-    F: MartianFileType + FileStorage<Vec<T>> + Debug,
-    D: TableConfig + Debug,
+    T: DeserializeOwned,
+    F: MartianFileType,
+    D: TableConfig,
 {
     fn read_from<R: Read>(reader: R) -> Result<Vec<T>, Error> {
-        let mut rdr = csv::ReaderBuilder::new()
-            .delimiter(D::delimiter())
-            .has_headers(D::header())
-            .from_reader(reader);
+        let mut rdr = Self::build_csv_reader(reader);
         let iter = rdr.deserialize::<T>();
         let rows = iter.collect::<csv::Result<Vec<T>>>()?;
         Ok(rows)
     }
+}
 
+/// Enable writing and reading a vector of T from a tabular file.
+impl<F, D, T> FileTypeWrite<Vec<T>> for DelimitedFormat<T, F, D>
+where
+    T: Serialize,
+    F: MartianFileType,
+    D: TableConfig,
+{
     fn write_into<W: Write>(writer: W, item: &Vec<T>) -> Result<(), Error> {
         let mut wtr = csv::WriterBuilder::default()
             .delimiter(D::delimiter())
@@ -204,7 +255,7 @@ where
 pub struct LazyTabularReader<F, D, T, R>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     R: Read,
     T: DeserializeOwned,
 {
@@ -215,7 +266,7 @@ where
 impl<F, D, T, R> Iterator for LazyTabularReader<F, D, T, R>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     R: Read,
     T: DeserializeOwned,
 {
@@ -232,14 +283,15 @@ where
 impl<F, D, T, R> LazyRead<T, R> for LazyTabularReader<F, D, T, R>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     R: Read,
     T: DeserializeOwned,
 {
-    type FileType = DelimitedFormat<F, D>;
+    type FileType = DelimitedFormat<T, F, D>;
     fn with_reader(reader: R) -> Result<Self, Error> {
         let rdr = csv::ReaderBuilder::new()
             .delimiter(D::delimiter())
+            .comment(D::comment())
             .has_headers(D::header())
             .from_reader(reader);
         Ok(LazyTabularReader {
@@ -253,7 +305,7 @@ pub struct LazyTabularWriter<F, D, T, W>
 where
     F: MartianFileType,
     W: Write,
-    D: TableConfig + Debug,
+    D: TableConfig,
 {
     writer: csv::Writer<W>,
     phantom: PhantomData<(F, D, T)>,
@@ -286,7 +338,7 @@ impl<F, D, T, W> LazyTabularWriter<F, D, T, W>
 where
     F: MartianFileType,
     W: Write,
-    D: TableConfig + Debug,
+    D: TableConfig,
     T: Serialize + Default,
 {
     pub fn write_header(&mut self) -> Result<(), Error> {
@@ -300,10 +352,10 @@ impl<F, D, T, W> LazyWrite<T, W> for LazyTabularWriter<F, D, T, W>
 where
     F: MartianFileType,
     W: Write,
-    D: TableConfig + Debug,
+    D: TableConfig,
     T: Serialize,
 {
-    type FileType = DelimitedFormat<F, D>;
+    type FileType = DelimitedFormat<T, F, D>;
     fn with_writer(writer: W) -> Result<Self, Error> {
         Ok(LazyTabularWriter {
             writer: csv::WriterBuilder::default()
@@ -324,10 +376,10 @@ where
     }
 }
 
-impl<F, D, T, W, R> LazyAgents<T, W, R> for DelimitedFormat<F, D>
+impl<F, D, T, W, R> LazyAgents<T, W, R> for DelimitedFormat<T, F, D>
 where
     F: MartianFileType,
-    D: TableConfig + Debug,
+    D: TableConfig,
     T: Serialize + DeserializeOwned,
     W: Write,
     R: Read,
@@ -381,34 +433,57 @@ mod tests {
             std::fs::read_to_string(&cells_tsv)?,
             "barcode\tgenome\nACGT\thg19\nTCAT\tmm10\n"
         );
+        assert_eq!(
+            cells_tsv.read_headers()?,
+            Some(vec!["barcode".to_string(), "genome".to_string()])
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_tsv_write_no_header() -> Result<(), Error> {
+        let dir = tempfile::tempdir()?;
+        let cells_tsv = TsvFileNoHeader::new(dir.path(), "test");
+        cells_tsv.write(&cells())?;
+        assert_eq!(
+            std::fs::read_to_string(&cells_tsv)?,
+            "ACGT\thg19\nTCAT\tmm10\n"
+        );
+        assert!(cells_tsv.read_headers()?.is_none());
         Ok(())
     }
 
     #[test]
     fn test_round_trip() -> Result<(), Error> {
-        assert!(crate::round_trip_check::<CsvFile, _>(&cells())?);
-        assert!(crate::round_trip_check::<TsvFile, _>(&cells())?);
+        assert!(crate::round_trip_check::<CsvFile<_>, _>(&cells())?);
+        assert!(crate::round_trip_check::<TsvFile<_>, _>(&cells())?);
         Ok(())
     }
 
     #[test]
     fn test_lazy_round_trip() -> Result<(), Error> {
-        assert!(crate::lazy_round_trip_check::<CsvFile, _>(&cells(), true)?);
-        assert!(crate::lazy_round_trip_check::<TsvFile, _>(&cells(), true)?);
+        assert!(crate::lazy_round_trip_check::<CsvFile<_>, _>(
+            &cells(),
+            true
+        )?);
+        assert!(crate::lazy_round_trip_check::<TsvFile<_>, _>(
+            &cells(),
+            true
+        )?);
         Ok(())
     }
 
     #[test]
     fn test_clone() {
-        let t = TsvFile::from("test");
+        let t: TsvFile<()> = TsvFile::from("test");
         let _ = t;
     }
 
     #[test]
     fn test_lazy_header_only() -> Result<(), Error> {
         let dir = tempfile::tempdir()?;
-        let cells_tsv = TsvFile::new(dir.path(), "test");
-        let mut writer: LazyTabularWriter<_, _, Cell, _> = cells_tsv.lazy_writer()?;
+        let cells_tsv: TsvFile<Cell> = TsvFile::new(dir.path(), "test");
+        let mut writer = cells_tsv.lazy_writer()?;
         writer.write_header()?;
         writer.finish()?;
         assert_eq!(std::fs::read_to_string(&cells_tsv)?, "barcode\tgenome\n");
@@ -418,8 +493,8 @@ mod tests {
     #[test]
     fn test_lazy_no_header() -> Result<(), Error> {
         let dir = tempfile::tempdir()?;
-        let cells_tsv = TsvFile::new(dir.path(), "test");
-        let writer: LazyTabularWriter<_, _, Cell, _> = cells_tsv.lazy_writer()?;
+        let cells_tsv: TsvFile<Cell> = TsvFile::new(dir.path(), "test");
+        let writer = cells_tsv.lazy_writer()?;
         writer.finish()?;
         assert_eq!(std::fs::read_to_string(&cells_tsv)?, "");
         Ok(())

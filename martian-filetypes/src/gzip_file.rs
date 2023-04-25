@@ -5,7 +5,7 @@
 //! ## Simple read/write example
 //! The example shown below creates an gzip compressed json file.
 //! ```rust
-//! use martian_filetypes::FileTypeIO;
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite};
 //! use martian_filetypes::bin_file::BincodeFile;
 //! use martian_filetypes::json_file::JsonFile;
 //! use martian_filetypes::gzip_file::Gzip;
@@ -29,7 +29,9 @@
 //!     Ok(())
 //! }
 //! ```
-use crate::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+use crate::{
+    ErrorContext, FileTypeIO, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
+};
 use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use flate2::Compression;
@@ -38,7 +40,7 @@ use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::marker::PhantomData;
 
-crate::martian_filetype_inner! {
+crate::martian_filetype_decorator! {
     /// A struct that wraps a basic `MartianFileType` and adds gzip compression
     /// capability.
     pub struct Gzip, "gz"
@@ -51,7 +53,7 @@ where
     /// Create an Gzip wrapped filetype from a basic filetype
     /// ```rust
     /// use martian_filetypes::{gzip_file::Gzip, bin_file::BincodeFile};
-    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::from("example"));
+    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::<()>::from("example"));
     /// assert_eq!(gz_bin_file.as_ref(), std::path::Path::new("example.bincode.gz"));
     /// ```
     pub fn from_filetype(source: F) -> Self {
@@ -59,26 +61,30 @@ where
     }
 }
 
-impl<F, T> FileStorage<T> for Gzip<F> where F: FileStorage<T> {}
-
-impl<F, T> FileTypeIO<T> for Gzip<F>
+impl<F, T> FileTypeRead<T> for Gzip<F>
 where
     F: MartianFileType + FileTypeIO<T>,
 {
     fn read(&self) -> Result<T, Error> {
         let decoder = GzDecoder::new(self.buf_reader()?);
-        <Self as FileTypeIO<T>>::read_from(decoder).map_err(|e| {
+        <Self as FileTypeRead<T>>::read_from(decoder).map_err(|e| {
             let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })
     }
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
-        <F as FileTypeIO<T>>::read_from(reader)
+        <F as FileTypeRead<T>>::read_from(reader)
     }
+}
+
+impl<F, T> FileTypeWrite<T> for Gzip<F>
+where
+    F: MartianFileType + FileTypeIO<T>,
+{
     fn write(&self, item: &T) -> Result<(), Error> {
         // Default compression level and configuration
         let mut encoder = GzEncoder::new(self.buf_writer()?, Compression::default());
-        <Self as FileTypeIO<T>>::write_into(&mut encoder, item).map_err(|e| {
+        <Self as FileTypeWrite<T>>::write_into(&mut encoder, item).map_err(|e| {
             let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })?;
@@ -86,10 +92,9 @@ where
         Ok(())
     }
     fn write_into<W: Write>(writer: W, item: &T) -> Result<(), Error> {
-        <F as FileTypeIO<T>>::write_into(writer, item)
+        <F as FileTypeWrite<T>>::write_into(writer, item)
     }
 }
-
 /// Helper struct to write items one by one into an Gzip file.
 /// Implements `LazyWrite` trait.
 pub struct LazyGzipWriter<L, T, W>
@@ -208,7 +213,7 @@ mod tests {
     #[test]
     fn test_gz_new() {
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.gz")
@@ -216,7 +221,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.json"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.json"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.gz")
@@ -224,7 +229,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file_json"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file_json"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file_json.json.gz")
@@ -232,7 +237,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.json.gz"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.json.gz"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.gz")
@@ -240,7 +245,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp"),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.tmp.json.gz")
@@ -248,7 +253,7 @@ mod tests {
         );
 
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file").as_ref(),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file").as_ref(),
             Path::new("/some/path/file.json.gz")
         );
     }
@@ -277,42 +282,42 @@ mod tests {
     #[test]
     fn test_gz_from() {
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
-            Gzip::<JsonFile>::from("/some/path/file")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::from("/some/path/file")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
-            Gzip::<JsonFile>::from("/some/path/file.json")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.json")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
-            Gzip::<JsonFile>::from("/some/path/file.json.gz")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.json.gz")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp"),
-            Gzip::<JsonFile>::from("/some/path/file.tmp.json.gz")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.tmp.json.gz")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp"),
-            Gzip::<JsonFile>::from("/some/path/file.tmp")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.tmp")
         );
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file.tmp.json"),
-            Gzip::<JsonFile>::from("/some/path/file.tmp")
+            Gzip::<JsonFile<()>>::new("/some/path/", "file.tmp.json"),
+            Gzip::<JsonFile<()>>::from("/some/path/file.tmp")
         );
     }
 
     #[test]
     fn test_gz_from_filetype() {
         assert_eq!(
-            Gzip::<JsonFile>::new("/some/path/", "file"),
+            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
             Gzip::from_filetype(JsonFile::new("/some/path/", "file"))
         );
     }
 
     #[test]
     fn test_gz_extension() {
-        assert_eq!(Gzip::<JsonFile>::extension(), "json.gz");
+        assert_eq!(Gzip::<JsonFile<()>>::extension(), "json.gz");
     }
 
     #[test]
@@ -336,7 +341,7 @@ mod tests {
     #[test]
     fn test_json_gz_lazy_write_no_finish() {
         let dir = tempfile::tempdir().unwrap();
-        let file = Gzip::<JsonFile>::new(dir.path(), "file");
+        let file: Gzip<JsonFile<_>> = Gzip::new(dir.path(), "file");
         let mut writer = file.lazy_writer().unwrap();
         for i in 0..10 {
             writer.write_item(&i).unwrap();
@@ -351,7 +356,7 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-        let gz_file = Gzip::<JsonFile>::new("/some/path/", "file");
+        let gz_file: Gzip<JsonFile<()>> = Gzip::new("/some/path/", "file");
         let path = PathBuf::from("/some/path/file.json.gz");
         assert_eq!(
             serde_json::to_string(&gz_file).unwrap(),
@@ -361,7 +366,8 @@ mod tests {
 
     #[test]
     fn test_deserialize() {
-        let gz_file: Gzip<JsonFile> = serde_json::from_str(r#""/some/path/file.json.gz""#).unwrap();
-        assert_eq!(gz_file, Gzip::<JsonFile>::new("/some/path/", "file"));
+        let gz_file: Gzip<JsonFile<()>> =
+            serde_json::from_str(r#""/some/path/file.json.gz""#).unwrap();
+        assert_eq!(gz_file, Gzip::new("/some/path/", "file"));
     }
 }

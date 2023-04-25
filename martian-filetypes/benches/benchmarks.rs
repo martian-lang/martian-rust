@@ -3,7 +3,7 @@ use martian::MartianFileType;
 use martian_filetypes::bin_file::BincodeFile;
 use martian_filetypes::json_file::JsonFile;
 use martian_filetypes::lz4_file::Lz4;
-use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+use martian_filetypes::{FileTypeIO, FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Clone)]
@@ -100,22 +100,22 @@ where
 
 fn json_lazy_read_bench(c: &mut Criterion) {
     let data: Vec<_> = vec![Foo::default(); 100_000];
-    lazy_read_bench::<JsonFile, _>(c, data, "bench-json-lazy-read");
+    lazy_read_bench::<JsonFile<_>, _>(c, data, "bench-json-lazy-read");
 }
 
 fn bincode_lazy_read_bench(c: &mut Criterion) {
     let data: Vec<_> = vec![Foo::default(); 100_000];
-    lazy_read_bench::<BincodeFile, _>(c, data, "bench-bincode-lazy-read");
+    lazy_read_bench::<BincodeFile<_>, _>(c, data, "bench-bincode-lazy-read");
 }
 
 fn json_lazy_write_bench(c: &mut Criterion) {
     let data: Vec<_> = vec![Foo::default(); 100_000];
-    lazy_write_bench::<JsonFile, _>(c, data, "bench-json-lazy-write");
+    lazy_write_bench::<JsonFile<_>, _>(c, data, "bench-json-lazy-write");
 }
 
 fn bincode_lazy_write_bench(c: &mut Criterion) {
     let data: Vec<_> = vec![Foo::default(); 100_000];
-    lazy_write_bench::<BincodeFile, _>(c, data, "bench-bincode-lazy-write");
+    lazy_write_bench::<BincodeFile<_>, _>(c, data, "bench-bincode-lazy-write");
 }
 
 criterion_group!(

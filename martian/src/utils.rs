@@ -97,8 +97,7 @@ fn _set_extension(mut result: PathBuf, extension: String) -> PathBuf {
             *r_str.last().expect("Path must be non-empty.")
         },
         std::path::MAIN_SEPARATOR as u8,
-        "You passed a directory instead of a file: {:?}",
-        result
+        "You passed a directory instead of a file: {result:?}",
     );
 
     assert!(!extension.starts_with('.'));

@@ -57,26 +57,15 @@
 //! generate a compiler error saying you are trying to deserialize from an incompatible file.
 //! This crate makes use of `MartianFiletype` trait in order to facilitate this.
 //!
-//! There are two concepts involved here:
-//! 1. **Representation**: How is the object represented on disk? E.g. json/bincode/csv etc.
-//! 2. **Validity**: Is it valid to deserialize this file as a type `T`?
-//!
-//! Let `F` be a `MartianFileType` and `T` be a type in rust which we want to store on-disk.
-//! ### Validity
-//! If `F: FileStorage<T>`, then it is **valid** to store some representation of the type `T`
-//! in the filetype `F`.
-//!
-//! ### Representation
 //! If `F: FileTypeIO<T>`, then a concrete representation of type `T` can be written to [read from]
 //! disk. `MartianFiletype`s which implement this trait are called `Formats`. For example, we can
-//! define a `JsonFormat<F>`, which can write out any type `T` onto disk as json as long as T is
-//! serializable and `F: FileStorage<T>`.
+//! define a `JsonFormat<F, T>`, which can write out the type `T` onto disk.
 //!
 //! ```
 //! # use anyhow ::Error;
 //! # use martian_derive::martian_filetype;
 //! # use martian_filetypes::json_file::JsonFormat;
-//! # use martian_filetypes::{FileStorage, FileTypeIO};
+//! # use martian_filetypes::{FileTypeRead, FileTypeWrite};
 //! # use serde::{Deserialize, Serialize};
 //! # use serde_json;
 //! #[derive(Debug, Serialize, Deserialize)]
@@ -84,7 +73,6 @@
 //!     id: usize,
 //! }
 //! martian_filetype! {FeatureFile, "feat"}
-//! impl FileStorage<Feature> for FeatureFile {} // VALIDITY
 //!
 //! #[derive(Debug, Serialize, Deserialize)]
 //! struct Creature {
@@ -94,8 +82,7 @@
 //! # fn main() -> Result<(), Error> {
 //! let feature = Feature { id: 5 };
 //! let creature = Creature { id: 10 };
-//! // JsonFormat<_> is the REPRESENTATION
-//! let feat_file: JsonFormat<FeatureFile> = JsonFormat::from("feature"); // feature.feat.json
+//! let feat_file: JsonFormat<FeatureFile, Feature> = JsonFormat::from("feature"); // feature.feat.json
 //! feat_file.write(&feature)?;
 //! // feat_file.write(&creature)?; // This is a compiler error
 //! // let _: Creature = feat_file.read()?; // This is a compiler error
@@ -131,14 +118,6 @@
 //!
 //! ## Examples
 //! Look at the individual filetype modules for examples.
-//!
-//! ## TODO
-//! - FastaFile
-//! - FastaIndexFile
-//! - FastqFile
-//! - CsvFile
-//! - BamFile
-//! - BamIndexFile
 
 use martian::{Error, MartianFileType};
 use std::fs::File;
@@ -190,20 +169,13 @@ where
     }
 }
 
-/// A `MartianFileType` `F` is a `FileStorage<T>` if it is valid to
-/// save an object of type `T` in a file with the extension `F::extension()`
-/// This trait will give us compile time guarantees on whether we are
-/// writing into or reading from a file type into an invalid type
-pub trait FileStorage<T>: MartianFileType {}
-
 /// A trait that represents a `MartianFileType` that can be read into
-/// memory as type `T` or written from type `T`. Use the `read()` and
-/// `write()` methods to achieve these.
+/// memory as type `T`. Use the `read()` method to achieve this.
 ///
 /// If you want to implement this trait for a custom filetype, read
 /// the inline comments on which functions are provided and which
 /// are required.
-pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
+pub trait FileTypeRead<T>: MartianFileType {
     /// Read the `MartianFileType` as type `T`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement
@@ -213,7 +185,7 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
             let context = ErrorContext::ReadContext(p, e.to_string());
             e.context(context)
         }
-        <Self as FileTypeIO<T>>::read_from(self.buf_reader()?)
+        <Self as FileTypeRead<T>>::read_from(self.buf_reader()?)
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
@@ -227,7 +199,15 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
     // in arbitrary readers (for e.g lz4 compressed). See the `lz4_file` for
     // a concrete example
     fn read_from<R: io::Read>(reader: R) -> Result<T, Error>;
+}
 
+/// A trait that represents a `MartianFileType` that can be written from type `T`.
+/// Use the `write()` method to achieve this.
+///
+/// If you want to implement this trait for a custom filetype, read
+/// the inline comments on which functions are provided and which
+/// are required.
+pub trait FileTypeWrite<T>: MartianFileType {
     /// Write type `T` into the `MartianFileType`
     /// The default implementation should work in most cases. It is recommended
     /// **not** to implement this for a custom filetype in general, instead implement
@@ -237,7 +217,7 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
             let context = ErrorContext::WriteContext(p, e.to_string());
             e.context(context)
         }
-        <Self as FileTypeIO<T>>::write_into(self.buf_writer()?, item)
+        <Self as FileTypeWrite<T>>::write_into(self.buf_writer()?, item)
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
@@ -247,11 +227,22 @@ pub trait FileTypeIO<T>: MartianFileType + fmt::Debug + FileStorage<T> {
     fn write_into<W: io::Write>(writer: W, item: &T) -> Result<(), Error>;
 }
 
+/// A trait that represents a `MartianFileType` that can be read into
+/// memory as type `T` or written from type `T`. Use the `read()` and
+/// `write()` methods to achieve these.
+///
+/// If you want to implement this trait for a custom filetype, read
+/// the inline comments on which functions are provided and which
+/// are required.
+pub trait FileTypeIO<T>: FileTypeRead<T> + FileTypeWrite<T> {}
+
+impl<T, F> FileTypeIO<T> for F where F: FileTypeRead<T> + FileTypeWrite<T> {}
+
 /// A trait that represents a `MartianFileType` which can be incrementally
 /// read or written. For example, you might have a fasta file and you might
 /// want to iterate over individual sequences in the file without
 /// reading everything into memory at once.
-pub trait LazyFileTypeIO<T>: MartianFileType + Sized + FileStorage<Vec<T>> {
+pub trait LazyFileTypeIO<T>: MartianFileType + Sized {
     type Reader: io::Read;
     type Writer: io::Write;
 
@@ -305,7 +296,7 @@ pub trait LazyAgents<T, W: io::Write, R: io::Read>: Sized + MartianFileType {
 
 impl<F, T> LazyFileTypeIO<T> for F
 where
-    F: LazyAgents<T, io::BufWriter<File>, io::BufReader<File>> + FileStorage<Vec<T>>,
+    F: LazyAgents<T, io::BufWriter<File>, io::BufReader<File>>,
 {
     type Writer = io::BufWriter<File>;
     type Reader = io::BufReader<File>;

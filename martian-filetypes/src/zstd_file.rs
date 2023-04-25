@@ -6,7 +6,7 @@
 //! ## Simple read/write example
 //! The example shown below creates an zstd compressed json and bincode file.
 //! ```rust
-//! use martian_filetypes::FileTypeIO;
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite};
 //! use martian_filetypes::bin_file::BincodeFile;
 //! use martian_filetypes::json_file::JsonFile;
 //! use martian_filetypes::zstd_file::Zstd;
@@ -30,7 +30,7 @@
 //!     # std::fs::remove_file(zstd_json_file)?; // Remove the file (hidden from the doc)
 //!
 //!     // --------------------- Bincode ----------------------------------
-//!     let zstd_bin_file: Zstd<BincodeFile> = Zstd::from("example"); // example.bincode.zst
+//!     let zstd_bin_file: Zstd<BincodeFile<_>> = Zstd::from("example"); // example.bincode.zst
 //!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()
 //!     zstd_bin_file.write(&chem)?; // Writes zstd compressed bincode file
 //!     let decoded: Chemistry = zstd_bin_file.read()?;
@@ -50,14 +50,14 @@
 //! ignoring the errors.
 //!
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::bin_file::BincodeFile;
 //! use martian_filetypes::zstd_file::Zstd;
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
 //! fn main() -> Result<(), Error> {
-//!     let zstd_bin_file: Zstd<BincodeFile> = Zstd::from("example_lazy");
+//!     let zstd_bin_file: Zstd<BincodeFile<_>> = Zstd::from("example_lazy");
 //!     let mut zstd_writer = zstd_bin_file.lazy_writer()?;
 //!     // The type of the zstd_writer will be inferred by the compiler as:
 //!     // LazyZstdWriter<LazyBincodeWriter<i32, zstd::encoder::Encoder<BufWriter<File>>>, i32, BufWriter<File>>
@@ -91,7 +91,8 @@
 //! ```
 
 use crate::{
-    martian_filetype_inner, ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite,
+    martian_filetype_decorator, ErrorContext, FileTypeIO, FileTypeRead, FileTypeWrite, LazyAgents,
+    LazyRead, LazyWrite,
 };
 use martian::{Error, MartianFileType};
 use serde::{Deserialize, Serialize};
@@ -99,7 +100,7 @@ use std::convert::From;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::marker::PhantomData;
 
-martian_filetype_inner! {
+martian_filetype_decorator! {
     /// A struct that wraps a basic `MartianFileType` and adds zstd compression
     /// capability.
     pub struct Zstd, "zst"
@@ -112,7 +113,7 @@ where
     /// Create an Zstd wrapped filetype from a basic filetype
     /// ```rust
     /// use martian_filetypes::{zstd_file::Zstd, bin_file::BincodeFile};
-    /// let zstd_bin_file = Zstd::from_filetype(BincodeFile::from("example"));
+    /// let zstd_bin_file = Zstd::from_filetype(BincodeFile::<()>::from("example"));
     /// assert_eq!(zstd_bin_file.as_ref(), std::path::Path::new("example.bincode.zst"));
     /// ```
     pub fn from_filetype(source: F) -> Self {
@@ -120,26 +121,30 @@ where
     }
 }
 
-impl<F, T> FileStorage<T> for Zstd<F> where F: FileStorage<T> {}
-
-impl<F, T> FileTypeIO<T> for Zstd<F>
+impl<F, T> FileTypeRead<T> for Zstd<F>
 where
     F: MartianFileType + FileTypeIO<T>,
 {
     fn read(&self) -> Result<T, Error> {
         let decoder = zstd::Decoder::new(self.buf_reader()?)?;
-        <Self as FileTypeIO<T>>::read_from(decoder).map_err(|e| {
+        <Self as FileTypeRead<T>>::read_from(decoder).map_err(|e| {
             let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })
     }
     fn read_from<R: Read>(reader: R) -> Result<T, Error> {
-        <F as FileTypeIO<T>>::read_from(reader)
+        <F as FileTypeRead<T>>::read_from(reader)
     }
+}
+
+impl<F, T> FileTypeWrite<T> for Zstd<F>
+where
+    F: MartianFileType + FileTypeIO<T>,
+{
     fn write(&self, item: &T) -> Result<(), Error> {
         // Default compression level and configuration
         let mut encoder = zstd::Encoder::new(self.buf_writer()?, 0)?;
-        <Self as FileTypeIO<T>>::write_into(&mut encoder, item).map_err(|e| {
+        <Self as FileTypeWrite<T>>::write_into(&mut encoder, item).map_err(|e| {
             let context = ErrorContext::WriteContext(self.as_ref().into(), e.to_string());
             e.context(context)
         })?;
@@ -147,7 +152,7 @@ where
         Ok(())
     }
     fn write_into<W: Write>(writer: W, item: &T) -> Result<(), Error> {
-        <F as FileTypeIO<T>>::write_into(writer, item)
+        <F as FileTypeWrite<T>>::write_into(writer, item)
     }
 }
 
@@ -277,7 +282,7 @@ mod tests {
     #[test]
     fn test_zstd_new() {
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file"),
+            Zstd::<JsonFile<()>>::new("/some/path/", "file"),
             Zstd {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.zst")
@@ -285,7 +290,7 @@ mod tests {
         );
 
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file.json"),
+            Zstd::<JsonFile<()>>::new("/some/path/", "file.json"),
             Zstd {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.zst")
@@ -293,7 +298,7 @@ mod tests {
         );
 
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file_json"),
+            Zstd::<JsonFile<()>>::new("/some/path/", "file_json"),
             Zstd {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file_json.json.zst")
@@ -301,7 +306,7 @@ mod tests {
         );
 
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file.json.zst"),
+            Zstd::<JsonFile<()>>::new("/some/path/", "file.json.zst"),
             Zstd {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.json.zst")
@@ -309,7 +314,7 @@ mod tests {
         );
 
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file.tmp"),
+            Zstd::<JsonFile<()>>::new("/some/path/", "file.tmp"),
             Zstd {
                 inner: PhantomData,
                 path: PathBuf::from("/some/path/file.tmp.json.zst")
@@ -317,7 +322,7 @@ mod tests {
         );
 
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file").as_ref(),
+            Zstd::<JsonFile<()>>::new("/some/path/", "file").as_ref(),
             Path::new("/some/path/file.json.zst")
         );
     }
@@ -346,42 +351,42 @@ mod tests {
     #[test]
     fn test_zstd_from() {
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file"),
-            Zstd::<JsonFile>::from("/some/path/file")
+            Zstd::<JsonFile<()>>::new("/some/path/", "file"),
+            Zstd::<JsonFile<()>>::from("/some/path/file")
         );
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file"),
-            Zstd::<JsonFile>::from("/some/path/file.json")
+            Zstd::<JsonFile<()>>::new("/some/path/", "file"),
+            Zstd::<JsonFile<()>>::from("/some/path/file.json")
         );
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file"),
-            Zstd::<JsonFile>::from("/some/path/file.json.zst")
+            Zstd::<JsonFile<()>>::new("/some/path/", "file"),
+            Zstd::<JsonFile<()>>::from("/some/path/file.json.zst")
         );
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file.tmp"),
-            Zstd::<JsonFile>::from("/some/path/file.tmp.json.zst")
+            Zstd::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Zstd::<JsonFile<()>>::from("/some/path/file.tmp.json.zst")
         );
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file.tmp"),
-            Zstd::<JsonFile>::from("/some/path/file.tmp")
+            Zstd::<JsonFile<()>>::new("/some/path/", "file.tmp"),
+            Zstd::<JsonFile<()>>::from("/some/path/file.tmp")
         );
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file.tmp.json"),
-            Zstd::<JsonFile>::from("/some/path/file.tmp")
+            Zstd::<JsonFile<()>>::new("/some/path/", "file.tmp.json"),
+            Zstd::<JsonFile<()>>::from("/some/path/file.tmp")
         );
     }
 
     #[test]
     fn test_zstd_from_filetype() {
         assert_eq!(
-            Zstd::<JsonFile>::new("/some/path/", "file"),
+            Zstd::<JsonFile<()>>::new("/some/path/", "file"),
             Zstd::from_filetype(JsonFile::new("/some/path/", "file"))
         );
     }
 
     #[test]
     fn test_zstd_extension() {
-        assert_eq!(Zstd::<JsonFile>::extension(), "json.zst");
+        assert_eq!(Zstd::<JsonFile<()>>::extension(), "json.zst");
     }
 
     #[test]
@@ -405,7 +410,7 @@ mod tests {
     #[test]
     fn test_json_zstd_lazy_write_no_finish() {
         let dir = tempfile::tempdir().unwrap();
-        let file = Zstd::<JsonFile>::new(dir.path(), "file");
+        let file = Zstd::<JsonFile<Vec<usize>>>::new(dir.path(), "file");
         let mut writer = file.lazy_writer().unwrap();
         for i in 0..10 {
             writer.write_item(&i).unwrap();
@@ -420,7 +425,7 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-        let zstd_file = Zstd::<JsonFile>::new("/some/path/", "file");
+        let zstd_file = Zstd::<JsonFile<Vec<usize>>>::new("/some/path/", "file");
         let path = PathBuf::from("/some/path/file.json.zst");
         assert_eq!(
             serde_json::to_string(&zstd_file).unwrap(),
@@ -430,8 +435,8 @@ mod tests {
 
     #[test]
     fn test_deserialize() {
-        let zstd_file: Zstd<JsonFile> =
+        let zstd_file: Zstd<JsonFile<()>> =
             serde_json::from_str(r#""/some/path/file.json.zst""#).unwrap();
-        assert_eq!(zstd_file, Zstd::<JsonFile>::new("/some/path/", "file"));
+        assert_eq!(zstd_file, Zstd::<JsonFile<()>>::new("/some/path/", "file"));
     }
 }
