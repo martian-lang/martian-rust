@@ -14,7 +14,6 @@ use std::time::SystemTime;
 use time::{OffsetDateTime, UtcOffset};
 
 pub type JsonDict = Map<String, Value>;
-pub type Json = Value;
 type Result<T> = std::result::Result<T, Error>;
 
 const METADATA_PREFIX: &str = "_";
