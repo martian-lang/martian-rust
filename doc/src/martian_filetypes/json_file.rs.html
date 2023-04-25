@@ -510,6 +510,14 @@
 <span id="510">510</span>
 <span id="511">511</span>
 <span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines a `JsonFile` and implements `FileTypeIO&lt;T&gt;` and
 //! `LazyFileTypeIO&lt;T&gt;` trait for a json file.
@@ -518,7 +526,7 @@
 //! ## Simple read/write example
 //! `JsonFile` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, json_file::JsonFile};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, json_file::JsonFile};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
@@ -533,7 +541,7 @@
 //!     let json_file = JsonFile::from(&quot;json_example&quot;);
 //!     // The two function below are simple wrappers over serde_json
 //!     json_file.write(&amp;chem)?; // Writes pretty formatted with 4 space indent
-//!     let decoded: Chemistry = json_file.read()?;
+//!     let decoded = json_file.read()?;
 //!     assert_eq!(chem, decoded);
 //!     # std::fs::remove_file(json_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
@@ -555,7 +563,7 @@
 //! If you don&#39;t do this, we will attempt to finish the writing in `drop()` ignoring all errors
 //!
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::json_file::{JsonFile, LazyJsonReader, LazyJsonWriter};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
@@ -563,7 +571,7 @@
 //!
 //! fn main() -&gt; Result&lt;(), Error&gt; {
 //!     let json_file = JsonFile::from(&quot;json_example_lazy&quot;);
-//!     let mut writer: LazyJsonWriter&lt;i32&gt; = json_file.lazy_writer()?;
+//!     let mut writer = json_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite&lt;i32&gt;`
 //!     for val in 0..10_000i32 {
 //!         writer.write_item(&amp;val)?;
@@ -575,7 +583,7 @@
 //!     // let vals: Vec&lt;_&gt; = (0..10_000).into_iter().collect()
 //!     // json_file.write(&amp;vals)?;
 //!
-//!     let mut reader: LazyJsonReader&lt;i32&gt; = json_file.lazy_reader()?;
+//!     let mut reader = json_file.lazy_reader()?;
 //!     let mut max_val = 0;
 //!     // reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;
 //!     for (i, val) in reader.enumerate() {
@@ -589,7 +597,9 @@
 //! }
 //! ```
 
-</span><span class="kw">use crate</span>::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+</span><span class="kw">use crate</span>::{
+    martian_filetype_typed_decorator, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
+};
 <span class="kw">use </span>anyhow::format_err;
 <span class="kw">use </span>martian::{Error, MartianFileType};
 <span class="kw">use </span>martian_derive::martian_filetype;
@@ -604,29 +614,35 @@
 <span class="kw">use </span>std::marker::PhantomData;
 
 <span class="macro">martian_filetype! </span>{Json, <span class="string">&quot;json&quot;</span>}
-<span class="kw">impl</span>&lt;T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>Json <span class="kw">where </span>T: Serialize + DeserializeOwned {}
 
-<span class="kw">pub type </span>JsonFile = JsonFormat&lt;Json&gt;;
-
-<span class="macro">crate::martian_filetype_inner! </span>{
-    <span class="doccomment">/// Json format
+<span class="macro">martian_filetype_typed_decorator! </span>{
+    <span class="doccomment">/// A struct that adds typed JSON serialization.
     </span><span class="kw">pub struct </span>JsonFormat, <span class="string">&quot;json&quot;
 </span>}
 
-<span class="kw">impl</span>&lt;F, T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>JsonFormat&lt;F&gt; <span class="kw">where </span>F: MartianFileType + FileStorage&lt;T&gt; {}
+<span class="kw">pub type </span>JsonFile&lt;T&gt; = JsonFormat&lt;Json, T&gt;;
 
 <span class="doccomment">/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
 /// Any type `T` that can be serialized can be saved as a `JsonFile`.
 /// The saved JsonFile will be pretty formatted using 4 space indentation.
-</span><span class="kw">impl</span>&lt;F, T&gt; FileTypeIO&lt;T&gt; <span class="kw">for </span>JsonFormat&lt;F&gt;
+</span><span class="kw">impl</span>&lt;F, T&gt; FileTypeRead&lt;T&gt; <span class="kw">for </span>JsonFormat&lt;F, T&gt;
 <span class="kw">where
-    </span>T: Serialize + DeserializeOwned,
-    F: MartianFileType + FileStorage&lt;T&gt; + Debug,
+    </span>T: DeserializeOwned,
+    F: MartianFileType,
 {
     <span class="kw">fn </span>read_from&lt;R: Read&gt;(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
         <span class="prelude-val">Ok</span>(serde_json::from_reader(reader)<span class="question-mark">?</span>)
     }
+}
 
+<span class="doccomment">/// Any type `T` that can be deserialized implements `read()` from a `JsonFile`
+/// Any type `T` that can be serialized can be saved as a `JsonFile`.
+/// The saved JsonFile will be pretty formatted using 4 space indentation.
+</span><span class="kw">impl</span>&lt;F, T&gt; FileTypeWrite&lt;T&gt; <span class="kw">for </span>JsonFormat&lt;F, T&gt;
+<span class="kw">where
+    </span>T: Serialize,
+    F: MartianFileType,
+{
     <span class="kw">fn </span>write_into&lt;W: Write&gt;(writer: W, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">let </span>formatter = PrettyFormatter::with_indent(<span class="string">b&quot;    &quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>serializer = Serializer::with_formatter(writer, formatter);
@@ -639,7 +655,7 @@
 /// stores a list of items.
 </span><span class="kw">pub struct </span>LazyJsonReader&lt;T, F = Json, R = BufReader&lt;File&gt;&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -650,11 +666,11 @@
 
 <span class="kw">impl</span>&lt;T, F, R&gt; LazyRead&lt;T, R&gt; <span class="kw">for </span>LazyJsonReader&lt;T, F, R&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
-    <span class="kw">type </span>FileType = JsonFormat&lt;F&gt;;
+    <span class="kw">type </span>FileType = JsonFormat&lt;F, Vec&lt;T&gt;&gt;;
     <span class="kw">fn </span>with_reader(<span class="kw-2">mut </span>reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>char_buf = [<span class="number">0u8</span>];
         reader.read_exact(<span class="kw-2">&amp;mut </span>char_buf)<span class="question-mark">?</span>;
@@ -673,7 +689,7 @@
 
 <span class="kw">impl</span>&lt;T, F, R&gt; Iterator <span class="kw">for </span>LazyJsonReader&lt;T, F, R&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     T: Serialize + DeserializeOwned,
 {
@@ -724,7 +740,7 @@
 /// stores a list of items.
 </span><span class="kw">pub struct </span>LazyJsonWriter&lt;T, F = Json, W = BufWriter&lt;File&gt;&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -737,11 +753,11 @@
 
 <span class="kw">impl</span>&lt;T, F, W&gt; LazyWrite&lt;T, W&gt; <span class="kw">for </span>LazyJsonWriter&lt;T, F, W&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
-    <span class="kw">type </span>FileType = JsonFormat&lt;F&gt;;
+    <span class="kw">type </span>FileType = JsonFormat&lt;F, Vec&lt;T&gt;&gt;;
     <span class="kw">fn </span>with_writer(writer: W) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="prelude-val">Ok</span>(LazyJsonWriter {
             state: WriterState::Start,
@@ -783,7 +799,7 @@
 
 <span class="kw">impl</span>&lt;T, F, W&gt; LazyJsonWriter&lt;T, F, W&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -801,9 +817,9 @@
     }
 }
 
-<span class="kw">impl</span>&lt;F, T, W, R&gt; LazyAgents&lt;T, W, R&gt; <span class="kw">for </span>JsonFormat&lt;F&gt;
+<span class="kw">impl</span>&lt;F, T, W, R&gt; LazyAgents&lt;T, W, R&gt; <span class="kw">for </span>JsonFormat&lt;F, Vec&lt;T&gt;&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     W: Write,
     T: Serialize + DeserializeOwned,
@@ -814,7 +830,7 @@
 
 <span class="kw">impl</span>&lt;T, F, W&gt; Drop <span class="kw">for </span>LazyJsonWriter&lt;T, F, W&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     W: Write,
     T: Serialize + DeserializeOwned,
 {
@@ -850,7 +866,7 @@
         <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
         <span class="kw">let </span>bc_json = JsonFile::new(dir.path(), <span class="string">&quot;barcodes&quot;</span>);
         bc_json.write(<span class="kw-2">&amp;</span>barcodes)<span class="question-mark">?</span>;
-        <span class="kw">let </span>actual: Vec&lt;String&gt; = bc_json.read()<span class="question-mark">?</span>;
+        <span class="kw">let </span>actual = bc_json.read()<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(barcodes, actual);
         <span class="macro">assert_eq!</span>(
             std::fs::read_to_string(bc_json)<span class="question-mark">?</span>,
@@ -864,33 +880,33 @@
         </span><span class="kw">fn </span>prop_test_json_file_u8(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;u8&gt;(), <span class="number">0usize</span>..<span class="number">100usize</span>),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(seq).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">true</span>).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[seq.clone(); <span class="number">10</span>]).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[seq.clone(); <span class="number">10</span>], <span class="bool-val">true</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq, <span class="bool-val">true</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[seq.clone(); <span class="number">10</span>]).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[seq.clone(); <span class="number">10</span>], <span class="bool-val">true</span>).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         <span class="attribute">#[test]
         </span><span class="kw">fn </span>prop_test_json_file_bool(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;bool&gt;(), <span class="number">0usize</span>..<span class="number">1000usize</span>),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(seq).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">true</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq, <span class="bool-val">true</span>).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         <span class="attribute">#[test]
         </span><span class="kw">fn </span>prop_test_json_file_vec_string(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;String&gt;(), <span class="number">0usize</span>..<span class="number">20usize</span>),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(seq).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">true</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq, <span class="bool-val">true</span>).unwrap());
             serde_lazy_roundtrip_check(seq).unwrap();
         }
         <span class="attribute">#[test]
         </span><span class="kw">fn </span>prop_test_json_file_string(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>any::&lt;String&gt;(),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
         }
 
         <span class="attribute">#[test]
@@ -899,16 +915,16 @@
             <span class="kw-2">ref </span>v2 <span class="kw">in </span>any::&lt;String&gt;(),
         ) {
             <span class="kw">let </span>foo = Foo {v1: <span class="kw-2">*</span>v1, v2: v2.clone(), v3: Bar::Variant};
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo).unwrap());
 
             <span class="kw">let </span>input = <span class="macro">vec!</span>[foo.clone(); <span class="number">20</span>];
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">true</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">true</span>).unwrap());
             serde_lazy_roundtrip_check(<span class="kw-2">&amp;</span>input).unwrap();
 
             <span class="kw">let </span>input = <span class="macro">vec!</span>[<span class="macro">vec!</span>[foo; <span class="number">2</span>]; <span class="number">4</span>];
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">true</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;JsonFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">true</span>).unwrap());
             serde_lazy_roundtrip_check(<span class="kw-2">&amp;</span>input).unwrap();
 
         }
@@ -920,8 +936,8 @@
         <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;lazy_test&quot;</span>);
         <span class="kw">let </span>input = String::from(<span class="string">&quot;Hello&quot;</span>);
         json_file.write(<span class="kw-2">&amp;</span>input)<span class="question-mark">?</span>;
-        <span class="kw">let </span>lazy_reader: <span class="prelude-ty">Result</span>&lt;LazyJsonReader&lt;i32&gt;, <span class="kw">_</span>&gt; = json_file.lazy_reader();
-        <span class="macro">assert!</span>(lazy_reader.is_err());
+        <span class="kw">let </span>reader_wrong_type: JsonFile&lt;Vec&lt;i32&gt;&gt; = JsonFile::new(dir.path(), <span class="string">&quot;lazy_test&quot;</span>);
+        <span class="macro">assert!</span>(reader_wrong_type.lazy_reader().is_err());
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -1007,8 +1023,8 @@
         drop(writer);
         <span class="kw">let </span>reader = json_file.lazy_reader().unwrap();
         <span class="kw">for </span>(i, val) <span class="kw">in </span>reader.enumerate() {
-            <span class="kw">let </span>val: usize = val.unwrap();
-            <span class="macro">assert_eq!</span>(val, i);
+            <span class="kw">let </span>val: i32 = val.unwrap();
+            <span class="macro">assert_eq!</span>(val, i <span class="kw">as </span>i32);
         }
     }
 

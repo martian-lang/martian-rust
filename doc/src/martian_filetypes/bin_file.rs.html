@@ -471,6 +471,20 @@
 <span id="471">471</span>
 <span id="472">472</span>
 <span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines a `BincodeFile` and implements `FileTypeIO&lt;T&gt;` and
 //! `LazyFileTypeIO&lt;T&gt;` trait for a bincode file. It is essentially a wrapper
@@ -485,9 +499,9 @@
 //! can be used to collect all the items in a `Vec&lt;T&gt;`
 //!
 //! ## Simple read/write example
-//! `BincodeFile` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.
+//! `BincodeFile&lt;T&gt;` implements `FileTypeIO&lt;T&gt;` for any serializable type `T`.
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, bin_file::BincodeFile};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, bin_file::BincodeFile};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
@@ -502,7 +516,7 @@
 //!     let bin_file = BincodeFile::from(&quot;bin_example&quot;);
 //!     // The two functions below are simple wrappers over bincode crate functions
 //!     bin_file.write(&amp;chem)?;
-//!     let decoded: Chemistry = bin_file.read()?;
+//!     let decoded = bin_file.read()?;
 //!     assert_eq!(chem, decoded);
 //!     # std::fs::remove_file(bin_file)?; // Remove the file (hidden from the doc)
 //!     Ok(())
@@ -513,17 +527,17 @@
 //! If the bincode file stores a list of items of type `T`, then the items can be read
 //! one at a time without reading the whole file into memory. A list of items
 //! of type `T` can also be incrementally written to a bincode file.
-//! `BincodeFile` implements `LazyFileTypeIO&lt;T&gt;` for any serializable type `T`.
+//! `BincodeFile&lt;Vec&lt;T&gt;&gt;` implements `LazyFileTypeIO&lt;T&gt;` for any serializable type `T`.
 //!
 //! ```rust
-//! use martian_filetypes::{FileTypeIO, LazyFileTypeIO, LazyWrite};
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite, LazyFileTypeIO, LazyWrite};
 //! use martian_filetypes::bin_file::{BincodeFile, LazyBincodeReader, LazyBincodeWriter};
 //! use martian::Error;
 //! use serde::{Serialize, Deserialize};
 //!
 //! fn main() -&gt; Result&lt;(), Error&gt; {
 //!     let bin_file = BincodeFile::from(&quot;bin_example_lazy&quot;);
-//!     let mut writer: LazyBincodeWriter&lt;i32&gt; = bin_file.lazy_writer()?;
+//!     let mut writer = bin_file.lazy_writer()?;
 //!     // writer implements the trait `LazyWrite&lt;i32&gt;`
 //!     for val in 0..10_000i32 {
 //!         writer.write_item(&amp;val)?;
@@ -536,9 +550,7 @@
 //!     // let vals: Vec&lt;_&gt; = (0..10_000).into_iter().collect()
 //!     // bin_file.write(&amp;vals)?;
 //!
-//!     // Type inference engine should figure out the type automatically,
-//!     // but it is shown here for illustration.
-//!     let mut reader: LazyBincodeReader&lt;i32&gt; = bin_file.lazy_reader()?;
+//!     let mut reader = bin_file.lazy_reader()?;
 //!     let mut max_val = 0;
 //!     // reader is an `Iterator` over values of type Result&lt;`i32`, Error&gt;
 //!     for (i, val) in reader.enumerate() {
@@ -552,7 +564,9 @@
 //! }
 //! ```
 
-</span><span class="kw">use crate</span>::{FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+</span><span class="kw">use crate</span>::{
+    martian_filetype_typed_decorator, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
+};
 <span class="kw">use </span>anyhow::format_err;
 <span class="kw">use </span>martian::{Error, MartianFileType};
 <span class="kw">use </span>martian_derive::martian_filetype;
@@ -566,22 +580,20 @@
 <span class="kw">use </span>std::marker::PhantomData;
 
 <span class="macro">martian_filetype! </span>{Bincode, <span class="string">&quot;bincode&quot;</span>}
-<span class="kw">impl</span>&lt;T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>Bincode <span class="kw">where </span>T: Serialize + DeserializeOwned {}
-<span class="kw">pub type </span>BincodeFile = BinaryFormat&lt;Bincode&gt;;
 
-<span class="macro">crate::martian_filetype_inner! </span>{
-    <span class="doccomment">/// Binary format
+<span class="macro">martian_filetype_typed_decorator! </span>{
+    <span class="doccomment">/// A struct that adds typed bincode serialization.
     </span><span class="kw">pub struct </span>BinaryFormat, <span class="string">&quot;bincode&quot;
 </span>}
 
-<span class="kw">impl</span>&lt;F, T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>BinaryFormat&lt;F&gt; <span class="kw">where </span>F: MartianFileType + FileStorage&lt;T&gt; {}
+<span class="kw">pub type </span>BincodeFile&lt;T&gt; = BinaryFormat&lt;Bincode, T&gt;;
 
 <span class="doccomment">/// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
 /// TODO: Include the TypeId here?
-</span><span class="kw">impl</span>&lt;T, F&gt; FileTypeIO&lt;T&gt; <span class="kw">for </span>BinaryFormat&lt;F&gt;
+</span><span class="kw">impl</span>&lt;T, F&gt; FileTypeRead&lt;T&gt; <span class="kw">for </span>BinaryFormat&lt;F, T&gt;
 <span class="kw">where
-    </span>T: Any + Serialize + DeserializeOwned,
-    F: FileStorage&lt;T&gt; + Debug,
+    </span>T: Any + DeserializeOwned,
+    F: MartianFileType,
 {
     <span class="kw">fn </span>read_from&lt;R: Read&gt;(<span class="kw-2">mut </span>reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
         <span class="kw">fn </span>check_type(
@@ -611,7 +623,15 @@
         )<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(bincode::deserialize_from(<span class="kw-2">&amp;mut </span>reader)<span class="question-mark">?</span>)
     }
+}
 
+<span class="doccomment">/// Any type `T` that can be deserialized implements `load()` from a `BincodeFile`
+/// TODO: Include the TypeId here?
+</span><span class="kw">impl</span>&lt;T, F&gt; FileTypeWrite&lt;T&gt; <span class="kw">for </span>BinaryFormat&lt;F, T&gt;
+<span class="kw">where
+    </span>T: Any + Serialize,
+    F: MartianFileType,
+{
     <span class="kw">fn </span>write_into&lt;W: Write&gt;(<span class="kw-2">mut </span>writer: W, input: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">let </span>type_hash = type_name::&lt;T&gt;();
         bincode::serialize_into(<span class="kw-2">&amp;mut </span>writer, <span class="kw-2">&amp;</span>type_hash)<span class="question-mark">?</span>;
@@ -629,7 +649,7 @@
 /// stores a list of items.
 </span><span class="kw">pub struct </span>LazyBincodeReader&lt;T, F = Bincode, R = BufReader&lt;File&gt;&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     T: Any + DeserializeOwned,
 {
@@ -642,11 +662,11 @@
 
 <span class="kw">impl</span>&lt;T, F, R&gt; LazyRead&lt;T, R&gt; <span class="kw">for </span>LazyBincodeReader&lt;T, F, R&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     T: Any + Serialize + DeserializeOwned,
 {
-    <span class="kw">type </span>FileType = BinaryFormat&lt;F&gt;;
+    <span class="kw">type </span>FileType = BinaryFormat&lt;F, Vec&lt;T&gt;&gt;;
     <span class="kw">fn </span>with_reader(<span class="kw-2">mut </span>reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="kw">fn </span>check_type(
             <span class="kw-2">mut </span>reader: <span class="kw">impl </span>Read,
@@ -686,7 +706,7 @@
 
 <span class="kw">impl</span>&lt;T, F, R&gt; Iterator <span class="kw">for </span>LazyBincodeReader&lt;T, F, R&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     T: Any + DeserializeOwned,
 {
@@ -748,7 +768,7 @@
 /// stores a list of items
 </span><span class="kw">pub struct </span>LazyBincodeWriter&lt;T, F = Bincode, W = BufWriter&lt;File&gt;&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     W: Write,
     T: Any + Serialize,
 {
@@ -760,11 +780,11 @@
 
 <span class="kw">impl</span>&lt;T, F, W&gt; LazyWrite&lt;T, W&gt; <span class="kw">for </span>LazyBincodeWriter&lt;T, F, W&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     W: Write,
     T: Any + Serialize,
 {
-    <span class="kw">type </span>FileType = BinaryFormat&lt;F&gt;;
+    <span class="kw">type </span>FileType = BinaryFormat&lt;F, Vec&lt;T&gt;&gt;;
     <span class="kw">fn </span>with_writer(<span class="kw-2">mut </span>writer: W) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="kw">let </span>type_hash = type_name::&lt;LazyMarker&lt;Vec&lt;T&gt;&gt;&gt;(); <span class="comment">// The file stores Vec&lt;T&gt;, not T
         </span>bincode::serialize_into(<span class="kw-2">&amp;mut </span>writer, <span class="kw-2">&amp;</span>type_hash)<span class="question-mark">?</span>;
@@ -785,9 +805,9 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T, F, W, R&gt; LazyAgents&lt;T, W, R&gt; <span class="kw">for </span>BinaryFormat&lt;F&gt;
+<span class="kw">impl</span>&lt;T, F, W, R&gt; LazyAgents&lt;T, W, R&gt; <span class="kw">for </span>BinaryFormat&lt;F, Vec&lt;T&gt;&gt;
 <span class="kw">where
-    </span>F: MartianFileType + FileStorage&lt;Vec&lt;T&gt;&gt;,
+    </span>F: MartianFileType,
     R: Read,
     W: Write,
     T: Any + Serialize + DeserializeOwned,
@@ -821,28 +841,28 @@
         </span><span class="kw">fn </span>prop_test_bincode_file_u8(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;u8&gt;(), <span class="number">0usize</span>..<span class="number">1000usize</span>),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
         }
         <span class="attribute">#[test]
         </span><span class="kw">fn </span>prop_test_bincode_file_bool(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;bool&gt;(), <span class="number">0usize</span>..<span class="number">1000usize</span>),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
         }
         <span class="attribute">#[test]
         </span><span class="kw">fn </span>prop_test_bincode_file_vec_string(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>vec(any::&lt;String&gt;(), <span class="number">0usize</span>..<span class="number">20usize</span>),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq, <span class="bool-val">false</span>).unwrap());
         }
         <span class="attribute">#[test]
         </span><span class="kw">fn </span>prop_test_bincode_file_string(
             <span class="kw-2">ref </span>seq <span class="kw">in </span>any::&lt;String&gt;(),
         ) {
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(seq).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(seq).unwrap());
         }
         <span class="attribute">#[test]
         </span><span class="kw">fn </span>prop_test_bincode_file_struct(
@@ -850,15 +870,15 @@
             <span class="kw-2">ref </span>v2 <span class="kw">in </span>any::&lt;String&gt;(),
         ) {
             <span class="kw">let </span>foo = Foo {v1: <span class="kw-2">*</span>v1, v2: v2.clone(), v3: Bar::Variant};
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo).unwrap());
 
             <span class="kw">let </span>input = <span class="macro">vec!</span>[foo.clone(); <span class="number">20</span>];
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">false</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">false</span>).unwrap());
 
             <span class="kw">let </span>input = <span class="macro">vec!</span>[<span class="macro">vec!</span>[foo; <span class="number">2</span>]; <span class="number">4</span>];
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
-            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">false</span>).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input).unwrap());
+            <span class="macro">prop_assert!</span>(<span class="kw">crate</span>::lazy_round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>input, <span class="bool-val">false</span>).unwrap());
 
         }
     }
@@ -874,7 +894,7 @@
             name: <span class="string">&quot;Bar&quot;</span>.into(),
             id: <span class="number">100</span>,
         };
-        <span class="macro">assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo)<span class="question-mark">?</span>);
+        <span class="macro">assert!</span>(<span class="kw">crate</span>::round_trip_check::&lt;BincodeFile&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>foo)<span class="question-mark">?</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -893,13 +913,21 @@
         <span class="kw">let _</span>: Vec&lt;u8&gt; = fn1.read()<span class="question-mark">?</span>;
         <span class="kw">let _</span>: Vec&lt;u64&gt; = fn2.read()<span class="question-mark">?</span>;
 
-        <span class="macro">assert!</span>(FileTypeIO::&lt;Vec&lt;u64&gt;&gt;::read(<span class="kw-2">&amp;</span>fn1).is_err());
-        <span class="macro">assert!</span>(FileTypeIO::&lt;u8&gt;::read(<span class="kw-2">&amp;</span>fn1).is_err());
-        <span class="macro">assert!</span>(FileTypeIO::&lt;String&gt;::read(<span class="kw-2">&amp;</span>fn1).is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;Vec&lt;u64&gt;&gt;::new(dir.path(), <span class="string">&quot;test1&quot;</span>)
+            .read()
+            .is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;u8&gt;::new(dir.path(), <span class="string">&quot;test1&quot;</span>).read().is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;String&gt;::new(dir.path(), <span class="string">&quot;test1&quot;</span>)
+            .read()
+            .is_err());
 
-        <span class="macro">assert!</span>(FileTypeIO::&lt;Vec&lt;u8&gt;&gt;::read(<span class="kw-2">&amp;</span>fn2).is_err());
-        <span class="macro">assert!</span>(FileTypeIO::&lt;u8&gt;::read(<span class="kw-2">&amp;</span>fn2).is_err());
-        <span class="macro">assert!</span>(FileTypeIO::&lt;String&gt;::read(<span class="kw-2">&amp;</span>fn2).is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;Vec&lt;u8&gt;&gt;::new(dir.path(), <span class="string">&quot;test2&quot;</span>)
+            .read()
+            .is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;u8&gt;::new(dir.path(), <span class="string">&quot;test2&quot;</span>).read().is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;String&gt;::new(dir.path(), <span class="string">&quot;test2&quot;</span>)
+            .read()
+            .is_err());
 
         <span class="prelude-val">Ok</span>(())
     }

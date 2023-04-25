@@ -227,7 +227,6 @@
 <span id="227">227</span>
 <span id="228">228</span>
 <span id="229">229</span>
-<span id="230">230</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Uncategorized collection of tiny useful functions
 //!
 //! All the functions are simple wrappers around functions from
@@ -327,8 +326,7 @@
             <span class="kw-2">*</span>r_str.last().expect(<span class="string">&quot;Path must be non-empty.&quot;</span>)
         },
         std::path::MAIN_SEPARATOR <span class="kw">as </span>u8,
-        <span class="string">&quot;You passed a directory instead of a file: {:?}&quot;</span>,
-        result
+        <span class="string">&quot;You passed a directory instead of a file: {result:?}&quot;</span>,
     );
 
     <span class="macro">assert!</span>(!extension.starts_with(<span class="string">&#39;.&#39;</span>));

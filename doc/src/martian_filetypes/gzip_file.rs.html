@@ -365,6 +365,12 @@
 <span id="365">365</span>
 <span id="366">366</span>
 <span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines an `gzip` wrapper over other basic filetypes. Most basic
 //! filetypes automatically inherit this behavior through the trait heirarchy.
@@ -372,7 +378,7 @@
 //! ## Simple read/write example
 //! The example shown below creates an gzip compressed json file.
 //! ```rust
-//! use martian_filetypes::FileTypeIO;
+//! use martian_filetypes::{FileTypeRead, FileTypeWrite};
 //! use martian_filetypes::bin_file::BincodeFile;
 //! use martian_filetypes::json_file::JsonFile;
 //! use martian_filetypes::gzip_file::Gzip;
@@ -396,7 +402,9 @@
 //!     Ok(())
 //! }
 //! ```
-</span><span class="kw">use crate</span>::{ErrorContext, FileStorage, FileTypeIO, LazyAgents, LazyRead, LazyWrite};
+</span><span class="kw">use crate</span>::{
+    ErrorContext, FileTypeIO, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
+};
 <span class="kw">use </span>flate2::read::GzDecoder;
 <span class="kw">use </span>flate2::write::GzEncoder;
 <span class="kw">use </span>flate2::Compression;
@@ -405,7 +413,7 @@
 <span class="kw">use </span>std::io::{Read, Write};
 <span class="kw">use </span>std::marker::PhantomData;
 
-<span class="macro">crate::martian_filetype_inner! </span>{
+<span class="macro">crate::martian_filetype_decorator! </span>{
     <span class="doccomment">/// A struct that wraps a basic `MartianFileType` and adds gzip compression
     /// capability.
     </span><span class="kw">pub struct </span>Gzip, <span class="string">&quot;gz&quot;
@@ -418,7 +426,7 @@
     <span class="doccomment">/// Create an Gzip wrapped filetype from a basic filetype
     /// ```rust
     /// use martian_filetypes::{gzip_file::Gzip, bin_file::BincodeFile};
-    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::from(&quot;example&quot;));
+    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::&lt;()&gt;::from(&quot;example&quot;));
     /// assert_eq!(gz_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.gz&quot;));
     /// ```
     </span><span class="kw">pub fn </span>from_filetype(source: F) -&gt; <span class="self">Self </span>{
@@ -426,26 +434,30 @@
     }
 }
 
-<span class="kw">impl</span>&lt;F, T&gt; FileStorage&lt;T&gt; <span class="kw">for </span>Gzip&lt;F&gt; <span class="kw">where </span>F: FileStorage&lt;T&gt; {}
-
-<span class="kw">impl</span>&lt;F, T&gt; FileTypeIO&lt;T&gt; <span class="kw">for </span>Gzip&lt;F&gt;
+<span class="kw">impl</span>&lt;F, T&gt; FileTypeRead&lt;T&gt; <span class="kw">for </span>Gzip&lt;F&gt;
 <span class="kw">where
     </span>F: MartianFileType + FileTypeIO&lt;T&gt;,
 {
     <span class="kw">fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
         <span class="kw">let </span>decoder = GzDecoder::new(<span class="self">self</span>.buf_reader()<span class="question-mark">?</span>);
-        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::read_from(decoder).map_err(|e| {
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeRead&lt;T&gt;&gt;::read_from(decoder).map_err(|e| {
             <span class="kw">let </span>context = ErrorContext::ReadContext(<span class="self">self</span>.as_ref().into(), e.to_string());
             e.context(context)
         })
     }
     <span class="kw">fn </span>read_from&lt;R: Read&gt;(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
-        &lt;F <span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::read_from(reader)
+        &lt;F <span class="kw">as </span>FileTypeRead&lt;T&gt;&gt;::read_from(reader)
     }
+}
+
+<span class="kw">impl</span>&lt;F, T&gt; FileTypeWrite&lt;T&gt; <span class="kw">for </span>Gzip&lt;F&gt;
+<span class="kw">where
+    </span>F: MartianFileType + FileTypeIO&lt;T&gt;,
+{
     <span class="kw">fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="comment">// Default compression level and configuration
         </span><span class="kw">let </span><span class="kw-2">mut </span>encoder = GzEncoder::new(<span class="self">self</span>.buf_writer()<span class="question-mark">?</span>, Compression::default());
-        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::write_into(<span class="kw-2">&amp;mut </span>encoder, item).map_err(|e| {
+        &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeWrite&lt;T&gt;&gt;::write_into(<span class="kw-2">&amp;mut </span>encoder, item).map_err(|e| {
             <span class="kw">let </span>context = ErrorContext::WriteContext(<span class="self">self</span>.as_ref().into(), e.to_string());
             e.context(context)
         })<span class="question-mark">?</span>;
@@ -453,10 +465,9 @@
         <span class="prelude-val">Ok</span>(())
     }
     <span class="kw">fn </span>write_into&lt;W: Write&gt;(writer: W, item: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        &lt;F <span class="kw">as </span>FileTypeIO&lt;T&gt;&gt;::write_into(writer, item)
+        &lt;F <span class="kw">as </span>FileTypeWrite&lt;T&gt;&gt;::write_into(writer, item)
     }
 }
-
 <span class="doccomment">/// Helper struct to write items one by one into an Gzip file.
 /// Implements `LazyWrite` trait.
 </span><span class="kw">pub struct </span>LazyGzipWriter&lt;L, T, W&gt;
@@ -575,7 +586,7 @@
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_gz_new() {
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from(<span class="string">&quot;/some/path/file.json.gz&quot;</span>)
@@ -583,7 +594,7 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json&quot;</span>),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from(<span class="string">&quot;/some/path/file.json.gz&quot;</span>)
@@ -591,7 +602,7 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file_json&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file_json&quot;</span>),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from(<span class="string">&quot;/some/path/file_json.json.gz&quot;</span>)
@@ -599,7 +610,7 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json.gz&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.json.gz&quot;</span>),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from(<span class="string">&quot;/some/path/file.json.gz&quot;</span>)
@@ -607,7 +618,7 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
             Gzip {
                 inner: PhantomData,
                 path: PathBuf::from(<span class="string">&quot;/some/path/file.tmp.json.gz&quot;</span>)
@@ -615,7 +626,7 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>).as_ref(),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>).as_ref(),
             Path::new(<span class="string">&quot;/some/path/file.json.gz&quot;</span>)
         );
     }
@@ -644,42 +655,42 @@
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_gz_from() {
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            Gzip::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file&quot;</span>)
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::from(<span class="string">&quot;/some/path/file&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            Gzip::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.json&quot;</span>)
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::from(<span class="string">&quot;/some/path/file.json&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            Gzip::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.json.gz&quot;</span>)
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::from(<span class="string">&quot;/some/path/file.json.gz&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
-            Gzip::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.tmp.json.gz&quot;</span>)
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::from(<span class="string">&quot;/some/path/file.tmp.json.gz&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
-            Gzip::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::from(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
         );
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp.json&quot;</span>),
-            Gzip::&lt;JsonFile&gt;::from(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file.tmp.json&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::from(<span class="string">&quot;/some/path/file.tmp&quot;</span>)
         );
     }
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_gz_from_filetype() {
         <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
+            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
             Gzip::from_filetype(JsonFile::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>))
         );
     }
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_gz_extension() {
-        <span class="macro">assert_eq!</span>(Gzip::&lt;JsonFile&gt;::extension(), <span class="string">&quot;json.gz&quot;</span>);
+        <span class="macro">assert_eq!</span>(Gzip::&lt;JsonFile&lt;()&gt;&gt;::extension(), <span class="string">&quot;json.gz&quot;</span>);
     }
 
     <span class="attribute">#[test]
@@ -703,7 +714,7 @@
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_json_gz_lazy_write_no_finish() {
         <span class="kw">let </span>dir = tempfile::tempdir().unwrap();
-        <span class="kw">let </span>file = Gzip::&lt;JsonFile&gt;::new(dir.path(), <span class="string">&quot;file&quot;</span>);
+        <span class="kw">let </span>file: Gzip&lt;JsonFile&lt;<span class="kw">_</span>&gt;&gt; = Gzip::new(dir.path(), <span class="string">&quot;file&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer().unwrap();
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10 </span>{
             writer.write_item(<span class="kw-2">&amp;</span>i).unwrap();
@@ -718,7 +729,7 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_serialize() {
-        <span class="kw">let </span>gz_file = Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>);
+        <span class="kw">let </span>gz_file: Gzip&lt;JsonFile&lt;()&gt;&gt; = Gzip::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>);
         <span class="kw">let </span>path = PathBuf::from(<span class="string">&quot;/some/path/file.json.gz&quot;</span>);
         <span class="macro">assert_eq!</span>(
             serde_json::to_string(<span class="kw-2">&amp;</span>gz_file).unwrap(),
@@ -728,8 +739,9 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_deserialize() {
-        <span class="kw">let </span>gz_file: Gzip&lt;JsonFile&gt; = serde_json::from_str(<span class="string">r#&quot;&quot;/some/path/file.json.gz&quot;&quot;#</span>).unwrap();
-        <span class="macro">assert_eq!</span>(gz_file, Gzip::&lt;JsonFile&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>));
+        <span class="kw">let </span>gz_file: Gzip&lt;JsonFile&lt;()&gt;&gt; =
+            serde_json::from_str(<span class="string">r#&quot;&quot;/some/path/file.json.gz&quot;&quot;#</span>).unwrap();
+        <span class="macro">assert_eq!</span>(gz_file, Gzip::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>));
     }
 }
 </code></pre></div>
