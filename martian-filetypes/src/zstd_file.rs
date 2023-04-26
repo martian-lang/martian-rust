@@ -106,21 +106,6 @@ martian_filetype_decorator! {
     pub struct Zstd, "zst"
 }
 
-impl<F> Zstd<F>
-where
-    F: MartianFileType,
-{
-    /// Create an Zstd wrapped filetype from a basic filetype
-    /// ```rust
-    /// use martian_filetypes::{zstd_file::Zstd, bin_file::BincodeFile};
-    /// let zstd_bin_file = Zstd::from_filetype(BincodeFile::<()>::from("example"));
-    /// assert_eq!(zstd_bin_file.as_ref(), std::path::Path::new("example.bincode.zst"));
-    /// ```
-    pub fn from_filetype(source: F) -> Self {
-        Self::from(source.as_ref())
-    }
-}
-
 impl<F, T> FileTypeRead<T> for Zstd<F>
 where
     F: MartianFileType + FileTypeIO<T>,
@@ -275,6 +260,7 @@ mod tests {
     use super::*;
     use crate::json_file::JsonFile;
     use crate::LazyFileTypeIO;
+    use martian::MartianTempFile;
     use std::path::{Path, PathBuf};
 
     martian_derive::martian_filetype! {CompoundFile, "foo.bar"}
@@ -377,23 +363,14 @@ mod tests {
     }
 
     #[test]
-    fn test_zstd_from_filetype() {
-        assert_eq!(
-            Zstd::<JsonFile<()>>::new("/some/path/", "file"),
-            Zstd::from_filetype(JsonFile::new("/some/path/", "file"))
-        );
-    }
-
-    #[test]
     fn test_zstd_extension() {
         assert_eq!(Zstd::<JsonFile<()>>::extension(), "json.zst");
     }
 
     #[test]
     fn test_json_zstd_lazy_write() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "file");
-        let file = Zstd::from_filetype(json_file);
+        let file = Zstd::<JsonFile<_>>::tempfile()?;
+
         let mut writer = file.lazy_writer()?;
         for i in 0..10usize {
             writer.write_item(&i)?;
@@ -408,19 +385,19 @@ mod tests {
     }
 
     #[test]
-    fn test_json_zstd_lazy_write_no_finish() {
-        let dir = tempfile::tempdir().unwrap();
-        let file = Zstd::<JsonFile<Vec<usize>>>::new(dir.path(), "file");
-        let mut writer = file.lazy_writer().unwrap();
+    fn test_json_zstd_lazy_write_no_finish() -> Result<(), Error> {
+        let file = Zstd::<JsonFile<_>>::tempfile()?;
+        let mut writer = file.lazy_writer()?;
         for i in 0..10 {
-            writer.write_item(&i).unwrap();
+            writer.write_item(&i)?;
         }
         drop(writer);
-        let reader = file.lazy_reader().unwrap();
+        let reader = file.lazy_reader()?;
         for (i, val) in reader.enumerate() {
-            let val: usize = val.unwrap();
+            let val: usize = val?;
             assert_eq!(val, i);
         }
+        Ok(())
     }
 
     #[test]

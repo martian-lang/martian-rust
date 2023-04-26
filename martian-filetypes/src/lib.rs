@@ -319,6 +319,9 @@ pub(crate) fn maybe_add_format(extension: String, format: &str) -> String {
 }
 
 #[cfg(test)]
+use martian::MartianTempFile;
+
+#[cfg(test)]
 pub fn round_trip_check<F, T>(input: &T) -> Result<bool, Error>
 where
     F: FileTypeIO<T>,
@@ -326,8 +329,7 @@ where
 {
     // TEST 1: Write as F and read from F
     let pass_direct = {
-        let dir = tempfile::tempdir()?;
-        let file = F::new(dir.path(), "my_file_roundtrip");
+        let file = F::tempfile()?;
         file.write(input)?;
         let decoded: T = file.read()?;
         input == &decoded
@@ -335,8 +337,7 @@ where
 
     // TEST 2: Write as Lz4<F> and read from Lz4<F>
     let pass_compressed_lz4 = {
-        let dir = tempfile::tempdir()?;
-        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file_roundtrip_compressed");
+        let file = lz4_file::Lz4::<F>::tempfile()?;
         file.write(input)?;
         let decoded: T = file.read()?;
         input == &decoded
@@ -344,8 +345,7 @@ where
 
     // TEST 3: Write as Gzip<F> and read from Gzip<F>
     let pass_compressed_gzip = {
-        let dir = tempfile::tempdir()?;
-        let file = gzip_file::Gzip::<F>::new(dir.path(), "my_file_roundtrip_compressed");
+        let file = gzip_file::Gzip::<F>::tempfile()?;
         file.write(input)?;
         let decoded: T = file.read()?;
         input == &decoded
@@ -363,8 +363,7 @@ where
 {
     // Write + Lazy read
     let pass_w_lr = {
-        let dir = tempfile::tempdir()?;
-        let file = F::new(dir.path(), "my_file");
+        let file = F::tempfile()?;
         file.write(input)?;
         let decoded: Vec<T> = file.read_all()?;
         input == &decoded
@@ -372,8 +371,7 @@ where
 
     // Write + Lazy read [Compressed]
     let pass_w_lr_c = {
-        let dir = tempfile::tempdir()?;
-        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file");
+        let file = lz4_file::Lz4::<F>::tempfile()?;
         file.write(input)?;
         let decoded: Vec<T> = file.read_all()?;
         input == &decoded
@@ -381,8 +379,7 @@ where
 
     // Lazy write + read
     let pass_lw_r = if require_read {
-        let dir = tempfile::tempdir()?;
-        let file = F::new(dir.path(), "my_file");
+        let file = F::tempfile()?;
         let mut lazy_writer = file.lazy_writer()?;
         for item in input {
             lazy_writer.write_item(item)?;
@@ -396,8 +393,7 @@ where
 
     // Lazy write + read [Compressed]
     let pass_lw_r_c = if require_read {
-        let dir = tempfile::tempdir()?;
-        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file");
+        let file = lz4_file::Lz4::<F>::tempfile()?;
         let mut lazy_writer = file.lazy_writer()?;
         for item in input {
             lazy_writer.write_item(item)?;
@@ -411,8 +407,7 @@ where
 
     // Lazy write + Lazy read
     let pass_lw_lr = {
-        let dir = tempfile::tempdir()?;
-        let file = F::new(dir.path(), "my_file");
+        let file = F::tempfile()?;
         let mut lazy_writer = file.lazy_writer()?;
         for item in input {
             lazy_writer.write_item(item)?;
@@ -424,8 +419,7 @@ where
 
     // Lazy write + Lazy read [Compressed]
     let pass_lw_lr_c = {
-        let dir = tempfile::tempdir()?;
-        let file = lz4_file::Lz4::<F>::new(dir.path(), "my_file");
+        let file = lz4_file::Lz4::<F>::tempfile()?;
         let mut lazy_writer = file.lazy_writer()?;
         for item in input {
             lazy_writer.write_item(item)?;

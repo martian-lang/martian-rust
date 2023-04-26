@@ -392,6 +392,7 @@ where
 mod tests {
     use super::*;
     use crate::LazyFileTypeIO;
+    use martian::MartianTempFile;
 
     #[derive(Serialize, Deserialize, PartialEq, Default)]
     struct Cell {
@@ -414,11 +415,10 @@ mod tests {
 
     #[test]
     fn test_csv_write() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let cells_csv = CsvFile::new(dir.path(), "test");
+        let cells_csv = CsvFile::tempfile()?;
         cells_csv.write(&cells())?;
         assert_eq!(
-            std::fs::read_to_string(&cells_csv)?,
+            std::fs::read_to_string(cells_csv.as_ref())?,
             "barcode,genome\nACGT,hg19\nTCAT,mm10\n"
         );
         Ok(())
@@ -426,11 +426,10 @@ mod tests {
 
     #[test]
     fn test_tsv_write() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let cells_tsv = TsvFile::new(dir.path(), "test");
+        let cells_tsv = TsvFile::tempfile()?;
         cells_tsv.write(&cells())?;
         assert_eq!(
-            std::fs::read_to_string(&cells_tsv)?,
+            std::fs::read_to_string(cells_tsv.as_ref())?,
             "barcode\tgenome\nACGT\thg19\nTCAT\tmm10\n"
         );
         assert_eq!(
@@ -442,11 +441,10 @@ mod tests {
 
     #[test]
     fn test_tsv_write_no_header() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let cells_tsv = TsvFileNoHeader::new(dir.path(), "test");
+        let cells_tsv = TsvFileNoHeader::tempfile()?;
         cells_tsv.write(&cells())?;
         assert_eq!(
-            std::fs::read_to_string(&cells_tsv)?,
+            std::fs::read_to_string(cells_tsv.as_ref())?,
             "ACGT\thg19\nTCAT\tmm10\n"
         );
         assert!(cells_tsv.read_headers()?.is_none());
@@ -481,22 +479,23 @@ mod tests {
 
     #[test]
     fn test_lazy_header_only() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let cells_tsv: TsvFile<Cell> = TsvFile::new(dir.path(), "test");
+        let cells_tsv = TsvFile::<Cell>::tempfile()?;
         let mut writer = cells_tsv.lazy_writer()?;
         writer.write_header()?;
         writer.finish()?;
-        assert_eq!(std::fs::read_to_string(&cells_tsv)?, "barcode\tgenome\n");
+        assert_eq!(
+            std::fs::read_to_string(cells_tsv.as_ref())?,
+            "barcode\tgenome\n"
+        );
         Ok(())
     }
 
     #[test]
     fn test_lazy_no_header() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let cells_tsv: TsvFile<Cell> = TsvFile::new(dir.path(), "test");
+        let cells_tsv = TsvFile::<Cell>::tempfile()?;
         let writer = cells_tsv.lazy_writer()?;
         writer.finish()?;
-        assert_eq!(std::fs::read_to_string(&cells_tsv)?, "");
+        assert_eq!(std::fs::read_to_string(cells_tsv.as_ref())?, "");
         Ok(())
     }
 }

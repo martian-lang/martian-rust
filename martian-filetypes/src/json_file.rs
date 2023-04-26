@@ -324,7 +324,7 @@ where
 mod tests {
     use super::*;
     use crate::LazyFileTypeIO;
-    use martian::MartianFileType;
+    use martian::{MartianFileType, MartianTempFile};
     use proptest::arbitrary::any;
     use proptest::collection::vec;
     use proptest::{prop_assert, proptest};
@@ -343,13 +343,12 @@ mod tests {
     #[test]
     fn test_json_file() -> Result<(), Error> {
         let barcodes: Vec<String> = vec!["AAAA".into(), "AACC".into(), "AAGG".into()];
-        let dir = tempfile::tempdir()?;
-        let bc_json = JsonFile::new(dir.path(), "barcodes");
+        let bc_json = JsonFile::tempfile()?;
         bc_json.write(&barcodes)?;
         let actual = bc_json.read()?;
         assert_eq!(barcodes, actual);
         assert_eq!(
-            std::fs::read_to_string(bc_json)?,
+            std::fs::read_to_string(bc_json.as_ref())?,
             "[\n    \"AAAA\",\n    \"AACC\",\n    \"AAGG\"\n]"
         );
         Ok(())
@@ -412,11 +411,10 @@ mod tests {
 
     #[test]
     fn test_json_lazy_read_not_vec() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "lazy_test");
+        let json_file = JsonFile::tempfile()?;
         let input = String::from("Hello");
         json_file.write(&input)?;
-        let reader_wrong_type: JsonFile<Vec<i32>> = JsonFile::new(dir.path(), "lazy_test");
+        let reader_wrong_type: JsonFile<Vec<i32>> = JsonFile::from_path(&json_file);
         assert!(reader_wrong_type.lazy_reader().is_err());
         Ok(())
     }
@@ -426,8 +424,7 @@ mod tests {
         T: Serialize + DeserializeOwned + PartialEq,
     {
         // Serde write + Lazy read
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "serde");
+        let json_file = JsonFile::tempfile()?;
         serde_json::to_writer(json_file.buf_writer()?, input)?;
         let decoded: Vec<T> = json_file
             .lazy_reader()?
@@ -436,7 +433,7 @@ mod tests {
         assert!(input == decoded);
 
         // Serde write pretty + lazy read
-        let json_file = JsonFile::new(dir.path(), "serde_pretty");
+        let json_file = JsonFile::from_path(&json_file);
         serde_json::to_writer_pretty(json_file.buf_writer()?, input)?;
         let decoded: Vec<T> = json_file
             .lazy_reader()?
@@ -449,8 +446,7 @@ mod tests {
 
     #[test]
     fn test_json_lazy_read_serde_write() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "lazy_test");
+        let json_file = JsonFile::tempfile()?;
         {
             let input = vec![0, 1, 2, 3];
             serde_json::to_writer(json_file.buf_writer()?, &input)?;
@@ -475,8 +471,7 @@ mod tests {
 
     #[test]
     fn test_json_lazy_write() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "lazy_write");
+        let json_file = JsonFile::tempfile()?;
         let input: Vec<i32> = (0..10).collect();
 
         let mut writer = json_file.lazy_writer()?;
@@ -492,20 +487,20 @@ mod tests {
     }
 
     #[test]
-    fn test_json_lazy_write_no_finish() {
-        let dir = tempfile::tempdir().unwrap();
-        let json_file = JsonFile::new(dir.path(), "lazy_write");
+    fn test_json_lazy_write_no_finish() -> Result<(), Error> {
+        let json_file = JsonFile::tempfile()?;
         let input: Vec<i32> = (0..10).collect();
-        let mut writer = json_file.lazy_writer().unwrap();
+        let mut writer = json_file.lazy_writer()?;
         for i in &input {
-            writer.write_item(i).unwrap();
+            writer.write_item(i)?;
         }
         drop(writer);
-        let reader = json_file.lazy_reader().unwrap();
+        let reader = json_file.lazy_reader()?;
         for (i, val) in reader.enumerate() {
-            let val: i32 = val.unwrap();
+            let val: i32 = val?;
             assert_eq!(val, i as i32);
         }
+        Ok(())
     }
 
     #[test]
