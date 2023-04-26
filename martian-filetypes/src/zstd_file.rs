@@ -22,16 +22,14 @@
 //! fn main() -> Result<(), Error> {
 //!     let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
 //!     // --------------------- Json ----------------------------------
-//!     let zstd_json_file = Zstd::from_filetype(JsonFile::from("example")); // example.json.zst
-//!     // zstd_json_file has the type Zstd<JsonFile>
+//!     let zstd_json_file: Zstd<JsonFile<_>> = "example".into(); // example.json.zst
 //!     zstd_json_file.write(&chem)?; // Writes zstd compressed json file
 //!     let decoded: Chemistry = zstd_json_file.read()?;
 //!     assert_eq!(chem, decoded);
 //!     # std::fs::remove_file(zstd_json_file)?; // Remove the file (hidden from the doc)
 //!
 //!     // --------------------- Bincode ----------------------------------
-//!     let zstd_bin_file: Zstd<BincodeFile<_>> = Zstd::from("example"); // example.bincode.zst
-//!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()
+//!     let zstd_bin_file: Zstd<BincodeFile<_>> = "example".into(); // example.bincode.zst
 //!     zstd_bin_file.write(&chem)?; // Writes zstd compressed bincode file
 //!     let decoded: Chemistry = zstd_bin_file.read()?;
 //!     assert_eq!(chem, decoded);

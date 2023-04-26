@@ -20,8 +20,7 @@
 //!
 //! fn main() -> Result<(), Error> {
 //!     let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
-//!     let gz_json_file = Gzip::from_filetype(JsonFile::from("example")); // example.json.gz
-//!     // gz_json_file has the type Gzip<JsonFile>
+//!     let gz_json_file: Gzip<JsonFile<_>> = "example".into(); // example.json.gz
 //!     gz_json_file.write(&chem)?; // Writes gzip compressed json file
 //!     let decoded: Chemistry = gz_json_file.read()?;
 //!     assert_eq!(chem, decoded);
