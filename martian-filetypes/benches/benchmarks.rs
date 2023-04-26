@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
-use martian::{MartianFileType, MartianTempFile};
+use martian::MartianTempFile;
 use martian_filetypes::bin_file::BincodeFile;
 use martian_filetypes::json_file::JsonFile;
 use martian_filetypes::lz4_file::Lz4;
