@@ -20,8 +20,7 @@
 //!
 //! fn main() -> Result<(), Error> {
 //!     let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
-//!     let gz_json_file = Gzip::from_filetype(JsonFile::from("example")); // example.json.gz
-//!     // gz_json_file has the type Gzip<JsonFile>
+//!     let gz_json_file: Gzip<JsonFile<_>> = "example".into(); // example.json.gz
 //!     gz_json_file.write(&chem)?; // Writes gzip compressed json file
 //!     let decoded: Chemistry = gz_json_file.read()?;
 //!     assert_eq!(chem, decoded);
@@ -44,21 +43,6 @@ crate::martian_filetype_decorator! {
     /// A struct that wraps a basic `MartianFileType` and adds gzip compression
     /// capability.
     pub struct Gzip, "gz"
-}
-
-impl<F> Gzip<F>
-where
-    F: MartianFileType,
-{
-    /// Create an Gzip wrapped filetype from a basic filetype
-    /// ```rust
-    /// use martian_filetypes::{gzip_file::Gzip, bin_file::BincodeFile};
-    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::<()>::from("example"));
-    /// assert_eq!(gz_bin_file.as_ref(), std::path::Path::new("example.bincode.gz"));
-    /// ```
-    pub fn from_filetype(source: F) -> Self {
-        Self::from(source.as_ref())
-    }
 }
 
 impl<F, T> FileTypeRead<T> for Gzip<F>
@@ -206,6 +190,7 @@ mod tests {
     use super::*;
     use crate::json_file::JsonFile;
     use crate::LazyFileTypeIO;
+    use martian::MartianTempFile;
     use std::path::{Path, PathBuf};
 
     martian_derive::martian_filetype! {CompoundFile, "foo.bar"}
@@ -308,23 +293,13 @@ mod tests {
     }
 
     #[test]
-    fn test_gz_from_filetype() {
-        assert_eq!(
-            Gzip::<JsonFile<()>>::new("/some/path/", "file"),
-            Gzip::from_filetype(JsonFile::new("/some/path/", "file"))
-        );
-    }
-
-    #[test]
     fn test_gz_extension() {
         assert_eq!(Gzip::<JsonFile<()>>::extension(), "json.gz");
     }
 
     #[test]
     fn test_json_gz_lazy_write() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "file");
-        let file = Gzip::from_filetype(json_file);
+        let file = Gzip::<JsonFile<_>>::tempfile()?;
         let mut writer = file.lazy_writer()?;
         for i in 0..10usize {
             writer.write_item(&i)?;
@@ -339,19 +314,19 @@ mod tests {
     }
 
     #[test]
-    fn test_json_gz_lazy_write_no_finish() {
-        let dir = tempfile::tempdir().unwrap();
-        let file: Gzip<JsonFile<_>> = Gzip::new(dir.path(), "file");
-        let mut writer = file.lazy_writer().unwrap();
+    fn test_json_gz_lazy_write_no_finish() -> Result<(), Error> {
+        let file = Gzip::<JsonFile<_>>::tempfile()?;
+        let mut writer = file.lazy_writer()?;
         for i in 0..10 {
-            writer.write_item(&i).unwrap();
+            writer.write_item(&i)?;
         }
         drop(writer);
-        let reader = file.lazy_reader().unwrap();
+        let reader = file.lazy_reader()?;
         for (i, val) in reader.enumerate() {
-            let val: usize = val.unwrap();
+            let val: usize = val?;
             assert_eq!(val, i);
         }
+        Ok(())
     }
 
     #[test]

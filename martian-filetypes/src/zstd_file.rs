@@ -22,16 +22,14 @@
 //! fn main() -> Result<(), Error> {
 //!     let chem = Chemistry { name: "SCVDJ".into(), paired_end: true };
 //!     // --------------------- Json ----------------------------------
-//!     let zstd_json_file = Zstd::from_filetype(JsonFile::from("example")); // example.json.zst
-//!     // zstd_json_file has the type Zstd<JsonFile>
+//!     let zstd_json_file: Zstd<JsonFile<_>> = "example".into(); // example.json.zst
 //!     zstd_json_file.write(&chem)?; // Writes zstd compressed json file
 //!     let decoded: Chemistry = zstd_json_file.read()?;
 //!     assert_eq!(chem, decoded);
 //!     # std::fs::remove_file(zstd_json_file)?; // Remove the file (hidden from the doc)
 //!
 //!     // --------------------- Bincode ----------------------------------
-//!     let zstd_bin_file: Zstd<BincodeFile<_>> = Zstd::from("example"); // example.bincode.zst
-//!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()
+//!     let zstd_bin_file: Zstd<BincodeFile<_>> = "example".into(); // example.bincode.zst
 //!     zstd_bin_file.write(&chem)?; // Writes zstd compressed bincode file
 //!     let decoded: Chemistry = zstd_bin_file.read()?;
 //!     assert_eq!(chem, decoded);
@@ -104,21 +102,6 @@ martian_filetype_decorator! {
     /// A struct that wraps a basic `MartianFileType` and adds zstd compression
     /// capability.
     pub struct Zstd, "zst"
-}
-
-impl<F> Zstd<F>
-where
-    F: MartianFileType,
-{
-    /// Create an Zstd wrapped filetype from a basic filetype
-    /// ```rust
-    /// use martian_filetypes::{zstd_file::Zstd, bin_file::BincodeFile};
-    /// let zstd_bin_file = Zstd::from_filetype(BincodeFile::<()>::from("example"));
-    /// assert_eq!(zstd_bin_file.as_ref(), std::path::Path::new("example.bincode.zst"));
-    /// ```
-    pub fn from_filetype(source: F) -> Self {
-        Self::from(source.as_ref())
-    }
 }
 
 impl<F, T> FileTypeRead<T> for Zstd<F>
@@ -275,6 +258,7 @@ mod tests {
     use super::*;
     use crate::json_file::JsonFile;
     use crate::LazyFileTypeIO;
+    use martian::MartianTempFile;
     use std::path::{Path, PathBuf};
 
     martian_derive::martian_filetype! {CompoundFile, "foo.bar"}
@@ -377,23 +361,14 @@ mod tests {
     }
 
     #[test]
-    fn test_zstd_from_filetype() {
-        assert_eq!(
-            Zstd::<JsonFile<()>>::new("/some/path/", "file"),
-            Zstd::from_filetype(JsonFile::new("/some/path/", "file"))
-        );
-    }
-
-    #[test]
     fn test_zstd_extension() {
         assert_eq!(Zstd::<JsonFile<()>>::extension(), "json.zst");
     }
 
     #[test]
     fn test_json_zstd_lazy_write() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let json_file = JsonFile::new(dir.path(), "file");
-        let file = Zstd::from_filetype(json_file);
+        let file = Zstd::<JsonFile<_>>::tempfile()?;
+
         let mut writer = file.lazy_writer()?;
         for i in 0..10usize {
             writer.write_item(&i)?;
@@ -408,19 +383,19 @@ mod tests {
     }
 
     #[test]
-    fn test_json_zstd_lazy_write_no_finish() {
-        let dir = tempfile::tempdir().unwrap();
-        let file = Zstd::<JsonFile<Vec<usize>>>::new(dir.path(), "file");
-        let mut writer = file.lazy_writer().unwrap();
+    fn test_json_zstd_lazy_write_no_finish() -> Result<(), Error> {
+        let file = Zstd::<JsonFile<_>>::tempfile()?;
+        let mut writer = file.lazy_writer()?;
         for i in 0..10 {
-            writer.write_item(&i).unwrap();
+            writer.write_item(&i)?;
         }
         drop(writer);
-        let reader = file.lazy_reader().unwrap();
+        let reader = file.lazy_reader()?;
         for (i, val) in reader.enumerate() {
-            let val: usize = val.unwrap();
+            let val: usize = val?;
             assert_eq!(val, i);
         }
+        Ok(())
     }
 
     #[test]

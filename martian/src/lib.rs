@@ -28,6 +28,9 @@ pub use metadata::*;
 mod macros;
 
 mod stage;
+mod temporary_file;
+pub use temporary_file::*;
+
 pub mod utils;
 pub use stage::*;
 

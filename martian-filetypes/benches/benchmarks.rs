@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
-use martian::MartianFileType;
+use martian::MartianTempFile;
 use martian_filetypes::bin_file::BincodeFile;
 use martian_filetypes::json_file::JsonFile;
 use martian_filetypes::lz4_file::Lz4;
@@ -16,14 +16,13 @@ struct Foo {
 
 fn lazy_read_bench<F, T>(c: &mut Criterion, data: Vec<T>, key: &'static str)
 where
-    F: FileTypeIO<Vec<T>> + LazyFileTypeIO<T> + 'static,
+    F: FileTypeIO<Vec<T>> + LazyFileTypeIO<T> + MartianTempFile + 'static,
     Lz4<F>: FileTypeIO<Vec<T>> + LazyFileTypeIO<T>,
 {
-    let dir = tempfile::tempdir().unwrap();
-    let file_full = F::new(dir.path(), "benchmark_full");
-    let file_lazy = F::new(dir.path(), "benchmark_lazy");
-    let file_lz4 = Lz4::<F>::new(dir.path(), "benchmark_lz4");
-    let file_lz4_lazy = Lz4::<F>::new(dir.path(), "benchmark_lz4_lazy");
+    let file_full = F::tempfile().unwrap();
+    let file_lazy = F::tempfile().unwrap();
+    let file_lz4 = Lz4::<F>::tempfile().unwrap();
+    let file_lz4_lazy = Lz4::<F>::tempfile().unwrap();
     file_full.write(&data).unwrap();
     file_lazy.write(&data).unwrap();
     file_lz4.write(&data).unwrap();
@@ -65,11 +64,10 @@ where
     Lz4<F>: FileTypeIO<Vec<T>> + LazyFileTypeIO<T>,
     T: Clone + 'static,
 {
-    let dir = tempfile::tempdir().unwrap();
-    let file_full = F::new(dir.path(), "benchmark_full");
-    let file_lazy = F::new(dir.path(), "benchmark_lazy");
-    let file_lz4 = Lz4::<F>::new(dir.path(), "benchmark_lz4");
-    let file_lz4_lazy = Lz4::<F>::new(dir.path(), "benchmark_lz4_lazy");
+    let file_full = F::tempfile().unwrap();
+    let file_lazy = F::tempfile().unwrap();
+    let file_lz4 = Lz4::<F>::tempfile().unwrap();
+    let file_lz4_lazy = Lz4::<F>::tempfile().unwrap();
     let elements = data.len() as u32;
 
     let mut group = c.benchmark_group(key);

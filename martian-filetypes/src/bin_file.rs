@@ -333,7 +333,7 @@ where
 mod tests {
     use super::*;
     use crate::LazyFileTypeIO;
-    use martian::MartianFileType;
+    use martian::{MartianFileType, MartianTempFile};
     use proptest::arbitrary::any;
     use proptest::collection::vec;
     use proptest::{prop_assert, proptest};
@@ -413,10 +413,8 @@ mod tests {
 
     #[test]
     fn test_bincode_inconsistent_type() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-
-        let fn1 = BincodeFile::new(dir.path(), "test1");
-        let fn2 = BincodeFile::new(dir.path(), "test2");
+        let fn1 = BincodeFile::<Vec<_>>::tempfile()?;
+        let fn2 = BincodeFile::<Vec<_>>::tempfile()?;
 
         let v1 = vec![1u8, 2u8, 3u8];
         let v2 = vec![1u64, 2u64, 3u64];
@@ -426,21 +424,13 @@ mod tests {
         let _: Vec<u8> = fn1.read()?;
         let _: Vec<u64> = fn2.read()?;
 
-        assert!(BincodeFile::<Vec<u64>>::new(dir.path(), "test1")
-            .read()
-            .is_err());
-        assert!(BincodeFile::<u8>::new(dir.path(), "test1").read().is_err());
-        assert!(BincodeFile::<String>::new(dir.path(), "test1")
-            .read()
-            .is_err());
+        assert!(BincodeFile::<Vec<u64>>::from_path(&fn1).read().is_err());
+        assert!(BincodeFile::<u8>::from_path(&fn1).read().is_err());
+        assert!(BincodeFile::<String>::from_path(&fn1).read().is_err());
 
-        assert!(BincodeFile::<Vec<u8>>::new(dir.path(), "test2")
-            .read()
-            .is_err());
-        assert!(BincodeFile::<u8>::new(dir.path(), "test2").read().is_err());
-        assert!(BincodeFile::<String>::new(dir.path(), "test2")
-            .read()
-            .is_err());
+        assert!(BincodeFile::<Vec<u8>>::from_path(&fn2).read().is_err());
+        assert!(BincodeFile::<u8>::from_path(&fn2).read().is_err());
+        assert!(BincodeFile::<String>::from_path(&fn2).read().is_err());
 
         Ok(())
     }
@@ -448,8 +438,7 @@ mod tests {
     #[test]
     fn test_lazy_read() -> Result<(), Error> {
         let values: Vec<u16> = (0..100).into_iter().collect();
-        let dir = tempfile::tempdir()?;
-        let bin_file = BincodeFile::new(dir.path(), "my_file");
+        let bin_file = BincodeFile::tempfile()?;
         bin_file.write(&values)?;
 
         let inc_reader = bin_file.lazy_reader()?;
@@ -472,8 +461,7 @@ mod tests {
 
     #[test]
     fn test_bincode_lazy_write_and_read() -> Result<(), Error> {
-        let dir = tempfile::tempdir()?;
-        let bin_file = BincodeFile::new(dir.path(), "my_file");
+        let bin_file = BincodeFile::tempfile()?;
         let mut writer = bin_file.lazy_writer()?;
         for i in 0..10i32 {
             writer.write_item(&i)?;
