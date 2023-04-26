@@ -346,31 +346,6 @@
 <span id="346">346</span>
 <span id="347">347</span>
 <span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
-<span id="360">360</span>
-<span id="361">361</span>
-<span id="362">362</span>
-<span id="363">363</span>
-<span id="364">364</span>
-<span id="365">365</span>
-<span id="366">366</span>
-<span id="367">367</span>
-<span id="368">368</span>
-<span id="369">369</span>
-<span id="370">370</span>
-<span id="371">371</span>
-<span id="372">372</span>
-<span id="373">373</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines an `gzip` wrapper over other basic filetypes. Most basic
 //! filetypes automatically inherit this behavior through the trait heirarchy.
@@ -393,8 +368,7 @@
 //!
 //! fn main() -&gt; Result&lt;(), Error&gt; {
 //!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };
-//!     let gz_json_file = Gzip::from_filetype(JsonFile::from(&quot;example&quot;)); // example.json.gz
-//!     // gz_json_file has the type Gzip&lt;JsonFile&gt;
+//!     let gz_json_file: Gzip&lt;JsonFile&lt;_&gt;&gt; = &quot;example&quot;.into(); // example.json.gz
 //!     gz_json_file.write(&amp;chem)?; // Writes gzip compressed json file
 //!     let decoded: Chemistry = gz_json_file.read()?;
 //!     assert_eq!(chem, decoded);
@@ -418,21 +392,6 @@
     /// capability.
     </span><span class="kw">pub struct </span>Gzip, <span class="string">&quot;gz&quot;
 </span>}
-
-<span class="kw">impl</span>&lt;F&gt; Gzip&lt;F&gt;
-<span class="kw">where
-    </span>F: MartianFileType,
-{
-    <span class="doccomment">/// Create an Gzip wrapped filetype from a basic filetype
-    /// ```rust
-    /// use martian_filetypes::{gzip_file::Gzip, bin_file::BincodeFile};
-    /// let gz_bin_file = Gzip::from_filetype(BincodeFile::&lt;()&gt;::from(&quot;example&quot;));
-    /// assert_eq!(gz_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.gz&quot;));
-    /// ```
-    </span><span class="kw">pub fn </span>from_filetype(source: F) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::from(source.as_ref())
-    }
-}
 
 <span class="kw">impl</span>&lt;F, T&gt; FileTypeRead&lt;T&gt; <span class="kw">for </span>Gzip&lt;F&gt;
 <span class="kw">where
@@ -579,6 +538,7 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::json_file::JsonFile;
     <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
+    <span class="kw">use </span>martian::MartianTempFile;
     <span class="kw">use </span>std::path::{Path, PathBuf};
 
     <span class="macro">martian_derive::martian_filetype! </span>{CompoundFile, <span class="string">&quot;foo.bar&quot;</span>}
@@ -681,23 +641,13 @@
     }
 
     <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_gz_from_filetype() {
-        <span class="macro">assert_eq!</span>(
-            Gzip::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            Gzip::from_filetype(JsonFile::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>))
-        );
-    }
-
-    <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_gz_extension() {
         <span class="macro">assert_eq!</span>(Gzip::&lt;JsonFile&lt;()&gt;&gt;::extension(), <span class="string">&quot;json.gz&quot;</span>);
     }
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_json_gz_lazy_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;file&quot;</span>);
-        <span class="kw">let </span>file = Gzip::from_filetype(json_file);
+        <span class="kw">let </span>file = Gzip::&lt;JsonFile&lt;<span class="kw">_</span>&gt;&gt;::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10usize </span>{
             writer.write_item(<span class="kw-2">&amp;</span>i)<span class="question-mark">?</span>;
@@ -712,19 +662,19 @@
     }
 
     <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_json_gz_lazy_write_no_finish() {
-        <span class="kw">let </span>dir = tempfile::tempdir().unwrap();
-        <span class="kw">let </span>file: Gzip&lt;JsonFile&lt;<span class="kw">_</span>&gt;&gt; = Gzip::new(dir.path(), <span class="string">&quot;file&quot;</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer().unwrap();
+    </span><span class="kw">fn </span>test_json_gz_lazy_write_no_finish() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>file = Gzip::&lt;JsonFile&lt;<span class="kw">_</span>&gt;&gt;::tempfile()<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10 </span>{
-            writer.write_item(<span class="kw-2">&amp;</span>i).unwrap();
+            writer.write_item(<span class="kw-2">&amp;</span>i)<span class="question-mark">?</span>;
         }
         drop(writer);
-        <span class="kw">let </span>reader = file.lazy_reader().unwrap();
+        <span class="kw">let </span>reader = file.lazy_reader()<span class="question-mark">?</span>;
         <span class="kw">for </span>(i, val) <span class="kw">in </span>reader.enumerate() {
-            <span class="kw">let </span>val: usize = val.unwrap();
+            <span class="kw">let </span>val: usize = val<span class="question-mark">?</span>;
             <span class="macro">assert_eq!</span>(val, i);
         }
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="attribute">#[test]

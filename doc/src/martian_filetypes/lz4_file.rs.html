@@ -414,32 +414,6 @@
 <span id="414">414</span>
 <span id="415">415</span>
 <span id="416">416</span>
-<span id="417">417</span>
-<span id="418">418</span>
-<span id="419">419</span>
-<span id="420">420</span>
-<span id="421">421</span>
-<span id="422">422</span>
-<span id="423">423</span>
-<span id="424">424</span>
-<span id="425">425</span>
-<span id="426">426</span>
-<span id="427">427</span>
-<span id="428">428</span>
-<span id="429">429</span>
-<span id="430">430</span>
-<span id="431">431</span>
-<span id="432">432</span>
-<span id="433">433</span>
-<span id="434">434</span>
-<span id="435">435</span>
-<span id="436">436</span>
-<span id="437">437</span>
-<span id="438">438</span>
-<span id="439">439</span>
-<span id="440">440</span>
-<span id="441">441</span>
-<span id="442">442</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines an `lz4` wrapper over other basic filetypes. Most basic
 //! filetypes automatically inherit this behavior through the trait heirarchy.
@@ -464,16 +438,14 @@
 //! fn main() -&gt; Result&lt;(), Error&gt; {
 //!     let chem = Chemistry { name: &quot;SCVDJ&quot;.into(), paired_end: true };
 //!     // --------------------- Json ----------------------------------
-//!     let lz4_json_file = Lz4::from_filetype(JsonFile::from(&quot;example&quot;)); // example.json.lz4
-//!     // lz4_json_file has the type Lz4&lt;JsonFile&gt;
+//!     let lz4_json_file: Lz4&lt;JsonFile&lt;_&gt;&gt; = &quot;example&quot;.into(); // example.json.lz4
 //!     lz4_json_file.write(&amp;chem)?; // Writes lz4 compressed json file
 //!     let decoded: Chemistry = lz4_json_file.read()?;
 //!     assert_eq!(chem, decoded);
 //!     # std::fs::remove_file(lz4_json_file)?; // Remove the file (hidden from the doc)
 //!
 //!     // --------------------- Bincode ----------------------------------
-//!     let lz4_bin_file: Lz4&lt;BincodeFile&lt;_&gt;&gt; = Lz4::from(&quot;example&quot;); // example.bincode.lz4
-//!     // Need to explcitly annotate the type id you are using from() or MartianFileType::new()
+//!     let lz4_bin_file: Lz4&lt;BincodeFile&lt;_&gt;&gt; = &quot;example&quot;.into(); // example.bincode.lz4
 //!     lz4_bin_file.write(&amp;chem)?; // Writes lz4 compressed bincode file
 //!     let decoded: Chemistry = lz4_bin_file.read()?;
 //!     assert_eq!(chem, decoded);
@@ -547,21 +519,6 @@
     /// capability.
     </span><span class="kw">pub struct </span>Lz4, <span class="string">&quot;lz4&quot;
 </span>}
-
-<span class="kw">impl</span>&lt;F&gt; Lz4&lt;F&gt;
-<span class="kw">where
-    </span>F: MartianFileType,
-{
-    <span class="doccomment">/// Create an Lz4 wrapped filetype from a basic filetype
-    /// ```rust
-    /// use martian_filetypes::{lz4_file::Lz4, bin_file::BincodeFile};
-    /// let lz4_bin_file = Lz4::from_filetype(BincodeFile::&lt;()&gt;::from(&quot;example&quot;));
-    /// assert_eq!(lz4_bin_file.as_ref(), std::path::Path::new(&quot;example.bincode.lz4&quot;));
-    /// ```
-    </span><span class="kw">pub fn </span>from_filetype(source: F) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::from(source.as_ref())
-    }
-}
 
 <span class="kw">impl</span>&lt;F, T&gt; FileTypeRead&lt;T&gt; <span class="kw">for </span>Lz4&lt;F&gt;
 <span class="kw">where
@@ -717,6 +674,7 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::json_file::JsonFile;
     <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
+    <span class="kw">use </span>martian::MartianTempFile;
     <span class="kw">use </span>std::path::{Path, PathBuf};
 
     <span class="macro">martian_derive::martian_filetype! </span>{CompoundFile, <span class="string">&quot;foo.bar&quot;</span>}
@@ -819,23 +777,13 @@
     }
 
     <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_lz4_from_filetype() {
-        <span class="macro">assert_eq!</span>(
-            Lz4::&lt;JsonFile&lt;()&gt;&gt;::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>),
-            Lz4::from_filetype(JsonFile::new(<span class="string">&quot;/some/path/&quot;</span>, <span class="string">&quot;file&quot;</span>))
-        );
-    }
-
-    <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_lz4_extension() {
         <span class="macro">assert_eq!</span>(Lz4::&lt;JsonFile&lt;()&gt;&gt;::extension(), <span class="string">&quot;json.lz4&quot;</span>);
     }
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_json_lz4_lazy_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;file&quot;</span>);
-        <span class="kw">let </span>file = Lz4::from_filetype(json_file);
+        <span class="kw">let </span>file = Lz4::&lt;JsonFile&lt;<span class="kw">_</span>&gt;&gt;::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10usize </span>{
             writer.write_item(<span class="kw-2">&amp;</span>i)<span class="question-mark">?</span>;
@@ -850,19 +798,19 @@
     }
 
     <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_json_lz4_lazy_write_no_finish() {
-        <span class="kw">let </span>dir = tempfile::tempdir().unwrap();
-        <span class="kw">let </span>file = Lz4::&lt;JsonFile&lt;Vec&lt;usize&gt;&gt;&gt;::new(dir.path(), <span class="string">&quot;file&quot;</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer().unwrap();
+    </span><span class="kw">fn </span>test_json_lz4_lazy_write_no_finish() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>file = Lz4::&lt;JsonFile&lt;Vec&lt;usize&gt;&gt;&gt;::tempfile()<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10 </span>{
-            writer.write_item(<span class="kw-2">&amp;</span>i).unwrap();
+            writer.write_item(<span class="kw-2">&amp;</span>i)<span class="question-mark">?</span>;
         }
         drop(writer);
-        <span class="kw">let </span>reader = file.lazy_reader().unwrap();
+        <span class="kw">let </span>reader = file.lazy_reader()<span class="question-mark">?</span>;
         <span class="kw">for </span>(i, val) <span class="kw">in </span>reader.enumerate() {
-            <span class="kw">let </span>val: usize = val.unwrap();
+            <span class="kw">let </span>val: usize = val<span class="question-mark">?</span>;
             <span class="macro">assert_eq!</span>(val, i);
         }
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="attribute">#[test]

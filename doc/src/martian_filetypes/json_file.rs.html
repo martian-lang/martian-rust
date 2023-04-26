@@ -513,11 +513,6 @@
 <span id="513">513</span>
 <span id="514">514</span>
 <span id="515">515</span>
-<span id="516">516</span>
-<span id="517">517</span>
-<span id="518">518</span>
-<span id="519">519</span>
-<span id="520">520</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines a `JsonFile` and implements `FileTypeIO&lt;T&gt;` and
 //! `LazyFileTypeIO&lt;T&gt;` trait for a json file.
@@ -844,7 +839,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
-    <span class="kw">use </span>martian::MartianFileType;
+    <span class="kw">use </span>martian::{MartianFileType, MartianTempFile};
     <span class="kw">use </span>proptest::arbitrary::any;
     <span class="kw">use </span>proptest::collection::vec;
     <span class="kw">use </span>proptest::{prop_assert, proptest};
@@ -863,13 +858,12 @@
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_json_file() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">let </span>barcodes: Vec&lt;String&gt; = <span class="macro">vec!</span>[<span class="string">&quot;AAAA&quot;</span>.into(), <span class="string">&quot;AACC&quot;</span>.into(), <span class="string">&quot;AAGG&quot;</span>.into()];
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>bc_json = JsonFile::new(dir.path(), <span class="string">&quot;barcodes&quot;</span>);
+        <span class="kw">let </span>bc_json = JsonFile::tempfile()<span class="question-mark">?</span>;
         bc_json.write(<span class="kw-2">&amp;</span>barcodes)<span class="question-mark">?</span>;
         <span class="kw">let </span>actual = bc_json.read()<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(barcodes, actual);
         <span class="macro">assert_eq!</span>(
-            std::fs::read_to_string(bc_json)<span class="question-mark">?</span>,
+            std::fs::read_to_string(bc_json.as_ref())<span class="question-mark">?</span>,
             <span class="string">&quot;[\n    \&quot;AAAA\&quot;,\n    \&quot;AACC\&quot;,\n    \&quot;AAGG\&quot;\n]&quot;
         </span>);
         <span class="prelude-val">Ok</span>(())
@@ -932,11 +926,10 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_json_lazy_read_not_vec() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;lazy_test&quot;</span>);
+        <span class="kw">let </span>json_file = JsonFile::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span>input = String::from(<span class="string">&quot;Hello&quot;</span>);
         json_file.write(<span class="kw-2">&amp;</span>input)<span class="question-mark">?</span>;
-        <span class="kw">let </span>reader_wrong_type: JsonFile&lt;Vec&lt;i32&gt;&gt; = JsonFile::new(dir.path(), <span class="string">&quot;lazy_test&quot;</span>);
+        <span class="kw">let </span>reader_wrong_type: JsonFile&lt;Vec&lt;i32&gt;&gt; = JsonFile::from_path(<span class="kw-2">&amp;</span>json_file);
         <span class="macro">assert!</span>(reader_wrong_type.lazy_reader().is_err());
         <span class="prelude-val">Ok</span>(())
     }
@@ -946,8 +939,7 @@
         </span>T: Serialize + DeserializeOwned + PartialEq,
     {
         <span class="comment">// Serde write + Lazy read
-        </span><span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;serde&quot;</span>);
+        </span><span class="kw">let </span>json_file = JsonFile::tempfile()<span class="question-mark">?</span>;
         serde_json::to_writer(json_file.buf_writer()<span class="question-mark">?</span>, input)<span class="question-mark">?</span>;
         <span class="kw">let </span>decoded: Vec&lt;T&gt; = json_file
             .lazy_reader()<span class="question-mark">?
@@ -956,7 +948,7 @@
         <span class="macro">assert!</span>(input == decoded);
 
         <span class="comment">// Serde write pretty + lazy read
-        </span><span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;serde_pretty&quot;</span>);
+        </span><span class="kw">let </span>json_file = JsonFile::from_path(<span class="kw-2">&amp;</span>json_file);
         serde_json::to_writer_pretty(json_file.buf_writer()<span class="question-mark">?</span>, input)<span class="question-mark">?</span>;
         <span class="kw">let </span>decoded: Vec&lt;T&gt; = json_file
             .lazy_reader()<span class="question-mark">?
@@ -969,8 +961,7 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_json_lazy_read_serde_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;lazy_test&quot;</span>);
+        <span class="kw">let </span>json_file = JsonFile::tempfile()<span class="question-mark">?</span>;
         {
             <span class="kw">let </span>input = <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
             serde_json::to_writer(json_file.buf_writer()<span class="question-mark">?</span>, <span class="kw-2">&amp;</span>input)<span class="question-mark">?</span>;
@@ -995,8 +986,7 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_json_lazy_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;lazy_write&quot;</span>);
+        <span class="kw">let </span>json_file = JsonFile::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span>input: Vec&lt;i32&gt; = (<span class="number">0</span>..<span class="number">10</span>).collect();
 
         <span class="kw">let </span><span class="kw-2">mut </span>writer = json_file.lazy_writer()<span class="question-mark">?</span>;
@@ -1012,20 +1002,20 @@
     }
 
     <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_json_lazy_write_no_finish() {
-        <span class="kw">let </span>dir = tempfile::tempdir().unwrap();
-        <span class="kw">let </span>json_file = JsonFile::new(dir.path(), <span class="string">&quot;lazy_write&quot;</span>);
+    </span><span class="kw">fn </span>test_json_lazy_write_no_finish() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>json_file = JsonFile::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span>input: Vec&lt;i32&gt; = (<span class="number">0</span>..<span class="number">10</span>).collect();
-        <span class="kw">let </span><span class="kw-2">mut </span>writer = json_file.lazy_writer().unwrap();
+        <span class="kw">let </span><span class="kw-2">mut </span>writer = json_file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span>input {
-            writer.write_item(i).unwrap();
+            writer.write_item(i)<span class="question-mark">?</span>;
         }
         drop(writer);
-        <span class="kw">let </span>reader = json_file.lazy_reader().unwrap();
+        <span class="kw">let </span>reader = json_file.lazy_reader()<span class="question-mark">?</span>;
         <span class="kw">for </span>(i, val) <span class="kw">in </span>reader.enumerate() {
-            <span class="kw">let </span>val: i32 = val.unwrap();
+            <span class="kw">let </span>val: i32 = val<span class="question-mark">?</span>;
             <span class="macro">assert_eq!</span>(val, i <span class="kw">as </span>i32);
         }
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="attribute">#[test]

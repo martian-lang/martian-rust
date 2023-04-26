@@ -473,18 +473,6 @@
 <span id="473">473</span>
 <span id="474">474</span>
 <span id="475">475</span>
-<span id="476">476</span>
-<span id="477">477</span>
-<span id="478">478</span>
-<span id="479">479</span>
-<span id="480">480</span>
-<span id="481">481</span>
-<span id="482">482</span>
-<span id="483">483</span>
-<span id="484">484</span>
-<span id="485">485</span>
-<span id="486">486</span>
-<span id="487">487</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This module defines a `BincodeFile` and implements `FileTypeIO&lt;T&gt;` and
 //! `LazyFileTypeIO&lt;T&gt;` trait for a bincode file. It is essentially a wrapper
@@ -820,7 +808,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
-    <span class="kw">use </span>martian::MartianFileType;
+    <span class="kw">use </span>martian::{MartianFileType, MartianTempFile};
     <span class="kw">use </span>proptest::arbitrary::any;
     <span class="kw">use </span>proptest::collection::vec;
     <span class="kw">use </span>proptest::{prop_assert, proptest};
@@ -900,10 +888,8 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_bincode_inconsistent_type() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>fn1 = BincodeFile::new(dir.path(), <span class="string">&quot;test1&quot;</span>);
-        <span class="kw">let </span>fn2 = BincodeFile::new(dir.path(), <span class="string">&quot;test2&quot;</span>);
+        <span class="kw">let </span>fn1 = BincodeFile::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;::tempfile()<span class="question-mark">?</span>;
+        <span class="kw">let </span>fn2 = BincodeFile::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;::tempfile()<span class="question-mark">?</span>;
 
         <span class="kw">let </span>v1 = <span class="macro">vec!</span>[<span class="number">1u8</span>, <span class="number">2u8</span>, <span class="number">3u8</span>];
         <span class="kw">let </span>v2 = <span class="macro">vec!</span>[<span class="number">1u64</span>, <span class="number">2u64</span>, <span class="number">3u64</span>];
@@ -913,21 +899,13 @@
         <span class="kw">let _</span>: Vec&lt;u8&gt; = fn1.read()<span class="question-mark">?</span>;
         <span class="kw">let _</span>: Vec&lt;u64&gt; = fn2.read()<span class="question-mark">?</span>;
 
-        <span class="macro">assert!</span>(BincodeFile::&lt;Vec&lt;u64&gt;&gt;::new(dir.path(), <span class="string">&quot;test1&quot;</span>)
-            .read()
-            .is_err());
-        <span class="macro">assert!</span>(BincodeFile::&lt;u8&gt;::new(dir.path(), <span class="string">&quot;test1&quot;</span>).read().is_err());
-        <span class="macro">assert!</span>(BincodeFile::&lt;String&gt;::new(dir.path(), <span class="string">&quot;test1&quot;</span>)
-            .read()
-            .is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;Vec&lt;u64&gt;&gt;::from_path(<span class="kw-2">&amp;</span>fn1).read().is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;u8&gt;::from_path(<span class="kw-2">&amp;</span>fn1).read().is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;String&gt;::from_path(<span class="kw-2">&amp;</span>fn1).read().is_err());
 
-        <span class="macro">assert!</span>(BincodeFile::&lt;Vec&lt;u8&gt;&gt;::new(dir.path(), <span class="string">&quot;test2&quot;</span>)
-            .read()
-            .is_err());
-        <span class="macro">assert!</span>(BincodeFile::&lt;u8&gt;::new(dir.path(), <span class="string">&quot;test2&quot;</span>).read().is_err());
-        <span class="macro">assert!</span>(BincodeFile::&lt;String&gt;::new(dir.path(), <span class="string">&quot;test2&quot;</span>)
-            .read()
-            .is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;Vec&lt;u8&gt;&gt;::from_path(<span class="kw-2">&amp;</span>fn2).read().is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;u8&gt;::from_path(<span class="kw-2">&amp;</span>fn2).read().is_err());
+        <span class="macro">assert!</span>(BincodeFile::&lt;String&gt;::from_path(<span class="kw-2">&amp;</span>fn2).read().is_err());
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -935,8 +913,7 @@
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_lazy_read() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">let </span>values: Vec&lt;u16&gt; = (<span class="number">0</span>..<span class="number">100</span>).into_iter().collect();
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>bin_file = BincodeFile::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>bin_file = BincodeFile::tempfile()<span class="question-mark">?</span>;
         bin_file.write(<span class="kw-2">&amp;</span>values)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>inc_reader = bin_file.lazy_reader()<span class="question-mark">?</span>;
@@ -959,8 +936,7 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_bincode_lazy_write_and_read() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>bin_file = BincodeFile::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>bin_file = BincodeFile::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>writer = bin_file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10i32 </span>{
             writer.write_item(<span class="kw-2">&amp;</span>i)<span class="question-mark">?</span>;

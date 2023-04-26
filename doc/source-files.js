@@ -24,7 +24,7 @@ var sourcesIndex = JSON.parse('{\
 "log":["",[],["lib.rs","macros.rs"]],\
 "lz4":["",[["block",[],["mod.rs"]]],["decoder.rs","encoder.rs","lib.rs","liblz4.rs"]],\
 "lz4_sys":["",[],["lib.rs"]],\
-"martian":["",[],["lib.rs","macros.rs","metadata.rs","mro.rs","prelude.rs","stage.rs","utils.rs"]],\
+"martian":["",[],["lib.rs","macros.rs","metadata.rs","mro.rs","prelude.rs","stage.rs","temporary_file.rs","utils.rs"]],\
 "martian_derive":["",[],["lib.rs"]],\
 "martian_filetypes":["",[],["bin_file.rs","gzip_file.rs","json_file.rs","lib.rs","lz4_file.rs","macros.rs","tabular_file.rs","zstd_file.rs"]],\
 "martian_lab":["",[],["lib.rs"]],\

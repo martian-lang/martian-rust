@@ -444,12 +444,6 @@
 <span id="444">444</span>
 <span id="445">445</span>
 <span id="446">446</span>
-<span id="447">447</span>
-<span id="448">448</span>
-<span id="449">449</span>
-<span id="450">450</span>
-<span id="451">451</span>
-<span id="452">452</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! This crate serves two purposes:
 //! 1. Defines traits that let you associate filetypes to in memory objects.
@@ -771,6 +765,9 @@
 }
 
 <span class="attribute">#[cfg(test)]
+</span><span class="kw">use </span>martian::MartianTempFile;
+
+<span class="attribute">#[cfg(test)]
 </span><span class="kw">pub fn </span>round_trip_check&lt;F, T&gt;(input: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;bool, Error&gt;
 <span class="kw">where
     </span>F: FileTypeIO&lt;T&gt;,
@@ -778,8 +775,7 @@
 {
     <span class="comment">// TEST 1: Write as F and read from F
     </span><span class="kw">let </span>pass_direct = {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file_roundtrip&quot;</span>);
+        <span class="kw">let </span>file = F::tempfile()<span class="question-mark">?</span>;
         file.write(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>decoded: T = file.read()<span class="question-mark">?</span>;
         input == <span class="kw-2">&amp;</span>decoded
@@ -787,8 +783,7 @@
 
     <span class="comment">// TEST 2: Write as Lz4&lt;F&gt; and read from Lz4&lt;F&gt;
     </span><span class="kw">let </span>pass_compressed_lz4 = {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file_roundtrip_compressed&quot;</span>);
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::tempfile()<span class="question-mark">?</span>;
         file.write(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>decoded: T = file.read()<span class="question-mark">?</span>;
         input == <span class="kw-2">&amp;</span>decoded
@@ -796,8 +791,7 @@
 
     <span class="comment">// TEST 3: Write as Gzip&lt;F&gt; and read from Gzip&lt;F&gt;
     </span><span class="kw">let </span>pass_compressed_gzip = {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = gzip_file::Gzip::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file_roundtrip_compressed&quot;</span>);
+        <span class="kw">let </span>file = gzip_file::Gzip::&lt;F&gt;::tempfile()<span class="question-mark">?</span>;
         file.write(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>decoded: T = file.read()<span class="question-mark">?</span>;
         input == <span class="kw-2">&amp;</span>decoded
@@ -815,8 +809,7 @@
 {
     <span class="comment">// Write + Lazy read
     </span><span class="kw">let </span>pass_w_lr = {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>file = F::tempfile()<span class="question-mark">?</span>;
         file.write(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>decoded: Vec&lt;T&gt; = file.read_all()<span class="question-mark">?</span>;
         input == <span class="kw-2">&amp;</span>decoded
@@ -824,8 +817,7 @@
 
     <span class="comment">// Write + Lazy read [Compressed]
     </span><span class="kw">let </span>pass_w_lr_c = {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::tempfile()<span class="question-mark">?</span>;
         file.write(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>decoded: Vec&lt;T&gt; = file.read_all()<span class="question-mark">?</span>;
         input == <span class="kw-2">&amp;</span>decoded
@@ -833,8 +825,7 @@
 
     <span class="comment">// Lazy write + read
     </span><span class="kw">let </span>pass_lw_r = <span class="kw">if </span>require_read {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>file = F::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>item <span class="kw">in </span>input {
             lazy_writer.write_item(item)<span class="question-mark">?</span>;
@@ -848,8 +839,7 @@
 
     <span class="comment">// Lazy write + read [Compressed]
     </span><span class="kw">let </span>pass_lw_r_c = <span class="kw">if </span>require_read {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>item <span class="kw">in </span>input {
             lazy_writer.write_item(item)<span class="question-mark">?</span>;
@@ -863,8 +853,7 @@
 
     <span class="comment">// Lazy write + Lazy read
     </span><span class="kw">let </span>pass_lw_lr = {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = F::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>file = F::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>item <span class="kw">in </span>input {
             lazy_writer.write_item(item)<span class="question-mark">?</span>;
@@ -876,8 +865,7 @@
 
     <span class="comment">// Lazy write + Lazy read [Compressed]
     </span><span class="kw">let </span>pass_lw_lr_c = {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::new(dir.path(), <span class="string">&quot;my_file&quot;</span>);
+        <span class="kw">let </span>file = lz4_file::Lz4::&lt;F&gt;::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>lazy_writer = file.lazy_writer()<span class="question-mark">?</span>;
         <span class="kw">for </span>item <span class="kw">in </span>input {
             lazy_writer.write_item(item)<span class="question-mark">?</span>;

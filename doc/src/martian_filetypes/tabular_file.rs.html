@@ -499,7 +499,6 @@
 <span id="499">499</span>
 <span id="500">500</span>
 <span id="501">501</span>
-<span id="502">502</span>
 </pre><pre class="rust"><code><span class="doccomment">//!
 //! A delimited file such as a csv file or a tab file stores a list of
 //! items of type `T`.
@@ -894,6 +893,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::LazyFileTypeIO;
+    <span class="kw">use </span>martian::MartianTempFile;
 
     <span class="attribute">#[derive(Serialize, Deserialize, PartialEq, Default)]
     </span><span class="kw">struct </span>Cell {
@@ -916,11 +916,10 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_csv_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>cells_csv = CsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        <span class="kw">let </span>cells_csv = CsvFile::tempfile()<span class="question-mark">?</span>;
         cells_csv.write(<span class="kw-2">&amp;</span>cells())<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(
-            std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_csv)<span class="question-mark">?</span>,
+            std::fs::read_to_string(cells_csv.as_ref())<span class="question-mark">?</span>,
             <span class="string">&quot;barcode,genome\nACGT,hg19\nTCAT,mm10\n&quot;
         </span>);
         <span class="prelude-val">Ok</span>(())
@@ -928,11 +927,10 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_tsv_write() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>cells_tsv = TsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        <span class="kw">let </span>cells_tsv = TsvFile::tempfile()<span class="question-mark">?</span>;
         cells_tsv.write(<span class="kw-2">&amp;</span>cells())<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(
-            std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_tsv)<span class="question-mark">?</span>,
+            std::fs::read_to_string(cells_tsv.as_ref())<span class="question-mark">?</span>,
             <span class="string">&quot;barcode\tgenome\nACGT\thg19\nTCAT\tmm10\n&quot;
         </span>);
         <span class="macro">assert_eq!</span>(
@@ -944,11 +942,10 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_tsv_write_no_header() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>cells_tsv = TsvFileNoHeader::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        <span class="kw">let </span>cells_tsv = TsvFileNoHeader::tempfile()<span class="question-mark">?</span>;
         cells_tsv.write(<span class="kw-2">&amp;</span>cells())<span class="question-mark">?</span>;
         <span class="macro">assert_eq!</span>(
-            std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_tsv)<span class="question-mark">?</span>,
+            std::fs::read_to_string(cells_tsv.as_ref())<span class="question-mark">?</span>,
             <span class="string">&quot;ACGT\thg19\nTCAT\tmm10\n&quot;
         </span>);
         <span class="macro">assert!</span>(cells_tsv.read_headers()<span class="question-mark">?</span>.is_none());
@@ -983,22 +980,23 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_lazy_header_only() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>cells_tsv: TsvFile&lt;Cell&gt; = TsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        <span class="kw">let </span>cells_tsv = TsvFile::&lt;Cell&gt;::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>writer = cells_tsv.lazy_writer()<span class="question-mark">?</span>;
         writer.write_header()<span class="question-mark">?</span>;
         writer.finish()<span class="question-mark">?</span>;
-        <span class="macro">assert_eq!</span>(std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_tsv)<span class="question-mark">?</span>, <span class="string">&quot;barcode\tgenome\n&quot;</span>);
+        <span class="macro">assert_eq!</span>(
+            std::fs::read_to_string(cells_tsv.as_ref())<span class="question-mark">?</span>,
+            <span class="string">&quot;barcode\tgenome\n&quot;
+        </span>);
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>test_lazy_no_header() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>dir = tempfile::tempdir()<span class="question-mark">?</span>;
-        <span class="kw">let </span>cells_tsv: TsvFile&lt;Cell&gt; = TsvFile::new(dir.path(), <span class="string">&quot;test&quot;</span>);
+        <span class="kw">let </span>cells_tsv = TsvFile::&lt;Cell&gt;::tempfile()<span class="question-mark">?</span>;
         <span class="kw">let </span>writer = cells_tsv.lazy_writer()<span class="question-mark">?</span>;
         writer.finish()<span class="question-mark">?</span>;
-        <span class="macro">assert_eq!</span>(std::fs::read_to_string(<span class="kw-2">&amp;</span>cells_tsv)<span class="question-mark">?</span>, <span class="string">&quot;&quot;</span>);
+        <span class="macro">assert_eq!</span>(std::fs::read_to_string(cells_tsv.as_ref())<span class="question-mark">?</span>, <span class="string">&quot;&quot;</span>);
         <span class="prelude-val">Ok</span>(())
     }
 }
