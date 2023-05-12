@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.20/src/utc_offset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utc_offset.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.21/src/utc_offset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utc_offset.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
                         <img src="https://avatars0.githubusercontent.com/u/55999857" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
@@ -345,6 +345,15 @@
 <span id="344">344</span>
 <span id="345">345</span>
 <span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
 </pre><pre class="rust"><code><span class="doccomment">//! The [`UtcOffset`] struct and its associated `impl`s.
 
 </span><span class="kw">use </span>core::fmt;
@@ -352,6 +361,7 @@
 <span class="attribute">#[cfg(feature = <span class="string">&quot;formatting&quot;</span>)]
 </span><span class="kw">use </span>std::io;
 
+<span class="kw">use </span><span class="kw">crate</span>::convert::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::error;
 <span class="attribute">#[cfg(feature = <span class="string">&quot;formatting&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::formatting::Formattable;
@@ -406,8 +416,8 @@
             <span class="macro">debug_assert!</span>(seconds &gt;= <span class="number">0</span>);
         }
         <span class="macro">debug_assert!</span>(hours.unsigned_abs() &lt; <span class="number">24</span>);
-        <span class="macro">debug_assert!</span>(minutes.unsigned_abs() &lt; <span class="number">60</span>);
-        <span class="macro">debug_assert!</span>(seconds.unsigned_abs() &lt; <span class="number">60</span>);
+        <span class="macro">debug_assert!</span>(minutes.unsigned_abs() &lt; Minute.per(Hour));
+        <span class="macro">debug_assert!</span>(seconds.unsigned_abs() &lt; Second.per(Minute));
 
         <span class="self">Self </span>{
             hours,
@@ -434,8 +444,12 @@
         <span class="kw-2">mut </span>seconds: i8,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, error::ComponentRange&gt; {
         <span class="macro">ensure_value_in_range!</span>(hours <span class="kw">in </span>-<span class="number">23 </span>=&gt; <span class="number">23</span>);
-        <span class="macro">ensure_value_in_range!</span>(minutes <span class="kw">in </span>-<span class="number">59 </span>=&gt; <span class="number">59</span>);
-        <span class="macro">ensure_value_in_range!</span>(seconds <span class="kw">in </span>-<span class="number">59 </span>=&gt; <span class="number">59</span>);
+        <span class="macro">ensure_value_in_range!</span>(
+            minutes <span class="kw">in </span>-(Minute.per(Hour) <span class="kw">as </span>i8 - <span class="number">1</span>) =&gt; Minute.per(Hour) <span class="kw">as </span>i8 - <span class="number">1
+        </span>);
+        <span class="macro">ensure_value_in_range!</span>(
+            seconds <span class="kw">in </span>-(Second.per(Minute) <span class="kw">as </span>i8 - <span class="number">1</span>) =&gt; Second.per(Minute) <span class="kw">as </span>i8 - <span class="number">1
+        </span>);
 
         <span class="kw">if </span>(hours &gt; <span class="number">0 </span>&amp;&amp; minutes &lt; <span class="number">0</span>) || (hours &lt; <span class="number">0 </span>&amp;&amp; minutes &gt; <span class="number">0</span>) {
             minutes <span class="kw-2">*</span>= -<span class="number">1</span>;
@@ -459,12 +473,14 @@
     /// # Ok::&lt;_, time::Error&gt;(())
     /// ```
     </span><span class="kw">pub const fn </span>from_whole_seconds(seconds: i32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, error::ComponentRange&gt; {
-        <span class="macro">ensure_value_in_range!</span>(seconds <span class="kw">in </span>-<span class="number">86_399 </span>=&gt; <span class="number">86_399</span>);
+        <span class="macro">ensure_value_in_range!</span>(
+            seconds <span class="kw">in </span>-<span class="number">24 </span>* Second.per(Hour) <span class="kw">as </span>i32 - <span class="number">1 </span>=&gt; <span class="number">24 </span>* Second.per(Hour) <span class="kw">as </span>i32 - <span class="number">1
+        </span>);
 
         <span class="prelude-val">Ok</span>(<span class="self">Self</span>::__from_hms_unchecked(
-            (seconds / <span class="number">3_600</span>) <span class="kw">as _</span>,
-            ((seconds / <span class="number">60</span>) % <span class="number">60</span>) <span class="kw">as _</span>,
-            (seconds % <span class="number">60</span>) <span class="kw">as _</span>,
+            (seconds / Second.per(Hour) <span class="kw">as </span>i32) <span class="kw">as _</span>,
+            ((seconds % Second.per(Hour) <span class="kw">as </span>i32) / Minute.per(Hour) <span class="kw">as </span>i32) <span class="kw">as _</span>,
+            (seconds % Second.per(Minute) <span class="kw">as </span>i32) <span class="kw">as _</span>,
         ))
     }
     <span class="comment">// endregion constructors
@@ -503,7 +519,7 @@
     /// assert_eq!(offset!(-1:02:03).whole_minutes(), -62);
     /// ```
     </span><span class="kw">pub const fn </span>whole_minutes(<span class="self">self</span>) -&gt; i16 {
-        <span class="self">self</span>.hours <span class="kw">as </span>i16 * <span class="number">60 </span>+ <span class="self">self</span>.minutes <span class="kw">as </span>i16
+        <span class="self">self</span>.hours <span class="kw">as </span>i16 * Minute.per(Hour) <span class="kw">as </span>i16 + <span class="self">self</span>.minutes <span class="kw">as </span>i16
     }
 
     <span class="doccomment">/// Obtain the number of minutes past the hour the offset is from UTC. A positive value
@@ -529,7 +545,9 @@
     </span><span class="comment">// This may be useful for anyone manually implementing arithmetic, as it
     // would let them construct a `Duration` directly.
     </span><span class="kw">pub const fn </span>whole_seconds(<span class="self">self</span>) -&gt; i32 {
-        <span class="self">self</span>.hours <span class="kw">as </span>i32 * <span class="number">3_600 </span>+ <span class="self">self</span>.minutes <span class="kw">as </span>i32 * <span class="number">60 </span>+ <span class="self">self</span>.seconds <span class="kw">as </span>i32
+        <span class="self">self</span>.hours <span class="kw">as </span>i32 * Second.per(Hour) <span class="kw">as </span>i32
+            + <span class="self">self</span>.minutes <span class="kw">as </span>i32 * Second.per(Minute) <span class="kw">as </span>i32
+            + <span class="self">self</span>.seconds <span class="kw">as </span>i32
     }
 
     <span class="doccomment">/// Obtain the number of seconds past the minute the offset is from UTC. A positive value

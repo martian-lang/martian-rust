@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.20/src/duration.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>duration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.21/src/duration.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>duration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
                         <img src="https://avatars0.githubusercontent.com/u/55999857" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
@@ -1144,6 +1144,28 @@
 <span id="1143">1143</span>
 <span id="1144">1144</span>
 <span id="1145">1145</span>
+<span id="1146">1146</span>
+<span id="1147">1147</span>
+<span id="1148">1148</span>
+<span id="1149">1149</span>
+<span id="1150">1150</span>
+<span id="1151">1151</span>
+<span id="1152">1152</span>
+<span id="1153">1153</span>
+<span id="1154">1154</span>
+<span id="1155">1155</span>
+<span id="1156">1156</span>
+<span id="1157">1157</span>
+<span id="1158">1158</span>
+<span id="1159">1159</span>
+<span id="1160">1160</span>
+<span id="1161">1161</span>
+<span id="1162">1162</span>
+<span id="1163">1163</span>
+<span id="1164">1164</span>
+<span id="1165">1165</span>
+<span id="1166">1166</span>
+<span id="1167">1167</span>
 </pre><pre class="rust"><code><span class="doccomment">//! The [`Duration`] struct and its associated `impl`s.
 
 </span><span class="kw">use </span>core::cmp::Ordering;
@@ -1152,6 +1174,7 @@
 <span class="kw">use </span>core::ops::{Add, AddAssign, Div, Mul, Neg, Sub, SubAssign};
 <span class="kw">use </span>core::time::Duration <span class="kw">as </span>StdDuration;
 
+<span class="kw">use </span><span class="kw">crate</span>::convert::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::error;
 <span class="attribute">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::Instant;
@@ -1271,10 +1294,10 @@
     </span><span class="kw">pub const </span>WEEK: <span class="self">Self </span>= <span class="self">Self</span>::weeks(<span class="number">1</span>);
 
     <span class="doccomment">/// The minimum possible duration. Adding any negative duration to this will cause an overflow.
-    </span><span class="kw">pub const </span>MIN: <span class="self">Self </span>= <span class="self">Self</span>::new_unchecked(i64::MIN, -<span class="number">999_999_999</span>);
+    </span><span class="kw">pub const </span>MIN: <span class="self">Self </span>= <span class="self">Self</span>::new_unchecked(i64::MIN, -((Nanosecond.per(Second) - <span class="number">1</span>) <span class="kw">as </span>i32));
 
     <span class="doccomment">/// The maximum possible duration. Adding any positive duration to this will cause an overflow.
-    </span><span class="kw">pub const </span>MAX: <span class="self">Self </span>= <span class="self">Self</span>::new_unchecked(i64::MAX, <span class="number">999_999_999</span>);
+    </span><span class="kw">pub const </span>MAX: <span class="self">Self </span>= <span class="self">Self</span>::new_unchecked(i64::MAX, (Nanosecond.per(Second) - <span class="number">1</span>) <span class="kw">as _</span>);
     <span class="comment">// endregion constants
 
     // region: is_{sign}
@@ -1348,12 +1371,12 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>new_unchecked(seconds: i64, nanoseconds: i32) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>seconds &lt; <span class="number">0 </span>{
             <span class="macro">debug_assert!</span>(nanoseconds &lt;= <span class="number">0</span>);
-            <span class="macro">debug_assert!</span>(nanoseconds &gt; -<span class="number">1_000_000_000</span>);
+            <span class="macro">debug_assert!</span>(nanoseconds &gt; -(Nanosecond.per(Second) <span class="kw">as </span>i32));
         } <span class="kw">else if </span>seconds &gt; <span class="number">0 </span>{
             <span class="macro">debug_assert!</span>(nanoseconds &gt;= <span class="number">0</span>);
-            <span class="macro">debug_assert!</span>(nanoseconds &lt; <span class="number">1_000_000_000</span>);
+            <span class="macro">debug_assert!</span>(nanoseconds &lt; Nanosecond.per(Second) <span class="kw">as _</span>);
         } <span class="kw">else </span>{
-            <span class="macro">debug_assert!</span>(nanoseconds.unsigned_abs() &lt; <span class="number">1_000_000_000</span>);
+            <span class="macro">debug_assert!</span>(nanoseconds.unsigned_abs() &lt; Nanosecond.per(Second));
         }
 
         <span class="self">Self </span>{
@@ -1374,19 +1397,19 @@
     /// ```
     </span><span class="kw">pub const fn </span>new(<span class="kw-2">mut </span>seconds: i64, <span class="kw-2">mut </span>nanoseconds: i32) -&gt; <span class="self">Self </span>{
         seconds = <span class="macro">expect_opt!</span>(
-            seconds.checked_add(nanoseconds <span class="kw">as </span>i64 / <span class="number">1_000_000_000</span>),
+            seconds.checked_add(nanoseconds <span class="kw">as </span>i64 / Nanosecond.per(Second) <span class="kw">as </span>i64),
             <span class="string">&quot;overflow constructing `time::Duration`&quot;
         </span>);
-        nanoseconds %= <span class="number">1_000_000_000</span>;
+        nanoseconds %= Nanosecond.per(Second) <span class="kw">as </span>i32;
 
         <span class="kw">if </span>seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0 </span>{
             <span class="comment">// `seconds` cannot overflow here because it is positive.
             </span>seconds -= <span class="number">1</span>;
-            nanoseconds += <span class="number">1_000_000_000</span>;
+            nanoseconds += Nanosecond.per(Second) <span class="kw">as </span>i32;
         } <span class="kw">else if </span>seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
             <span class="comment">// `seconds` cannot overflow here because it is negative.
             </span>seconds += <span class="number">1</span>;
-            nanoseconds -= <span class="number">1_000_000_000</span>;
+            nanoseconds -= Nanosecond.per(Second) <span class="kw">as </span>i32;
         }
 
         <span class="self">Self</span>::new_unchecked(seconds, nanoseconds)
@@ -1401,7 +1424,7 @@
     /// ```
     </span><span class="kw">pub const fn </span>weeks(weeks: i64) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::seconds(<span class="macro">expect_opt!</span>(
-            weeks.checked_mul(<span class="number">604_800</span>),
+            weeks.checked_mul(Second.per(Week) <span class="kw">as _</span>),
             <span class="string">&quot;overflow constructing `time::Duration`&quot;
         </span>))
     }
@@ -1415,7 +1438,7 @@
     /// ```
     </span><span class="kw">pub const fn </span>days(days: i64) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::seconds(<span class="macro">expect_opt!</span>(
-            days.checked_mul(<span class="number">86_400</span>),
+            days.checked_mul(Second.per(Day) <span class="kw">as _</span>),
             <span class="string">&quot;overflow constructing `time::Duration`&quot;
         </span>))
     }
@@ -1429,7 +1452,7 @@
     /// ```
     </span><span class="kw">pub const fn </span>hours(hours: i64) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::seconds(<span class="macro">expect_opt!</span>(
-            hours.checked_mul(<span class="number">3_600</span>),
+            hours.checked_mul(Second.per(Hour) <span class="kw">as _</span>),
             <span class="string">&quot;overflow constructing `time::Duration`&quot;
         </span>))
     }
@@ -1443,7 +1466,7 @@
     /// ```
     </span><span class="kw">pub const fn </span>minutes(minutes: i64) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::seconds(<span class="macro">expect_opt!</span>(
-            minutes.checked_mul(<span class="number">60</span>),
+            minutes.checked_mul(Second.per(Minute) <span class="kw">as _</span>),
             <span class="string">&quot;overflow constructing `time::Duration`&quot;
         </span>))
     }
@@ -1474,7 +1497,8 @@
         }
         <span class="kw">let </span>seconds_truncated = seconds <span class="kw">as </span>i64;
         <span class="comment">// This only works because we handle the overflow condition above.
-        </span><span class="kw">let </span>nanoseconds = ((seconds - seconds_truncated <span class="kw">as </span>f64) * <span class="number">1_000_000_000.</span>) <span class="kw">as </span>i32;
+        </span><span class="kw">let </span>nanoseconds =
+            ((seconds - seconds_truncated <span class="kw">as </span>f64) * Nanosecond.per(Second) <span class="kw">as </span>f64) <span class="kw">as </span>i32;
         <span class="self">Self</span>::new_unchecked(seconds_truncated, nanoseconds)
     }
 
@@ -1494,7 +1518,8 @@
         }
         <span class="kw">let </span>seconds_truncated = seconds <span class="kw">as </span>i64;
         <span class="comment">// This only works because we handle the overflow condition above.
-        </span><span class="kw">let </span>nanoseconds = ((seconds - seconds_truncated <span class="kw">as </span>f32) * <span class="number">1_000_000_000.</span>) <span class="kw">as </span>i32;
+        </span><span class="kw">let </span>nanoseconds =
+            ((seconds - seconds_truncated <span class="kw">as </span>f32) * Nanosecond.per(Second) <span class="kw">as </span>f32) <span class="kw">as </span>i32;
         <span class="self">Self</span>::new_unchecked(seconds_truncated, nanoseconds)
     }
 
@@ -1507,8 +1532,9 @@
     /// ```
     </span><span class="kw">pub const fn </span>milliseconds(milliseconds: i64) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new_unchecked(
-            milliseconds / <span class="number">1_000</span>,
-            ((milliseconds % <span class="number">1_000</span>) * <span class="number">1_000_000</span>) <span class="kw">as _</span>,
+            milliseconds / Millisecond.per(Second) <span class="kw">as </span>i64,
+            (milliseconds % Millisecond.per(Second) <span class="kw">as </span>i64 * Nanosecond.per(Millisecond) <span class="kw">as </span>i64)
+                <span class="kw">as _</span>,
         )
     }
 
@@ -1521,8 +1547,9 @@
     /// ```
     </span><span class="kw">pub const fn </span>microseconds(microseconds: i64) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new_unchecked(
-            microseconds / <span class="number">1_000_000</span>,
-            ((microseconds % <span class="number">1_000_000</span>) * <span class="number">1_000</span>) <span class="kw">as _</span>,
+            microseconds / Microsecond.per(Second) <span class="kw">as </span>i64,
+            (microseconds % Microsecond.per(Second) <span class="kw">as </span>i64 * Nanosecond.per(Microsecond) <span class="kw">as </span>i64)
+                <span class="kw">as _</span>,
         )
     }
 
@@ -1535,8 +1562,8 @@
     /// ```
     </span><span class="kw">pub const fn </span>nanoseconds(nanoseconds: i64) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new_unchecked(
-            nanoseconds / <span class="number">1_000_000_000</span>,
-            (nanoseconds % <span class="number">1_000_000_000</span>) <span class="kw">as _</span>,
+            nanoseconds / Nanosecond.per(Second) <span class="kw">as </span>i64,
+            (nanoseconds % Nanosecond.per(Second) <span class="kw">as </span>i64) <span class="kw">as _</span>,
         )
     }
 
@@ -1545,8 +1572,8 @@
     /// As the input range cannot be fully mapped to the output, this should only be used where it&#39;s
     /// known to result in a valid value.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>nanoseconds_i128(nanoseconds: i128) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>seconds = nanoseconds / <span class="number">1_000_000_000</span>;
-        <span class="kw">let </span>nanoseconds = nanoseconds % <span class="number">1_000_000_000</span>;
+        <span class="kw">let </span>seconds = nanoseconds / Nanosecond.per(Second) <span class="kw">as </span>i128;
+        <span class="kw">let </span>nanoseconds = nanoseconds % Nanosecond.per(Second) <span class="kw">as </span>i128;
 
         <span class="kw">if </span>seconds &gt; i64::MAX <span class="kw">as </span>i128 || seconds &lt; i64::MIN <span class="kw">as </span>i128 {
             <span class="kw">crate</span>::expect_failed(<span class="string">&quot;overflow constructing `time::Duration`&quot;</span>);
@@ -1567,8 +1594,8 @@
     /// assert_eq!((-6).days().whole_weeks(), 0);
     /// ```
     </span><span class="kw">pub const fn </span>whole_weeks(<span class="self">self</span>) -&gt; i64 {
-        <span class="self">self</span>.whole_seconds() / <span class="number">604_800
-    </span>}
+        <span class="self">self</span>.whole_seconds() / Second.per(Week) <span class="kw">as </span>i64
+    }
 
     <span class="doccomment">/// Get the number of whole days in the duration.
     ///
@@ -1580,8 +1607,8 @@
     /// assert_eq!((-23).hours().whole_days(), 0);
     /// ```
     </span><span class="kw">pub const fn </span>whole_days(<span class="self">self</span>) -&gt; i64 {
-        <span class="self">self</span>.whole_seconds() / <span class="number">86_400
-    </span>}
+        <span class="self">self</span>.whole_seconds() / Second.per(Day) <span class="kw">as </span>i64
+    }
 
     <span class="doccomment">/// Get the number of whole hours in the duration.
     ///
@@ -1593,8 +1620,8 @@
     /// assert_eq!((-59).minutes().whole_hours(), 0);
     /// ```
     </span><span class="kw">pub const fn </span>whole_hours(<span class="self">self</span>) -&gt; i64 {
-        <span class="self">self</span>.whole_seconds() / <span class="number">3_600
-    </span>}
+        <span class="self">self</span>.whole_seconds() / Second.per(Hour) <span class="kw">as </span>i64
+    }
 
     <span class="doccomment">/// Get the number of whole minutes in the duration.
     ///
@@ -1606,8 +1633,8 @@
     /// assert_eq!((-59).seconds().whole_minutes(), 0);
     /// ```
     </span><span class="kw">pub const fn </span>whole_minutes(<span class="self">self</span>) -&gt; i64 {
-        <span class="self">self</span>.whole_seconds() / <span class="number">60
-    </span>}
+        <span class="self">self</span>.whole_seconds() / Second.per(Minute) <span class="kw">as </span>i64
+    }
 
     <span class="doccomment">/// Get the number of whole seconds in the duration.
     ///
@@ -1630,8 +1657,8 @@
     /// assert_eq!((-1.5).seconds().as_seconds_f64(), -1.5);
     /// ```
     </span><span class="kw">pub fn </span>as_seconds_f64(<span class="self">self</span>) -&gt; f64 {
-        <span class="self">self</span>.seconds <span class="kw">as </span>f64 + <span class="self">self</span>.nanoseconds <span class="kw">as </span>f64 / <span class="number">1_000_000_000.
-    </span>}
+        <span class="self">self</span>.seconds <span class="kw">as </span>f64 + <span class="self">self</span>.nanoseconds <span class="kw">as </span>f64 / Nanosecond.per(Second) <span class="kw">as </span>f64
+    }
 
     <span class="doccomment">/// Get the number of fractional seconds in the duration.
     ///
@@ -1641,8 +1668,8 @@
     /// assert_eq!((-1.5).seconds().as_seconds_f32(), -1.5);
     /// ```
     </span><span class="kw">pub fn </span>as_seconds_f32(<span class="self">self</span>) -&gt; f32 {
-        <span class="self">self</span>.seconds <span class="kw">as </span>f32 + <span class="self">self</span>.nanoseconds <span class="kw">as </span>f32 / <span class="number">1_000_000_000.
-    </span>}
+        <span class="self">self</span>.seconds <span class="kw">as </span>f32 + <span class="self">self</span>.nanoseconds <span class="kw">as </span>f32 / Nanosecond.per(Second) <span class="kw">as </span>f32
+    }
 
     <span class="doccomment">/// Get the number of whole milliseconds in the duration.
     ///
@@ -1654,8 +1681,9 @@
     /// assert_eq!((-1).milliseconds().whole_milliseconds(), -1);
     /// ```
     </span><span class="kw">pub const fn </span>whole_milliseconds(<span class="self">self</span>) -&gt; i128 {
-        <span class="self">self</span>.seconds <span class="kw">as </span>i128 * <span class="number">1_000 </span>+ <span class="self">self</span>.nanoseconds <span class="kw">as </span>i128 / <span class="number">1_000_000
-    </span>}
+        <span class="self">self</span>.seconds <span class="kw">as </span>i128 * Millisecond.per(Second) <span class="kw">as </span>i128
+            + <span class="self">self</span>.nanoseconds <span class="kw">as </span>i128 / Nanosecond.per(Millisecond) <span class="kw">as </span>i128
+    }
 
     <span class="doccomment">/// Get the number of milliseconds past the number of whole seconds.
     ///
@@ -1668,7 +1696,7 @@
     /// ```
     </span><span class="comment">// Allow the lint, as the value is guaranteed to be less than 1000.
     </span><span class="kw">pub const fn </span>subsec_milliseconds(<span class="self">self</span>) -&gt; i16 {
-        (<span class="self">self</span>.nanoseconds / <span class="number">1_000_000</span>) <span class="kw">as _
+        (<span class="self">self</span>.nanoseconds / Nanosecond.per(Millisecond) <span class="kw">as </span>i32) <span class="kw">as _
     </span>}
 
     <span class="doccomment">/// Get the number of whole microseconds in the duration.
@@ -1681,8 +1709,9 @@
     /// assert_eq!((-1).microseconds().whole_microseconds(), -1);
     /// ```
     </span><span class="kw">pub const fn </span>whole_microseconds(<span class="self">self</span>) -&gt; i128 {
-        <span class="self">self</span>.seconds <span class="kw">as </span>i128 * <span class="number">1_000_000 </span>+ <span class="self">self</span>.nanoseconds <span class="kw">as </span>i128 / <span class="number">1_000
-    </span>}
+        <span class="self">self</span>.seconds <span class="kw">as </span>i128 * Microsecond.per(Second) <span class="kw">as </span>i128
+            + <span class="self">self</span>.nanoseconds <span class="kw">as </span>i128 / Nanosecond.per(Microsecond) <span class="kw">as </span>i128
+    }
 
     <span class="doccomment">/// Get the number of microseconds past the number of whole seconds.
     ///
@@ -1694,8 +1723,8 @@
     /// assert_eq!((-1.0004).seconds().subsec_microseconds(), -400);
     /// ```
     </span><span class="kw">pub const fn </span>subsec_microseconds(<span class="self">self</span>) -&gt; i32 {
-        <span class="self">self</span>.nanoseconds / <span class="number">1_000
-    </span>}
+        <span class="self">self</span>.nanoseconds / Nanosecond.per(Microsecond) <span class="kw">as </span>i32
+    }
 
     <span class="doccomment">/// Get the number of nanoseconds in the duration.
     ///
@@ -1707,7 +1736,7 @@
     /// assert_eq!((-1).nanoseconds().whole_nanoseconds(), -1);
     /// ```
     </span><span class="kw">pub const fn </span>whole_nanoseconds(<span class="self">self</span>) -&gt; i128 {
-        <span class="self">self</span>.seconds <span class="kw">as </span>i128 * <span class="number">1_000_000_000 </span>+ <span class="self">self</span>.nanoseconds <span class="kw">as </span>i128
+        <span class="self">self</span>.seconds <span class="kw">as </span>i128 * Nanosecond.per(Second) <span class="kw">as </span>i128 + <span class="self">self</span>.nanoseconds <span class="kw">as </span>i128
     }
 
     <span class="doccomment">/// Get the number of nanoseconds past the number of whole seconds.
@@ -1737,11 +1766,12 @@
         <span class="kw">let </span><span class="kw-2">mut </span>seconds = <span class="macro">const_try_opt!</span>(<span class="self">self</span>.seconds.checked_add(rhs.seconds));
         <span class="kw">let </span><span class="kw-2">mut </span>nanoseconds = <span class="self">self</span>.nanoseconds + rhs.nanoseconds;
 
-        <span class="kw">if </span>nanoseconds &gt;= <span class="number">1_000_000_000 </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
-            nanoseconds -= <span class="number">1_000_000_000</span>;
+        <span class="kw">if </span>nanoseconds &gt;= Nanosecond.per(Second) <span class="kw">as _ </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
+            nanoseconds -= Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="macro">const_try_opt!</span>(seconds.checked_add(<span class="number">1</span>));
-        } <span class="kw">else if </span>nanoseconds &lt;= -<span class="number">1_000_000_000 </span>|| seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0 </span>{
-            nanoseconds += <span class="number">1_000_000_000</span>;
+        } <span class="kw">else if </span>nanoseconds &lt;= -(Nanosecond.per(Second) <span class="kw">as </span>i32) || seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0
+        </span>{
+            nanoseconds += Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="macro">const_try_opt!</span>(seconds.checked_sub(<span class="number">1</span>));
         }
 
@@ -1760,11 +1790,12 @@
         <span class="kw">let </span><span class="kw-2">mut </span>seconds = <span class="macro">const_try_opt!</span>(<span class="self">self</span>.seconds.checked_sub(rhs.seconds));
         <span class="kw">let </span><span class="kw-2">mut </span>nanoseconds = <span class="self">self</span>.nanoseconds - rhs.nanoseconds;
 
-        <span class="kw">if </span>nanoseconds &gt;= <span class="number">1_000_000_000 </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
-            nanoseconds -= <span class="number">1_000_000_000</span>;
+        <span class="kw">if </span>nanoseconds &gt;= Nanosecond.per(Second) <span class="kw">as _ </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
+            nanoseconds -= Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="macro">const_try_opt!</span>(seconds.checked_add(<span class="number">1</span>));
-        } <span class="kw">else if </span>nanoseconds &lt;= -<span class="number">1_000_000_000 </span>|| seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0 </span>{
-            nanoseconds += <span class="number">1_000_000_000</span>;
+        } <span class="kw">else if </span>nanoseconds &lt;= -(Nanosecond.per(Second) <span class="kw">as </span>i32) || seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0
+        </span>{
+            nanoseconds += Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="macro">const_try_opt!</span>(seconds.checked_sub(<span class="number">1</span>));
         }
 
@@ -1784,8 +1815,8 @@
     </span><span class="kw">pub const fn </span>checked_mul(<span class="self">self</span>, rhs: i32) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
         <span class="comment">// Multiply nanoseconds as i64, because it cannot overflow that way.
         </span><span class="kw">let </span>total_nanos = <span class="self">self</span>.nanoseconds <span class="kw">as </span>i64 * rhs <span class="kw">as </span>i64;
-        <span class="kw">let </span>extra_secs = total_nanos / <span class="number">1_000_000_000</span>;
-        <span class="kw">let </span>nanoseconds = (total_nanos % <span class="number">1_000_000_000</span>) <span class="kw">as _</span>;
+        <span class="kw">let </span>extra_secs = total_nanos / Nanosecond.per(Second) <span class="kw">as </span>i64;
+        <span class="kw">let </span>nanoseconds = (total_nanos % Nanosecond.per(Second) <span class="kw">as </span>i64) <span class="kw">as _</span>;
         <span class="kw">let </span>seconds = <span class="macro">const_try_opt!</span>(
             <span class="macro">const_try_opt!</span>(<span class="self">self</span>.seconds.checked_mul(rhs <span class="kw">as _</span>)).checked_add(extra_secs)
         );
@@ -1804,7 +1835,8 @@
     </span><span class="kw">pub const fn </span>checked_div(<span class="self">self</span>, rhs: i32) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>seconds = <span class="macro">const_try_opt!</span>(<span class="self">self</span>.seconds.checked_div(rhs <span class="kw">as </span>i64));
         <span class="kw">let </span>carry = <span class="self">self</span>.seconds - seconds * (rhs <span class="kw">as </span>i64);
-        <span class="kw">let </span>extra_nanos = <span class="macro">const_try_opt!</span>((carry * <span class="number">1_000_000_000</span>).checked_div(rhs <span class="kw">as </span>i64));
+        <span class="kw">let </span>extra_nanos =
+            <span class="macro">const_try_opt!</span>((carry * Nanosecond.per(Second) <span class="kw">as </span>i64).checked_div(rhs <span class="kw">as </span>i64));
         <span class="kw">let </span>nanoseconds = <span class="macro">const_try_opt!</span>(<span class="self">self</span>.nanoseconds.checked_div(rhs)) + (extra_nanos <span class="kw">as </span>i32);
 
         <span class="prelude-val">Some</span>(<span class="self">Self</span>::new_unchecked(seconds, nanoseconds))
@@ -1834,14 +1866,15 @@
         }
         <span class="kw">let </span><span class="kw-2">mut </span>nanoseconds = <span class="self">self</span>.nanoseconds + rhs.nanoseconds;
 
-        <span class="kw">if </span>nanoseconds &gt;= <span class="number">1_000_000_000 </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
-            nanoseconds -= <span class="number">1_000_000_000</span>;
+        <span class="kw">if </span>nanoseconds &gt;= Nanosecond.per(Second) <span class="kw">as _ </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
+            nanoseconds -= Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="kw">match </span>seconds.checked_add(<span class="number">1</span>) {
                 <span class="prelude-val">Some</span>(seconds) =&gt; seconds,
                 <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="self">Self</span>::MAX,
             };
-        } <span class="kw">else if </span>nanoseconds &lt;= -<span class="number">1_000_000_000 </span>|| seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0 </span>{
-            nanoseconds += <span class="number">1_000_000_000</span>;
+        } <span class="kw">else if </span>nanoseconds &lt;= -(Nanosecond.per(Second) <span class="kw">as </span>i32) || seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0
+        </span>{
+            nanoseconds += Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="kw">match </span>seconds.checked_sub(<span class="number">1</span>) {
                 <span class="prelude-val">Some</span>(seconds) =&gt; seconds,
                 <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="self">Self</span>::MIN,
@@ -1873,14 +1906,15 @@
         }
         <span class="kw">let </span><span class="kw-2">mut </span>nanoseconds = <span class="self">self</span>.nanoseconds - rhs.nanoseconds;
 
-        <span class="kw">if </span>nanoseconds &gt;= <span class="number">1_000_000_000 </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
-            nanoseconds -= <span class="number">1_000_000_000</span>;
+        <span class="kw">if </span>nanoseconds &gt;= Nanosecond.per(Second) <span class="kw">as _ </span>|| seconds &lt; <span class="number">0 </span>&amp;&amp; nanoseconds &gt; <span class="number">0 </span>{
+            nanoseconds -= Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="kw">match </span>seconds.checked_add(<span class="number">1</span>) {
                 <span class="prelude-val">Some</span>(seconds) =&gt; seconds,
                 <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="self">Self</span>::MAX,
             };
-        } <span class="kw">else if </span>nanoseconds &lt;= -<span class="number">1_000_000_000 </span>|| seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0 </span>{
-            nanoseconds += <span class="number">1_000_000_000</span>;
+        } <span class="kw">else if </span>nanoseconds &lt;= -(Nanosecond.per(Second) <span class="kw">as </span>i32) || seconds &gt; <span class="number">0 </span>&amp;&amp; nanoseconds &lt; <span class="number">0
+        </span>{
+            nanoseconds += Nanosecond.per(Second) <span class="kw">as </span>i32;
             seconds = <span class="kw">match </span>seconds.checked_sub(<span class="number">1</span>) {
                 <span class="prelude-val">Some</span>(seconds) =&gt; seconds,
                 <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="self">Self</span>::MIN,
@@ -1905,8 +1939,8 @@
     </span><span class="kw">pub const fn </span>saturating_mul(<span class="self">self</span>, rhs: i32) -&gt; <span class="self">Self </span>{
         <span class="comment">// Multiply nanoseconds as i64, because it cannot overflow that way.
         </span><span class="kw">let </span>total_nanos = <span class="self">self</span>.nanoseconds <span class="kw">as </span>i64 * rhs <span class="kw">as </span>i64;
-        <span class="kw">let </span>extra_secs = total_nanos / <span class="number">1_000_000_000</span>;
-        <span class="kw">let </span>nanoseconds = (total_nanos % <span class="number">1_000_000_000</span>) <span class="kw">as _</span>;
+        <span class="kw">let </span>extra_secs = total_nanos / Nanosecond.per(Second) <span class="kw">as </span>i64;
+        <span class="kw">let </span>nanoseconds = (total_nanos % Nanosecond.per(Second) <span class="kw">as </span>i64) <span class="kw">as _</span>;
         <span class="kw">let </span>(seconds, overflow1) = <span class="self">self</span>.seconds.overflowing_mul(rhs <span class="kw">as _</span>);
         <span class="kw">if </span>overflow1 {
             <span class="kw">if </span><span class="self">self</span>.seconds &gt; <span class="number">0 </span>&amp;&amp; rhs &gt; <span class="number">0 </span>|| <span class="self">self</span>.seconds &lt; <span class="number">0 </span>&amp;&amp; rhs &lt; <span class="number">0 </span>{
@@ -1980,13 +2014,13 @@
             <span class="comment">// Even if this produces a de-normal float, because we&#39;re rounding we don&#39;t really care.
             </span><span class="kw">let </span>seconds = <span class="self">self</span>.unsigned_abs().as_secs_f64();
 
-            <span class="macro">item!</span>(<span class="string">&quot;d&quot;</span>, seconds / <span class="number">86_400.</span>);
-            <span class="macro">item!</span>(<span class="string">&quot;h&quot;</span>, seconds / <span class="number">3_600.</span>);
-            <span class="macro">item!</span>(<span class="string">&quot;m&quot;</span>, seconds / <span class="number">60.</span>);
+            <span class="macro">item!</span>(<span class="string">&quot;d&quot;</span>, seconds / Second.per(Day) <span class="kw">as </span>f64);
+            <span class="macro">item!</span>(<span class="string">&quot;h&quot;</span>, seconds / Second.per(Hour) <span class="kw">as </span>f64);
+            <span class="macro">item!</span>(<span class="string">&quot;m&quot;</span>, seconds / Second.per(Minute) <span class="kw">as </span>f64);
             <span class="macro">item!</span>(<span class="string">&quot;s&quot;</span>, seconds);
-            <span class="macro">item!</span>(<span class="string">&quot;ms&quot;</span>, seconds * <span class="number">1_000.</span>);
-            <span class="macro">item!</span>(<span class="string">&quot;µs&quot;</span>, seconds * <span class="number">1_000_000.</span>);
-            <span class="macro">item!</span>(<span class="string">&quot;ns&quot;</span>, seconds * <span class="number">1_000_000_000.</span>);
+            <span class="macro">item!</span>(<span class="string">&quot;ms&quot;</span>, seconds * Millisecond.per(Second) <span class="kw">as </span>f64);
+            <span class="macro">item!</span>(<span class="string">&quot;µs&quot;</span>, seconds * Microsecond.per(Second) <span class="kw">as </span>f64);
+            <span class="macro">item!</span>(<span class="string">&quot;ns&quot;</span>, seconds * Nanosecond.per(Second) <span class="kw">as </span>f64);
         } <span class="kw">else </span>{
             <span class="comment">// Precise, but verbose representation.
 
@@ -2007,13 +2041,23 @@
             <span class="kw">let </span>seconds = <span class="self">self</span>.seconds.unsigned_abs();
             <span class="kw">let </span>nanoseconds = <span class="self">self</span>.nanoseconds.unsigned_abs();
 
-            <span class="macro">item!</span>(<span class="string">&quot;d&quot;</span>, seconds / <span class="number">86_400</span>)<span class="question-mark">?</span>;
-            <span class="macro">item!</span>(<span class="string">&quot;h&quot;</span>, seconds / <span class="number">3_600 </span>% <span class="number">24</span>)<span class="question-mark">?</span>;
-            <span class="macro">item!</span>(<span class="string">&quot;m&quot;</span>, seconds / <span class="number">60 </span>% <span class="number">60</span>)<span class="question-mark">?</span>;
-            <span class="macro">item!</span>(<span class="string">&quot;s&quot;</span>, seconds % <span class="number">60</span>)<span class="question-mark">?</span>;
-            <span class="macro">item!</span>(<span class="string">&quot;ms&quot;</span>, nanoseconds / <span class="number">1_000_000</span>)<span class="question-mark">?</span>;
-            <span class="macro">item!</span>(<span class="string">&quot;µs&quot;</span>, nanoseconds / <span class="number">1_000 </span>% <span class="number">1_000</span>)<span class="question-mark">?</span>;
-            <span class="macro">item!</span>(<span class="string">&quot;ns&quot;</span>, nanoseconds % <span class="number">1_000</span>)<span class="question-mark">?</span>;
+            <span class="macro">item!</span>(<span class="string">&quot;d&quot;</span>, seconds / Second.per(Day) <span class="kw">as </span>u64)<span class="question-mark">?</span>;
+            <span class="macro">item!</span>(
+                <span class="string">&quot;h&quot;</span>,
+                seconds / Second.per(Hour) <span class="kw">as </span>u64 % Hour.per(Day) <span class="kw">as </span>u64
+            )<span class="question-mark">?</span>;
+            <span class="macro">item!</span>(
+                <span class="string">&quot;m&quot;</span>,
+                seconds / Second.per(Minute) <span class="kw">as </span>u64 % Minute.per(Hour) <span class="kw">as </span>u64
+            )<span class="question-mark">?</span>;
+            <span class="macro">item!</span>(<span class="string">&quot;s&quot;</span>, seconds % Second.per(Minute) <span class="kw">as </span>u64)<span class="question-mark">?</span>;
+            <span class="macro">item!</span>(<span class="string">&quot;ms&quot;</span>, nanoseconds / Nanosecond.per(Millisecond))<span class="question-mark">?</span>;
+            <span class="macro">item!</span>(
+                <span class="string">&quot;µs&quot;</span>,
+                nanoseconds / Nanosecond.per(Microsecond) <span class="kw">as </span>u32
+                    % Microsecond.per(Millisecond) <span class="kw">as </span>u32
+            )<span class="question-mark">?</span>;
+            <span class="macro">item!</span>(<span class="string">&quot;ns&quot;</span>, nanoseconds % Nanosecond.per(Microsecond) <span class="kw">as </span>u32)<span class="question-mark">?</span>;
         }
 
         <span class="prelude-val">Ok</span>(())
