@@ -22,7 +22,7 @@ zstd = "<0.13, >=0.11"
 
 [dev-dependencies]
 tempfile = "3"
-criterion = "0.4"
+criterion = "0.5"
 trybuild = "1.0"
 
 [[bench]]
