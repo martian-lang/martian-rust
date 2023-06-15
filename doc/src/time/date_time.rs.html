@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.21/src/date_time.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>date_time.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.3.22/src/date_time.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>date_time.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../time/index.html">
                         <img src="https://avatars0.githubusercontent.com/u/55999857" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
@@ -1165,6 +1165,18 @@
 <span id="1164">1164</span>
 <span id="1165">1165</span>
 <span id="1166">1166</span>
+<span id="1167">1167</span>
+<span id="1168">1168</span>
+<span id="1169">1169</span>
+<span id="1170">1170</span>
+<span id="1171">1171</span>
+<span id="1172">1172</span>
+<span id="1173">1173</span>
+<span id="1174">1174</span>
+<span id="1175">1175</span>
+<span id="1176">1176</span>
+<span id="1177">1177</span>
+<span id="1178">1178</span>
 </pre><pre class="rust"><code><span class="doccomment">//! The [`DateTime`] struct and its associated `impl`s.
 
 </span><span class="comment">// TODO(jhpratt) Document everything before making public.
@@ -1314,7 +1326,8 @@
     <span class="kw">if </span>O::STATIC_OFFSET.is_some() {
         O::STATIC_OFFSET
     } <span class="kw">else if </span>O::HAS_MEMORY_OFFSET {
-        <span class="kw">union </span>Convert&lt;O: MaybeOffset&gt; {
+        <span class="attribute">#[repr(C)] </span><span class="comment">// needed to guarantee they align at the start
+        </span><span class="kw">union </span>Convert&lt;O: MaybeOffset&gt; {
             input: O::MemoryOffsetType,
             output: UtcOffset,
         }
@@ -1339,7 +1352,8 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>maybe_offset_from_offset&lt;O: MaybeOffset&gt;(
     offset: UtcOffset,
 ) -&gt; O::MemoryOffsetType {
-    <span class="kw">union </span>Convert&lt;O: MaybeOffset&gt; {
+    <span class="attribute">#[repr(C)] </span><span class="comment">// needed to guarantee the types align at the start
+    </span><span class="kw">union </span>Convert&lt;O: MaybeOffset&gt; {
         input: UtcOffset,
         output: O::MemoryOffsetType,
     }
@@ -1661,30 +1675,40 @@
     <span class="kw">where
         </span>O: HasLogicalOffset,
     {
+        <span class="macro">expect_opt!</span>(
+            <span class="self">self</span>.checked_to_offset(offset),
+            <span class="string">&quot;local datetime out of valid range&quot;
+        </span>)
+    }
+
+    <span class="kw">pub const fn </span>checked_to_offset(<span class="self">self</span>, offset: UtcOffset) -&gt; <span class="prelude-ty">Option</span>&lt;DateTime&lt;offset_kind::Fixed&gt;&gt;
+    <span class="kw">where
+        </span>O: HasLogicalOffset,
+    {
         <span class="kw">let </span>self_offset = maybe_offset_as_offset::&lt;O&gt;(<span class="self">self</span>.offset);
 
         <span class="kw">if </span>self_offset.whole_hours() == offset.whole_hours()
             &amp;&amp; self_offset.minutes_past_hour() == offset.minutes_past_hour()
             &amp;&amp; self_offset.seconds_past_minute() == offset.seconds_past_minute()
         {
-            <span class="kw">return </span>DateTime {
+            <span class="kw">return </span><span class="prelude-val">Some</span>(DateTime {
                 date: <span class="self">self</span>.date,
                 time: <span class="self">self</span>.time,
                 offset,
-            };
+            });
         }
 
         <span class="kw">let </span>(year, ordinal, time) = <span class="self">self</span>.to_offset_raw(offset);
 
         <span class="kw">if </span>year &gt; MAX_YEAR || year &lt; MIN_YEAR {
-            <span class="macro">panic!</span>(<span class="string">&quot;local datetime out of valid range&quot;</span>);
+            <span class="kw">return </span><span class="prelude-val">None</span>;
         }
 
-        DateTime {
+        <span class="prelude-val">Some</span>(DateTime {
             date: Date::__from_ordinal_date_unchecked(year, ordinal),
             time,
             offset,
-        }
+        })
     }
 
     <span class="doccomment">/// Equivalent to `.to_offset(UtcOffset::UTC)`, but returning the year, ordinal, and time. This
