@@ -221,17 +221,24 @@ pub trait FileTypeWrite<T>: MartianFileType {
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
-    /// Create an instance of this file type and immediately write contents into it.
-    fn create(rover: &MartianRover, file_name: &str, contents: &T) -> Result<Self, Error> {
-        let file: Self = rover.make_path(file_name);
-        file.write(contents)?;
-        Ok(file)
-    }
-
     #[doc(hidden)]
     // In general, do not call this function directly. Use `write()` instead.
     // The comments provided in `read_from()` apply here as well.
     fn write_into<W: io::Write>(writer: W, item: &T) -> Result<(), Error>;
+}
+
+/// Something that can create a Martian file and eagerly write into it.
+pub trait FileTypeCreate<T, F: FileTypeWrite<T>> {
+    /// Create a Martian file of type F and immediately write T into it.
+    fn create(&self, file_name: &str, contents: &T) -> Result<F, Error>;
+}
+
+impl<T, F: FileTypeWrite<T>> FileTypeCreate<T, F> for MartianRover {
+    fn create(&self, file_name: &str, contents: &T) -> Result<F, Error> {
+        let file: F = self.make_path(file_name);
+        file.write(contents)?;
+        Ok(file)
+    }
 }
 
 /// A trait that represents a `MartianFileType` that can be read into
