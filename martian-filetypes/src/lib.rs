@@ -119,7 +119,7 @@
 //! ## Examples
 //! Look at the individual filetype modules for examples.
 
-use martian::{Error, MartianFileType};
+use martian::{Error, MartianFileType, MartianRover};
 use std::fs::File;
 use std::iter::FromIterator;
 use std::path::PathBuf;
@@ -219,6 +219,13 @@ pub trait FileTypeWrite<T>: MartianFileType {
         }
         <Self as FileTypeWrite<T>>::write_into(self.buf_writer()?, item)
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
+    }
+
+    /// Create an instance of this file type and immediately write contents into it.
+    fn create(rover: &MartianRover, file_name: &str, contents: &T) -> Result<Self, Error> {
+        let file: Self = rover.make_path(file_name);
+        file.write(contents)?;
+        Ok(file)
     }
 
     #[doc(hidden)]
