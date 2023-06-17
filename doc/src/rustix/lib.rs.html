@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.4/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../rustix/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.20/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../rustix/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -223,13 +223,35 @@
 <span id="223">223</span>
 <span id="224">224</span>
 <span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
 </pre><pre class="rust"><code><span class="doccomment">//! `rustix` provides efficient memory-safe and [I/O-safe] wrappers to
 //! POSIX-like, Unix-like, Linux, and Winsock2 syscall-like APIs, with
 //! configurable backends.
 //!
 //! With rustix, you can write code like this:
 //!
-//! ```rust
+//! ```
 //! # #[cfg(feature = &quot;net&quot;)]
 //! # fn read(sock: std::net::TcpStream, buf: &amp;mut [u8]) -&gt; std::io::Result&lt;()&gt; {
 //! # use rustix::net::RecvFlags;
@@ -241,7 +263,7 @@
 //!
 //! instead of like this:
 //!
-//! ```rust
+//! ```
 //! # #[cfg(feature = &quot;net&quot;)]
 //! # fn read(sock: std::net::TcpStream, buf: &amp;mut [u8]) -&gt; std::io::Result&lt;()&gt; {
 //! # use std::convert::TryInto;
@@ -284,6 +306,8 @@
 //!  - Constants use `enum`s and [`bitflags`] types.
 //!  - Multiplexed functions (eg. `fcntl`, `ioctl`, etc.) are de-multiplexed.
 //!  - Variadic functions (eg. `openat`, etc.) are presented as non-variadic.
+//!  - Functions that return strings automatically allocate sufficient memory
+//!    and retry the syscall as needed to determine the needed length.
 //!  - Functions and types which need `l` prefixes or `64` suffixes to enable
 //!    large-file support (LFS) are used automatically. File sizes and offsets
 //!    are always presented as `u64` and `i64`.
@@ -296,7 +320,8 @@
 //!    running under seccomp.
 //!
 //! Things they don&#39;t do include:
-//!  - Detecting whether functions are supported at runtime.
+//!  - Detecting whether functions are supported at runtime, except in specific
+//!    cases where new interfaces need to be detected to support y2038 and LFS.
 //!  - Hiding significant differences between platforms.
 //!  - Restricting ambient authorities.
 //!  - Imposing sandboxing features such as filesystem path or network address
@@ -322,7 +347,7 @@
 #![cfg_attr(linux_raw, deny(unsafe_code))]
 #![cfg_attr(rustc_attrs, feature(rustc_attrs))]
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
-#![cfg_attr(all(target_os = <span class="string">&quot;wasi&quot;</span>, feature = <span class="string">&quot;std&quot;</span>), feature(wasi_ext))]
+#![cfg_attr(all(wasi_ext, target_os = <span class="string">&quot;wasi&quot;</span>, feature = <span class="string">&quot;std&quot;</span>), feature(wasi_ext))]
 #![cfg_attr(
     all(linux_raw, naked_functions, target_arch = <span class="string">&quot;x86&quot;</span>),
     feature(naked_functions)
@@ -333,10 +358,9 @@
 #![cfg_attr(alloc_c_string, feature(alloc_ffi))]
 #![cfg_attr(alloc_c_string, feature(alloc_c_string))]
 #![cfg_attr(not(feature = <span class="string">&quot;std&quot;</span>), no_std)]
-#![cfg_attr(feature = <span class="string">&quot;rustc-dep-of-std&quot;</span>, feature(core_intrinsics))]
 #![cfg_attr(feature = <span class="string">&quot;rustc-dep-of-std&quot;</span>, feature(ip))]
 #![cfg_attr(
-    all(not(feature = <span class="string">&quot;rustc-dep-of-std&quot;</span>), core_intrinsics),
+    any(feature = <span class="string">&quot;rustc-dep-of-std&quot;</span>, core_intrinsics),
     feature(core_intrinsics)
 )]
 #![cfg_attr(asm_experimental_arch, feature(asm_experimental_arch))]
@@ -347,6 +371,9 @@
 </span><span class="attribute">#![allow(clippy::unnecessary_cast)]
 </span><span class="comment">// It is common in linux and libc APIs for types to vary between platforms.
 </span><span class="attribute">#![allow(clippy::useless_conversion)]
+</span><span class="comment">// Redox and WASI have enough differences that it isn&#39;t worth
+// precisely conditionallizing all the `use`s for them.
+</span><span class="attribute">#![cfg_attr(any(target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>), allow(unused_imports))]
 
 #[cfg(not(feature = <span class="string">&quot;rustc-dep-of-std&quot;</span>))]
 </span><span class="kw">extern crate </span>alloc;
@@ -358,6 +385,18 @@
 <span class="attribute">#[macro_use]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>const_assert;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>utils;
+
+<span class="comment">// linux_raw: Weak symbols are used by the use-libc-auxv feature for
+// glibc 2.15 support.
+//
+// libc: Weak symbols are used to call various functions available in some
+// versions of libc and not others.
+</span><span class="attribute">#[cfg(any(
+    all(linux_raw, feature = <span class="string">&quot;use-libc-auxv&quot;</span>),
+    all(libc, not(any(windows, target_os = <span class="string">&quot;wasi&quot;</span>)))
+))]
+#[macro_use]
+</span><span class="kw">mod </span>weak;
 
 <span class="comment">// Pick the backend implementation to use.
 </span><span class="attribute">#[cfg_attr(libc, path = <span class="string">&quot;backend/libc/mod.rs&quot;</span>)]
@@ -384,7 +423,7 @@
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;fs&quot;</span>)))]
 </span><span class="kw">pub mod </span>fs;
 <span class="kw">pub mod </span>io;
-<span class="attribute">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attribute">#[cfg(linux_kernel)]
 #[cfg(feature = <span class="string">&quot;io_uring&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;io_uring&quot;</span>)))]
 </span><span class="kw">pub mod </span>io_uring;
@@ -408,6 +447,11 @@
 #[cfg(feature = <span class="string">&quot;process&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;process&quot;</span>)))]
 </span><span class="kw">pub mod </span>process;
+<span class="attribute">#[cfg(not(windows))]
+#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
+#[cfg(feature = <span class="string">&quot;pty&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;pty&quot;</span>)))]
+</span><span class="kw">pub mod </span>pty;
 <span class="attribute">#[cfg(not(windows))]
 #[cfg(feature = <span class="string">&quot;rand&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;rand&quot;</span>)))]
