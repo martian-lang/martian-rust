@@ -230,11 +230,11 @@ pub trait FileTypeWrite<T>: MartianFileType {
 /// Something that can create a Martian file and eagerly write into it.
 pub trait FileTypeCreate<T, F: FileTypeWrite<T>> {
     /// Create a Martian file of type F and immediately write T into it.
-    fn create(&self, file_name: &str, contents: &T) -> Result<F, Error>;
+    fn create_file(&self, file_name: &str, contents: &T) -> Result<F, Error>;
 }
 
 impl<T, F: FileTypeWrite<T>> FileTypeCreate<T, F> for MartianRover {
-    fn create(&self, file_name: &str, contents: &T) -> Result<F, Error> {
+    fn create_file(&self, file_name: &str, contents: &T) -> Result<F, Error> {
         let file: F = self.make_path(file_name);
         file.write(contents)?;
         Ok(file)
