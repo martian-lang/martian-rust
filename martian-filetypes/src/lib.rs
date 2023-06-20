@@ -221,6 +221,14 @@ pub trait FileTypeWrite<T>: MartianFileType {
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
+    /// Write type `T` into the `MartianFileType`, transferring ownership.
+    /// This allows the creation of a martian file as well as writing a datatype
+    /// into that file as a single method call chain.
+    fn with_content(self, item: &T) -> Result<Self, Error> {
+        self.write(item)?;
+        Ok(self)
+    }
+
     #[doc(hidden)]
     // In general, do not call this function directly. Use `write()` instead.
     // The comments provided in `read_from()` apply here as well.
