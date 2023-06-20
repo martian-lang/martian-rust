@@ -119,7 +119,7 @@
 //! ## Examples
 //! Look at the individual filetype modules for examples.
 
-use martian::{Error, MartianFileType, MartianRover};
+use martian::{Error, MartianFileType};
 use std::fs::File;
 use std::iter::FromIterator;
 use std::path::PathBuf;
@@ -221,24 +221,18 @@ pub trait FileTypeWrite<T>: MartianFileType {
             .map_err(|e| _fmt_err(e, self.as_ref().into()))
     }
 
+    /// Write type `T` into the `MartianFileType`, transferring ownership.
+    /// This allows the creation of a martian file as well as writing a datatype
+    /// into that file as a single method call chain.
+    fn with_content(self, item: &T) -> Result<Self, Error> {
+        self.write(item)?;
+        Ok(self)
+    }
+
     #[doc(hidden)]
     // In general, do not call this function directly. Use `write()` instead.
     // The comments provided in `read_from()` apply here as well.
     fn write_into<W: io::Write>(writer: W, item: &T) -> Result<(), Error>;
-}
-
-/// Something that can create a Martian file and eagerly write into it.
-pub trait FileTypeCreate<T, F: FileTypeWrite<T>> {
-    /// Create a Martian file of type F and immediately write T into it.
-    fn create_file(&self, file_name: &str, contents: &T) -> Result<F, Error>;
-}
-
-impl<T, F: FileTypeWrite<T>> FileTypeCreate<T, F> for MartianRover {
-    fn create_file(&self, file_name: &str, contents: &T) -> Result<F, Error> {
-        let file: F = self.make_path(file_name);
-        file.write(contents)?;
-        Ok(file)
-    }
 }
 
 /// A trait that represents a `MartianFileType` that can be read into
