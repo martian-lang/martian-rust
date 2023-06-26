@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.96/src/error.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>error.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../serde_json/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.99/src/error.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>error.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../serde_json/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -443,6 +443,58 @@
 <span id="443">443</span>
 <span id="444">444</span>
 <span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
 </pre><pre class="rust"><code><span class="doccomment">//! When serializing or deserializing JSON goes wrong.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::io;
@@ -454,6 +506,8 @@
 <span class="kw">use </span>serde::{de, ser};
 <span class="attribute">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
 </span><span class="kw">use </span>std::error;
+<span class="attribute">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+</span><span class="kw">use </span>std::io::ErrorKind;
 
 <span class="doccomment">/// This type represents all possible errors that can occur when serializing or
 /// deserializing JSON data.
@@ -481,15 +535,16 @@
     /// The first character in the input and any characters immediately
     /// following a newline character are in column 1.
     ///
-    /// Note that errors may occur in column 0, for example if a read from an IO
-    /// stream fails immediately following a previously read newline character.
+    /// Note that errors may occur in column 0, for example if a read from an
+    /// I/O stream fails immediately following a previously read newline
+    /// character.
     </span><span class="kw">pub fn </span>column(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.err.column
     }
 
     <span class="doccomment">/// Categorizes the cause of this error.
     ///
-    /// - `Category::Io` - failure to read or write bytes on an IO stream
+    /// - `Category::Io` - failure to read or write bytes on an I/O stream
     /// - `Category::Syntax` - input that is not syntactically valid JSON
     /// - `Category::Data` - input data that is semantically incorrect
     /// - `Category::Eof` - unexpected end of the input data
@@ -521,7 +576,7 @@
     }
 
     <span class="doccomment">/// Returns true if this error was caused by a failure to read or write
-    /// bytes on an IO stream.
+    /// bytes on an I/O stream.
     </span><span class="kw">pub fn </span>is_io(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.classify() == Category::Io
     }
@@ -549,12 +604,61 @@
     </span><span class="kw">pub fn </span>is_eof(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.classify() == Category::Eof
     }
+
+    <span class="doccomment">/// The kind reported by the underlying standard library I/O error, if this
+    /// error was caused by a failure to read or write bytes on an I/O stream.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use serde_json::Value;
+    /// use std::io::{self, ErrorKind, Read};
+    /// use std::process;
+    ///
+    /// struct ReaderThatWillTimeOut&lt;&#39;a&gt;(&amp;&#39;a [u8]);
+    ///
+    /// impl&lt;&#39;a&gt; Read for ReaderThatWillTimeOut&lt;&#39;a&gt; {
+    ///     fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; io::Result&lt;usize&gt; {
+    ///         if self.0.is_empty() {
+    ///             Err(io::Error::new(ErrorKind::TimedOut, &quot;timed out&quot;))
+    ///         } else {
+    ///             self.0.read(buf)
+    ///         }
+    ///     }
+    /// }
+    ///
+    /// fn main() {
+    ///     let reader = ReaderThatWillTimeOut(br#&quot; {&quot;k&quot;: &quot;#);
+    ///
+    ///     let _: Value = match serde_json::from_reader(reader) {
+    ///         Ok(value) =&gt; value,
+    ///         Err(error) =&gt; {
+    ///             if error.io_error_kind() == Some(ErrorKind::TimedOut) {
+    ///                 // Maybe this application needs to retry certain kinds of errors.
+    ///
+    ///                 # return;
+    ///             } else {
+    ///                 eprintln!(&quot;error: {}&quot;, error);
+    ///                 process::exit(1);
+    ///             }
+    ///         }
+    ///     };
+    /// }
+    /// ```
+    </span><span class="attribute">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    </span><span class="kw">pub fn </span>io_error_kind(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ErrorKind&gt; {
+        <span class="kw">if let </span>ErrorCode::Io(io_error) = <span class="kw-2">&amp;</span><span class="self">self</span>.err.code {
+            <span class="prelude-val">Some</span>(io_error.kind())
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
+    }
 }
 
 <span class="doccomment">/// Categorizes the cause of a `serde_json::Error`.
 </span><span class="attribute">#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 </span><span class="kw">pub enum </span>Category {
-    <span class="doccomment">/// The error was caused by a failure to read or write bytes on an IO
+    <span class="doccomment">/// The error was caused by a failure to read or write bytes on an I/O
     /// stream.
     </span>Io,
 
@@ -579,8 +683,8 @@
 </span><span class="kw">impl </span>From&lt;Error&gt; <span class="kw">for </span>io::Error {
     <span class="doccomment">/// Convert a `serde_json::Error` into an `io::Error`.
     ///
-    /// JSON syntax and data errors are turned into `InvalidData` IO errors.
-    /// EOF errors are turned into `UnexpectedEof` IO errors.
+    /// JSON syntax and data errors are turned into `InvalidData` I/O errors.
+    /// EOF errors are turned into `UnexpectedEof` I/O errors.
     ///
     /// ```
     /// use std::io;
@@ -610,8 +714,8 @@
         } <span class="kw">else </span>{
             <span class="kw">match </span>j.classify() {
                 Category::Io =&gt; <span class="macro">unreachable!</span>(),
-                Category::Syntax | Category::Data =&gt; io::Error::new(io::ErrorKind::InvalidData, j),
-                Category::Eof =&gt; io::Error::new(io::ErrorKind::UnexpectedEof, j),
+                Category::Syntax | Category::Data =&gt; io::Error::new(ErrorKind::InvalidData, j),
+                Category::Eof =&gt; io::Error::new(ErrorKind::UnexpectedEof, j),
             }
         }
     }
@@ -627,7 +731,7 @@
     <span class="doccomment">/// Catchall for syntax error messages
     </span>Message(Box&lt;str&gt;),
 
-    <span class="doccomment">/// Some IO error occurred while serializing or deserializing.
+    <span class="doccomment">/// Some I/O error occurred while serializing or deserializing.
     </span>Io(io::Error),
 
     <span class="doccomment">/// EOF while parsing a list.
