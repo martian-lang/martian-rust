@@ -20,7 +20,7 @@ rustc_version = ">=0.3, <0.5"
 rayon = { version = ">=1.0", optional = true }
 
 [dev-dependencies]
-indoc = "2.0.1"
+indoc = "2.0.2"
 pretty_assertions = "1.2.1"
 insta = "1.30"
 
