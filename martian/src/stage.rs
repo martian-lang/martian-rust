@@ -2,13 +2,16 @@ use crate::metadata::{Metadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
 use crate::Error;
+use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 
 /// A struct which needs to be used as one of the associated types in `MartianMain` or
 /// `MartianStage` if it is empty. For example, a stage with no chunk inputs, would
@@ -396,17 +399,24 @@ pub struct MartianRover {
     threads: usize,
     vmem_gb: usize,
     version: Version,
+    metadata: Option<Rc<RefCell<Metadata>>>,
 }
 
-impl<'a> From<&'a Metadata> for MartianRover {
-    fn from(md: &Metadata) -> MartianRover {
-        MartianRover {
-            files_path: PathBuf::from(&md.files_path),
-            mem_gb: md.jobinfo.mem_gb,
-            threads: md.jobinfo.threads,
-            vmem_gb: md.jobinfo.vmem_gb,
-            version: md.jobinfo.version.clone(),
-        }
+impl From<Rc<RefCell<Metadata>>> for MartianRover {
+    fn from(md: Rc<RefCell<Metadata>>) -> MartianRover {
+        let mut r = {
+            let md_ref = md.borrow();
+            MartianRover {
+                files_path: PathBuf::from(&md_ref.files_path),
+                mem_gb: md_ref.jobinfo.mem_gb,
+                threads: md_ref.jobinfo.threads,
+                vmem_gb: md_ref.jobinfo.vmem_gb,
+                version: md_ref.jobinfo.version.clone(),
+                metadata: None,
+            }
+        };
+        r.metadata = Some(md);
+        r
     }
 }
 
@@ -432,6 +442,7 @@ impl MartianRover {
             threads: resource.threads.unwrap() as usize,
             vmem_gb: resource.vmem_gb.unwrap() as usize,
             version: Version::default(),
+            metadata: None,
         }
     }
     ///
@@ -477,6 +488,18 @@ impl MartianRover {
     }
     pub fn pipelines_version(&self) -> String {
         self.version.pipelines.clone()
+    }
+
+    /// Add a message to the martian alarm system.
+    /// If this rover was not initialized with metadata, such as in test mode,
+    /// log at warning level instead.
+    pub fn alarm(&mut self, message: &str) -> Result<(), Error> {
+        if let Some(md) = &self.metadata {
+            md.borrow_mut().alarm(message)
+        } else {
+            warn!("{message}");
+            Ok(())
+        }
     }
 }
 
@@ -651,9 +674,9 @@ pub trait MartianStage: MroMaker {
 /// A raw martian stage that works with untype metadata. It is recommended
 /// not to implement this directly. Use `MartianMain` or `MartianStage` traits instead
 pub trait RawMartianStage {
-    fn split(&self, metadata: &mut Metadata) -> Result<(), Error>;
-    fn main(&self, metadata: &mut Metadata) -> Result<(), Error>;
-    fn join(&self, metadata: &mut Metadata) -> Result<(), Error>;
+    fn split(&self, metadata: Rc<RefCell<Metadata>>) -> Result<(), Error>;
+    fn main(&self, metadata: Rc<RefCell<Metadata>>) -> Result<(), Error>;
+    fn join(&self, metadata: Rc<RefCell<Metadata>>) -> Result<(), Error>;
 }
 
 impl<T> MartianStage for T
@@ -723,32 +746,33 @@ impl<T> RawMartianStage for T
 where
     T: MartianStage,
 {
-    fn split(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
-        let rover: MartianRover = MartianRover::from(&*md);
+    fn split(&self, md: Rc<RefCell<Metadata>>) -> Result<(), Error> {
+        let args: <T as MartianStage>::StageInputs = md.borrow().decode(ARGS_FN)?;
+        let rover: MartianRover = MartianRover::from(md.clone());
         let stage_defs = MartianStage::split(self, args, rover)?;
         let stage_def_obj = obj_encode(&stage_defs)?;
-        md.complete_with("stage_defs", &stage_def_obj)
+        md.borrow_mut().complete_with("stage_defs", &stage_def_obj)
     }
 
-    fn main(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
-        let chunk_args: <T as MartianStage>::ChunkInputs = md.decode(ARGS_FN)?;
-        let rover = MartianRover::from(&*md);
+    fn main(&self, md: Rc<RefCell<Metadata>>) -> Result<(), Error> {
+        let args: <T as MartianStage>::StageInputs = md.borrow().decode(ARGS_FN)?;
+        let chunk_args: <T as MartianStage>::ChunkInputs = md.borrow().decode(ARGS_FN)?;
+        let rover = MartianRover::from(md.clone());
         let outs = MartianStage::main(self, args, chunk_args, rover)?;
         let outs_obj = obj_encode(&outs)?;
-        md.complete_with(OUTS_FN, &outs_obj)
+        md.borrow_mut().complete_with(OUTS_FN, &outs_obj)
     }
 
-    fn join(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
-        let rover = MartianRover::from(&*md);
+    fn join(&self, md: Rc<RefCell<Metadata>>) -> Result<(), Error> {
+        let args: <T as MartianStage>::StageInputs = md.borrow().decode(ARGS_FN)?;
+        let rover = MartianRover::from(md.clone());
         // let outs = md.read_json_obj("outs")?;
-        let chunk_defs: Vec<<T as MartianStage>::ChunkInputs> = md.decode("chunk_defs")?;
-        let chunk_outs: Vec<<T as MartianStage>::ChunkOutputs> = md.decode("chunk_outs")?;
+        let chunk_defs: Vec<<T as MartianStage>::ChunkInputs> = md.borrow().decode("chunk_defs")?;
+        let chunk_outs: Vec<<T as MartianStage>::ChunkOutputs> =
+            md.borrow().decode("chunk_outs")?;
         let outs = MartianStage::join(self, args, chunk_defs, chunk_outs, rover)?;
         let outs_obj = obj_encode(&outs)?;
-        md.complete_with(OUTS_FN, &outs_obj)
+        md.borrow_mut().complete_with(OUTS_FN, &outs_obj)
     }
 }
 

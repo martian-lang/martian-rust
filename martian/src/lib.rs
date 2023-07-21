@@ -9,12 +9,14 @@ pub use anyhow::Error;
 use anyhow::{format_err, Context};
 use backtrace::Backtrace;
 use log::{error, info};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
 use std::io::Write as IoWrite;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::Path;
+use std::rc::Rc;
 use std::{io, panic};
 use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
 use time::format_description::FormatItem::Literal;
@@ -186,7 +188,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let _md = initialize(args).context("IO Error initializing stage");
 
     // special handler for error in stage setup
-    let mut md = match _md {
+    let md = match _md {
         Ok(m) => m,
         Err(e) => {
             let _ = write_errors(&format!("{e:?}"), false);
@@ -257,12 +259,14 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         },
     ));
 
-    let result = if md.stage_type == "split" {
-        stage.split(&mut md)
-    } else if md.stage_type == "main" {
-        stage.main(&mut md)
-    } else if md.stage_type == "join" {
-        stage.join(&mut md)
+    let md = Rc::new(RefCell::new(md));
+
+    let result = if md.borrow().stage_type == "split" {
+        stage.split(md.clone())
+    } else if md.borrow().stage_type == "main" {
+        stage.main(md.clone())
+    } else if md.borrow().stage_type == "join" {
+        stage.join(md.clone())
     } else {
         panic!("Unrecognized stage type");
     };
@@ -273,7 +277,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
         // write message and stack trace, exit code = 1;
         Err(e) => {
-            report_error(&mut md, &e, is_error_assert(&e));
+            report_error(&mut md.borrow_mut(), &e, is_error_assert(&e));
             (1, Some(e))
         }
     }
