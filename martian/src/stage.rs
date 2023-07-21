@@ -493,7 +493,7 @@ impl MartianRover {
     /// Add a message to the martian alarm system.
     /// If this rover was not initialized with metadata, such as in test mode,
     /// log at warning level instead.
-    pub fn alarm(&mut self, message: &str) -> Result<(), Error> {
+    pub fn alarm(&self, message: &str) -> Result<(), Error> {
         if let Some(md) = &self.metadata {
             md.borrow_mut().alarm(message)
         } else {
