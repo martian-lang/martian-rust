@@ -261,13 +261,14 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
     let md = Rc::new(RefCell::new(md));
 
-    let result = match md.borrow().stage_type.as_str() {
-        "split" => stage.split(md.clone()),
-        "main" => stage.main(md.clone()),
-        "join" => stage.join(md.clone()),
-        unknown => {
-            panic!("Unrecognized stage type: {unknown}");
-        }
+    let result = if md.borrow().stage_type == "split" {
+        stage.split(md.clone())
+    } else if md.borrow().stage_type == "main" {
+        stage.main(md.clone())
+    } else if md.borrow().stage_type == "join" {
+        stage.join(md.clone())
+    } else {
+        panic!("Unrecognized stage type");
     };
 
     match result {
