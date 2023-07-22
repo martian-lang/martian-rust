@@ -9,14 +9,14 @@ pub use anyhow::Error;
 use anyhow::{format_err, Context};
 use backtrace::Backtrace;
 use log::{error, info};
-use std::cell::RefCell;
+
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
 use std::io::Write as IoWrite;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::Path;
-use std::rc::Rc;
+
 use std::{io, panic};
 use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
 use time::format_description::FormatItem::Literal;
@@ -360,7 +360,6 @@ pub fn make_mro_string(header_comment: &str, mro_registry: &[StageMro]) -> Strin
         assert!(
             header_comment
                 .lines()
-                .into_iter()
                 .all(|line| line.trim_end().is_empty() || line.starts_with('#')),
             "All non-empty header lines must start with '#', but got\n{}",
             header_comment

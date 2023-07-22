@@ -1,18 +1,18 @@
 use crate::metadata::{Metadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
-use crate::{make_timestamp_now, Error, SharedFile};
+use crate::{Error, SharedFile};
 use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use std::cell::RefCell;
+
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::{Path, PathBuf};
-use std::rc::Rc;
-use std::sync::Arc;
+
+
 
 /// A struct which needs to be used as one of the associated types in `MartianMain` or
 /// `MartianStage` if it is empty. For example, a stage with no chunk inputs, would
@@ -806,9 +806,8 @@ mod test {
     #[test]
     fn test_stage_def_extend() {
         let _stagedef = StageDef::from_iter([0, 1, 2]);
-        let _stagedef: StageDef<usize> = (0..3).into_iter().collect();
+        let _stagedef: StageDef<usize> = (0..3).collect();
         let _stagedef = (0..3)
-            .into_iter()
             .zip(std::iter::repeat(Resource::default()))
             .collect::<StageDef<usize>>()
             .join_resource(Resource::default());

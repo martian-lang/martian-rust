@@ -437,7 +437,7 @@ mod tests {
 
     #[test]
     fn test_lazy_read() -> Result<(), Error> {
-        let values: Vec<u16> = (0..100).into_iter().collect();
+        let values: Vec<u16> = (0..100).collect();
         let bin_file = BincodeFile::tempfile()?;
         bin_file.write(&values)?;
 
