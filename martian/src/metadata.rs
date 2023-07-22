@@ -5,7 +5,6 @@ use serde_json::map::Map;
 use serde_json::{self, Value};
 use std::any::type_name;
 use std::borrow::Cow;
-use std::cell::OnceCell;
 use std::fs::{rename, File, OpenOptions};
 use std::io::{ErrorKind, Write};
 use std::os::unix::io::FromRawFd;
@@ -29,8 +28,8 @@ pub struct Metadata {
     run_file: String,
     raw_jobinfo: JsonDict,
     pub jobinfo: JobInfo, // Partially parsed Job info
-    /// Lazily initialized shared reference to the alarm file.
-    alarm_file: OnceCell<SharedFile>,
+    /// Shared reference to the alarm file.
+    alarm_file: SharedFile,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -147,6 +146,7 @@ impl Metadata {
         let metadata_path = args.pop().unwrap();
         let stage_type = args.pop().unwrap();
         let stage_name = args.pop().unwrap();
+        let alarm_file = SharedFile::new(make_metadata_file_path(metadata_path.as_ref(), "alarm"));
 
         Metadata {
             stage_name,
@@ -156,14 +156,13 @@ impl Metadata {
             run_file,
             raw_jobinfo: Map::new(),
             jobinfo: Default::default(),
-            alarm_file: Default::default(),
+            alarm_file,
         }
     }
 
     /// Path within chunk
     pub fn make_path(&self, name: &str) -> PathBuf {
-        let md: &Path = self.metadata_path.as_ref();
-        md.join([METADATA_PREFIX, name].concat())
+        make_metadata_file_path(self.metadata_path.as_ref(), name)
     }
 
     /// Write to a file inside the chunk
@@ -262,12 +261,12 @@ impl Metadata {
     }
 
     pub(crate) fn alarm_file(&self) -> &SharedFile {
-        self.alarm_file
-            .get_or_init(|| SharedFile::new(self.make_path("alarm")))
+        &self.alarm_file
     }
 
+    /// Write a message to the stage alarms.
     pub fn alarm(&self, message: &str) -> Result<()> {
-        self.alarm_file().appendln(message, true)
+        self.alarm_file.appendln(message, true)
     }
 
     #[cold]
@@ -330,6 +329,10 @@ impl Metadata {
     pub fn get_martian_version(&self) -> &str {
         self.jobinfo.version.martian.as_str()
     }
+}
+
+fn make_metadata_file_path(metadata_dir: &Path, name: &str) -> PathBuf {
+    metadata_dir.join([METADATA_PREFIX, name].concat())
 }
 
 /// Manage shared access to a metadata file.
