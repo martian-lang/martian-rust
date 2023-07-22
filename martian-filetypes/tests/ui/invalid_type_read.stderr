@@ -2,7 +2,7 @@ error[E0308]: `?` operator has incompatible types
   --> tests/ui/invalid_type_read.rs:27:37
    |
 27 |         let new_feature: Creature = feat_file.read()?; // Compiler error
-   |                                     ^^^^^^^^^^^^^^^^^ expected struct `Creature`, found struct `Feature`
+   |                                     ^^^^^^^^^^^^^^^^^ expected `Creature`, found `Feature`
    |
    = note: `?` operator cannot convert from `Feature` to `Creature`
 
@@ -10,6 +10,6 @@ error[E0308]: `?` operator has incompatible types
   --> tests/ui/invalid_type_read.rs:34:37
    |
 34 |         let new_feature: Creature = feat_file.read()?; // Compiler error
-   |                                     ^^^^^^^^^^^^^^^^^ expected struct `Creature`, found struct `Feature`
+   |                                     ^^^^^^^^^^^^^^^^^ expected `Creature`, found `Feature`
    |
    = note: `?` operator cannot convert from `Feature` to `Creature`
