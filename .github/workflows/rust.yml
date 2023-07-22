@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: dtolnay/rust-toolchain@1.66.0
+    - uses: dtolnay/rust-toolchain@1.70.0
       with:
         components: rustfmt
     - uses: actions/checkout@v3
