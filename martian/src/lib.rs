@@ -184,11 +184,9 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let log_file: File = unsafe { File::from_raw_fd(3) };
     setup_logging(log_file, level);
 
-    // setup Martian metadata (and an extra copy for use in the panic handler
-    let _md = initialize(args).context("IO Error initializing stage");
-
+    // setup Martian metadata
     // special handler for error in stage setup
-    let md = match _md {
+    let mut md = match initialize(args).context("IO Error initializing stage") {
         Ok(m) => m,
         Err(e) => {
             let _ = write_errors(&format!("{e:?}"), false);
@@ -259,14 +257,12 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         },
     ));
 
-    let md = Rc::new(RefCell::new(md));
-
-    let result = if md.borrow().stage_type == "split" {
-        stage.split(md.clone())
-    } else if md.borrow().stage_type == "main" {
-        stage.main(md.clone())
-    } else if md.borrow().stage_type == "join" {
-        stage.join(md.clone())
+    let result = if md.stage_type == "split" {
+        stage.split(&mut md)
+    } else if md.stage_type == "main" {
+        stage.main(&mut md)
+    } else if md.stage_type == "join" {
+        stage.join(&mut md)
     } else {
         panic!("Unrecognized stage type");
     };
@@ -277,7 +273,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
         // write message and stack trace, exit code = 1;
         Err(e) => {
-            report_error(&mut md.borrow_mut(), &e, is_error_assert(&e));
+            report_error(&mut md, &e, is_error_assert(&e));
             (1, Some(e))
         }
     }

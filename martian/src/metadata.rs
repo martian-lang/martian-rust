@@ -5,11 +5,12 @@ use serde_json::map::Map;
 use serde_json::{self, Value};
 use std::any::type_name;
 use std::borrow::Cow;
-use std::collections::HashSet;
+use std::cell::OnceCell;
 use std::fs::{rename, File, OpenOptions};
 use std::io::{ErrorKind, Write};
-use std::os::unix::io::{FromRawFd, IntoRawFd};
+use std::os::unix::io::FromRawFd;
 use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 use time::{OffsetDateTime, UtcOffset};
 
@@ -28,7 +29,8 @@ pub struct Metadata {
     run_file: String,
     raw_jobinfo: JsonDict,
     pub jobinfo: JobInfo, // Partially parsed Job info
-    cache: HashSet<String>,
+    /// Lazily initialized shared reference to the alarm file.
+    alarm_file: OnceCell<SharedFile>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -58,22 +60,17 @@ impl Default for Version {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum ProfileMode {
+    #[default]
     Disable,
     Cpu,
     Line,
     Mem,
     Perf,
     Pyspy,
-}
-
-impl Default for ProfileMode {
-    fn default() -> ProfileMode {
-        ProfileMode::Disable
-    }
 }
 
 // Stuff that will be added to the _jobinfo under the "rust" key
@@ -157,9 +154,9 @@ impl Metadata {
             metadata_path,
             files_path,
             run_file,
-            cache: HashSet::new(),
             raw_jobinfo: Map::new(),
-            jobinfo: JobInfo::default(),
+            jobinfo: Default::default(),
+            alarm_file: Default::default(),
         }
     }
 
@@ -182,39 +179,32 @@ impl Metadata {
     }
 
     /// Update the Martian journal -- so that Martian knows what we've updated
-    fn update_journal_main(&mut self, name: &str, force: bool) -> Result<()> {
+    fn update_journal(&self, name: &str) -> Result<()> {
         let journal_name: Cow<str> = if self.stage_type != "main" {
             format!("{}_{name}", self.stage_type).into()
         } else {
             name.into()
         };
 
-        if force || !self.cache.contains(name) {
-            let tmp_run_file = format!("{}.{journal_name}.tmp", self.run_file);
-            let run_file = &tmp_run_file[..tmp_run_file.len() - 4];
+        let tmp_run_file = format!("{}.{journal_name}.tmp", self.run_file);
+        let run_file = &tmp_run_file[..tmp_run_file.len() - 4];
 
-            {
-                let mut f = File::create(&tmp_run_file)?;
-                if let Err(err) = f.write_all(make_timestamp_now().as_bytes()) {
-                    // Pretty much ignore this error.  The only reason we need
-                    // any content at all in this file is because some
-                    // filesystems behave strangely with completely empty files.
-                    eprintln!("Writing journal file {tmp_run_file}: {err}");
-                }
+        {
+            let mut f = File::create(&tmp_run_file)?;
+            if let Err(err) = f.write_all(make_timestamp_now().as_bytes()) {
+                // Pretty much ignore this error.  The only reason we need
+                // any content at all in this file is because some
+                // filesystems behave strangely with completely empty files.
+                eprintln!("Writing journal file {tmp_run_file}: {err}");
             }
-            rename(tmp_run_file.as_str(), run_file).or_else(ignore_not_found)?;
-            self.cache.insert(journal_name.into_owned());
         }
+        rename(tmp_run_file.as_str(), run_file).or_else(ignore_not_found)?;
 
         Ok(())
     }
 
-    fn update_journal(&mut self, name: &str) -> Result<()> {
-        self.update_journal_main(name, false)
-    }
-
     /// Write JSON to a chunk file
-    pub(crate) fn write_json_obj(&mut self, name: &str, object: &JsonDict) -> Result<()> {
+    pub(crate) fn write_json_obj(&self, name: &str, object: &JsonDict) -> Result<()> {
         serde_json::to_writer_pretty(File::create(self.make_path(name))?, object)?;
         self.update_journal(name)?;
         Ok(())
@@ -271,40 +261,13 @@ impl Metadata {
         Error::new(e).context(context)
     }
 
-    fn _append(&mut self, name: &str, message: &str) -> Result<()> {
-        let filename = self.make_path(name);
-        let mut file = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(filename)?;
-        file.write_all(message.as_bytes())?;
-        file.write_all(b"\n")?;
-        // Ensure the file is closed before we write the journal, to reduce
-        // the chances that `mrp` sees the journal entry before the file content
-        // has be sync'ed.  This can be an issue on nfs systems.
-        drop(file);
-        self.update_journal(name)?;
-        Ok(())
+    pub(crate) fn alarm_file(&self) -> &SharedFile {
+        self.alarm_file
+            .get_or_init(|| SharedFile::new(self.make_path("alarm")))
     }
 
-    /// Write to _log
-    pub fn log(&mut self, level: &str, message: &str) -> Result<()> {
-        let mut log_file = unsafe { File::from_raw_fd(3) };
-
-        log_file
-            .write(format!("{} [{level}] {message}", make_timestamp_now()).as_bytes())
-            .and(log_file.flush())?;
-
-        let _ = log_file.into_raw_fd();
-        Ok(())
-    }
-
-    pub fn log_time(&mut self, message: &str) -> Result<()> {
-        self.log("time", message)
-    }
-
-    pub fn alarm(&mut self, message: &str) -> Result<()> {
-        self._append("alarm", &format!("{} {message}", make_timestamp_now()))
+    pub fn alarm(&self, message: &str) -> Result<()> {
+        self.alarm_file().appendln(message, true)
     }
 
     #[cold]
@@ -366,6 +329,30 @@ impl Metadata {
 
     pub fn get_martian_version(&self) -> &str {
         self.jobinfo.version.martian.as_str()
+    }
+}
+
+/// Manage shared access to a metadata file.
+#[derive(Debug, Clone)]
+pub(crate) struct SharedFile(Arc<Mutex<PathBuf>>);
+
+impl SharedFile {
+    pub fn new(path: PathBuf) -> Self {
+        Self(Arc::new(Mutex::new(path)))
+    }
+
+    /// Append the provided contents to the file.
+    /// Creates the file if it does not exist.
+    /// Appends a newline after contents.
+    /// Prepends a timestamp if requested.
+    pub fn appendln(&self, contents: &str, prepend_timestamp: bool) -> Result<()> {
+        let path = self.0.lock().unwrap();
+        let mut file = OpenOptions::new().create(true).append(true).open(&*path)?;
+        if prepend_timestamp {
+            write!(file, "{} ", make_timestamp_now())?;
+        }
+        writeln!(file, "{contents}")?;
+        Ok(())
     }
 }
 
