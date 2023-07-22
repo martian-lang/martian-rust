@@ -469,15 +469,12 @@ impl MartianStruct for MartianVoid {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-#[derive(Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub enum Volatile {
     #[default]
     Strict,
     False,
 }
-
-
 
 impl From<&Volatile> for &'static str {
     fn from(v: &Volatile) -> Self {

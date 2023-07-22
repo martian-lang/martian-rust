@@ -7,12 +7,9 @@ use log::warn;
 use rayon::prelude::*;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::{Path, PathBuf};
-
-
 
 /// A struct which needs to be used as one of the associated types in `MartianMain` or
 /// `MartianStage` if it is empty. For example, a stage with no chunk inputs, would
