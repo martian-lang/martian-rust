@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Gzip","A struct that wraps a basic `MartianFileType` and adds gzip compression capability."],["LazyGzipReader","Iterator over individual items  within an gz file that stores a list of items."],["LazyGzipWriter","Helper struct to write items one by one into an Gzip file. Implements `LazyWrite` trait."]]};
+window.SIDEBAR_ITEMS = {"struct":["Gzip","LazyGzipReader","LazyGzipWriter"]};

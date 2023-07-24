@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["ADAPTER_MAIN_TEMPLATE",""],["CARGO_TOML_ADDITION",""],["DEFAULT_MAIN",""],["STAGE_TEMPLATE",""],["STAGE_TEMPLATE_MAIN",""]],"fn":[["new_adapter",""],["new_stage",""]]};
+window.SIDEBAR_ITEMS = {"constant":["ADAPTER_MAIN_TEMPLATE","CARGO_TOML_ADDITION","DEFAULT_MAIN","STAGE_TEMPLATE","STAGE_TEMPLATE_MAIN"],"fn":["new_adapter","new_stage"]};

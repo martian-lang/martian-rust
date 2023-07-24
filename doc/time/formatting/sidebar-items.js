@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["Formattable","A type that describes a format."]]};
+window.SIDEBAR_ITEMS = {"trait":["Formattable"]};

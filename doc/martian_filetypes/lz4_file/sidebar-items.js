@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["LazyLz4Reader","Iterator over individual items  within an lz4 file that stores a list of items."],["LazyLz4Writer","Helper struct to write items one by one into an Lz4 file. Implements `LazyWrite` trait."],["Lz4","A struct that wraps a basic `MartianFileType` and adds lz4 compression capability."]]};
+window.SIDEBAR_ITEMS = {"struct":["LazyLz4Reader","LazyLz4Writer","Lz4"]};

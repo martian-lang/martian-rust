@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Json",""],["JsonFormat","A struct that adds typed JSON serialization."],["LazyJsonReader","Iterator over individual items  within a json file that stores a list of items."],["LazyJsonWriter","Write items one by one to a json file that stores a list of items."]],"type":[["JsonFile",""]]};
+window.SIDEBAR_ITEMS = {"struct":["Json","JsonFormat","LazyJsonReader","LazyJsonWriter"],"type":["JsonFile"]};

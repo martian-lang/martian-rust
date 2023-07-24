@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["BinaryFormat","A struct that adds typed bincode serialization."],["Bincode",""],["LazyBincodeReader","Iterator over individual items  within a bincode file that stores a list of items."],["LazyBincodeWriter","Helper struct to write items one by one to a bincode file that stores a list of items"]],"type":[["BincodeFile",""]]};
+window.SIDEBAR_ITEMS = {"struct":["BinaryFormat","Bincode","LazyBincodeReader","LazyBincodeWriter"],"type":["BincodeFile"]};
