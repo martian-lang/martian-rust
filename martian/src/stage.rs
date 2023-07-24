@@ -1,7 +1,8 @@
 use crate::metadata::{Metadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
-use crate::Error;
+use crate::{Error, SharedFile};
+use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
 use serde::de::DeserializeOwned;
@@ -396,9 +397,10 @@ pub struct MartianRover {
     threads: usize,
     vmem_gb: usize,
     version: Version,
+    alarm_file: Option<SharedFile>,
 }
 
-impl<'a> From<&'a Metadata> for MartianRover {
+impl From<&Metadata> for MartianRover {
     fn from(md: &Metadata) -> MartianRover {
         MartianRover {
             files_path: PathBuf::from(&md.files_path),
@@ -406,6 +408,7 @@ impl<'a> From<&'a Metadata> for MartianRover {
             threads: md.jobinfo.threads,
             vmem_gb: md.jobinfo.vmem_gb,
             version: md.jobinfo.version.clone(),
+            alarm_file: Some(md.alarm_file().clone()),
         }
     }
 }
@@ -432,6 +435,7 @@ impl MartianRover {
             threads: resource.threads.unwrap() as usize,
             vmem_gb: resource.vmem_gb.unwrap() as usize,
             version: Version::default(),
+            alarm_file: None,
         }
     }
     ///
@@ -477,6 +481,18 @@ impl MartianRover {
     }
     pub fn pipelines_version(&self) -> String {
         self.version.pipelines.clone()
+    }
+
+    /// Add a message to the martian alarm system.
+    /// If this rover was not initialized with metadata, such as in test mode,
+    /// log at warning level instead.
+    pub fn alarm(&self, message: &str) -> Result<(), Error> {
+        if let Some(f) = &self.alarm_file {
+            f.appendln(message, true)
+        } else {
+            warn!("{message}");
+            Ok(())
+        }
     }
 }
 
@@ -787,9 +803,8 @@ mod test {
     #[test]
     fn test_stage_def_extend() {
         let _stagedef = StageDef::from_iter([0, 1, 2]);
-        let _stagedef: StageDef<usize> = (0..3).into_iter().collect();
+        let _stagedef: StageDef<usize> = (0..3).collect();
         let _stagedef = (0..3)
-            .into_iter()
             .zip(std::iter::repeat(Resource::default()))
             .collect::<StageDef<usize>>()
             .join_resource(Resource::default());

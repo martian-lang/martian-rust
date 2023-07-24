@@ -152,7 +152,7 @@ pub fn make_mro(
     // struct. We can build the `stage_name()` function from the struct name.
     // TODO: This might also be a good time to check that the implementation is
     // actually for a unit struct. But is it possible?
-    let stage_struct = item_impl.self_ty.clone();
+    let stage_struct = item_impl.self_ty;
     let stage_struct_name = match *stage_struct {
         Type::Path(ref ty_path) => {
             let segments = &ty_path.path.segments;

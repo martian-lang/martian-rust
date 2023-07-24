@@ -2,13 +2,13 @@ error[E0308]: mismatched types
   --> tests/ui/invalid_type_write.rs:26:25
    |
 26 |         feat_file.write(&creature)?; // This is a compiler error
-   |                   ----- ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
+   |                   ----- ^^^^^^^^^ expected `&Feature`, found `&Creature`
    |                   |
-   |                   arguments to this function are incorrect
+   |                   arguments to this method are incorrect
    |
    = note: expected reference `&Feature`
               found reference `&Creature`
-note: associated function defined here
+note: method defined here
   --> src/lib.rs
    |
    |     fn write(&self, item: &T) -> Result<(), Error> {
@@ -18,13 +18,13 @@ error[E0308]: mismatched types
   --> tests/ui/invalid_type_write.rs:31:25
    |
 31 |         feat_file.write(&creature)?; // This is a compiler error
-   |                   ----- ^^^^^^^^^ expected struct `Feature`, found struct `Creature`
+   |                   ----- ^^^^^^^^^ expected `&Feature`, found `&Creature`
    |                   |
-   |                   arguments to this function are incorrect
+   |                   arguments to this method are incorrect
    |
    = note: expected reference `&Feature`
               found reference `&Creature`
-note: associated function defined here
+note: method defined here
   --> src/lib.rs
    |
    |     fn write(&self, item: &T) -> Result<(), Error> {

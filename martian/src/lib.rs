@@ -9,12 +9,14 @@ pub use anyhow::Error;
 use anyhow::{format_err, Context};
 use backtrace::Backtrace;
 use log::{error, info};
+
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
 use std::io::Write as IoWrite;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::Path;
+
 use std::{io, panic};
 use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
 use time::format_description::FormatItem::Literal;
@@ -182,11 +184,9 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     let log_file: File = unsafe { File::from_raw_fd(3) };
     setup_logging(log_file, level);
 
-    // setup Martian metadata (and an extra copy for use in the panic handler
-    let _md = initialize(args).context("IO Error initializing stage");
-
+    // setup Martian metadata
     // special handler for error in stage setup
-    let mut md = match _md {
+    let mut md = match initialize(args).context("IO Error initializing stage") {
         Ok(m) => m,
         Err(e) => {
             let _ = write_errors(&format!("{e:?}"), false);
@@ -360,7 +360,6 @@ pub fn make_mro_string(header_comment: &str, mro_registry: &[StageMro]) -> Strin
         assert!(
             header_comment
                 .lines()
-                .into_iter()
                 .all(|line| line.trim_end().is_empty() || line.starts_with('#')),
             "All non-empty header lines must start with '#', but got\n{}",
             header_comment
