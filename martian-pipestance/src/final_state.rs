@@ -1,31 +1,15 @@
-use anyhow::{Context, Result};
+use crate::common::NodeType;
+use crate::PipestanceFile;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
-use std::path::Path;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FinalState(pub Vec<FinalStateElement>);
 
-impl FinalState {
-    pub const FILENAME: &str = "_finalstate";
-
-    /// Deserialize the '_finalstate' file from the `path`.
-    ///
-    /// # Errors
-    ///
-    /// This function will return an error if the file doesn't exist or isn't a valid _finalstate
-    /// file.
-    pub fn from_file(path: impl AsRef<Path>) -> Result<Self> {
-        let path = path.as_ref();
-        Self::from_string(
-            std::fs::read_to_string(path)
-                .context(format!("Failed to open _finalstate from {:?}", path))?,
-        )
-    }
-
-    fn from_string(file_content: String) -> Result<Self> {
-        Ok(serde_json::from_str(&file_content)?)
+impl PipestanceFile for FinalState {
+    fn filename() -> &'static str {
+        "_finalstate"
     }
 }
 
@@ -43,7 +27,7 @@ pub struct FinalStateElement {
     pub edges: Vec<Edge>,
     pub stagecode_lang: StagecodeLang,
     #[serde(rename = "type")]
-    pub ty: Type,
+    pub ty: NodeType,
 }
 
 // Encapsulates information about a node failure.
@@ -59,13 +43,6 @@ pub struct NodeErrorInfo {
 pub struct Edge {
     pub from: String,
     pub to: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Type {
-    Pipeline,
-    Stage,
 }
 
 // Exportable information from a Fork object.
@@ -186,21 +163,13 @@ pub enum StagecodeLang {
 #[cfg(test)]
 mod tests {
     use super::FinalState;
+    use crate::common::read_zst;
+    use crate::PipestanceFile;
     use anyhow::Result;
-    use std::io::Read;
-
-    fn read_zst(fname: &str) -> Result<String> {
-        let mut file = std::fs::File::open(fname)?;
-        let mut decoder = zstd::stream::read::Decoder::new(&mut file)?;
-        let mut buffer = String::new();
-        decoder.read_to_string(&mut buffer)?;
-        Ok(buffer)
-    }
 
     #[test]
     fn test_finalstate_deserialize() -> Result<()> {
         let _finalstate = FinalState::from_string(read_zst("test_data/_finalstate.zst")?)?;
-
         Ok(())
     }
 }
