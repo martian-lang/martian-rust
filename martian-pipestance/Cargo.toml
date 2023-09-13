@@ -1,0 +1,17 @@
+[package]
+name = "martian-pipestance"
+version = "0.1.0"
+authors = ["Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>"]
+edition = "2021"
+include = ["src/**/*"]
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0", features = ['derive'] }
+serde_json = "1.0"
+anyhow = { version = "1", features = ["backtrace"] }
+
+[dev-dependencies]
+zstd = "0.12.4"
