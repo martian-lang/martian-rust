@@ -42,7 +42,6 @@ type StageId = String;
 struct StageInfo {
     #[allow(dead_code)]
     id: StageId,
-    parents: BTreeSet<StageId>,
     children: BTreeSet<StageId>,
     no_queue_wall_time: f64,
 }
@@ -51,7 +50,6 @@ impl StageInfo {
     fn new(id: StageId) -> Self {
         StageInfo {
             id,
-            parents: BTreeSet::new(),
             children: BTreeSet::new(),
             no_queue_wall_time: 0.0,
         }
@@ -61,6 +59,8 @@ impl StageInfo {
 #[derive(Default)]
 struct CriticalPathBuilder {
     stage_info: BTreeMap<StageId, StageInfo>,
+    graph: DiGraph<OrderedFloat<f64>, ()>,
+    stage_id_map: BTreeMap<String, NodeIndex>,
 }
 
 fn collect_all_nested_strings(v: &Value) -> Vec<String> {
@@ -107,8 +107,27 @@ impl CriticalPathBuilder {
             .collect();
 
         let mut builder = Self::default();
+
+        let stage_weights: BTreeMap<_, _> = perf
+            .0
+            .iter()
+            .filter_map(|p| {
+                (p.ty == NodeType::Stage).then(|| (&p.fqname, p.no_queue_wall_time_seconds()))
+            })
+            .collect();
+
+        for (&stage_id, &weight) in &stage_weights {
+            assert!(!builder.stage_id_map.contains_key(stage_id));
+            let node_idx = builder.graph.add_node(weight.into());
+            builder.stage_id_map.insert(stage_id.to_string(), node_idx);
+        }
+
         for stage_state in final_state.completed_stages() {
-            builder.mut_stage(&stage_state.fqname);
+            builder.mut_stage(&stage_state.fqname).no_queue_wall_time =
+                stage_weights[&stage_state.fqname];
+
+            assert!(builder.stage_id_map.contains_key(&stage_state.fqname));
+
             for binding_info in stage_state.argument_bindings() {
                 match binding_info.mode {
                     ArgumentMode::Empty => {
@@ -117,27 +136,31 @@ impl CriticalPathBuilder {
                                 .into_iter()
                                 .filter_map(|path| return_path_map.get(&path))
                             {
-                                builder.add_link(&stage_state.fqname, parent)
+                                builder.add_link(&stage_state.fqname, parent);
+                                builder.graph.update_edge(
+                                    builder.stage_id_map[parent],
+                                    builder.stage_id_map[&stage_state.fqname],
+                                    (),
+                                );
                             }
                         }
                     }
                     ArgumentMode::Reference => {
-                        builder.add_link(&stage_state.fqname, binding_info.node.as_ref().unwrap())
+                        builder.add_link(&stage_state.fqname, binding_info.node.as_ref().unwrap());
+                        builder.graph.update_edge(
+                            builder.stage_id_map[binding_info.node.as_ref().unwrap()],
+                            builder.stage_id_map[&stage_state.fqname],
+                            (),
+                        );
                     }
                 }
             }
-        }
-
-        for stage_perf in perf.0.iter().filter(|s| s.ty == NodeType::Stage) {
-            let cost = stage_perf.no_queue_wall_time_seconds();
-            builder.mut_stage(&stage_perf.fqname).no_queue_wall_time = cost;
         }
 
         builder
     }
 
     fn add_link(&mut self, child: &str, parent: &str) {
-        self.mut_stage(child).parents.insert(parent.to_string());
         self.mut_stage(parent).children.insert(child.to_string());
     }
 
@@ -151,11 +174,28 @@ impl CriticalPathBuilder {
         let all_nodes: Vec<_> = self.stage_info.keys().cloned().collect();
 
         self.mut_stage(Self::START_NODE);
+        self.stage_id_map.insert(
+            Self::START_NODE.to_string(),
+            self.graph.add_node(0.0.into()),
+        );
+
         self.mut_stage(Self::END_NODE);
+        self.stage_id_map
+            .insert(Self::END_NODE.to_string(), self.graph.add_node(0.0.into()));
 
         for node in all_nodes {
             self.add_link(&node, Self::START_NODE);
+            self.graph.update_edge(
+                self.stage_id_map[Self::START_NODE],
+                self.stage_id_map[&node],
+                (),
+            );
             self.add_link(Self::END_NODE, &node);
+            self.graph.update_edge(
+                self.stage_id_map[&node],
+                self.stage_id_map[Self::END_NODE],
+                (),
+            );
         }
     }
 
@@ -163,21 +203,10 @@ impl CriticalPathBuilder {
         self.add_start_and_end_node();
 
         // Create a directed graph
-        let mut graph = DiGraph::new();
-        let mut node_of_id = BTreeMap::new();
+        let graph = self.graph;
 
-        let ordered_nodes: Vec<_> = self.stage_info.keys().collect();
-
-        for (node, info) in &self.stage_info {
-            let gnode = graph.add_node(OrderedFloat(info.no_queue_wall_time));
-            node_of_id.insert(node, gnode);
-        }
-
-        for (node, info) in &self.stage_info {
-            for child in &info.children {
-                graph.update_edge(node_of_id[node], node_of_id[child], ());
-            }
-        }
+        let stage_id_of_node: BTreeMap<_, _> =
+            self.stage_id_map.iter().map(|(k, v)| (v, k)).collect();
 
         // Find topological order
         let topological_order: Vec<NodeIndex> = toposort(&graph, None).unwrap();
@@ -208,12 +237,14 @@ impl CriticalPathBuilder {
             max_weights.insert(*node, path_edge);
         }
 
+        println!("{:#?}", max_weights);
+
         // Trace back the path
         let mut path = Vec::new();
         let mut current_node = topological_order[0];
         while let Some(child) = max_weights[&current_node].child {
             current_node = child;
-            let node_id = ordered_nodes[current_node.index()];
+            let node_id = stage_id_of_node[&current_node];
             if node_id != CriticalPathBuilder::END_NODE {
                 path.push(CriticalPathNode {
                     id: node_id.clone(),
