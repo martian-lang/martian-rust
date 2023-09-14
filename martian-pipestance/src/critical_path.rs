@@ -28,10 +28,17 @@ pub struct CriticalPath {
     pub path: Vec<CriticalPathNode>,
 }
 
+impl CriticalPath {
+    pub fn compute(final_state: &FinalState, perf: &Perf) -> Self {
+        CriticalPathBuilder::new(final_state, perf).critical_path()
+    }
+}
+
 type StageId = String;
 
 #[derive(Debug)]
 struct StageInfo {
+    #[allow(dead_code)]
     id: StageId,
     parents: BTreeSet<StageId>,
     children: BTreeSet<StageId>,
