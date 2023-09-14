@@ -183,35 +183,35 @@ impl CriticalPathBuilder {
         let topological_order: Vec<NodeIndex> = toposort(&graph, None).unwrap();
 
         #[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
-        struct MaxChild {
+        struct MaxWeight {
             weight: OrderedFloat<f64>,
             child: Option<NodeIndex>,
         }
 
         // Calculate maximum weighted path
-        let mut max_children: BTreeMap<NodeIndex, MaxChild> = BTreeMap::new();
+        let mut max_weights: BTreeMap<NodeIndex, MaxWeight> = BTreeMap::new();
 
         for node in topological_order.iter().rev() {
             let node_weight = graph[*node];
             let path_edge = graph
                 .neighbors_directed(*node, petgraph::Direction::Outgoing)
-                .map(|child| MaxChild {
-                    weight: max_children[&child].weight + node_weight,
+                .map(|child| MaxWeight {
+                    weight: max_weights[&child].weight + node_weight,
                     child: Some(child),
                 })
                 .max()
-                .unwrap_or(MaxChild {
+                .unwrap_or(MaxWeight {
                     weight: node_weight,
                     child: None,
                 });
 
-            max_children.insert(*node, path_edge);
+            max_weights.insert(*node, path_edge);
         }
 
         // Trace back the path
         let mut path = Vec::new();
         let mut current_node = topological_order[0];
-        while let Some(child) = max_children[&current_node].child {
+        while let Some(child) = max_weights[&current_node].child {
             current_node = child;
             let node_id = ordered_nodes[current_node.index()];
             if node_id != CriticalPathBuilder::END_NODE {
@@ -224,7 +224,7 @@ impl CriticalPathBuilder {
         }
 
         CriticalPath {
-            total_time_seconds: max_children[&topological_order[0]].weight.0,
+            total_time_seconds: max_weights[&topological_order[0]].weight.0,
             path,
         }
     }
