@@ -76,7 +76,7 @@ struct GraphNode {
 struct CriticalPathBuilder {
     // stage_info: BTreeMap<StageId, StageInfo>,
     graph: DiGraph<GraphNode, ()>,
-    stage_id_map: BTreeMap<String, NodeIndex>,
+    node_id_of_stage_id: BTreeMap<String, NodeIndex>,
 }
 
 fn collect_all_nested_strings(v: &Value) -> Vec<String> {
@@ -136,7 +136,7 @@ impl CriticalPathBuilder {
             .collect();
 
         for stage_state in final_state.completed_stages() {
-            assert!(self.stage_id_map.contains_key(&stage_state.fqname));
+            assert!(self.node_id_of_stage_id.contains_key(&stage_state.fqname));
 
             for binding_info in stage_state.argument_bindings() {
                 match binding_info.mode {
@@ -164,18 +164,21 @@ impl CriticalPathBuilder {
             weight: weight.into(),
             stage_id: stage_id.to_string(),
         };
-        assert!(!self.stage_id_map.contains_key(&node.stage_id));
-        self.stage_id_map
+        assert!(!self.node_id_of_stage_id.contains_key(&node.stage_id));
+        self.node_id_of_stage_id
             .insert(node.stage_id.to_string(), self.graph.add_node(node));
     }
 
     fn add_edge(&mut self, from: &str, to: &str) {
-        self.graph
-            .update_edge(self.stage_id_map[from], self.stage_id_map[to], ());
+        self.graph.update_edge(
+            self.node_id_of_stage_id[from],
+            self.node_id_of_stage_id[to],
+            (),
+        );
     }
 
     fn add_start_and_end_node(&mut self) {
-        let all_nodes: Vec<_> = self.stage_id_map.keys().cloned().collect();
+        let all_nodes: Vec<_> = self.node_id_of_stage_id.keys().cloned().collect();
 
         self.add_node(Self::START_NODE, 0.0);
         self.add_node(Self::END_NODE, 0.0);
