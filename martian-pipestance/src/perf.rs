@@ -51,6 +51,15 @@ impl PerfElement {
             .reduce(f64::max)
             .unwrap_or(0.0)
     }
+
+    /// Actual wall time of the slowest fork
+    pub fn observed_wall_time(&self) -> f64 {
+        self.forks
+            .iter()
+            .map(|f| f.fork_stats.walltime)
+            .reduce(f64::max)
+            .unwrap_or(0.0)
+    }
 }
 
 /// Core type of a `_perf` file. Contains all information about a stage execution.
