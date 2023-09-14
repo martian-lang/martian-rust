@@ -9,7 +9,7 @@ use ordered_float::OrderedFloat;
 use petgraph::algo::toposort;
 use petgraph::graph::{DiGraph, NodeIndex};
 use serde_json::Value;
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+use std::collections::{BTreeMap, VecDeque};
 use std::fmt;
 
 pub struct CriticalPathNode {
@@ -36,29 +36,9 @@ impl CriticalPath {
     }
 }
 
-type StageId = String;
-
-#[derive(Debug)]
-struct StageInfo {
-    #[allow(dead_code)]
-    id: StageId,
-    children: BTreeSet<StageId>,
-    no_queue_wall_time: f64,
-}
-
-impl StageInfo {
-    fn new(id: StageId) -> Self {
-        StageInfo {
-            id,
-            children: BTreeSet::new(),
-            no_queue_wall_time: 0.0,
-        }
-    }
-}
-
 #[derive(Default)]
 struct CriticalPathBuilder {
-    stage_info: BTreeMap<StageId, StageInfo>,
+    // stage_info: BTreeMap<StageId, StageInfo>,
     graph: DiGraph<OrderedFloat<f64>, ()>,
     stage_id_map: BTreeMap<String, NodeIndex>,
 }
@@ -123,9 +103,6 @@ impl CriticalPathBuilder {
         }
 
         for stage_state in final_state.completed_stages() {
-            builder.mut_stage(&stage_state.fqname).no_queue_wall_time =
-                stage_weights[&stage_state.fqname];
-
             assert!(builder.stage_id_map.contains_key(&stage_state.fqname));
 
             for binding_info in stage_state.argument_bindings() {
@@ -136,7 +113,6 @@ impl CriticalPathBuilder {
                                 .into_iter()
                                 .filter_map(|path| return_path_map.get(&path))
                             {
-                                builder.add_link(&stage_state.fqname, parent);
                                 builder.graph.update_edge(
                                     builder.stage_id_map[parent],
                                     builder.stage_id_map[&stage_state.fqname],
@@ -146,7 +122,6 @@ impl CriticalPathBuilder {
                         }
                     }
                     ArgumentMode::Reference => {
-                        builder.add_link(&stage_state.fqname, binding_info.node.as_ref().unwrap());
                         builder.graph.update_edge(
                             builder.stage_id_map[binding_info.node.as_ref().unwrap()],
                             builder.stage_id_map[&stage_state.fqname],
@@ -160,37 +135,23 @@ impl CriticalPathBuilder {
         builder
     }
 
-    fn add_link(&mut self, child: &str, parent: &str) {
-        self.mut_stage(parent).children.insert(child.to_string());
-    }
-
-    fn mut_stage(&mut self, id: &str) -> &mut StageInfo {
-        self.stage_info
-            .entry(id.to_string())
-            .or_insert_with(|| StageInfo::new(id.to_string()))
-    }
-
     fn add_start_and_end_node(&mut self) {
-        let all_nodes: Vec<_> = self.stage_info.keys().cloned().collect();
+        let all_nodes: Vec<_> = self.stage_id_map.keys().cloned().collect();
 
-        self.mut_stage(Self::START_NODE);
         self.stage_id_map.insert(
             Self::START_NODE.to_string(),
             self.graph.add_node(0.0.into()),
         );
 
-        self.mut_stage(Self::END_NODE);
         self.stage_id_map
             .insert(Self::END_NODE.to_string(), self.graph.add_node(0.0.into()));
 
         for node in all_nodes {
-            self.add_link(&node, Self::START_NODE);
             self.graph.update_edge(
                 self.stage_id_map[Self::START_NODE],
                 self.stage_id_map[&node],
                 (),
             );
-            self.add_link(Self::END_NODE, &node);
             self.graph.update_edge(
                 self.stage_id_map[&node],
                 self.stage_id_map[Self::END_NODE],
