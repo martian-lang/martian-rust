@@ -42,15 +42,6 @@ struct GraphNode {
     stage_id: String,
 }
 
-impl GraphNode {
-    fn new(weight: impl Into<OrderedFloat<f64>>, stage_id: impl ToString) -> Self {
-        GraphNode {
-            weight: weight.into(),
-            stage_id: stage_id.to_string(),
-        }
-    }
-}
-
 #[derive(Default)]
 struct CriticalPathBuilder {
     // stage_info: BTreeMap<StageId, StageInfo>,
@@ -104,14 +95,9 @@ impl CriticalPathBuilder {
         let mut builder = Self::default();
 
         for perf_element in perf.0.iter().filter(|p| p.ty == NodeType::Stage) {
-            let stage_id = &perf_element.fqname;
-            assert!(!builder.stage_id_map.contains_key(stage_id));
-            builder.stage_id_map.insert(
-                stage_id.to_string(),
-                builder.graph.add_node(GraphNode::new(
-                    perf_element.no_queue_wall_time_seconds(),
-                    stage_id,
-                )),
+            builder.add_node(
+                &perf_element.fqname,
+                perf_element.no_queue_wall_time_seconds(),
             );
         }
 
@@ -126,20 +112,12 @@ impl CriticalPathBuilder {
                                 .into_iter()
                                 .filter_map(|path| return_path_map.get(&path))
                             {
-                                builder.graph.update_edge(
-                                    builder.stage_id_map[parent],
-                                    builder.stage_id_map[&stage_state.fqname],
-                                    (),
-                                );
+                                builder.add_edge(parent, &stage_state.fqname);
                             }
                         }
                     }
                     ArgumentMode::Reference => {
-                        builder.graph.update_edge(
-                            builder.stage_id_map[binding_info.node.as_ref().unwrap()],
-                            builder.stage_id_map[&stage_state.fqname],
-                            (),
-                        );
+                        builder.add_edge(binding_info.node.as_ref().unwrap(), &stage_state.fqname);
                     }
                 }
             }
@@ -148,30 +126,30 @@ impl CriticalPathBuilder {
         builder
     }
 
+    fn add_node(&mut self, stage_id: &str, weight: f64) {
+        let node = GraphNode {
+            weight: weight.into(),
+            stage_id: stage_id.to_string(),
+        };
+        assert!(!self.stage_id_map.contains_key(&node.stage_id));
+        self.stage_id_map
+            .insert(node.stage_id.to_string(), self.graph.add_node(node));
+    }
+
+    fn add_edge(&mut self, from: &str, to: &str) {
+        self.graph
+            .update_edge(self.stage_id_map[from], self.stage_id_map[to], ());
+    }
+
     fn add_start_and_end_node(&mut self) {
         let all_nodes: Vec<_> = self.stage_id_map.keys().cloned().collect();
 
-        self.stage_id_map.insert(
-            Self::START_NODE.to_string(),
-            self.graph.add_node(GraphNode::new(0.0, Self::START_NODE)),
-        );
-
-        self.stage_id_map.insert(
-            Self::END_NODE.to_string(),
-            self.graph.add_node(GraphNode::new(0.0, Self::END_NODE)),
-        );
+        self.add_node(Self::START_NODE, 0.0);
+        self.add_node(Self::END_NODE, 0.0);
 
         for node in all_nodes {
-            self.graph.update_edge(
-                self.stage_id_map[Self::START_NODE],
-                self.stage_id_map[&node],
-                (),
-            );
-            self.graph.update_edge(
-                self.stage_id_map[&node],
-                self.stage_id_map[Self::END_NODE],
-                (),
-            );
+            self.add_edge(Self::START_NODE, &node);
+            self.add_edge(&node, Self::END_NODE);
         }
     }
 
