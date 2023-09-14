@@ -41,6 +41,18 @@ pub struct PerfElement {
     pub ty: NodeType,
 }
 
+impl PerfElement {
+    /// Wall time if there is no queueing time
+    /// Slowest (split + slowest chunk + join) among all forks
+    pub fn no_queue_wall_time_seconds(&self) -> f64 {
+        self.forks
+            .iter()
+            .map(|f| f.no_queue_wall_time_seconds())
+            .reduce(f64::max)
+            .unwrap_or(0.0)
+    }
+}
+
 /// Core type of a `_perf` file. Contains all information about a stage execution.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PerfStats {
@@ -147,6 +159,24 @@ pub struct ForkPerfInfo {
     pub chunks: Vec<ChunkPerfInfo>,
     /// Index of the fork
     pub index: i32,
+}
+
+impl ForkPerfInfo {
+    /// Wall time if there is no queueing time (split + slowest chunk + join)
+    pub fn no_queue_wall_time_seconds(&self) -> f64 {
+        self.split_stats.as_ref().map_or(0.0, |s| s.walltime)
+            + self
+                .chunks
+                .iter()
+                .map(|c| c.chunk_stats.walltime)
+                .reduce(f64::max)
+                .unwrap_or(0.0)
+            + self.join_stats.as_ref().map_or(0.0, |s| s.walltime)
+    }
+
+    pub fn wall_time_seconds(&self) -> f64 {
+        self.fork_stats.walltime
+    }
 }
 
 /// Information about a single chunk (executed during main)

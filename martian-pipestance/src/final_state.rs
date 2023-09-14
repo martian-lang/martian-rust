@@ -13,6 +13,14 @@ impl PipestanceFile for FinalState {
     }
 }
 
+impl FinalState {
+    pub fn completed_stages(&self) -> impl Iterator<Item = &FinalStateElement> {
+        self.0
+            .iter()
+            .filter(|s| (s.ty == NodeType::Stage) && (s.state == State::Complete))
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FinalStateElement {
@@ -28,6 +36,25 @@ pub struct FinalStateElement {
     pub stagecode_lang: StagecodeLang,
     #[serde(rename = "type")]
     pub ty: NodeType,
+}
+
+impl FinalStateElement {
+    pub fn return_bindings(&self) -> impl Iterator<Item = &BindingInfo> {
+        self.forks
+            .iter()
+            .filter_map(|f| {
+                f.bindings
+                    .as_ref()
+                    .map(|binding| binding.bindings_return.iter().flatten())
+            })
+            .flatten()
+    }
+    pub fn argument_bindings(&self) -> impl Iterator<Item = &BindingInfo> {
+        self.forks
+            .iter()
+            .filter_map(|f| f.bindings.as_ref().map(|binding| binding.argument.iter()))
+            .flatten()
+    }
 }
 
 // Encapsulates information about a node failure.
@@ -82,7 +109,7 @@ pub struct BindingInfo {
     pub waiting: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum ArgumentMode {
     #[serde(rename = "")]
@@ -126,30 +153,20 @@ pub struct ChunkDef {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Metadata {
     pub path: String,
-    pub names: Vec<State>,
+    pub names: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum State {
-    Args,
-    #[serde(rename = "chunk_defs")]
-    ChunkDefs,
-    #[serde(rename = "chunk_outs")]
-    ChunkOuts,
     Complete,
+    Failed,
     Disabled,
-    Heartbeat,
-    Invocation,
-    Jobinfo,
-    Jobscript,
-    Log,
-    Outs,
-    #[serde(rename = "stage_defs")]
-    StageDefs,
-    Stderr,
-    Stdout,
-    Vdrkill,
+    Running,
+    Queued,
+    Ready,
+    #[serde(alias = "")]
+    Waiting,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

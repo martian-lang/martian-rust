@@ -3,10 +3,12 @@ use serde::de::DeserializeOwned;
 use std::path::Path;
 
 pub mod common;
+pub mod critical_path;
 pub mod final_state;
 pub mod perf;
 
-/// A file associated with a martian pipestance
+/// A file associated with a martian pipestance such as _perf, _finalstate etc
+/// that can be deserialized into a concrete type
 pub trait PipestanceFile: DeserializeOwned {
     fn filename() -> &'static str;
     fn from_pipestance_folder(pipestance_folder: impl AsRef<Path>) -> Result<Self> {
