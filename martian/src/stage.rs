@@ -494,6 +494,23 @@ impl MartianRover {
             Ok(())
         }
     }
+
+    /// Creates a hard link (falls back to copy) to the given MartianFileType file
+    /// within the rover's file directory
+    ///
+    /// # Arguments
+    ///
+    /// * `src` - The path to the MartianFileType file
+    ///
+    /// # Returns
+    ///
+    /// * The path of the newly created link
+    pub fn hard_link_or_copy<M: MartianFileType>(&self, src: &M) -> Result<M, Error> {
+        let stem = src.as_ref().file_name().expect("Could not get file name.");
+        let dst: M = self.make_path(stem);
+        std::fs::hard_link(src, &dst).or_else(|_| std::fs::copy(src, &dst).map(|_| ()))?;
+        Ok(dst)
+    }
 }
 
 /// Two different kinds of marian stages. `MainOnly` stages only have a
