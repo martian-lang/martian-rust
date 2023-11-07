@@ -1,28 +1,31 @@
 [package]
 name = "martian"
 version = "0.26.0"
-authors = ["Patrick Marks <patrick@10xgenomics.com>", "Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>"]
+authors = [
+    "Patrick Marks <patrick@10xgenomics.com>",
+    "Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>",
+]
 edition = "2021"
 include = ["src/*.rs", "README.md"]
 license = "MIT"
 
 [dependencies]
-log = "0.4"
-fern = ">=0.5, <0.7"
-time = { version = ">=0.3", features = ["formatting", "local-offset"] }
-serde = { version = "1.0", features = ['derive'] }
-serde_json = "1.0"
-backtrace = "*"
 anyhow = { version = "1", features = ["backtrace"] }
+backtrace = "0.3"
+fern = ">=0.5, <0.7"
 heck = "0.4"
-tempfile = "3"
+log = "0.4"
+rayon = { version = "1", optional = true }
 rustc_version = ">=0.3, <0.5"
-rayon = { version = ">=1.0", optional = true }
+serde = { version = "1", features = ['derive'] }
+serde_json = "1"
+tempfile = "3"
+time = { version = ">=0.3", features = ["formatting", "local-offset"] }
 
 [dev-dependencies]
-indoc = "2.0.2"
-pretty_assertions = "1.4.0"
-insta = "1.30"
+indoc = "2"
+insta = "1"
+pretty_assertions = "1"
 
 [features]
 default = []
