@@ -21,7 +21,7 @@ var sourcesIndex = JSON.parse('{\
 "lazy_static":["",[],["inline_lazy.rs","lib.rs"]],\
 "libc":["",[["unix",[["linux_like",[["linux",[["arch",[["generic",[],["mod.rs"]]],["mod.rs"]],["gnu",[["b64",[["x86_64",[],["align.rs","mod.rs","not_x32.rs"]]],["mod.rs"]]],["align.rs","mod.rs"]]],["align.rs","mod.rs","non_exhaustive.rs"]]],["mod.rs"]]],["align.rs","mod.rs"]]],["fixed_width_ints.rs","lib.rs","macros.rs"]],\
 "linux_raw_sys":["",[["x86_64",[],["errno.rs","general.rs","ioctl.rs"]]],["lib.rs"]],\
-"log":["",[],["lib.rs","macros.rs"]],\
+"log":["",[],["__private_api.rs","lib.rs","macros.rs"]],\
 "lz4":["",[["block",[],["mod.rs"]]],["decoder.rs","encoder.rs","lib.rs","liblz4.rs"]],\
 "lz4_sys":["",[],["lib.rs"]],\
 "martian":["",[],["lib.rs","macros.rs","metadata.rs","mro.rs","prelude.rs","stage.rs","temporary_file.rs","utils.rs"]],\
