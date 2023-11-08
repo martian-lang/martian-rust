@@ -1,20 +1,12 @@
+error: "The usage of mro_type should be of form #[mro_type="type"] or #[mro_type="type[]"], where type can be one of: int, float, string, bool, map, path"
+ --> tests/ui_martian_struct/test_invalid_mro_type_val.rs:8:5
+  |
+8 | /     #[mro_type=int] // Should be "int"
+9 | |     foo: Foo,
+  | |____________^
+
 error: unexpected expression: `int`
- --> $DIR/test_invalid_mro_type_val.rs:8:16
+ --> tests/ui_martian_struct/test_invalid_mro_type_val.rs:8:16
   |
 8 |     #[mro_type=int] // Should be "int"
   |                ^^^
-
-error[E0277]: the trait bound `Foo: MartianFileType` is not satisfied
- --> $DIR/test_invalid_mro_type_val.rs:5:10
-  |
-5 | #[derive(MartianStruct)]
-  |          ^^^^^^^^^^^^^ the trait `MartianFileType` is not implemented for `Foo`
-  |
-  = help: the following other types implement trait `AsMartianBlanketType`:
-            HashMap<K, V, H>
-            HashSet<K, H>
-            Option<T>
-            Vec<T>
-  = note: required for `Foo` to implement `AsMartianPrimaryType`
-  = note: required for `Foo` to implement `AsMartianBlanketType`
-  = note: this error originates in the derive macro `MartianStruct` (in Nightly builds, run with -Z macro-backtrace for more info)
