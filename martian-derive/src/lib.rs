@@ -442,7 +442,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // Generate tokenstream for `MroField` calls for each field
     // Make sure that none of the field names are martian keywords.
-    // Parse the #[mro_retian] attributes attached to the field, and make sure
+    // Parse the #[mro_retain] attributes attached to the field, and make sure
     // that no serde field attributes are used
     let mut vec_inner = Vec::with_capacity(fields.len());
     let blacklist: HashSet<&str> = MARTIAN_TOKENS.iter().copied().collect();
@@ -451,59 +451,68 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
         let mut retain = false;
         let mut mro_type = None;
         for attr in &field.attrs {
-            if let Ok(meta) = attr.parse_meta() {
-                match meta {
-                    syn::Meta::Path(ref path) if path.is_ident("mro_retain") => {
-                        retain = true;
-                    }
-                    syn::Meta::List(ref list) if list.path.is_ident("serde") => {
-                        return syn::Error::new_spanned(field,
-                            "Cannot use serde attributes here. \
-                            This might be okay, but it's hard to guarantee that deriving MartianStruct would work correctly when using serde attributes."
-                        )
-                            .to_compile_error()
-                            .into();
-                    }
-                    syn::Meta::NameValue(ref name_val) if name_val.path.is_ident("mro_type") => {
-                        match name_val.lit {
-                            syn::Lit::Str(ref val) => {
-                                let val_string = val.value();
-                                match val_string.parse::<MartianBlanketType>() {
-                                    Ok(_) => {
-                                        if mro_type.is_some() {
-                                            return syn::Error::new_spanned(
-                                                field,
-                                                format!(
-                                                    "Looks like you are setting #[mro_type] twice for field '{name}'"
-                                                )
-                                            )
-                                            .to_compile_error()
-                                            .into();
-                                        }
-                                        mro_type = Some(val_string)
-                                    }
-                                    Err(_) => {
-                                        return syn::Error::new_spanned(
-                                            field,
-                                            format!(
-                                                "{}. Found {}",
-                                                INVALID_MRO_TYPE_ERROR, val_string
-                                            ),
-                                        )
-                                        .to_compile_error()
-                                        .into();
-                                    }
-                                }
-                            }
-                            _ => {
-                                return syn::Error::new_spanned(field, INVALID_MRO_TYPE_ERROR)
-                                    .to_compile_error()
-                                    .into();
-                            }
-                        }
-                    }
-                    _ => {}
+            if attr.path().is_ident("mro_retain") {
+                if !matches!(attr.meta, syn::Meta::Path(_)) {
+                    return syn::Error::new_spanned(field, "mro_retain accepts no arguments")
+                        .to_compile_error()
+                        .into();
                 }
+                retain = true;
+            }
+
+            if attr.path().is_ident("serde") {
+                return syn::Error::new_spanned(
+                    field,
+                    "Cannot use serde attributes here. \
+                     This might be okay, but it's hard to guarantee that deriving \
+                     MartianStruct would work correctly when using serde attributes.",
+                )
+                .to_compile_error()
+                .into();
+            }
+
+            if attr.path().is_ident("mro_type") {
+                let syn::Meta::NameValue(syn::MetaNameValue {
+                    path: _,
+                    eq_token: _,
+                    value:
+                        syn::Expr::Lit(syn::ExprLit {
+                            attrs,
+                            lit: syn::Lit::Str(val),
+                        }),
+                }) = &attr.meta
+                else {
+                    return syn::Error::new_spanned(field, INVALID_MRO_TYPE_ERROR)
+                        .to_compile_error()
+                        .into();
+                };
+
+                if !attrs.is_empty() {
+                    return syn::Error::new_spanned(field, INVALID_MRO_TYPE_ERROR)
+                        .to_compile_error()
+                        .into();
+                }
+
+                if val.value().parse::<MartianBlanketType>().is_err() {
+                    let value = val.value();
+                    return syn::Error::new_spanned(
+                        field,
+                        format!("{INVALID_MRO_TYPE_ERROR}. Found {value}"),
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+
+                if mro_type.is_some() {
+                    return syn::Error::new_spanned(
+                        field,
+                        format!("Specified #[mro_type] twice for field '{name}'"),
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+
+                mro_type = Some(val.value())
             }
         }
         if name.starts_with("__") {
