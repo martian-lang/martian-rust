@@ -1,4 +1,4 @@
-var sourcesIndex = JSON.parse('{\
+var srcIndex = JSON.parse('{\
 "addr2line":["",[],["function.rs","lazy.rs","lib.rs"]],\
 "adler":["",[],["algo.rs","lib.rs"]],\
 "anyhow":["",[],["backtrace.rs","chain.rs","context.rs","ensure.rs","error.rs","fmt.rs","kind.rs","lib.rs","macros.rs","ptr.rs","wrapper.rs"]],\
@@ -57,4 +57,4 @@ var sourcesIndex = JSON.parse('{\
 "zstd_safe":["",[],["constants.rs","lib.rs"]],\
 "zstd_sys":["",[],["bindings_zdict.rs","bindings_zstd.rs","lib.rs"]]\
 }');
-createSourceSidebar();
+createSrcSidebar();
