@@ -9,7 +9,7 @@ jobs:
   clippy_check:
     runs-on: ubuntu-latest
     steps:
-    - uses: dtolnay/rust-toolchain@1.70.0
+    - uses: dtolnay/rust-toolchain@1.73.0
       with:
         components: clippy
     - uses: actions/checkout@v4
