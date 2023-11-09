@@ -953,6 +953,15 @@
 <a href="#953" id="953">953</a>
 <a href="#954" id="954">954</a>
 <a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
 </pre></div><pre class="rust"><code><span class="attr">#![recursion_limit = <span class="string">&quot;256&quot;</span>]
 
 </span><span class="doccomment">/// TODO:
@@ -1397,7 +1406,7 @@
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // Generate tokenstream for `MroField` calls for each field
     // Make sure that none of the field names are martian keywords.
-    // Parse the #[mro_retian] attributes attached to the field, and make sure
+    // Parse the #[mro_retain] attributes attached to the field, and make sure
     // that no serde field attributes are used
     </span><span class="kw">let </span><span class="kw-2">mut </span>vec_inner = Vec::with_capacity(fields.len());
     <span class="kw">let </span>blacklist: HashSet&lt;<span class="kw-2">&amp;</span>str&gt; = MARTIAN_TOKENS.iter().copied().collect();
@@ -1406,59 +1415,68 @@
         <span class="kw">let </span><span class="kw-2">mut </span>retain = <span class="bool-val">false</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>mro_type = <span class="prelude-val">None</span>;
         <span class="kw">for </span>attr <span class="kw">in </span><span class="kw-2">&amp;</span>field.attrs {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(meta) = attr.parse_meta() {
-                <span class="kw">match </span>meta {
-                    syn::Meta::Path(<span class="kw-2">ref </span>path) <span class="kw">if </span>path.is_ident(<span class="string">&quot;mro_retain&quot;</span>) =&gt; {
-                        retain = <span class="bool-val">true</span>;
-                    }
-                    syn::Meta::List(<span class="kw-2">ref </span>list) <span class="kw">if </span>list.path.is_ident(<span class="string">&quot;serde&quot;</span>) =&gt; {
-                        <span class="kw">return </span>syn::Error::new_spanned(field,
-                            <span class="string">&quot;Cannot use serde attributes here. \
-                            This might be okay, but it&#39;s hard to guarantee that deriving MartianStruct would work correctly when using serde attributes.&quot;
-                        </span>)
-                            .to_compile_error()
-                            .into();
-                    }
-                    syn::Meta::NameValue(<span class="kw-2">ref </span>name_val) <span class="kw">if </span>name_val.path.is_ident(<span class="string">&quot;mro_type&quot;</span>) =&gt; {
-                        <span class="kw">match </span>name_val.lit {
-                            syn::Lit::Str(<span class="kw-2">ref </span>val) =&gt; {
-                                <span class="kw">let </span>val_string = val.value();
-                                <span class="kw">match </span>val_string.parse::&lt;MartianBlanketType&gt;() {
-                                    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                                        <span class="kw">if </span>mro_type.is_some() {
-                                            <span class="kw">return </span>syn::Error::new_spanned(
-                                                field,
-                                                <span class="macro">format!</span>(
-                                                    <span class="string">&quot;Looks like you are setting #[mro_type] twice for field &#39;{name}&#39;&quot;
-                                                </span>)
-                                            )
-                                            .to_compile_error()
-                                            .into();
-                                        }
-                                        mro_type = <span class="prelude-val">Some</span>(val_string)
-                                    }
-                                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
-                                        <span class="kw">return </span>syn::Error::new_spanned(
-                                            field,
-                                            <span class="macro">format!</span>(
-                                                <span class="string">&quot;{}. Found {}&quot;</span>,
-                                                INVALID_MRO_TYPE_ERROR, val_string
-                                            ),
-                                        )
-                                        .to_compile_error()
-                                        .into();
-                                    }
-                                }
-                            }
-                            <span class="kw">_ </span>=&gt; {
-                                <span class="kw">return </span>syn::Error::new_spanned(field, INVALID_MRO_TYPE_ERROR)
-                                    .to_compile_error()
-                                    .into();
-                            }
-                        }
-                    }
-                    <span class="kw">_ </span>=&gt; {}
+            <span class="kw">if </span>attr.path().is_ident(<span class="string">&quot;mro_retain&quot;</span>) {
+                <span class="kw">if </span>!<span class="macro">matches!</span>(attr.meta, syn::Meta::Path(<span class="kw">_</span>)) {
+                    <span class="kw">return </span>syn::Error::new_spanned(field, <span class="string">&quot;mro_retain accepts no arguments&quot;</span>)
+                        .to_compile_error()
+                        .into();
                 }
+                retain = <span class="bool-val">true</span>;
+            }
+
+            <span class="kw">if </span>attr.path().is_ident(<span class="string">&quot;serde&quot;</span>) {
+                <span class="kw">return </span>syn::Error::new_spanned(
+                    field,
+                    <span class="string">&quot;Cannot use serde attributes here. \
+                     This might be okay, but it&#39;s hard to guarantee that deriving \
+                     MartianStruct would work correctly when using serde attributes.&quot;</span>,
+                )
+                .to_compile_error()
+                .into();
+            }
+
+            <span class="kw">if </span>attr.path().is_ident(<span class="string">&quot;mro_type&quot;</span>) {
+                <span class="kw">let </span>syn::Meta::NameValue(syn::MetaNameValue {
+                    path: <span class="kw">_</span>,
+                    eq_token: <span class="kw">_</span>,
+                    value:
+                        syn::Expr::Lit(syn::ExprLit {
+                            attrs,
+                            lit: syn::Lit::Str(val),
+                        }),
+                }) = <span class="kw-2">&amp;</span>attr.meta
+                <span class="kw">else </span>{
+                    <span class="kw">return </span>syn::Error::new_spanned(field, INVALID_MRO_TYPE_ERROR)
+                        .to_compile_error()
+                        .into();
+                };
+
+                <span class="kw">if </span>!attrs.is_empty() {
+                    <span class="kw">return </span>syn::Error::new_spanned(field, INVALID_MRO_TYPE_ERROR)
+                        .to_compile_error()
+                        .into();
+                }
+
+                <span class="kw">if </span>val.value().parse::&lt;MartianBlanketType&gt;().is_err() {
+                    <span class="kw">let </span>value = val.value();
+                    <span class="kw">return </span>syn::Error::new_spanned(
+                        field,
+                        <span class="macro">format!</span>(<span class="string">&quot;{INVALID_MRO_TYPE_ERROR}. Found {value}&quot;</span>),
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+
+                <span class="kw">if </span>mro_type.is_some() {
+                    <span class="kw">return </span>syn::Error::new_spanned(
+                        field,
+                        <span class="macro">format!</span>(<span class="string">&quot;Specified #[mro_type] twice for field &#39;{name}&#39;&quot;</span>),
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+
+                mro_type = <span class="prelude-val">Some</span>(val.value())
             }
         }
         <span class="kw">if </span>name.starts_with(<span class="string">&quot;__&quot;</span>) {

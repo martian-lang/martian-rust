@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-1.0.109/src/gen/hash.rs`."><title>hash.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="syn" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0 (90c541806 2023-05-31)" data-search-js="search-e077946657036a58.js" data-settings-js="settings-298e1ea74db45b39.js" data-settings-css="settings-7bfb4c59cc6bc502.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-905937fbbdc8e9ea.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f61008743c98d196.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../syn/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-2.0.39/src/gen/hash.rs`."><title>hash.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="syn" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0 (90c541806 2023-05-31)" data-search-js="search-e077946657036a58.js" data-settings-js="settings-298e1ea74db45b39.js" data-settings-css="settings-7bfb4c59cc6bc502.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-905937fbbdc8e9ea.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f61008743c98d196.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../syn/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2805,68 +2805,6 @@
 <a href="#2805" id="2805">2805</a>
 <a href="#2806" id="2806">2806</a>
 <a href="#2807" id="2807">2807</a>
-<a href="#2808" id="2808">2808</a>
-<a href="#2809" id="2809">2809</a>
-<a href="#2810" id="2810">2810</a>
-<a href="#2811" id="2811">2811</a>
-<a href="#2812" id="2812">2812</a>
-<a href="#2813" id="2813">2813</a>
-<a href="#2814" id="2814">2814</a>
-<a href="#2815" id="2815">2815</a>
-<a href="#2816" id="2816">2816</a>
-<a href="#2817" id="2817">2817</a>
-<a href="#2818" id="2818">2818</a>
-<a href="#2819" id="2819">2819</a>
-<a href="#2820" id="2820">2820</a>
-<a href="#2821" id="2821">2821</a>
-<a href="#2822" id="2822">2822</a>
-<a href="#2823" id="2823">2823</a>
-<a href="#2824" id="2824">2824</a>
-<a href="#2825" id="2825">2825</a>
-<a href="#2826" id="2826">2826</a>
-<a href="#2827" id="2827">2827</a>
-<a href="#2828" id="2828">2828</a>
-<a href="#2829" id="2829">2829</a>
-<a href="#2830" id="2830">2830</a>
-<a href="#2831" id="2831">2831</a>
-<a href="#2832" id="2832">2832</a>
-<a href="#2833" id="2833">2833</a>
-<a href="#2834" id="2834">2834</a>
-<a href="#2835" id="2835">2835</a>
-<a href="#2836" id="2836">2836</a>
-<a href="#2837" id="2837">2837</a>
-<a href="#2838" id="2838">2838</a>
-<a href="#2839" id="2839">2839</a>
-<a href="#2840" id="2840">2840</a>
-<a href="#2841" id="2841">2841</a>
-<a href="#2842" id="2842">2842</a>
-<a href="#2843" id="2843">2843</a>
-<a href="#2844" id="2844">2844</a>
-<a href="#2845" id="2845">2845</a>
-<a href="#2846" id="2846">2846</a>
-<a href="#2847" id="2847">2847</a>
-<a href="#2848" id="2848">2848</a>
-<a href="#2849" id="2849">2849</a>
-<a href="#2850" id="2850">2850</a>
-<a href="#2851" id="2851">2851</a>
-<a href="#2852" id="2852">2852</a>
-<a href="#2853" id="2853">2853</a>
-<a href="#2854" id="2854">2854</a>
-<a href="#2855" id="2855">2855</a>
-<a href="#2856" id="2856">2856</a>
-<a href="#2857" id="2857">2857</a>
-<a href="#2858" id="2858">2858</a>
-<a href="#2859" id="2859">2859</a>
-<a href="#2860" id="2860">2860</a>
-<a href="#2861" id="2861">2861</a>
-<a href="#2862" id="2862">2862</a>
-<a href="#2863" id="2863">2863</a>
-<a href="#2864" id="2864">2864</a>
-<a href="#2865" id="2865">2865</a>
-<a href="#2866" id="2866">2866</a>
-<a href="#2867" id="2867">2867</a>
-<a href="#2868" id="2868">2868</a>
-<a href="#2869" id="2869">2869</a>
 </pre></div><pre class="rust"><code><span class="comment">// This file is @generated by syn-internal-codegen.
 // It is not intended for manual editing.
 
@@ -2911,6 +2849,30 @@
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>AssocConst {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.ident.hash(state);
+        <span class="self">self</span>.generics.hash(state);
+        <span class="self">self</span>.value.hash(state);
+    }
+}
+<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>AssocType {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.ident.hash(state);
+        <span class="self">self</span>.generics.hash(state);
+        <span class="self">self</span>.ty.hash(state);
+    }
+}
+<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>AttrStyle {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -2934,8 +2896,7 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.style.hash(state);
-        <span class="self">self</span>.path.hash(state);
-        TokenStreamHelper(<span class="kw-2">&amp;</span><span class="self">self</span>.tokens).hash(state);
+        <span class="self">self</span>.meta.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -2948,6 +2909,18 @@
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.name.hash(state);
         <span class="self">self</span>.ty.hash(state);
+    }
+}
+<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>BareVariadic {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.name.hash(state);
+        <span class="self">self</span>.comma.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -3012,48 +2985,37 @@
             BinOp::Gt(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">17u8</span>);
             }
-            BinOp::AddEq(<span class="kw">_</span>) =&gt; {
+            BinOp::AddAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">18u8</span>);
             }
-            BinOp::SubEq(<span class="kw">_</span>) =&gt; {
+            BinOp::SubAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">19u8</span>);
             }
-            BinOp::MulEq(<span class="kw">_</span>) =&gt; {
+            BinOp::MulAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">20u8</span>);
             }
-            BinOp::DivEq(<span class="kw">_</span>) =&gt; {
+            BinOp::DivAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">21u8</span>);
             }
-            BinOp::RemEq(<span class="kw">_</span>) =&gt; {
+            BinOp::RemAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">22u8</span>);
             }
-            BinOp::BitXorEq(<span class="kw">_</span>) =&gt; {
+            BinOp::BitXorAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">23u8</span>);
             }
-            BinOp::BitAndEq(<span class="kw">_</span>) =&gt; {
+            BinOp::BitAndAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">24u8</span>);
             }
-            BinOp::BitOrEq(<span class="kw">_</span>) =&gt; {
+            BinOp::BitOrAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">25u8</span>);
             }
-            BinOp::ShlEq(<span class="kw">_</span>) =&gt; {
+            BinOp::ShlAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">26u8</span>);
             }
-            BinOp::ShrEq(<span class="kw">_</span>) =&gt; {
+            BinOp::ShrAssign(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">27u8</span>);
             }
         }
-    }
-}
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>Binding {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.ident.hash(state);
-        <span class="self">self</span>.ty.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -3098,6 +3060,7 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.ident.hash(state);
+        <span class="self">self</span>.generics.hash(state);
         <span class="self">self</span>.bounds.hash(state);
     }
 }
@@ -3188,77 +3151,76 @@
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::AssignOp(v0) =&gt; {
+            </span>Expr::Async(v0) =&gt; {
                 state.write_u8(<span class="number">2u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::Async(v0) =&gt; {
+            </span>Expr::Await(v0) =&gt; {
                 state.write_u8(<span class="number">3u8</span>);
                 v0.hash(state);
             }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::Await(v0) =&gt; {
-                state.write_u8(<span class="number">4u8</span>);
-                v0.hash(state);
-            }
             Expr::Binary(v0) =&gt; {
-                state.write_u8(<span class="number">5u8</span>);
+                state.write_u8(<span class="number">4u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::Block(v0) =&gt; {
-                state.write_u8(<span class="number">6u8</span>);
-                v0.hash(state);
-            }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::Box(v0) =&gt; {
-                state.write_u8(<span class="number">7u8</span>);
+                state.write_u8(<span class="number">5u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::Break(v0) =&gt; {
-                state.write_u8(<span class="number">8u8</span>);
+                state.write_u8(<span class="number">6u8</span>);
                 v0.hash(state);
             }
             Expr::Call(v0) =&gt; {
-                state.write_u8(<span class="number">9u8</span>);
+                state.write_u8(<span class="number">7u8</span>);
                 v0.hash(state);
             }
             Expr::Cast(v0) =&gt; {
-                state.write_u8(<span class="number">10u8</span>);
+                state.write_u8(<span class="number">8u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::Closure(v0) =&gt; {
-                state.write_u8(<span class="number">11u8</span>);
+                state.write_u8(<span class="number">9u8</span>);
+                v0.hash(state);
+            }
+            <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+            </span>Expr::Const(v0) =&gt; {
+                state.write_u8(<span class="number">10u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::Continue(v0) =&gt; {
-                state.write_u8(<span class="number">12u8</span>);
+                state.write_u8(<span class="number">11u8</span>);
                 v0.hash(state);
             }
             Expr::Field(v0) =&gt; {
-                state.write_u8(<span class="number">13u8</span>);
+                state.write_u8(<span class="number">12u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::ForLoop(v0) =&gt; {
+                state.write_u8(<span class="number">13u8</span>);
+                v0.hash(state);
+            }
+            Expr::Group(v0) =&gt; {
                 state.write_u8(<span class="number">14u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::Group(v0) =&gt; {
+            </span>Expr::If(v0) =&gt; {
                 state.write_u8(<span class="number">15u8</span>);
                 v0.hash(state);
             }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::If(v0) =&gt; {
+            Expr::Index(v0) =&gt; {
                 state.write_u8(<span class="number">16u8</span>);
                 v0.hash(state);
             }
-            Expr::Index(v0) =&gt; {
+            <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+            </span>Expr::Infer(v0) =&gt; {
                 state.write_u8(<span class="number">17u8</span>);
                 v0.hash(state);
             }
@@ -3276,8 +3238,7 @@
                 state.write_u8(<span class="number">20u8</span>);
                 v0.hash(state);
             }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::Macro(v0) =&gt; {
+            Expr::Macro(v0) =&gt; {
                 state.write_u8(<span class="number">21u8</span>);
                 v0.hash(state);
             }
@@ -3339,35 +3300,30 @@
                 state.write_u8(<span class="number">33u8</span>);
                 v0.hash(state);
             }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-            </span>Expr::Type(v0) =&gt; {
-                state.write_u8(<span class="number">34u8</span>);
-                v0.hash(state);
-            }
             Expr::Unary(v0) =&gt; {
-                state.write_u8(<span class="number">35u8</span>);
+                state.write_u8(<span class="number">34u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::Unsafe(v0) =&gt; {
-                state.write_u8(<span class="number">36u8</span>);
+                state.write_u8(<span class="number">35u8</span>);
                 v0.hash(state);
             }
             Expr::Verbatim(v0) =&gt; {
-                state.write_u8(<span class="number">37u8</span>);
+                state.write_u8(<span class="number">36u8</span>);
                 TokenStreamHelper(v0).hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::While(v0) =&gt; {
-                state.write_u8(<span class="number">38u8</span>);
+                state.write_u8(<span class="number">37u8</span>);
                 v0.hash(state);
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
             </span>Expr::Yield(v0) =&gt; {
-                state.write_u8(<span class="number">39u8</span>);
+                state.write_u8(<span class="number">38u8</span>);
                 v0.hash(state);
             }
-            <span class="attr">#[cfg(any(syn_no_non_exhaustive, not(feature = <span class="string">&quot;full&quot;</span>)))]
+            <span class="attr">#[cfg(not(feature = <span class="string">&quot;full&quot;</span>))]
             </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
@@ -3392,19 +3348,6 @@
     {
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.left.hash(state);
-        <span class="self">self</span>.right.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprAssignOp {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.left.hash(state);
-        <span class="self">self</span>.op.hash(state);
         <span class="self">self</span>.right.hash(state);
     }
 }
@@ -3458,17 +3401,6 @@
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprBox {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.expr.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprBreak {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -3511,12 +3443,25 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.lifetimes.hash(state);
+        <span class="self">self</span>.constness.hash(state);
         <span class="self">self</span>.movability.hash(state);
         <span class="self">self</span>.asyncness.hash(state);
         <span class="self">self</span>.capture.hash(state);
         <span class="self">self</span>.inputs.hash(state);
         <span class="self">self</span>.output.hash(state);
         <span class="self">self</span>.body.hash(state);
+    }
+}
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprConst {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.block.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -3556,7 +3501,7 @@
         <span class="self">self</span>.body.hash(state);
     }
 }
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprGroup {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
@@ -3594,6 +3539,16 @@
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprInfer {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.attrs.hash(state);
+    }
+}
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprLet {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -3627,7 +3582,7 @@
         <span class="self">self</span>.body.hash(state);
     }
 }
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprMacro {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
@@ -3695,9 +3650,9 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.from.hash(state);
+        <span class="self">self</span>.start.hash(state);
         <span class="self">self</span>.limits.hash(state);
-        <span class="self">self</span>.to.hash(state);
+        <span class="self">self</span>.end.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -3743,6 +3698,7 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.qself.hash(state);
         <span class="self">self</span>.path.hash(state);
         <span class="self">self</span>.fields.hash(state);
         <span class="self">self</span>.dot2_token.hash(state);
@@ -3780,18 +3736,6 @@
     {
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.elems.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>ExprType {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.expr.hash(state);
-        <span class="self">self</span>.ty.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -3850,9 +3794,24 @@
     {
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.vis.hash(state);
+        <span class="self">self</span>.mutability.hash(state);
         <span class="self">self</span>.ident.hash(state);
         <span class="self">self</span>.colon_token.hash(state);
         <span class="self">self</span>.ty.hash(state);
+    }
+}
+<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>FieldMutability {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="kw">match </span><span class="self">self </span>{
+            FieldMutability::None =&gt; {
+                state.write_u8(<span class="number">0u8</span>);
+            }
+        }
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -3982,8 +3941,6 @@
                 state.write_u8(<span class="number">4u8</span>);
                 TokenStreamHelper(v0).hash(state);
             }
-            <span class="attr">#[cfg(syn_no_non_exhaustive)]
-            </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
@@ -4035,6 +3992,7 @@
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.vis.hash(state);
         <span class="self">self</span>.ident.hash(state);
+        <span class="self">self</span>.generics.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -4057,31 +4015,16 @@
                 state.write_u8(<span class="number">2u8</span>);
                 v0.hash(state);
             }
-            GenericArgument::Binding(v0) =&gt; {
+            GenericArgument::AssocType(v0) =&gt; {
                 state.write_u8(<span class="number">3u8</span>);
                 v0.hash(state);
             }
-            GenericArgument::Constraint(v0) =&gt; {
+            GenericArgument::AssocConst(v0) =&gt; {
                 state.write_u8(<span class="number">4u8</span>);
                 v0.hash(state);
             }
-        }
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>GenericMethodArgument {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="kw">match </span><span class="self">self </span>{
-            GenericMethodArgument::Type(v0) =&gt; {
-                state.write_u8(<span class="number">0u8</span>);
-                v0.hash(state);
-            }
-            GenericMethodArgument::Const(v0) =&gt; {
-                state.write_u8(<span class="number">1u8</span>);
+            GenericArgument::Constraint(v0) =&gt; {
+                state.write_u8(<span class="number">5u8</span>);
                 v0.hash(state);
             }
         }
@@ -4095,11 +4038,11 @@
         </span>H: Hasher,
     {
         <span class="kw">match </span><span class="self">self </span>{
-            GenericParam::Type(v0) =&gt; {
+            GenericParam::Lifetime(v0) =&gt; {
                 state.write_u8(<span class="number">0u8</span>);
                 v0.hash(state);
             }
-            GenericParam::Lifetime(v0) =&gt; {
+            GenericParam::Type(v0) =&gt; {
                 state.write_u8(<span class="number">1u8</span>);
                 v0.hash(state);
             }
@@ -4135,7 +4078,7 @@
                 state.write_u8(<span class="number">0u8</span>);
                 v0.hash(state);
             }
-            ImplItem::Method(v0) =&gt; {
+            ImplItem::Fn(v0) =&gt; {
                 state.write_u8(<span class="number">1u8</span>);
                 v0.hash(state);
             }
@@ -4151,8 +4094,6 @@
                 state.write_u8(<span class="number">4u8</span>);
                 TokenStreamHelper(v0).hash(state);
             }
-            <span class="attr">#[cfg(syn_no_non_exhaustive)]
-            </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
@@ -4167,8 +4108,23 @@
         <span class="self">self</span>.vis.hash(state);
         <span class="self">self</span>.defaultness.hash(state);
         <span class="self">self</span>.ident.hash(state);
+        <span class="self">self</span>.generics.hash(state);
         <span class="self">self</span>.ty.hash(state);
         <span class="self">self</span>.expr.hash(state);
+    }
+}
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>ImplItemFn {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.vis.hash(state);
+        <span class="self">self</span>.defaultness.hash(state);
+        <span class="self">self</span>.sig.hash(state);
+        <span class="self">self</span>.block.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -4185,20 +4141,6 @@
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>ImplItemMethod {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.vis.hash(state);
-        <span class="self">self</span>.defaultness.hash(state);
-        <span class="self">self</span>.sig.hash(state);
-        <span class="self">self</span>.block.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>ImplItemType {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -4210,6 +4152,16 @@
         <span class="self">self</span>.ident.hash(state);
         <span class="self">self</span>.generics.hash(state);
         <span class="self">self</span>.ty.hash(state);
+    }
+}
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>ImplRestriction {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{}
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -4248,48 +4200,42 @@
                 state.write_u8(<span class="number">6u8</span>);
                 v0.hash(state);
             }
-            Item::Macro2(v0) =&gt; {
+            Item::Mod(v0) =&gt; {
                 state.write_u8(<span class="number">7u8</span>);
                 v0.hash(state);
             }
-            Item::Mod(v0) =&gt; {
+            Item::Static(v0) =&gt; {
                 state.write_u8(<span class="number">8u8</span>);
                 v0.hash(state);
             }
-            Item::Static(v0) =&gt; {
+            Item::Struct(v0) =&gt; {
                 state.write_u8(<span class="number">9u8</span>);
                 v0.hash(state);
             }
-            Item::Struct(v0) =&gt; {
+            Item::Trait(v0) =&gt; {
                 state.write_u8(<span class="number">10u8</span>);
                 v0.hash(state);
             }
-            Item::Trait(v0) =&gt; {
+            Item::TraitAlias(v0) =&gt; {
                 state.write_u8(<span class="number">11u8</span>);
                 v0.hash(state);
             }
-            Item::TraitAlias(v0) =&gt; {
+            Item::Type(v0) =&gt; {
                 state.write_u8(<span class="number">12u8</span>);
                 v0.hash(state);
             }
-            Item::Type(v0) =&gt; {
+            Item::Union(v0) =&gt; {
                 state.write_u8(<span class="number">13u8</span>);
                 v0.hash(state);
             }
-            Item::Union(v0) =&gt; {
+            Item::Use(v0) =&gt; {
                 state.write_u8(<span class="number">14u8</span>);
                 v0.hash(state);
             }
-            Item::Use(v0) =&gt; {
-                state.write_u8(<span class="number">15u8</span>);
-                v0.hash(state);
-            }
             Item::Verbatim(v0) =&gt; {
-                state.write_u8(<span class="number">16u8</span>);
+                state.write_u8(<span class="number">15u8</span>);
                 TokenStreamHelper(v0).hash(state);
             }
-            <span class="attr">#[cfg(syn_no_non_exhaustive)]
-            </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
@@ -4303,6 +4249,7 @@
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.vis.hash(state);
         <span class="self">self</span>.ident.hash(state);
+        <span class="self">self</span>.generics.hash(state);
         <span class="self">self</span>.ty.hash(state);
         <span class="self">self</span>.expr.hash(state);
     }
@@ -4355,6 +4302,7 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.unsafety.hash(state);
         <span class="self">self</span>.abi.hash(state);
         <span class="self">self</span>.items.hash(state);
     }
@@ -4390,19 +4338,6 @@
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>ItemMacro2 {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.vis.hash(state);
-        <span class="self">self</span>.ident.hash(state);
-        TokenStreamHelper(<span class="kw-2">&amp;</span><span class="self">self</span>.rules).hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>ItemMod {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -4410,6 +4345,7 @@
     {
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.vis.hash(state);
+        <span class="self">self</span>.unsafety.hash(state);
         <span class="self">self</span>.ident.hash(state);
         <span class="self">self</span>.content.hash(state);
         <span class="self">self</span>.semi.hash(state);
@@ -4456,6 +4392,7 @@
         <span class="self">self</span>.vis.hash(state);
         <span class="self">self</span>.unsafety.hash(state);
         <span class="self">self</span>.auto_token.hash(state);
+        <span class="self">self</span>.restriction.hash(state);
         <span class="self">self</span>.ident.hash(state);
         <span class="self">self</span>.generics.hash(state);
         <span class="self">self</span>.colon_token.hash(state);
@@ -4530,7 +4467,7 @@
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>LifetimeDef {
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>LifetimeParam {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
         </span>H: Hasher,
@@ -4604,6 +4541,17 @@
         <span class="self">self</span>.init.hash(state);
     }
 }
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>LocalInit {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.expr.hash(state);
+        <span class="self">self</span>.diverge.hash(state);
+    }
+}
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>Macro {
@@ -4667,7 +4615,8 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.path.hash(state);
-        <span class="self">self</span>.nested.hash(state);
+        <span class="self">self</span>.delimiter.hash(state);
+        TokenStreamHelper(<span class="kw-2">&amp;</span><span class="self">self</span>.tokens).hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -4678,36 +4627,7 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.path.hash(state);
-        <span class="self">self</span>.lit.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>MethodTurbofish {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.args.hash(state);
-    }
-}
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>NestedMeta {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="kw">match </span><span class="self">self </span>{
-            NestedMeta::Meta(v0) =&gt; {
-                state.write_u8(<span class="number">0u8</span>);
-                v0.hash(state);
-            }
-            NestedMeta::Lit(v0) =&gt; {
-                state.write_u8(<span class="number">1u8</span>);
-                v0.hash(state);
-            }
-        }
+        <span class="self">self</span>.value.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -4729,7 +4649,7 @@
         </span>H: Hasher,
     {
         <span class="kw">match </span><span class="self">self </span>{
-            Pat::Box(v0) =&gt; {
+            Pat::Const(v0) =&gt; {
                 state.write_u8(<span class="number">0u8</span>);
                 v0.hash(state);
             }
@@ -4749,64 +4669,55 @@
                 state.write_u8(<span class="number">4u8</span>);
                 v0.hash(state);
             }
-            Pat::Path(v0) =&gt; {
+            Pat::Paren(v0) =&gt; {
                 state.write_u8(<span class="number">5u8</span>);
                 v0.hash(state);
             }
-            Pat::Range(v0) =&gt; {
+            Pat::Path(v0) =&gt; {
                 state.write_u8(<span class="number">6u8</span>);
                 v0.hash(state);
             }
-            Pat::Reference(v0) =&gt; {
+            Pat::Range(v0) =&gt; {
                 state.write_u8(<span class="number">7u8</span>);
                 v0.hash(state);
             }
-            Pat::Rest(v0) =&gt; {
+            Pat::Reference(v0) =&gt; {
                 state.write_u8(<span class="number">8u8</span>);
                 v0.hash(state);
             }
-            Pat::Slice(v0) =&gt; {
+            Pat::Rest(v0) =&gt; {
                 state.write_u8(<span class="number">9u8</span>);
                 v0.hash(state);
             }
-            Pat::Struct(v0) =&gt; {
+            Pat::Slice(v0) =&gt; {
                 state.write_u8(<span class="number">10u8</span>);
                 v0.hash(state);
             }
-            Pat::Tuple(v0) =&gt; {
+            Pat::Struct(v0) =&gt; {
                 state.write_u8(<span class="number">11u8</span>);
                 v0.hash(state);
             }
-            Pat::TupleStruct(v0) =&gt; {
+            Pat::Tuple(v0) =&gt; {
                 state.write_u8(<span class="number">12u8</span>);
                 v0.hash(state);
             }
-            Pat::Type(v0) =&gt; {
+            Pat::TupleStruct(v0) =&gt; {
                 state.write_u8(<span class="number">13u8</span>);
                 v0.hash(state);
             }
-            Pat::Verbatim(v0) =&gt; {
+            Pat::Type(v0) =&gt; {
                 state.write_u8(<span class="number">14u8</span>);
+                v0.hash(state);
+            }
+            Pat::Verbatim(v0) =&gt; {
+                state.write_u8(<span class="number">15u8</span>);
                 TokenStreamHelper(v0).hash(state);
             }
             Pat::Wild(v0) =&gt; {
-                state.write_u8(<span class="number">15u8</span>);
+                state.write_u8(<span class="number">16u8</span>);
                 v0.hash(state);
             }
-            <span class="attr">#[cfg(syn_no_non_exhaustive)]
-            </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>PatBox {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.pat.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -4825,28 +4736,6 @@
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>PatLit {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.expr.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>PatMacro {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.mac.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>PatOr {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -4859,27 +4748,13 @@
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>PatPath {
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>PatParen {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.qself.hash(state);
-        <span class="self">self</span>.path.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>PatRange {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.lo.hash(state);
-        <span class="self">self</span>.limits.hash(state);
-        <span class="self">self</span>.hi.hash(state);
+        <span class="self">self</span>.pat.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -4923,9 +4798,10 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.qself.hash(state);
         <span class="self">self</span>.path.hash(state);
         <span class="self">self</span>.fields.hash(state);
-        <span class="self">self</span>.dot2_token.hash(state);
+        <span class="self">self</span>.rest.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -4947,8 +4823,9 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.qself.hash(state);
         <span class="self">self</span>.path.hash(state);
-        <span class="self">self</span>.pat.hash(state);
+        <span class="self">self</span>.elems.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -5019,17 +4896,6 @@
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>PredicateEq {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.lhs_ty.hash(state);
-        <span class="self">self</span>.rhs_ty.hash(state);
-    }
-}
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>PredicateLifetime {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -5090,6 +4956,8 @@
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.reference.hash(state);
         <span class="self">self</span>.mutability.hash(state);
+        <span class="self">self</span>.colon_token.hash(state);
+        <span class="self">self</span>.ty.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -5130,6 +4998,23 @@
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>StaticMutability {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="kw">match </span><span class="self">self </span>{
+            StaticMutability::Mut(<span class="kw">_</span>) =&gt; {
+                state.write_u8(<span class="number">0u8</span>);
+            }
+            StaticMutability::None =&gt; {
+                state.write_u8(<span class="number">1u8</span>);
+            }
+        }
+    }
+}
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>Stmt {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
     <span class="kw">where
@@ -5144,15 +5029,28 @@
                 state.write_u8(<span class="number">1u8</span>);
                 v0.hash(state);
             }
-            Stmt::Expr(v0) =&gt; {
+            Stmt::Expr(v0, v1) =&gt; {
                 state.write_u8(<span class="number">2u8</span>);
                 v0.hash(state);
+                v1.hash(state);
             }
-            Stmt::Semi(v0, <span class="kw">_</span>) =&gt; {
+            Stmt::Macro(v0) =&gt; {
                 state.write_u8(<span class="number">3u8</span>);
                 v0.hash(state);
             }
         }
+    }
+}
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>StmtMacro {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.mac.hash(state);
+        <span class="self">self</span>.semi_token.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -5197,7 +5095,7 @@
                 state.write_u8(<span class="number">0u8</span>);
                 v0.hash(state);
             }
-            TraitItem::Method(v0) =&gt; {
+            TraitItem::Fn(v0) =&gt; {
                 state.write_u8(<span class="number">1u8</span>);
                 v0.hash(state);
             }
@@ -5213,8 +5111,6 @@
                 state.write_u8(<span class="number">4u8</span>);
                 TokenStreamHelper(v0).hash(state);
             }
-            <span class="attr">#[cfg(syn_no_non_exhaustive)]
-            </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
@@ -5227,8 +5123,22 @@
     {
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.ident.hash(state);
+        <span class="self">self</span>.generics.hash(state);
         <span class="self">self</span>.ty.hash(state);
         <span class="self">self</span>.default.hash(state);
+    }
+}
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
+#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
+</span><span class="kw">impl </span>Hash <span class="kw">for </span>TraitItemFn {
+    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
+    <span class="kw">where
+        </span>H: Hasher,
+    {
+        <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.sig.hash(state);
+        <span class="self">self</span>.default.hash(state);
+        <span class="self">self</span>.semi_token.hash(state);
     }
 }
 <span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
@@ -5240,19 +5150,6 @@
     {
         <span class="self">self</span>.attrs.hash(state);
         <span class="self">self</span>.mac.hash(state);
-        <span class="self">self</span>.semi_token.hash(state);
-    }
-}
-<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>TraitItemMethod {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {
-        <span class="self">self</span>.attrs.hash(state);
-        <span class="self">self</span>.sig.hash(state);
-        <span class="self">self</span>.default.hash(state);
         <span class="self">self</span>.semi_token.hash(state);
     }
 }
@@ -5339,8 +5236,6 @@
                 state.write_u8(<span class="number">14u8</span>);
                 TokenStreamHelper(v0).hash(state);
             }
-            <span class="attr">#[cfg(syn_no_non_exhaustive)]
-            </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
@@ -5446,6 +5341,10 @@
             TypeParamBound::Lifetime(v0) =&gt; {
                 state.write_u8(<span class="number">1u8</span>);
                 v0.hash(state);
+            }
+            TypeParamBound::Verbatim(v0) =&gt; {
+                state.write_u8(<span class="number">2u8</span>);
+                TokenStreamHelper(v0).hash(state);
             }
         }
     }
@@ -5627,7 +5526,7 @@
         }
     }
 }
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
+<span class="attr">#[cfg(feature = <span class="string">&quot;full&quot;</span>)]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>Variadic {
     <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H)
@@ -5635,6 +5534,8 @@
         </span>H: Hasher,
     {
         <span class="self">self</span>.attrs.hash(state);
+        <span class="self">self</span>.pat.hash(state);
+        <span class="self">self</span>.comma.hash(state);
     }
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
@@ -5649,22 +5550,6 @@
         <span class="self">self</span>.fields.hash(state);
         <span class="self">self</span>.discriminant.hash(state);
     }
-}
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>VisCrate {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {}
-}
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
-#[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
-</span><span class="kw">impl </span>Hash <span class="kw">for </span>VisPublic {
-    <span class="kw">fn </span>hash&lt;H&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span>H)
-    <span class="kw">where
-        </span>H: Hasher,
-    {}
 }
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;derive&quot;</span>, feature = <span class="string">&quot;full&quot;</span>))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = <span class="string">&quot;extra-traits&quot;</span>)))]
@@ -5685,20 +5570,15 @@
         </span>H: Hasher,
     {
         <span class="kw">match </span><span class="self">self </span>{
-            Visibility::Public(v0) =&gt; {
+            Visibility::Public(<span class="kw">_</span>) =&gt; {
                 state.write_u8(<span class="number">0u8</span>);
-                v0.hash(state);
             }
-            Visibility::Crate(v0) =&gt; {
+            Visibility::Restricted(v0) =&gt; {
                 state.write_u8(<span class="number">1u8</span>);
                 v0.hash(state);
             }
-            Visibility::Restricted(v0) =&gt; {
-                state.write_u8(<span class="number">2u8</span>);
-                v0.hash(state);
-            }
             Visibility::Inherited =&gt; {
-                state.write_u8(<span class="number">3u8</span>);
+                state.write_u8(<span class="number">2u8</span>);
             }
         }
     }
@@ -5721,16 +5601,12 @@
         </span>H: Hasher,
     {
         <span class="kw">match </span><span class="self">self </span>{
-            WherePredicate::Type(v0) =&gt; {
+            WherePredicate::Lifetime(v0) =&gt; {
                 state.write_u8(<span class="number">0u8</span>);
                 v0.hash(state);
             }
-            WherePredicate::Lifetime(v0) =&gt; {
+            WherePredicate::Type(v0) =&gt; {
                 state.write_u8(<span class="number">1u8</span>);
-                v0.hash(state);
-            }
-            WherePredicate::Eq(v0) =&gt; {
-                state.write_u8(<span class="number">2u8</span>);
                 v0.hash(state);
             }
         }

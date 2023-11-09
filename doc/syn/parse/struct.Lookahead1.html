@@ -7,7 +7,7 @@ go ahead and use <code>ParseStream::peek</code> instead.</p>
 <p>Consuming tokens from the source stream after constructing a lookahead
 object does not also advance the lookahead object.</p>
 <h2 id="example"><a href="#example">Example</a></h2>
-<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>syn::{ConstParam, Ident, Lifetime, LifetimeDef, <span class="prelude-ty">Result</span>, Token, TypeParam};
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>syn::{ConstParam, Ident, Lifetime, LifetimeParam, <span class="prelude-ty">Result</span>, Token, TypeParam};
 <span class="kw">use </span>syn::parse::{Parse, ParseStream};
 
 <span class="comment">// A generic parameter, a single one of the comma-separated elements inside
@@ -23,7 +23,7 @@ object does not also advance the lookahead object.</p>
 //       |          ^
 </span><span class="kw">enum </span>GenericParam {
     Type(TypeParam),
-    Lifetime(LifetimeDef),
+    Lifetime(LifetimeParam),
     Const(ConstParam),
 }
 
