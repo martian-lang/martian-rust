@@ -427,9 +427,7 @@ fn test_with_struct() {
         barcode_length: u8,
     }
 
-    // TODO(Peter) currently multi-line doc comments are supported, but only the last one is used
-    // this is fine for the time being because it's a little ambiguous what is best in that case,
-    // don't want to generate crazy huge MRO lines.
+    // Currently only the last line is used in the case of multi-line doc comments
     #[derive(Serialize, Deserialize, MartianStruct)]
     struct Config {
         /// The sample definition
