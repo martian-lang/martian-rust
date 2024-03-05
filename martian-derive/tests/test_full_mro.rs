@@ -421,16 +421,28 @@ fn test_main_only_full_name() {
 fn test_with_struct() {
     #[derive(Serialize, Deserialize, MartianStruct)]
     struct ChemistryDef {
+        /// The chemistry name
         name: String,
         barcode_read: String,
         barcode_length: u8,
     }
 
+    // TODO(Peter) currently multi-line doc comments are supported, but only the last one is used
+    // this is fine for the time being because it's a little ambiguous what is best in that case,
+    // don't want to generate crazy huge MRO lines.
     #[derive(Serialize, Deserialize, MartianStruct)]
     struct Config {
+        /// The sample definition
         sample_def: Vec<SampleDef>,
+        /// The reference path
+        /// more info about the reference path
+        /// even more info about reference path
+        #[mro_filename = "the_reference_path"]
         reference_path: PathBuf,
+        /// The number of cells to force the pipeline to call
         force_cells: u8,
+        /// The primer definitions as a JSON file
+        #[mro_filename = "renamed_primers_json.json"]
         primers: JsonFile,
     }
 
@@ -438,6 +450,8 @@ fn test_with_struct() {
     struct RnaChunk {
         chemistry_def: ChemistryDef,
         chunk_id: u8,
+        /// The r1 fastq file
+        #[mro_filename = "read1.fastq"]
         r1: FastqFile,
     }
 
@@ -485,8 +499,10 @@ fn test_with_struct() {
 fn test_typed_map() {
     #[derive(Serialize, Deserialize, MartianStruct)]
     struct ReadsStruct {
+        // The reads name
         name: String,
         reads_map: HashMap<String, FastqFile>,
+        // The reads multi map
         multi_reads_map: Vec<HashMap<String, FastqFile>>,
     }
 

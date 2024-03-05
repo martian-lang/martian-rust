@@ -8,7 +8,9 @@ use martian::{utils, MartianBlanketType, MartianPrimaryType, StageKind, Volatile
 use quote::quote;
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
-use syn::{Data, DeriveInput, Error, Fields, Ident, ImplItem, ItemImpl, ItemStruct, Type};
+use syn::{
+    Data, DeriveInput, Error, Expr, Fields, Ident, ImplItem, ItemImpl, ItemStruct, Lit, Meta, Type,
+};
 
 const ATTR_NOT_ON_TRAIT_IMPL_ERROR: &str = r#"The attribute #[make_mro] should only be applied to `martian::MartianMain` or `martian::MartianStage` trait implementation of a stage struct"#;
 const MARTIAN_MAIN_TRAIT: &str = "MartianMain";
@@ -404,7 +406,7 @@ attr_parse!(
 ///
 /// You can optionally add a field to the "retain" section of the mro using `#[mro_retain]`.
 ///
-#[proc_macro_derive(MartianStruct, attributes(mro_retain, mro_type))]
+#[proc_macro_derive(MartianStruct, attributes(mro_retain, mro_type, mro_filename))]
 pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 1
@@ -450,6 +452,9 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
         let name = field.ident.clone().unwrap().to_string();
         let mut retain = false;
         let mut mro_type = None;
+        let mut doc_comment = None;
+        let mut mro_filename = None;
+
         for attr in &field.attrs {
             if attr.path().is_ident("mro_retain") {
                 if !matches!(attr.meta, syn::Meta::Path(_)) {
@@ -513,6 +518,22 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                 }
 
                 mro_type = Some(val.value())
+            } else if attr.path().is_ident("doc") {
+                if let Meta::NameValue(meta) = &attr.meta {
+                    if let Expr::Lit(elit) = &meta.value {
+                        if let Lit::Str(lstr) = &elit.lit {
+                            doc_comment = Some(lstr.value());
+                        }
+                    }
+                }
+            } else if attr.path().is_ident("mro_filename") {
+                if let Meta::NameValue(meta) = &attr.meta {
+                    if let Expr::Lit(elit) = &meta.value {
+                        if let Lit::Str(lstr) = &elit.lit {
+                            mro_filename = Some(lstr.value());
+                        }
+                    }
+                }
             }
         }
         if name.starts_with("__") {
@@ -534,19 +555,42 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
             .to_compile_error()
             .into();
         }
-        let ty = field.ty;
+        let ty = field.clone().ty;
 
         let actual_type = match mro_type {
             Some(t) => quote![#t.parse().unwrap()],
             None => quote![<#ty as ::martian::AsMartianBlanketType>::as_martian_blanket_type()],
         };
+
+        if mro_filename.is_some() && doc_comment.is_none() {
+            return syn::Error::new_spanned(field,
+            "ERROR: mro_filename attribute was specified for field but a doc comment was not defined for the field. \
+            mro_filename can only be specified when a doc comment is specified for a field, \
+            because doc comments are converted into Martian struct field descriptions which precede \
+            the Martian filename column (optional 3rd and 4th columns in Martian struct def)")
+                .to_compile_error()
+                .into();
+        }
+
+        let doc_comment_code = match doc_comment {
+            Some(t) => {
+                quote![Some(#t.trim_start().to_string())]
+            }
+            None => quote![None],
+        };
+
+        let mro_filename_code = match mro_filename {
+            Some(t) => quote![Some(#t.to_string())],
+            None => quote![None],
+        };
+
         vec_inner.push(if retain {
             quote![
-                <::martian::MroField>::retained(#name, #actual_type)
+                <::martian::MroField>::retained(#name, #actual_type, #doc_comment_code, #mro_filename_code)
             ]
         } else {
             quote![
-                <::martian::MroField>::new(#name, #actual_type)
+                <::martian::MroField>::new(#name, #actual_type, #doc_comment_code, #mro_filename_code)
             ]
         });
     }
