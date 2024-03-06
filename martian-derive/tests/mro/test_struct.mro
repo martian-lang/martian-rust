@@ -13,13 +13,13 @@ struct SampleDef(
 
 struct Config(
     SampleDef[] sample_def     "The sample definition",
-    path        reference_path "even more info about reference path"                "the_reference_path",
+    path        reference_path "even more info about reference path"               "the_reference_path",
     int         force_cells    "The number of cells to force the pipeline to call",
-    json        primers        "The primer definitions as a JSON file"              "renamed_primers_json.json",
+    json        primers        "The primer definitions as a JSON file"             "renamed_primers_json.json",
 )
 
 struct ChemistryDef(
-    string name            "The chemistry name",
+    string name           "The chemistry name",
     string barcode_read,
     int    barcode_length,
 )
@@ -27,7 +27,7 @@ struct ChemistryDef(
 struct RnaChunk(
     ChemistryDef chemistry_def,
     int          chunk_id,
-    fastq        r1             "The r1 fastq file" "read1.fastq",
+    fastq        r1            "The r1 fastq file" "read1.fastq",
 )
 
 stage SETUP_CHUNKS(
