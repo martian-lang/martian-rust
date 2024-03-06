@@ -457,20 +457,16 @@ impl MroField {
     }
 
     fn name_width(&self) -> usize {
-        if self.mro_filename.is_none() && self.desc.is_none() {
-            self.name.len() + 1 // string length + 1 space
-        } else {
-            self.name.len() // string_length
-        }
+        self.name.len()
     }
 
     fn desc_width(&self) -> usize {
         match self.desc {
             Some(ref desc) => {
                 if self.mro_filename.is_some() {
-                    desc.len() + 3 // string length + 2 quote chars + 1 space
+                    desc.len() + 2 // string length + 2 quote chars
                 } else {
-                    desc.len() + 4 // string length + 2 quote chars + 1 comma + 1 space
+                    desc.len() + 3 // string length + 2 quote chars + 1 comma
                 }
             }
             None => 0,
