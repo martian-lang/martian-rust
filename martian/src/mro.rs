@@ -482,7 +482,7 @@ impl MroField {
             None => "".to_string(),
         };
         let mro_filename_field = match self.mro_filename {
-            Some(ref name) => format!(" \"{}\"", name),
+            Some(ref name) => format!(" \"{name}\""),
             None => "".to_string(),
         };
 
