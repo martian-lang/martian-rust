@@ -424,6 +424,7 @@ fn test_with_struct() {
         /// The chemistry name
         name: String,
         barcode_read: String,
+        #[mro_filename = "the_bc_length"]
         barcode_length: u8,
     }
 

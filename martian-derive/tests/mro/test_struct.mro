@@ -21,7 +21,7 @@ struct Config(
 struct ChemistryDef(
     string name           "The chemistry name",
     string barcode_read,
-    int    barcode_length,
+    int    barcode_length ""                   "the_bc_length",
 )
 
 struct RnaChunk(

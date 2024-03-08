@@ -563,13 +563,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
         };
 
         if mro_filename.is_some() && doc_comment.is_none() {
-            return syn::Error::new_spanned(field,
-            "ERROR: mro_filename attribute was specified for field but a doc comment was not defined for the field. \
-            mro_filename can only be specified when a doc comment is specified for a field, \
-            because doc comments are converted into Martian struct field descriptions which precede \
-            the Martian filename column (optional 3rd and 4th columns in Martian struct def)")
-                .to_compile_error()
-                .into();
+            doc_comment = Some("".to_string());
         }
 
         let doc_comment_code = match doc_comment {
