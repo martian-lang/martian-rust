@@ -478,11 +478,11 @@ impl MroField {
     /// across numerous other MroFields -- e.g. when printing multiple fields of a struct.
     fn fmt_align_4_columns(&self, ty_width: usize, name_width: usize, desc_width: usize) -> String {
         let desc_field = match self.desc {
-            Some(ref desc) => format!(" \"{}\"", desc),
+            Some(ref desc) => format!(" \"{desc}\""),
             None => "".to_string(),
         };
         let mro_filename_field = match self.mro_filename {
-            Some(ref name) => format!(" \"{}\"", name),
+            Some(ref name) => format!(" \"{name}\""),
             None => "".to_string(),
         };
 
