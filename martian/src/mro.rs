@@ -90,17 +90,27 @@ impl Display for StructDef {
             .max()
             .unwrap_or(0);
 
+        // Determing the field width for the name field
+        let name_width = self
+            .fields
+            .iter()
+            .map(MroField::name_width)
+            .max()
+            .unwrap_or(0);
+
+        // Determing the field width for the desc field
+        let desc_width = self
+            .fields
+            .iter()
+            .map(MroField::desc_width)
+            .max()
+            .unwrap_or(0);
+
         writeln!(f, "struct {}(", self.name)?;
 
         for field in &self.fields {
-            writeln!(
-                f,
-                "{blank:indent$}{field:<ty_width$},",
-                blank = "",
-                indent = TAB_WIDTH_FOR_MRO,
-                field = field,
-                ty_width = ty_width
-            )?;
+            let formatted_line = field.fmt_align_4_columns(ty_width, name_width, desc_width);
+            writeln!(f, "    {},", formatted_line)?;
         }
         writeln!(f, ")")
     }
@@ -394,6 +404,8 @@ impl<K, V: AsMartianBlanketType, H> AsMartianBlanketType for HashMap<K, V, H> {
 pub struct MroField {
     name: String,
     ty: MartianBlanketType,
+    desc: Option<String>,
+    mro_filename: Option<String>,
     retain: bool,
 }
 
@@ -419,22 +431,92 @@ impl MroDisplay for MroField {
 impl MroField {
     /// Create a new `MroField` with the given name and type.
     /// The field has a default `retain = false`.
-    pub fn new(name: impl ToString, ty: MartianBlanketType) -> Self {
-        fn _new_field(name: String, ty: MartianBlanketType) -> MroField {
+    pub fn new(
+        name: impl ToString,
+        ty: MartianBlanketType,
+        desc: Option<String>,
+        mro_filename: Option<String>,
+    ) -> Self {
+        fn _new_field(
+            name: String,
+            ty: MartianBlanketType,
+            desc: Option<String>,
+            mro_filename: Option<String>,
+        ) -> MroField {
             let field = MroField {
                 name,
                 ty,
+                desc,
+                mro_filename,
                 retain: false,
             };
             field.verify(); // No use case to resultify this so far
             field
         }
-        _new_field(name.to_string(), ty)
+        _new_field(name.to_string(), ty, desc, mro_filename)
     }
+
+    fn name_width(&self) -> usize {
+        self.name.len()
+    }
+
+    fn desc_width(&self) -> usize {
+        match self.desc {
+            Some(ref desc) => {
+                if self.mro_filename.is_some() {
+                    desc.len() + 2 // string length + 2 quote chars
+                } else {
+                    desc.len() + 3 // string length + 2 quote chars + 1 comma
+                }
+            }
+            None => 0,
+        }
+    }
+
+    /// Special formatter that can correctly align all 4 fields that may be present
+    /// note that ty_width, name_width and desc_width are the max width of those columns
+    /// across numerous other MroFields -- e.g. when printing multiple fields of a struct.
+    fn fmt_align_4_columns(&self, ty_width: usize, name_width: usize, desc_width: usize) -> String {
+        let desc_field = match self.desc {
+            Some(ref desc) => format!(" \"{desc}\""),
+            None => "".to_string(),
+        };
+        let mro_filename_field = match self.mro_filename {
+            Some(ref name) => format!(" \"{name}\""),
+            None => "".to_string(),
+        };
+
+        let adjusted_name_width = if self.mro_filename.is_none() && self.desc.is_none() {
+            0
+        } else {
+            name_width
+        };
+
+        let adjusted_desc_width = if self.mro_filename.is_none() {
+            0
+        } else {
+            desc_width
+        };
+
+        format!(
+            "{ty:<ty_width$} {name:<adjusted_name_width$}{desc_field:<adjusted_desc_width$}{mro_filename_field}",
+            ty = self.ty,
+            ty_width = ty_width,
+            adjusted_name_width = adjusted_name_width,
+            adjusted_desc_width = adjusted_desc_width,
+            name = self.name.as_str()
+        )
+    }
+
     /// Create a new `MroField` with the given name and type, with the
     /// `retain` field set to true
-    pub fn retained(name: impl ToString, ty: MartianBlanketType) -> Self {
-        let mut field = Self::new(name, ty);
+    pub fn retained(
+        name: impl ToString,
+        ty: MartianBlanketType,
+        desc: Option<String>,
+        mro_filename: Option<String>,
+    ) -> Self {
+        let mut field = Self::new(name, ty, desc, mro_filename);
         field.retain = true;
         field
     }
@@ -1050,12 +1132,12 @@ mod tests {
     fn test_in_and_out_display() {
         let in_out = InAndOut {
             inputs: vec![
-                MroField::new("unsorted", Array(Float.into())),
-                MroField::new("reverse", Primary(Bool)),
+                MroField::new("unsorted", Array(Float.into()), None, None),
+                MroField::new("reverse", Primary(Bool), None, None),
             ],
             outputs: vec![
-                MroField::new("sorted", Array(Float.into())),
-                MroField::new("sum", Primary(Float)),
+                MroField::new("sorted", Array(Float.into()), None, None),
+                MroField::new("sum", Primary(Float), None, None),
             ],
         };
         let expected = "    in  float[] unsorted,
@@ -1087,12 +1169,12 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: Some(InAndOut {
-                inputs: vec![MroField::new("value", Primary(Float))],
-                outputs: vec![MroField::new("value", Primary(Float))],
+                inputs: vec![MroField::new("value", Primary(Float), None, None)],
+                outputs: vec![MroField::new("value", Primary(Float), None, None)],
             }),
             using_attrs: MroUsing::default(),
         };
@@ -1118,8 +1200,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: Some(InAndOut::default()),
             using_attrs: MroUsing::default(),
@@ -1145,8 +1227,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: None,
             using_attrs: MroUsing::default(),
@@ -1175,8 +1257,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: None,
             using_attrs: MroUsing {
@@ -1211,8 +1293,8 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::retained("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::retained("sum", Primary(Float), None, None)],
             },
             chunk_in_out: None,
             using_attrs: MroUsing {
@@ -1233,11 +1315,11 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: Some(InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
                 outputs: Vec::new(),
             }),
             using_attrs: MroUsing {
@@ -1257,12 +1339,12 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
-                outputs: vec![MroField::new("sum", Primary(Int))],
+                outputs: vec![MroField::new("sum", Primary(Int), None, None)],
             }),
             using_attrs: MroUsing {
                 mem_gb: Some(1),
@@ -1280,12 +1362,12 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             }),
             using_attrs: MroUsing {
                 mem_gb: Some(1),
@@ -1319,12 +1401,12 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("values", Array(Float.into()))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("values", Array(Float.into()), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
-                outputs: vec![MroField::new("value", Primary(Str))],
+                outputs: vec![MroField::new("value", Primary(Str), None, None)],
             }),
             using_attrs: MroUsing {
                 mem_gb: Some(1),
@@ -1359,7 +1441,7 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("sum", Primary(Int))],
+                inputs: vec![MroField::new("sum", Primary(Int), None, None)],
                 outputs: Vec::new(),
             },
             chunk_in_out: Some(InAndOut {
@@ -1397,12 +1479,12 @@ mod tests {
             adapter_name: "my_adapter".into(),
             stage_key: "sum_squares".into(),
             stage_in_out: InAndOut {
-                inputs: vec![MroField::new("value", Primary(Float))],
-                outputs: vec![MroField::new("sum", Primary(Float))],
+                inputs: vec![MroField::new("value", Primary(Float), None, None)],
+                outputs: vec![MroField::new("sum", Primary(Float), None, None)],
             },
             chunk_in_out: Some(InAndOut {
                 inputs: Vec::new(),
-                outputs: vec![MroField::new("value_s", Primary(Str))],
+                outputs: vec![MroField::new("value_s", Primary(Str), None, None)],
             }),
             using_attrs: MroUsing {
                 mem_gb: Some(1),
@@ -1431,15 +1513,25 @@ mod tests {
     #[test]
     fn test_filetype_header_from_mro_field() {
         assert_eq!(
-            FiletypeHeader::from(&MroField::new("foo", Array(Float.into()))),
+            FiletypeHeader::from(&MroField::new("foo", Array(Float.into()), None, None)),
             FiletypeHeader(HashSet::new())
         );
         assert_eq!(
-            FiletypeHeader::from(&MroField::new("foo", Array(FileType("txt".into()).into()))),
+            FiletypeHeader::from(&MroField::new(
+                "foo",
+                Array(FileType("txt".into()).into()),
+                None,
+                None
+            )),
             FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
         );
         assert_eq!(
-            FiletypeHeader::from(&MroField::new("foo", Primary(FileType("json".into())))),
+            FiletypeHeader::from(&MroField::new(
+                "foo",
+                Primary(FileType("json".into())),
+                None,
+                None
+            ),),
             FiletypeHeader(vec!["json".to_string()].into_iter().collect())
         );
     }
@@ -1451,8 +1543,15 @@ mod tests {
                 "foo",
                 Primary(Struct(StructDef {
                     name: "MexFiles".to_string(),
-                    fields: vec![MroField::new("foo", Array(FileType("txt".into()).into()))],
-                }))
+                    fields: vec![MroField::new(
+                        "foo",
+                        Array(FileType("txt".into()).into()),
+                        None,
+                        None
+                    )],
+                })),
+                None,
+                None
             )),
             FiletypeHeader(vec!["txt".to_string()].into_iter().collect())
         );
@@ -1462,10 +1561,15 @@ mod tests {
     fn test_filetype_header_from_in_out() {
         let filetype = FiletypeHeader::from(&InAndOut {
             inputs: vec![
-                MroField::new("summary", Primary(FileType("json".into()))),
-                MroField::new("contigs", Primary(FileType("bam".into()))),
+                MroField::new("summary", Primary(FileType("json".into())), None, None),
+                MroField::new("contigs", Primary(FileType("bam".into())), None, None),
             ],
-            outputs: vec![MroField::new("contigs", Primary(FileType("bam".into())))],
+            outputs: vec![MroField::new(
+                "contigs",
+                Primary(FileType("bam".into())),
+                None,
+                None,
+            )],
         });
         let expected = FiletypeHeader(
             vec!["json".to_string(), "bam".to_string()]
@@ -1554,13 +1658,20 @@ mod tests {
     #[test]
     fn test_in_and_out_display_with_struct() {
         let in_out = InAndOut {
-            inputs: vec![MroField::new("raw_matrix", Primary(FileType("h5".into())))],
+            inputs: vec![MroField::new(
+                "raw_matrix",
+                Primary(FileType("h5".into())),
+                None,
+                None,
+            )],
             outputs: vec![MroField::new(
                 "mex_files",
                 Primary(Struct(StructDef {
                     name: "MexFiles".to_string(),
                     fields: vec![],
                 })),
+                None,
+                None,
             )],
         };
         let expected = "    in  h5       raw_matrix,
@@ -1575,9 +1686,9 @@ mod tests {
         let struct_def = StructDef {
             name: "MexFiles".to_string(),
             fields: vec![
-                MroField::new("matrix", Primary(FileType("mtx".into()))),
-                MroField::new("barcodes", Primary(Path)),
-                MroField::new("features", Primary(Path)),
+                MroField::new("matrix", Primary(FileType("mtx".into())), None, None),
+                MroField::new("barcodes", Primary(Path), None, None),
+                MroField::new("features", Primary(Path), None, None),
             ],
         };
 
@@ -1598,9 +1709,9 @@ mod tests {
         let struct_def = StructDef {
             name: "MexFiles".to_string(),
             fields: vec![
-                MroField::new("matrix", Primary(FileType("mtx".into()))),
-                MroField::new("barcodes", Primary(Path)),
-                MroField::new("features", Primary(Path)),
+                MroField::new("matrix", Primary(FileType("mtx".into())), None, None),
+                MroField::new("barcodes", Primary(Path), None, None),
+                MroField::new("features", Primary(Path), None, None),
             ],
         };
         let mut map = BTreeMap::new();
@@ -1624,22 +1735,27 @@ mod tests {
     fn test_struct_header_recursive_display() {
         let sample_def = StructDef {
             name: "SampleDef".into(),
-            fields: vec![MroField::new("read_path", Primary(Path))],
+            fields: vec![MroField::new("read_path", Primary(Path), None, None)],
         };
         let chemistry_def = StructDef {
             name: "ChemistryDef".into(),
             fields: vec![
-                MroField::new("name", Primary(Str)),
-                MroField::new("barcode_read", Primary(Str)),
-                MroField::new("barcode_length", Primary(Int)),
+                MroField::new("name", Primary(Str), None, None),
+                MroField::new("barcode_read", Primary(Str), None, None),
+                MroField::new("barcode_length", Primary(Int), None, None),
             ],
         };
         let rna_chunk = StructDef {
             name: "RnaChunk".to_string(),
             fields: vec![
-                MroField::new("chemistry_def", Primary(Struct(chemistry_def.clone()))),
-                MroField::new("chunk_id", Primary(Int)),
-                MroField::new("r1", Primary(FileType("fastq.gz".into()))),
+                MroField::new(
+                    "chemistry_def",
+                    Primary(Struct(chemistry_def.clone())),
+                    None,
+                    None,
+                ),
+                MroField::new("chunk_id", Primary(Int), None, None),
+                MroField::new("r1", Primary(FileType("fastq.gz".into())), None, None),
             ],
         };
 
@@ -1649,15 +1765,17 @@ mod tests {
             stage_key: "setup_chunks".into(),
             stage_in_out: InAndOut {
                 inputs: vec![
-                    MroField::new("sample_defs", Array(Struct(sample_def).into())),
+                    MroField::new("sample_defs", Array(Struct(sample_def).into()), None, None),
                     MroField::new(
                         "custom_chemistry_def",
                         Primary(Struct(chemistry_def.clone())),
+                        None,
+                        None,
                     ),
                 ],
                 outputs: vec![
-                    MroField::new("read_chunks", Array(Struct(rna_chunk).into())),
-                    MroField::new("chemistry_def", Primary(Struct(chemistry_def))),
+                    MroField::new("read_chunks", Array(Struct(rna_chunk).into()), None, None),
+                    MroField::new("chemistry_def", Primary(Struct(chemistry_def)), None, None),
                 ],
             },
             chunk_in_out: None,
