@@ -518,11 +518,15 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
                 }
 
                 mro_type = Some(val.value())
-            } else if attr.path().is_ident("doc") {
+            } else if attr.path().is_ident("doc") && doc_comment.is_none() {
                 if let Meta::NameValue(meta) = &attr.meta {
                     if let Expr::Lit(elit) = &meta.value {
                         if let Lit::Str(lstr) = &elit.lit {
-                            doc_comment = Some(lstr.value());
+                            let val = lstr.value();
+                            let trimmed = val.trim();
+                            if !trimmed.is_empty() {
+                                doc_comment = Some(trimmed.to_string());
+                            }
                         }
                     }
                 }
@@ -568,7 +572,7 @@ pub fn martian_struct(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
 
         let doc_comment_code = match doc_comment {
             Some(t) => {
-                quote![Some(#t.trim_start().to_string())]
+                quote![Some(#t.to_string())]
             }
             None => quote![None],
         };
