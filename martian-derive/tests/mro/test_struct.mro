@@ -13,7 +13,7 @@ struct SampleDef(
 
 struct Config(
     SampleDef[] sample_def     "The sample definition",
-    path        reference_path "even more info about reference path"               "the_reference_path",
+    path        reference_path "The reference path"                                "the_reference_path",
     int         force_cells    "The number of cells to force the pipeline to call",
     json        primers        "The primer definitions as a JSON file"             "renamed_primers_json.json",
 )
