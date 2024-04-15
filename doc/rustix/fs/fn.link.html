@@ -2,7 +2,7 @@
 <p>POSIX leaves it implementation-defined whether <code>link</code> follows a symlink in
 <code>old_path</code>, or creates a new link to the symbolic link itself. On platforms
 which have it, <a href="fn.linkat.html" title="fn rustix::fs::linkat"><code>linkat</code></a> avoids this problem since it has an <a href="struct.AtFlags.html" title="struct rustix::fs::AtFlags"><code>AtFlags</code></a>
-paramter and the <a href="struct.AtFlags.html#associatedconstant.SYMLINK_FOLLOW" title="associated constant rustix::fs::AtFlags::SYMLINK_FOLLOW"><code>AtFlags::SYMLINK_FOLLOW</code></a> flag determines whether
+parameter and the <a href="struct.AtFlags.html#associatedconstant.SYMLINK_FOLLOW" title="associated constant rustix::fs::AtFlags::SYMLINK_FOLLOW"><code>AtFlags::SYMLINK_FOLLOW</code></a> flag determines whether
 symlinks should be followed.</p>
 <h2 id="references"><a href="#references">References</a></h2>
 <ul>
