@@ -1004,6 +1004,7 @@
 <a href="#1004" id="1004">1004</a>
 <a href="#1005" id="1005">1005</a>
 <a href="#1006" id="1006">1006</a>
+<a href="#1007" id="1007">1007</a>
 </pre></div><pre class="rust"><code><span class="attr">#![recursion_limit = <span class="string">&quot;256&quot;</span>]
 
 </span><span class="doccomment">/// TODO:
@@ -1111,7 +1112,8 @@
     };
     <span class="kw">let </span>using_attributes_fn = <span class="macro">quote!</span>[
         <span class="kw">fn </span>using_attributes() -&gt; ::martian::MroUsing {
-            ::martian::MroUsing {
+            <span class="attr">#[allow(clippy::needless_update)]
+            </span>::martian::MroUsing {
                 #mem_gb_quote
                 #threads_quote
                 #vmem_gb_quote
