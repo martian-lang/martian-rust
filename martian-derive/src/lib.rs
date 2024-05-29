@@ -105,6 +105,7 @@ pub fn make_mro(
     };
     let using_attributes_fn = quote![
         fn using_attributes() -> ::martian::MroUsing {
+            #[allow(clippy::needless_update)]
             ::martian::MroUsing {
                 #mem_gb_quote
                 #threads_quote
