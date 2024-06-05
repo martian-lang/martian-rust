@@ -3,20 +3,17 @@
 //!
 //! ## Documentation
 //! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
-//!
 
 pub use anyhow::Error;
-use anyhow::{format_err, Context};
+use anyhow::{ensure, Context, Result};
 use backtrace::Backtrace;
 use log::{error, info};
-
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs::File;
 use std::io::Write as IoWrite;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::Path;
-
 use std::{io, panic};
 use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
 use time::format_description::FormatItem::Literal;
@@ -42,7 +39,7 @@ pub use log::LevelFilter;
 pub use mro::*;
 pub mod prelude;
 
-pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
+pub fn initialize(args: Vec<String>) -> Result<Metadata> {
     let mut md = Metadata::new(args);
     md.update_jobinfo()?;
 
@@ -50,7 +47,7 @@ pub fn initialize(args: Vec<String>) -> Result<Metadata, Error> {
 }
 
 #[cold]
-fn write_errors(msg: &str, is_assert: bool) -> Result<(), Error> {
+fn write_errors(msg: &str, is_assert: bool) -> Result<()> {
     let mut err_file: File = unsafe { File::from_raw_fd(4) };
 
     // We want to aggressively avoid allocations here if we can, since one
@@ -195,13 +192,13 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
     };
 
     // Get the stage implementation
-    let _stage = stage_map.get(&md.stage_name).ok_or_else(
+    let stage = stage_map.get(&md.stage_name).with_context(
         #[cold]
-        || format_err!("Couldn't find requested Martian stage: {}", md.stage_name),
+        || format!("Couldn't find requested Martian stage: {}", md.stage_name),
     );
 
     // special handler for non-existent stage
-    let stage = match _stage {
+    let stage = match stage {
         Ok(s) => s,
         Err(e) => {
             let _ = write_errors(&format!("{e:?}"), false);
@@ -298,36 +295,38 @@ fn get_generator_name() -> String {
         })
 }
 
+/// Write MRO to filename or stdout.
 pub fn martian_make_mro(
     header_comment: &str,
-    file_name: Option<impl AsRef<Path>>,
+    filename: Option<impl AsRef<Path>>,
     rewrite: bool,
     mro_registry: Vec<StageMro>,
-) -> Result<(), Error> {
-    if let Some(ref f) = file_name {
-        let file_path = f.as_ref();
-        if file_path.is_dir() {
-            return Err(format_err!(
-                "Error! Path {} is a directory!",
-                file_path.display()
-            ));
-        }
-        if file_path.exists() && !rewrite {
-            return Err(format_err!(
-                "File {} exists. You need to explicitly mention if it is okay to rewrite.",
-                file_path.display()
-            ));
-        }
+) -> Result<()> {
+    if let Some(filename) = &filename {
+        let filename = filename.as_ref();
+        ensure!(
+            !filename.is_dir(),
+            "Path {} is a directory",
+            filename.display()
+        );
+        ensure!(
+            rewrite || !filename.exists(),
+            "File {} exists. Use --rewrite to overwrite it.",
+            filename.display()
+        );
     }
 
-    let final_mro_string = make_mro_string(header_comment, &mro_registry);
-    match file_name {
-        Some(f) => {
-            let mut output = File::create(f)?;
-            output.write_all(final_mro_string.as_bytes())?;
+    let mro = make_mro_string(header_comment, &mro_registry);
+    match filename {
+        Some(filename) => {
+            let filename = filename.as_ref();
+            File::create(filename)
+                .with_context(|| filename.display().to_string())?
+                .write_all(mro.as_bytes())
+                .with_context(|| filename.display().to_string())?;
         }
         None => {
-            print!("{final_mro_string}");
+            print!("{mro}");
         }
     }
     Ok(())
