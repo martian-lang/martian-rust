@@ -52,12 +52,14 @@ pub fn to_camel_case(stage_name: &str) -> String {
 /// Parse the `env::args()` and return the name of the
 /// current executable as a String
 pub fn current_executable() -> String {
-    let args: Vec<_> = std::env::args().collect();
-    std::path::Path::new(&args[0])
+    Path::new(&std::env::args().next().unwrap())
+        .canonicalize()
+        .unwrap()
         .file_name()
         .unwrap()
-        .to_string_lossy()
-        .into_owned()
+        .to_str()
+        .unwrap()
+        .to_string()
 }
 
 /// Given a filename and an extension, return the filename with the correct extension.
