@@ -360,8 +360,7 @@ pub fn make_mro_string(header_comment: &str, mro_registry: &[StageMro]) -> Strin
             header_comment
                 .lines()
                 .all(|line| line.trim_end().is_empty() || line.starts_with('#')),
-            "All non-empty header lines must start with '#', but got\n{}",
-            header_comment
+            "All non-empty header lines must start with '#', but got\n{header_comment}"
         );
         format!(
             "{}
