@@ -227,6 +227,8 @@
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Uncategorized collection of tiny useful functions
 //!
 //! All the functions are simple wrappers around functions from
@@ -281,12 +283,14 @@
 <span class="doccomment">/// Parse the `env::args()` and return the name of the
 /// current executable as a String
 </span><span class="kw">pub fn </span>current_executable() -&gt; String {
-    <span class="kw">let </span>args: Vec&lt;<span class="kw">_</span>&gt; = std::env::args().collect();
-    std::path::Path::new(<span class="kw-2">&amp;</span>args[<span class="number">0</span>])
+    Path::new(<span class="kw-2">&amp;</span>std::env::args().next().unwrap())
+        .canonicalize()
+        .unwrap()
         .file_name()
         .unwrap()
-        .to_string_lossy()
-        .into_owned()
+        .to_str()
+        .unwrap()
+        .to_string()
 }
 
 <span class="doccomment">/// Given a filename and an extension, return the filename with the correct extension.

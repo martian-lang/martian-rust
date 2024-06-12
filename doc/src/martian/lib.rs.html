@@ -371,38 +371,28 @@
 <a href="#371" id="371">371</a>
 <a href="#372" id="372">372</a>
 <a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! # Martian-Rust
 //! This crate provides a strongly typed high level API for implementing martian stages in Rust.
 //!
 //! ## Documentation
 //! For a guide style documentation and examples, visit: [https://martian-lang.github.io/martian-rust/](https://martian-lang.github.io/martian-rust/#/)
-//!
 
 </span><span class="kw">pub use </span>anyhow::Error;
-<span class="kw">use </span>anyhow::{format_err, Context};
+<span class="kw">use </span>anyhow::{ensure, Context, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span>backtrace::Backtrace;
 <span class="kw">use </span>log::{error, info};
-
 <span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::Write <span class="kw">as </span>FmtWrite;
 <span class="kw">use </span>std::fs::File;
 <span class="kw">use </span>std::io::Write <span class="kw">as </span>IoWrite;
 <span class="kw">use </span>std::os::unix::io::{FromRawFd, IntoRawFd};
 <span class="kw">use </span>std::path::Path;
-
 <span class="kw">use </span>std::{io, panic};
 <span class="kw">use </span>time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
 <span class="kw">use </span>time::format_description::FormatItem::Literal;
 <span class="kw">use </span>time::format_description::{Component, FormatItem};
 <span class="kw">use </span>time::OffsetDateTime;
+<span class="kw">use </span>utils::current_executable;
 
 <span class="kw">mod </span>metadata;
 <span class="kw">pub use </span>metadata::<span class="kw-2">*</span>;
@@ -423,7 +413,7 @@
 </span><span class="kw">pub use </span>mro::<span class="kw-2">*</span>;
 <span class="kw">pub mod </span>prelude;
 
-<span class="kw">pub fn </span>initialize(args: Vec&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Metadata, Error&gt; {
+<span class="kw">pub fn </span>initialize(args: Vec&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Metadata&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>md = Metadata::new(args);
     md.update_jobinfo()<span class="question-mark">?</span>;
 
@@ -431,7 +421,7 @@
 }
 
 <span class="attr">#[cold]
-</span><span class="kw">fn </span>write_errors(msg: <span class="kw-2">&amp;</span>str, is_assert: bool) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+</span><span class="kw">fn </span>write_errors(msg: <span class="kw-2">&amp;</span>str, is_assert: bool) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>err_file: File = <span class="kw">unsafe </span>{ File::from_raw_fd(<span class="number">4</span>) };
 
     <span class="comment">// We want to aggressively avoid allocations here if we can, since one
@@ -460,7 +450,7 @@
 // We could use the proc macro, but then we&#39;d need
 // to compile the proc macro crate, which would slow down build times
 // significantly for very little benefit in readability.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>DATE_FORMAT: <span class="kw-2">&amp;</span>[FormatItem] = <span class="kw-2">&amp;</span>[
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>DATE_FORMAT: <span class="kw-2">&amp;</span>[FormatItem&lt;<span class="lifetime">&#39;_</span>&gt;] = <span class="kw-2">&amp;</span>[
     FormatItem::Component(Component::Year(Year::default())),
     Literal(<span class="string">b&quot;-&quot;</span>),
     FormatItem::Component(Component::Month(Month::default())),
@@ -576,13 +566,13 @@
     };
 
     <span class="comment">// Get the stage implementation
-    </span><span class="kw">let </span>_stage = stage_map.get(<span class="kw-2">&amp;</span>md.stage_name).ok_or_else(
+    </span><span class="kw">let </span>stage = stage_map.get(<span class="kw-2">&amp;</span>md.stage_name).with_context(
         <span class="attr">#[cold]
-        </span>|| <span class="macro">format_err!</span>(<span class="string">&quot;Couldn&#39;t find requested Martian stage: {}&quot;</span>, md.stage_name),
+        </span>|| <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t find requested Martian stage: {}&quot;</span>, md.stage_name),
     );
 
     <span class="comment">// special handler for non-existent stage
-    </span><span class="kw">let </span>stage = <span class="kw">match </span>_stage {
+    </span><span class="kw">let </span>stage = <span class="kw">match </span>stage {
         <span class="prelude-val">Ok</span>(s) =&gt; s,
         <span class="prelude-val">Err</span>(e) =&gt; {
             <span class="kw">let _ </span>= write_errors(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{e:?}&quot;</span>), <span class="bool-val">false</span>);
@@ -667,48 +657,43 @@
     <span class="kw">let _ </span>= write_errors(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{e:#}&quot;</span>), is_assert);
 }
 
-<span class="kw">fn </span>get_generator_name() -&gt; String {
-    std::env::var(<span class="string">&quot;CARGO_BIN_NAME&quot;</span>)
-        .or_else(|<span class="kw">_</span>| std::env::var(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
-        .or_else(|<span class="kw">_</span>| std::env::var(<span class="string">&quot;CARGO_PKG_NAME&quot;</span>))
-        .unwrap_or_else(|<span class="kw">_</span>| {
-            <span class="macro">option_env!</span>(<span class="string">&quot;CARGO_BIN_NAME&quot;</span>)
-                .or(<span class="macro">option_env!</span>(<span class="string">&quot;CARGO_CRATE_NAME&quot;</span>))
-                .unwrap_or(<span class="string">&quot;martian-rust&quot;</span>)
-                .into()
-        })
+<span class="doccomment">/// Return the environment variable CARGO_PKG_NAME or the current executable name.
+</span><span class="kw">fn </span>get_generator_name() -&gt; String {
+    std::env::var(<span class="string">&quot;CARGO_PKG_NAME&quot;</span>).unwrap_or_else(|<span class="kw">_</span>| current_executable())
 }
 
-<span class="kw">pub fn </span>martian_make_mro(
+<span class="doccomment">/// Write MRO to filename or stdout.
+</span><span class="kw">pub fn </span>martian_make_mro(
     header_comment: <span class="kw-2">&amp;</span>str,
-    file_name: <span class="prelude-ty">Option</span>&lt;<span class="kw">impl </span>AsRef&lt;Path&gt;&gt;,
+    filename: <span class="prelude-ty">Option</span>&lt;<span class="kw">impl </span>AsRef&lt;Path&gt;&gt;,
     rewrite: bool,
     mro_registry: Vec&lt;StageMro&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>f) = file_name {
-        <span class="kw">let </span>file_path = f.as_ref();
-        <span class="kw">if </span>file_path.is_dir() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
-                <span class="string">&quot;Error! Path {} is a directory!&quot;</span>,
-                file_path.display()
-            ));
-        }
-        <span class="kw">if </span>file_path.exists() &amp;&amp; !rewrite {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format_err!</span>(
-                <span class="string">&quot;File {} exists. You need to explicitly mention if it is okay to rewrite.&quot;</span>,
-                file_path.display()
-            ));
-        }
+) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(filename) = <span class="kw-2">&amp;</span>filename {
+        <span class="kw">let </span>filename = filename.as_ref();
+        <span class="macro">ensure!</span>(
+            !filename.is_dir(),
+            <span class="string">&quot;Path {} is a directory&quot;</span>,
+            filename.display()
+        );
+        <span class="macro">ensure!</span>(
+            rewrite || !filename.exists(),
+            <span class="string">&quot;File {} exists. Use --rewrite to overwrite it.&quot;</span>,
+            filename.display()
+        );
     }
 
-    <span class="kw">let </span>final_mro_string = make_mro_string(header_comment, <span class="kw-2">&amp;</span>mro_registry);
-    <span class="kw">match </span>file_name {
-        <span class="prelude-val">Some</span>(f) =&gt; {
-            <span class="kw">let </span><span class="kw-2">mut </span>output = File::create(f)<span class="question-mark">?</span>;
-            output.write_all(final_mro_string.as_bytes())<span class="question-mark">?</span>;
+    <span class="kw">let </span>mro = make_mro_string(header_comment, <span class="kw-2">&amp;</span>mro_registry);
+    <span class="kw">match </span>filename {
+        <span class="prelude-val">Some</span>(filename) =&gt; {
+            <span class="kw">let </span>filename = filename.as_ref();
+            File::create(filename)
+                .with_context(|| filename.display().to_string())<span class="question-mark">?
+                </span>.write_all(mro.as_bytes())
+                .with_context(|| filename.display().to_string())<span class="question-mark">?</span>;
         }
         <span class="prelude-val">None </span>=&gt; {
-            <span class="macro">print!</span>(<span class="string">&quot;{final_mro_string}&quot;</span>);
+            <span class="macro">print!</span>(<span class="string">&quot;{mro}&quot;</span>);
         }
     }
     <span class="prelude-val">Ok</span>(())
@@ -742,9 +727,8 @@
             header_comment
                 .lines()
                 .all(|line| line.trim_end().is_empty() || line.starts_with(<span class="string">&#39;#&#39;</span>)),
-            <span class="string">&quot;All non-empty header lines must start with &#39;#&#39;, but got\n{}&quot;</span>,
-            header_comment
-        );
+            <span class="string">&quot;All non-empty header lines must start with &#39;#&#39;, but got\n{header_comment}&quot;
+        </span>);
         <span class="macro">format!</span>(
             <span class="string">&quot;{}
 #
