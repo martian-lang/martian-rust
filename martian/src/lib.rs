@@ -19,6 +19,7 @@ use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year}
 use time::format_description::FormatItem::Literal;
 use time::format_description::{Component, FormatItem};
 use time::OffsetDateTime;
+use utils::current_executable;
 
 mod metadata;
 pub use metadata::*;
@@ -283,16 +284,17 @@ fn report_error(md: &mut Metadata, e: &Error, is_assert: bool) {
     let _ = write_errors(&format!("{e:#}"), is_assert);
 }
 
+/// Return the name of the generator binary.
 fn get_generator_name() -> String {
     std::env::var("CARGO_BIN_NAME")
         .or_else(|_| std::env::var("CARGO_CRATE_NAME"))
-        .or_else(|_| std::env::var("CARGO_PKG_NAME"))
-        .unwrap_or_else(|_| {
+        .ok()
+        .or_else(|| {
             option_env!("CARGO_BIN_NAME")
                 .or(option_env!("CARGO_CRATE_NAME"))
-                .unwrap_or("martian-rust")
-                .into()
+                .map(String::from)
         })
+        .unwrap_or_else(|| current_executable())
 }
 
 /// Write MRO to filename or stdout.
