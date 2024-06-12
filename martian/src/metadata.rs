@@ -179,7 +179,7 @@ impl Metadata {
 
     /// Update the Martian journal -- so that Martian knows what we've updated
     fn update_journal(&self, name: &str) -> Result<()> {
-        let journal_name: Cow<str> = if self.stage_type != "main" {
+        let journal_name: Cow<'_, str> = if self.stage_type != "main" {
             format!("{}_{name}", self.stage_type).into()
         } else {
             name.into()

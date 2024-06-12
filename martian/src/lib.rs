@@ -19,6 +19,7 @@ use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year}
 use time::format_description::FormatItem::Literal;
 use time::format_description::{Component, FormatItem};
 use time::OffsetDateTime;
+use utils::current_executable;
 
 mod metadata;
 pub use metadata::*;
@@ -76,7 +77,7 @@ fn write_errors(msg: &str, is_assert: bool) -> Result<()> {
 // We could use the proc macro, but then we'd need
 // to compile the proc macro crate, which would slow down build times
 // significantly for very little benefit in readability.
-pub(crate) const DATE_FORMAT: &[FormatItem] = &[
+pub(crate) const DATE_FORMAT: &[FormatItem<'_>] = &[
     FormatItem::Component(Component::Year(Year::default())),
     Literal(b"-"),
     FormatItem::Component(Component::Month(Month::default())),
@@ -283,16 +284,9 @@ fn report_error(md: &mut Metadata, e: &Error, is_assert: bool) {
     let _ = write_errors(&format!("{e:#}"), is_assert);
 }
 
+/// Return the environment variable CARGO_PKG_NAME or the current executable name.
 fn get_generator_name() -> String {
-    std::env::var("CARGO_BIN_NAME")
-        .or_else(|_| std::env::var("CARGO_CRATE_NAME"))
-        .or_else(|_| std::env::var("CARGO_PKG_NAME"))
-        .unwrap_or_else(|_| {
-            option_env!("CARGO_BIN_NAME")
-                .or(option_env!("CARGO_CRATE_NAME"))
-                .unwrap_or("martian-rust")
-                .into()
-        })
+    std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| current_executable())
 }
 
 /// Write MRO to filename or stdout.
