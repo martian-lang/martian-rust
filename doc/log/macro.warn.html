@@ -3,10 +3,10 @@
     ($(<span class="macro-nonterminal">$arg</span>:tt)+) =&gt; { ... };
 }</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Logs a message at the warn level.</p>
 <h2 id="examples"><a href="#examples">Examples</a></h2>
-<div class="example-wrap edition"><a href="#" class="tooltip" title="This example runs with edition 2018">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>log::warn;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>log::warn;
 
 <span class="kw">let </span>warn_description = <span class="string">&quot;Invalid Input&quot;</span>;
 
-<span class="macro">warn!</span>(<span class="string">&quot;Warning! {}!&quot;</span>, warn_description);
-<span class="macro">warn!</span>(target: <span class="string">&quot;input_events&quot;</span>, <span class="string">&quot;App received warning: {}&quot;</span>, warn_description);</code></pre></div>
+<span class="macro">warn!</span>(<span class="string">&quot;Warning! {warn_description}!&quot;</span>);
+<span class="macro">warn!</span>(target: <span class="string">&quot;input_events&quot;</span>, <span class="string">&quot;App received warning: {warn_description}&quot;</span>);</code></pre></div>
 </div></details></section></div></main></body></html>

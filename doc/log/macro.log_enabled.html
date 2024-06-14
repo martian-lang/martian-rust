@@ -6,7 +6,7 @@ be logged.</p>
 <p>This can be used to avoid expensive computation of log message arguments if
 the message would be ignored anyway.</p>
 <h2 id="examples"><a href="#examples">Examples</a></h2>
-<div class="example-wrap edition"><a href="#" class="tooltip" title="This example runs with edition 2018">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>log::Level::Debug;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>log::Level::Debug;
 <span class="kw">use </span>log::{debug, log_enabled};
 
 <span class="kw">if </span><span class="macro">log_enabled!</span>(Debug) {

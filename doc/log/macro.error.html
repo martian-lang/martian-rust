@@ -3,10 +3,10 @@
     ($(<span class="macro-nonterminal">$arg</span>:tt)+) =&gt; { ... };
 }</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Logs a message at the error level.</p>
 <h2 id="examples"><a href="#examples">Examples</a></h2>
-<div class="example-wrap edition"><a href="#" class="tooltip" title="This example runs with edition 2018">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>log::error;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>log::error;
 
 <span class="kw">let </span>(err_info, port) = (<span class="string">&quot;No connection&quot;</span>, <span class="number">22</span>);
 
-<span class="macro">error!</span>(<span class="string">&quot;Error: {} on port {}&quot;</span>, err_info, port);
-<span class="macro">error!</span>(target: <span class="string">&quot;app_events&quot;</span>, <span class="string">&quot;App Error: {}, Port: {}&quot;</span>, err_info, <span class="number">22</span>);</code></pre></div>
+<span class="macro">error!</span>(<span class="string">&quot;Error: {err_info} on port {port}&quot;</span>);
+<span class="macro">error!</span>(target: <span class="string">&quot;app_events&quot;</span>, <span class="string">&quot;App Error: {err_info}, Port: {port}&quot;</span>);</code></pre></div>
 </div></details></section></div></main></body></html>
