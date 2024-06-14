@@ -4,7 +4,7 @@ compressed data from the underlying <a href="https://doc.rust-lang.org/std/io/tr
 <p>A gzip file consists of a series of <em>members</em> concatenated one after another.
 MultiGzDecoder decodes all members from the data and only returns Ok(0) when the
 underlying reader does. For a file, this reads to the end of the file.</p>
-<p>To handle members seperately, see <a href="struct.GzDecoder.html" title="struct flate2::bufread::GzDecoder">GzDecoder</a> or read more
+<p>To handle members separately, see <a href="struct.GzDecoder.html" title="struct flate2::bufread::GzDecoder">GzDecoder</a> or read more
 <a href="../index.html#about-multi-member-gzip-files">in the introduction</a>.</p>
 <h2 id="examples"><a href="#examples">Examples</a></h2>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::io::prelude::<span class="kw-2">*</span>;
