@@ -25,12 +25,12 @@ representation of the syntax tree.</p>
         }
     };
 
-    <span class="kw">let </span><span class="kw-2">mut </span>file = File::open(<span class="kw-2">&amp;</span>filename).expect(<span class="string">&quot;Unable to open file&quot;</span>);
+    <span class="kw">let </span><span class="kw-2">mut </span>file = File::open(<span class="kw-2">&amp;</span>filename).expect(<span class="string">&quot;unable to open file&quot;</span>);
 
     <span class="kw">let </span><span class="kw-2">mut </span>src = String::new();
-    file.read_to_string(<span class="kw-2">&amp;mut </span>src).expect(<span class="string">&quot;Unable to read file&quot;</span>);
+    file.read_to_string(<span class="kw-2">&amp;mut </span>src).expect(<span class="string">&quot;unable to read file&quot;</span>);
 
-    <span class="kw">let </span>syntax = syn::parse_file(<span class="kw-2">&amp;</span>src).expect(<span class="string">&quot;Unable to parse file&quot;</span>);
+    <span class="kw">let </span>syntax = syn::parse_file(<span class="kw-2">&amp;</span>src).expect(<span class="string">&quot;unable to parse file&quot;</span>);
 
     <span class="comment">// Debug impl is available if Syn is built with &quot;extra-traits&quot; feature.
     </span><span class="macro">println!</span>(<span class="string">&quot;{:#?}&quot;</span>, syntax);
