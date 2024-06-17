@@ -13,7 +13,7 @@ license = "MIT"
 anyhow = { version = "1", features = ["backtrace"] }
 backtrace = "0.3"
 fern = ">=0.5, <0.7"
-heck = "0.5"
+heck = ">=0.4, <0.6"
 log = "0.4"
 rayon = { version = "1", optional = true }
 rustc_version = ">=0.3, <0.5"
