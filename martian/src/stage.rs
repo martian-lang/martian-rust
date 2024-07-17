@@ -221,7 +221,7 @@ impl Resource {
     /// assert_eq!(resource.get_mem_gb(), Some(2));
     /// assert_eq!(resource.get_vmem_gb(), Some(4));
     /// assert_eq!(resource.get_threads(), None);
-    /// assert_eq!(resource.get_special(), "gpu_count1_mem8".to_owned());
+    /// assert_eq!(resource.get_special(), Some("gpu_count1_mem8".to_owned()));
     /// ```
     pub fn special(mut self, special: String) -> Self {
         self.special = Some(special);
