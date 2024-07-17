@@ -6,7 +6,7 @@ use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
 use serde::de::DeserializeOwned;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::{Path, PathBuf};
@@ -126,7 +126,56 @@ pub struct Resource {
     #[serde(rename = "__vmem_gb")]
     vmem_gb: Option<isize>,
     #[serde(rename = "__special")]
-    special: Option<(isize, isize)>,
+    special: Option<GpuResource>,
+}
+
+#[derive(Debug, Copy, Clone, Default)]
+struct GpuResource {
+    count: isize,
+    mem: isize,
+}
+
+impl std::fmt::Display for GpuResource {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "gpu_count{}_mem{}", self.count, self.mem)
+    }
+}
+
+impl Serialize for GpuResource {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl<'de> Deserialize<'de> for GpuResource {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+
+        if !s.starts_with("gpu_count") || !s.contains("_mem") {
+            return Err(serde::de::Error::custom("format error"));
+        }
+
+        let count_start = 9; // position after "gpu_count"
+        let count_end = s
+            .find("_mem")
+            .ok_or_else(|| serde::de::Error::custom("format error"))?;
+        let mem_start = count_end + 4; // position after "_mem"
+
+        let count = s[count_start..count_end]
+            .parse::<isize>()
+            .map_err(serde::de::Error::custom)?;
+        let mem = s[mem_start..]
+            .parse::<isize>()
+            .map_err(serde::de::Error::custom)?;
+
+        Ok(GpuResource { count, mem })
+    }
 }
 
 impl Resource {
@@ -168,7 +217,7 @@ impl Resource {
 
     /// Get the special resource request
     pub fn get_special(&self) -> Option<String> {
-        self.special.map(|s| format!("gpu_count{}_mem{}", s.0, s.1))
+        self.special.map(|s| s.to_string())
     }
 
     /// Set the mem_gb
@@ -223,8 +272,8 @@ impl Resource {
     /// assert_eq!(resource.get_threads(), None);
     /// assert_eq!(resource.get_special(), "gpu_count1_mem8".to_owned());
     /// ```
-    pub fn special(mut self, n: isize, mem: isize) -> Self {
-        self.special = Some((n, mem));
+    pub fn special(mut self, count: isize, mem: isize) -> Self {
+        self.special = Some(GpuResource { count, mem });
         self
     }
 
