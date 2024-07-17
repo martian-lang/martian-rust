@@ -1,7 +1,5 @@
 //! SumSquares stage code
 
-use serde::{Deserialize, Serialize};
-
 // The prelude brings the following items in scope:
 // - Traits: MartianMain, MartianStage, RawMartianStage, MartianFileType, MartianMakePath
 // - Struct/Enum: MartianRover, Resource, StageDef, MartianVoid,
@@ -9,10 +7,10 @@ use serde::{Deserialize, Serialize};
 // - Macros: martian_stages!
 // - Functions: martian_main, martian_main_with_log_level, martian_make_mro
 use martian::prelude::*;
-
 // Bring the procedural macros in scope:
 // #[derive(MartianStruct)], #[derive(MartianType)], #[make_mro], martian_filetype!
 use martian_derive::{make_mro, MartianStruct};
+use serde::{Deserialize, Serialize};
 
 // NOTE: The following four structs will serve as the associated type for the
 // trait. The struct fields need to be owned and are limited to
@@ -73,7 +71,7 @@ impl MartianStage for SumSquares {
         for value in args.values {
             let chunk_inputs = SumSquaresChunkInputs { value };
             // It is optional to create a chunk with resource. If not specified, default resource will be used
-            stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource);
+            stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource.clone());
         }
         // Return the stage definition
         Ok(stage_def)
