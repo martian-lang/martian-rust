@@ -392,6 +392,7 @@ attr_parse!(
     mem_gb: i16,
     threads: i16,
     vmem_gb: i16,
+    special: String,
     volatile: Volatile,
     stage_name: String
 );
