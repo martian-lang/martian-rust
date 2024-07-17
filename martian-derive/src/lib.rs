@@ -3,7 +3,6 @@
 /// TODO:
 /// - Handle default values for FileType
 /// - Repo wide reorganization
-extern crate proc_macro;
 use martian::{utils, MartianBlanketType, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
 use quote::quote;
 use std::collections::{HashMap, HashSet};

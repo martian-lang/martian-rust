@@ -136,7 +136,7 @@ struct GpuResource {
 }
 
 impl std::fmt::Display for GpuResource {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "gpu_count{}_mem{}", self.count, self.mem)
     }
 }
