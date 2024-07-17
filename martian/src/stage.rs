@@ -125,6 +125,8 @@ pub struct Resource {
     threads: Option<isize>,
     #[serde(rename = "__vmem_gb")]
     vmem_gb: Option<isize>,
+    #[serde(rename = "__special")]
+    special: Option<(isize, isize)>,
 }
 
 impl Resource {
@@ -162,6 +164,11 @@ impl Resource {
     /// Get the threads
     pub fn get_threads(&self) -> Option<isize> {
         self.threads
+    }
+
+    /// Get the special resource request
+    pub fn get_special(&self) -> Option<String> {
+        self.special.map(|s| format!("gpu_count{}_mem{}", s.0, s.1))
     }
 
     /// Set the mem_gb
@@ -206,6 +213,21 @@ impl Resource {
         self
     }
 
+    /// Set the special request
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2).vmem_gb(4).special(1, 8);
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), Some(4));
+    /// assert_eq!(resource.get_threads(), None);
+    /// assert_eq!(resource.get_special(), "gpu_count1_mem8".to_owned());
+    /// ```
+    pub fn special(mut self, n: isize, mem: isize) -> Self {
+        self.special = Some((n, mem));
+        self
+    }
+
     /// Create a resource with the specified `mem_gb`. `vmem_gb` and
     /// `threads` are set to None.
     ///
@@ -222,6 +244,7 @@ impl Resource {
             mem_gb: Some(mem_gb),
             threads: None,
             vmem_gb: None,
+            special: None,
         }
     }
 
@@ -241,6 +264,7 @@ impl Resource {
             mem_gb: None,
             threads: Some(threads),
             vmem_gb: None,
+            special: None,
         }
     }
 }
