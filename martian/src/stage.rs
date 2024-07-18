@@ -117,7 +117,7 @@ impl<T: MartianFileType> MartianMakePath for T {
 ///
 /// Memory/ thread request can be negative in matrian. See
 /// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)
-#[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Resource {
     #[serde(rename = "__mem_gb")]
     mem_gb: Option<isize>,
@@ -125,6 +125,8 @@ pub struct Resource {
     threads: Option<isize>,
     #[serde(rename = "__vmem_gb")]
     vmem_gb: Option<isize>,
+    #[serde(rename = "__special")]
+    special: Option<String>,
 }
 
 impl Resource {
@@ -162,6 +164,11 @@ impl Resource {
     /// Get the threads
     pub fn get_threads(&self) -> Option<isize> {
         self.threads
+    }
+
+    /// Get the special resource request
+    pub fn get_special(&self) -> Option<String> {
+        self.special.clone()
     }
 
     /// Set the mem_gb
@@ -206,6 +213,21 @@ impl Resource {
         self
     }
 
+    /// Set the special request
+    /// ```rust
+    /// use martian::Resource;
+    ///
+    /// let resource = Resource::new().mem_gb(2).vmem_gb(4).special("gpu_count1_mem8".to_owned());
+    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_vmem_gb(), Some(4));
+    /// assert_eq!(resource.get_threads(), None);
+    /// assert_eq!(resource.get_special(), Some("gpu_count1_mem8".to_owned()));
+    /// ```
+    pub fn special(mut self, special: String) -> Self {
+        self.special = Some(special);
+        self
+    }
+
     /// Create a resource with the specified `mem_gb`. `vmem_gb` and
     /// `threads` are set to None.
     ///
@@ -222,6 +244,7 @@ impl Resource {
             mem_gb: Some(mem_gb),
             threads: None,
             vmem_gb: None,
+            special: None,
         }
     }
 
@@ -241,6 +264,7 @@ impl Resource {
             mem_gb: None,
             threads: Some(threads),
             vmem_gb: None,
+            special: None,
         }
     }
 }
@@ -609,7 +633,7 @@ pub trait MartianStage: MroMaker {
                     fill_defaults(resource),
                 ))
             }
-            let rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource)?;
+            let rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource.clone())?;
             self.main(args.clone(), chunk.inputs.clone(), rover)
         };
 

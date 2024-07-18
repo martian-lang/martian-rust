@@ -1,44 +1,45 @@
-   0: anyhow::private::format_err
-             at ./cargo/registry/src/github.com-1ecc6299db9ec823/anyhow-1.0.51/src/lib.rs:659:13
-   1: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
-             at ./martian-lab/examples/sum_sq/src/sum_squares.rs:94:24
-   2: <T as martian::stage::RawMartianStage>::main
-             at ./martian/src/stage.rs:681:20
-   3: martian::martian_entry_point
-             at ./martian/src/lib.rs:262:9
-   4: martian::MartianAdapter<S>::run_get_error
-             at ./martian/src/lib.rs:164:9
-   5: martian::MartianAdapter<S>::run
-             at ./martian/src/lib.rs:157:9
-   6: sum_sq::main
-             at ./martian-lab/examples/sum_sq/src/main.rs:48:23
-   7: core::ops::function::FnOnce::call_once
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:227:5
-   8: std::sys_common::backtrace::__rust_begin_short_backtrace
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/sys_common/backtrace.rs:125:18
-   9: std::rt::lang_start::{{closure}}
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:63:18
-  10: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/core/src/ops/function.rs:259:13
-      std::panicking::try::do_call
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:401:40
-      std::panicking::try
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:365:19
-      std::panic::catch_unwind
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panic.rs:434:14
-      std::rt::lang_start_internal::{{closure}}
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:45:48
-      std::panicking::try::do_call
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:401:40
-      std::panicking::try
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panicking.rs:365:19
-      std::panic::catch_unwind
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/panic.rs:434:14
-      std::rt::lang_start_internal
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:45:20
-  11: std::rt::lang_start
-             at /rustc/c8dfcfe046a7680554bf4eb612bad840e7631c4b/library/std/src/rt.rs:62:5
-  12: main
-  13: __libc_start_main
-  14: <unknown>
-             at /sysdeps/x86_64/elf/start.S:103
+   0: anyhow::error::<impl anyhow::Error>::msg
+             at /mnt/bazelbuild/user/preyas.shah/cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.86/src/backtrace.rs:27:14
+   1: anyhow::__private::format_err
+             at /mnt/bazelbuild/user/preyas.shah/cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.86/src/lib.rs:689:13
+   2: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
+             at /mnt/home/preyas/Reps/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:92:24
+   3: <T as martian::stage::RawMartianStage>::main
+             at /mnt/home/preyas/Reps/martian-rust/martian/src/stage.rs:778:20
+   4: martian::martian_entry_point
+             at /mnt/home/preyas/Reps/martian-rust/martian/src/lib.rs:261:9
+   5: martian::MartianAdapter<S>::run_get_error
+             at /mnt/home/preyas/Reps/martian-rust/martian/src/lib.rs:165:9
+   6: martian::MartianAdapter<S>::run
+             at /mnt/home/preyas/Reps/martian-rust/martian/src/lib.rs:158:9
+   7: sum_sq::main
+             at /mnt/home/preyas/Reps/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48:23
+   8: core::ops::function::FnOnce::call_once
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/core/src/ops/function.rs:250:5
+   9: std::sys_common::backtrace::__rust_begin_short_backtrace
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/sys_common/backtrace.rs:155:18
+  10: std::rt::lang_start::{{closure}}
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/rt.rs:159:18
+  11: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/core/src/ops/function.rs:284:13
+  12: std::panicking::try::do_call
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/panicking.rs:559:40
+  13: std::panicking::try
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/panicking.rs:523:19
+  14: std::panic::catch_unwind
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/panic.rs:149:14
+  15: std::rt::lang_start_internal::{{closure}}
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/rt.rs:141:48
+  16: std::panicking::try::do_call
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/panicking.rs:559:40
+  17: std::panicking::try
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/panicking.rs:523:19
+  18: std::panic::catch_unwind
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/panic.rs:149:14
+  19: std::rt::lang_start_internal
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/rt.rs:141:20
+  20: std::rt::lang_start
+             at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/rt.rs:158:17
+  21: main
+  22: __libc_start_main
+  23: <unknown>

@@ -602,7 +602,7 @@ macro_rules! mro_using {
         ///     threads = 16,
         /// )
         /// ```
-        #[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
+        #[derive(Debug, Default, Clone, Serialize, Deserialize)]
         pub struct MroUsing {
             $(pub $property: Option<$type>,)*
         }
@@ -622,7 +622,7 @@ macro_rules! mro_using {
                     return Ok(());
                 }
                 $(
-                    if let Some($property) = self.$property {
+                    if let Some($property) = self.$property.clone() {
                         writeln!(
                             f,
                             "{blank:indent$}{key:<width$} = {value},",
@@ -654,7 +654,7 @@ macro_rules! mro_using {
     };
 }
 
-mro_using! {mem_gb: i16, threads: i16, vmem_gb: i16, volatile: Volatile}
+mro_using! {mem_gb: i16, threads: i16, vmem_gb: i16, special: String, volatile: Volatile}
 
 /// Input and outputs fields together
 #[derive(Debug, Default)]
