@@ -1010,8 +1010,7 @@
 </span><span class="doccomment">/// TODO:
 /// - Handle default values for FileType
 /// - Repo wide reorganization
-</span><span class="kw">extern crate </span>proc_macro;
-<span class="kw">use </span>martian::{utils, MartianBlanketType, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
+</span><span class="kw">use </span>martian::{utils, MartianBlanketType, MartianPrimaryType, StageKind, Volatile, MARTIAN_TOKENS};
 <span class="kw">use </span>quote::quote;
 <span class="kw">use </span>std::collections::{HashMap, HashSet};
 <span class="kw">use </span>std::str::FromStr;
@@ -1400,6 +1399,7 @@
     mem_gb: i16,
     threads: i16,
     vmem_gb: i16,
+    special: String,
     volatile: Volatile,
     stage_name: String
 );

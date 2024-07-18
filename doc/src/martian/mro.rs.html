@@ -2423,7 +2423,7 @@
         ///     threads = 16,
         /// )
         /// ```
-        </span><span class="attr">#[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
+        </span><span class="attr">#[derive(Debug, Default, Clone, Serialize, Deserialize)]
         </span><span class="kw">pub struct </span>MroUsing {
             $(<span class="kw">pub </span><span class="macro-nonterminal">$property</span>: <span class="prelude-ty">Option</span>&lt;<span class="macro-nonterminal">$</span><span class="kw">type</span>&gt;,)*
         }
@@ -2443,7 +2443,7 @@
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(());
                 }
                 $(
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="macro-nonterminal">$property</span>) = <span class="self">self</span>.<span class="macro-nonterminal">$property </span>{
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="macro-nonterminal">$property</span>) = <span class="self">self</span>.<span class="macro-nonterminal">$property</span>.clone() {
                         <span class="macro">writeln!</span>(
                             f,
                             <span class="string">&quot;{blank:indent$}{key:&lt;width$} = {value},&quot;</span>,
@@ -2475,7 +2475,7 @@
     };
 }
 
-<span class="macro">mro_using! </span>{mem_gb: i16, threads: i16, vmem_gb: i16, volatile: Volatile}
+<span class="macro">mro_using! </span>{mem_gb: i16, threads: i16, vmem_gb: i16, special: String, volatile: Volatile}
 
 <span class="doccomment">/// Input and outputs fields together
 </span><span class="attr">#[derive(Debug, Default)]
