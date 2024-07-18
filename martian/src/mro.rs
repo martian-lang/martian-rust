@@ -622,7 +622,7 @@ macro_rules! mro_using {
                     return Ok(());
                 }
                 $(
-                    if let Some(ref $property) = self.$property {
+                    if let Some($property) = self.$property.clone() {
                         writeln!(
                             f,
                             "{blank:indent$}{key:<width$} = {value},",
