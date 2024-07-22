@@ -3,25 +3,18 @@
     {
       "__mem_gb": 1,
       "__threads": 1,
-      "__vmem_gb": null,
       "value": 1.0
     },
     {
       "__mem_gb": 1,
       "__threads": 1,
-      "__vmem_gb": null,
       "value": 2.0
     },
     {
       "__mem_gb": 1,
       "__threads": 1,
-      "__vmem_gb": null,
       "value": 3.0
     }
   ],
-  "join": {
-    "__mem_gb": null,
-    "__threads": null,
-    "__vmem_gb": null
-  }
+  "join": {}
 }

@@ -119,11 +119,11 @@ impl<T: MartianFileType> MartianMakePath for T {
 /// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Resource {
-    #[serde(rename = "__mem_gb")]
+    #[serde(rename = "__mem_gb", skip_serializing_if = "Option::is_none")]
     mem_gb: Option<isize>,
-    #[serde(rename = "__threads")]
+    #[serde(rename = "__threads", skip_serializing_if = "Option::is_none")]
     threads: Option<isize>,
-    #[serde(rename = "__vmem_gb")]
+    #[serde(rename = "__vmem_gb", skip_serializing_if = "Option::is_none")]
     vmem_gb: Option<isize>,
     #[serde(rename = "__special", skip_serializing_if = "Option::is_none")]
     special: Option<String>,
