@@ -955,13 +955,13 @@
 /// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)
 </span><span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 </span><span class="kw">pub struct </span>Resource {
-    <span class="attr">#[serde(rename = <span class="string">&quot;__mem_gb&quot;</span>)]
+    <span class="attr">#[serde(rename = <span class="string">&quot;__mem_gb&quot;</span>, skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
     </span>mem_gb: <span class="prelude-ty">Option</span>&lt;isize&gt;,
-    <span class="attr">#[serde(rename = <span class="string">&quot;__threads&quot;</span>)]
+    <span class="attr">#[serde(rename = <span class="string">&quot;__threads&quot;</span>, skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
     </span>threads: <span class="prelude-ty">Option</span>&lt;isize&gt;,
-    <span class="attr">#[serde(rename = <span class="string">&quot;__vmem_gb&quot;</span>)]
+    <span class="attr">#[serde(rename = <span class="string">&quot;__vmem_gb&quot;</span>, skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
     </span>vmem_gb: <span class="prelude-ty">Option</span>&lt;isize&gt;,
-    <span class="attr">#[serde(rename = <span class="string">&quot;__special&quot;</span>)]
+    <span class="attr">#[serde(rename = <span class="string">&quot;__special&quot;</span>, skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
     </span>special: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
