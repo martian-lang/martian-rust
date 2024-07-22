@@ -125,7 +125,7 @@ pub struct Resource {
     threads: Option<isize>,
     #[serde(rename = "__vmem_gb")]
     vmem_gb: Option<isize>,
-    #[serde(rename = "__special")]
+    #[serde(rename = "__special", skip_serializing_if = "Option::is_none")]
     special: Option<String>,
 }
 
