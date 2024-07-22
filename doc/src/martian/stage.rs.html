@@ -834,6 +834,10 @@
 <a href="#834" id="834">834</a>
 <a href="#835" id="835">835</a>
 <a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::metadata::{Metadata, Version};
 <span class="kw">use </span><span class="kw">crate</span>::mro::{MartianStruct, MroMaker};
 <span class="kw">use </span><span class="kw">crate</span>::utils::obj_encode;
@@ -953,7 +957,7 @@
 ///
 /// Memory/ thread request can be negative in matrian. See
 /// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)
-</span><span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+</span><span class="attr">#[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
 </span><span class="kw">pub struct </span>Resource {
     <span class="attr">#[serde(rename = <span class="string">&quot;__mem_gb&quot;</span>, skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
     </span>mem_gb: <span class="prelude-ty">Option</span>&lt;isize&gt;,
@@ -961,8 +965,12 @@
     </span>threads: <span class="prelude-ty">Option</span>&lt;isize&gt;,
     <span class="attr">#[serde(rename = <span class="string">&quot;__vmem_gb&quot;</span>, skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
     </span>vmem_gb: <span class="prelude-ty">Option</span>&lt;isize&gt;,
-    <span class="attr">#[serde(rename = <span class="string">&quot;__special&quot;</span>, skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
-    </span>special: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="attr">#[serde(
+        rename = <span class="string">&quot;__special&quot;</span>,
+        skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>,
+        skip_deserializing
+    )]
+    </span>special: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt;,
 }
 
 <span class="kw">impl </span>Resource {
@@ -1003,8 +1011,8 @@
     }
 
     <span class="doccomment">/// Get the special resource request
-    </span><span class="kw">pub fn </span>get_special(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;String&gt; {
-        <span class="self">self</span>.special.clone()
+    </span><span class="kw">pub fn </span>get_special(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
+        <span class="self">self</span>.special
     }
 
     <span class="doccomment">/// Set the mem_gb
@@ -1053,13 +1061,13 @@
     /// ```rust
     /// use martian::Resource;
     ///
-    /// let resource = Resource::new().mem_gb(2).vmem_gb(4).special(&quot;gpu_count1_mem8&quot;.to_owned());
+    /// let resource = Resource::new().mem_gb(2).vmem_gb(4).special(&quot;gpu_count1_mem8&quot;);
     /// assert_eq!(resource.get_mem_gb(), Some(2));
     /// assert_eq!(resource.get_vmem_gb(), Some(4));
     /// assert_eq!(resource.get_threads(), None);
-    /// assert_eq!(resource.get_special(), Some(&quot;gpu_count1_mem8&quot;.to_owned()));
+    /// assert_eq!(resource.get_special(), Some(&quot;gpu_count1_mem8&quot;));
     /// ```
-    </span><span class="kw">pub fn </span>special(<span class="kw-2">mut </span><span class="self">self</span>, special: String) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>special(<span class="kw-2">mut </span><span class="self">self</span>, special: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.special = <span class="prelude-val">Some</span>(special);
         <span class="self">self
     </span>}
@@ -1469,7 +1477,7 @@
                     fill_defaults(resource),
                 ))
             }
-            <span class="kw">let </span>rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource.clone())<span class="question-mark">?</span>;
+            <span class="kw">let </span>rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource)<span class="question-mark">?</span>;
             <span class="self">self</span>.main(args.clone(), chunk.inputs.clone(), rover)
         };
 
