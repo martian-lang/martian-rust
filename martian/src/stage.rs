@@ -125,8 +125,12 @@ pub struct Resource {
     threads: Option<isize>,
     #[serde(rename = "__vmem_gb", skip_serializing_if = "Option::is_none")]
     vmem_gb: Option<isize>,
-    #[serde(rename = "__special", skip_serializing_if = "Option::is_none")]
-    special: Option<String>,
+    #[serde(
+        rename = "__special",
+        skip_serializing_if = "Option::is_none",
+        skip_deserializing
+    )]
+    special: Option<&'static str>,
 }
 
 impl Resource {
@@ -167,8 +171,8 @@ impl Resource {
     }
 
     /// Get the special resource request
-    pub fn get_special(&self) -> Option<String> {
-        self.special.clone()
+    pub fn get_special(&self) -> Option<&'static str> {
+        self.special
     }
 
     /// Set the mem_gb
@@ -217,13 +221,13 @@ impl Resource {
     /// ```rust
     /// use martian::Resource;
     ///
-    /// let resource = Resource::new().mem_gb(2).vmem_gb(4).special("gpu_count1_mem8".to_owned());
+    /// let resource = Resource::new().mem_gb(2).vmem_gb(4).special("gpu_count1_mem8");
     /// assert_eq!(resource.get_mem_gb(), Some(2));
     /// assert_eq!(resource.get_vmem_gb(), Some(4));
     /// assert_eq!(resource.get_threads(), None);
-    /// assert_eq!(resource.get_special(), Some("gpu_count1_mem8".to_owned()));
+    /// assert_eq!(resource.get_special(), Some("gpu_count1_mem8"));
     /// ```
-    pub fn special(mut self, special: String) -> Self {
+    pub fn special(mut self, special: &'static str) -> Self {
         self.special = Some(special);
         self
     }
