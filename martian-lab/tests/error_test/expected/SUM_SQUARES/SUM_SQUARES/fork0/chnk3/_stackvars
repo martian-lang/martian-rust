@@ -1,19 +1,19 @@
    0: anyhow::error::<impl anyhow::Error>::msg
-             at /mnt/bazelbuild/user/preyas.shah/cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.86/src/backtrace.rs:27:14
+             at ./cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.86/src/backtrace.rs:27:14
    1: anyhow::__private::format_err
-             at /mnt/bazelbuild/user/preyas.shah/cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.86/src/lib.rs:689:13
+             at ./cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.86/src/lib.rs:689:13
    2: <sum_sq::sum_squares::SumSquares as martian::stage::MartianStage>::main
-             at /mnt/home/preyas/Reps/martian-rust/martian-lab/examples/sum_sq/src/sum_squares.rs:92:24
+             at ./martian-lab/examples/sum_sq/src/sum_squares.rs:92:24
    3: <T as martian::stage::RawMartianStage>::main
-             at /mnt/home/preyas/Reps/martian-rust/martian/src/stage.rs:778:20
+             at ./martian/src/stage.rs:778:20
    4: martian::martian_entry_point
-             at /mnt/home/preyas/Reps/martian-rust/martian/src/lib.rs:261:9
+             at ./martian/src/lib.rs:261:9
    5: martian::MartianAdapter<S>::run_get_error
-             at /mnt/home/preyas/Reps/martian-rust/martian/src/lib.rs:165:9
+             at ./martian/src/lib.rs:165:9
    6: martian::MartianAdapter<S>::run
-             at /mnt/home/preyas/Reps/martian-rust/martian/src/lib.rs:158:9
+             at ./martian/src/lib.rs:158:9
    7: sum_sq::main
-             at /mnt/home/preyas/Reps/martian-rust/martian-lab/examples/sum_sq/src/main.rs:48:23
+             at ./martian-lab/examples/sum_sq/src/main.rs:48:23
    8: core::ops::function::FnOnce::call_once
              at /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/core/src/ops/function.rs:250:5
    9: std::sys_common::backtrace::__rust_begin_short_backtrace
