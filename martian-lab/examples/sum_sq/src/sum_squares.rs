@@ -71,7 +71,7 @@ impl MartianStage for SumSquares {
         for value in args.values {
             let chunk_inputs = SumSquaresChunkInputs { value };
             // It is optional to create a chunk with resource. If not specified, default resource will be used
-            stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource.clone());
+            stage_def.add_chunk_with_resource(chunk_inputs, chunk_resource);
         }
         // Return the stage definition
         Ok(stage_def)

@@ -117,7 +117,7 @@ impl<T: MartianFileType> MartianMakePath for T {
 ///
 /// Memory/ thread request can be negative in matrian. See
 /// [http://martian-lang.org/advanced-features/#resource-consumption](http://martian-lang.org/advanced-features/#resource-consumption)
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
 pub struct Resource {
     #[serde(rename = "__mem_gb", skip_serializing_if = "Option::is_none")]
     mem_gb: Option<isize>,
@@ -637,7 +637,7 @@ pub trait MartianStage: MroMaker {
                     fill_defaults(resource),
                 ))
             }
-            let rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource.clone())?;
+            let rover = _chunk_prelude(chunk_idx, run_directory, chunk.resource)?;
             self.main(args.clone(), chunk.inputs.clone(), rover)
         };
 
