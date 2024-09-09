@@ -23,7 +23,7 @@ jobs:
           mv target/doc book/
 
       - name: Deploy to gh-pages branch
-        uses: JamesIves/github-pages-deploy-action@v4.6.1
+        uses: JamesIves/github-pages-deploy-action@v4.6.4
 
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
