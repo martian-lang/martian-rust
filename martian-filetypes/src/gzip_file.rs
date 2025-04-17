@@ -31,7 +31,7 @@
 use crate::{
     ErrorContext, FileTypeIO, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
 };
-use flate2::read::GzDecoder;
+use flate2::read::MultiGzDecoder;
 use flate2::write::GzEncoder;
 use flate2::Compression;
 use martian::{Error, MartianFileType};
@@ -50,7 +50,7 @@ where
     F: MartianFileType + FileTypeIO<T>,
 {
     fn read(&self) -> Result<T, Error> {
-        let decoder = GzDecoder::new(self.buf_reader()?);
+        let decoder = MultiGzDecoder::new(self.buf_reader()?);
         <Self as FileTypeRead<T>>::read_from(decoder).map_err(|e| {
             let context = ErrorContext::ReadContext(self.as_ref().into(), e.to_string());
             e.context(context)
@@ -143,7 +143,7 @@ where
 /// stores a list of items.
 pub struct LazyGzipReader<L, T, R>
 where
-    L: LazyRead<T, GzDecoder<R>>,
+    L: LazyRead<T, MultiGzDecoder<R>>,
     R: Read,
 {
     inner: L,
@@ -152,13 +152,13 @@ where
 
 impl<L, T, R> LazyRead<T, R> for LazyGzipReader<L, T, R>
 where
-    L: LazyRead<T, GzDecoder<R>>,
+    L: LazyRead<T, MultiGzDecoder<R>>,
     R: Read,
 {
     type FileType = Gzip<L::FileType>;
     fn with_reader(reader: R) -> Result<Self, Error> {
         Ok(LazyGzipReader {
-            inner: L::with_reader(GzDecoder::new(reader))?,
+            inner: L::with_reader(MultiGzDecoder::new(reader))?,
             phantom: PhantomData,
         })
     }
@@ -166,7 +166,7 @@ where
 
 impl<L, T, R> Iterator for LazyGzipReader<L, T, R>
 where
-    L: LazyRead<T, GzDecoder<R>>,
+    L: LazyRead<T, MultiGzDecoder<R>>,
     R: Read,
 {
     type Item = Result<T, Error>;
@@ -179,7 +179,7 @@ impl<F, T, W, R> LazyAgents<T, W, R> for Gzip<F>
 where
     R: Read,
     W: Write,
-    F: LazyAgents<T, GzEncoder<W>, GzDecoder<R>>,
+    F: LazyAgents<T, GzEncoder<W>, MultiGzDecoder<R>>,
 {
     type LazyWriter = LazyGzipWriter<F::LazyWriter, T, W>;
     type LazyReader = LazyGzipReader<F::LazyReader, T, R>;
