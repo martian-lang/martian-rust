@@ -379,7 +379,7 @@
 </span><span class="kw">use crate</span>::{
     ErrorContext, FileTypeIO, FileTypeRead, FileTypeWrite, LazyAgents, LazyRead, LazyWrite,
 };
-<span class="kw">use </span>flate2::read::GzDecoder;
+<span class="kw">use </span>flate2::read::MultiGzDecoder;
 <span class="kw">use </span>flate2::write::GzEncoder;
 <span class="kw">use </span>flate2::Compression;
 <span class="kw">use </span>martian::{Error, MartianFileType};
@@ -398,7 +398,7 @@
     </span>F: MartianFileType + FileTypeIO&lt;T&gt;,
 {
     <span class="kw">fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
-        <span class="kw">let </span>decoder = GzDecoder::new(<span class="self">self</span>.buf_reader()<span class="question-mark">?</span>);
+        <span class="kw">let </span>decoder = MultiGzDecoder::new(<span class="self">self</span>.buf_reader()<span class="question-mark">?</span>);
         &lt;<span class="self">Self </span><span class="kw">as </span>FileTypeRead&lt;T&gt;&gt;::read_from(decoder).map_err(|e| {
             <span class="kw">let </span>context = ErrorContext::ReadContext(<span class="self">self</span>.as_ref().into(), e.to_string());
             e.context(context)
@@ -491,7 +491,7 @@
 /// stores a list of items.
 </span><span class="kw">pub struct </span>LazyGzipReader&lt;L, T, R&gt;
 <span class="kw">where
-    </span>L: LazyRead&lt;T, GzDecoder&lt;R&gt;&gt;,
+    </span>L: LazyRead&lt;T, MultiGzDecoder&lt;R&gt;&gt;,
     R: Read,
 {
     inner: L,
@@ -500,13 +500,13 @@
 
 <span class="kw">impl</span>&lt;L, T, R&gt; LazyRead&lt;T, R&gt; <span class="kw">for </span>LazyGzipReader&lt;L, T, R&gt;
 <span class="kw">where
-    </span>L: LazyRead&lt;T, GzDecoder&lt;R&gt;&gt;,
+    </span>L: LazyRead&lt;T, MultiGzDecoder&lt;R&gt;&gt;,
     R: Read,
 {
     <span class="kw">type </span>FileType = Gzip&lt;L::FileType&gt;;
     <span class="kw">fn </span>with_reader(reader: R) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="prelude-val">Ok</span>(LazyGzipReader {
-            inner: L::with_reader(GzDecoder::new(reader))<span class="question-mark">?</span>,
+            inner: L::with_reader(MultiGzDecoder::new(reader))<span class="question-mark">?</span>,
             phantom: PhantomData,
         })
     }
@@ -514,7 +514,7 @@
 
 <span class="kw">impl</span>&lt;L, T, R&gt; Iterator <span class="kw">for </span>LazyGzipReader&lt;L, T, R&gt;
 <span class="kw">where
-    </span>L: LazyRead&lt;T, GzDecoder&lt;R&gt;&gt;,
+    </span>L: LazyRead&lt;T, MultiGzDecoder&lt;R&gt;&gt;,
     R: Read,
 {
     <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;T, Error&gt;;
@@ -527,7 +527,7 @@
 <span class="kw">where
     </span>R: Read,
     W: Write,
-    F: LazyAgents&lt;T, GzEncoder&lt;W&gt;, GzDecoder&lt;R&gt;&gt;,
+    F: LazyAgents&lt;T, GzEncoder&lt;W&gt;, MultiGzDecoder&lt;R&gt;&gt;,
 {
     <span class="kw">type </span>LazyWriter = LazyGzipWriter&lt;F::LazyWriter, T, W&gt;;
     <span class="kw">type </span>LazyReader = LazyGzipReader&lt;F::LazyReader, T, R&gt;;
