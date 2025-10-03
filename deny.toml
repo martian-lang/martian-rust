@@ -9,6 +9,7 @@ db-urls = ["https://github.com/rustsec/advisory-db"]
 # output a note when they are encountered.
 ignore = [
 ]
+unmaintained = "workspace"
 
 # This section is considered when running `cargo deny check licenses`
 # More documentation for the licenses section can be found here:
