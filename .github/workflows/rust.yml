@@ -23,7 +23,9 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Build
         run: cargo build --verbose --all
-      - uses: EmbarkStudios/cargo-deny-action@v1
+      - uses: 10XGenomics/cargo-deny-action@main
+        with:
+          arguments: --locked
       - name: Run tests
         run: cargo test --verbose --all
       - name: Martian Integration tests
