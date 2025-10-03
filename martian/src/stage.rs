@@ -1,7 +1,7 @@
-use crate::metadata::{Metadata, Version};
+use crate::metadata::{SharedMetadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
-use crate::{Error, JournalUpdater, SharedFile};
+use crate::Error;
 use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
@@ -425,22 +425,26 @@ pub struct MartianRover {
     threads: usize,
     vmem_gb: usize,
     version: Version,
-    /// Thread-safe handle to the alarm file.
-    alarm_file: Option<SharedFile>,
-    /// Opaque closure to write a journal file.
-    update_journal: JournalUpdater,
+    /// Handle to the metadata, if this Rover was created by mrp.
+    metadata: Option<SharedMetadata>,
 }
 
-impl From<&Metadata> for MartianRover {
-    fn from(md: &Metadata) -> MartianRover {
+impl From<SharedMetadata> for MartianRover {
+    fn from(smd: SharedMetadata) -> MartianRover {
+        let md = smd.lock().unwrap();
+        let files_path = PathBuf::from(&md.files_path);
+        let mem_gb = md.jobinfo.mem_gb;
+        let threads = md.jobinfo.threads;
+        let vmem_gb = md.jobinfo.vmem_gb;
+        let version = md.jobinfo.version.clone();
+        drop(md);
         MartianRover {
-            files_path: PathBuf::from(&md.files_path),
-            mem_gb: md.jobinfo.mem_gb,
-            threads: md.jobinfo.threads,
-            vmem_gb: md.jobinfo.vmem_gb,
-            version: md.jobinfo.version.clone(),
-            alarm_file: Some(md.alarm_file().clone()),
-            update_journal: md.journal_updater(),
+            files_path,
+            mem_gb,
+            threads,
+            vmem_gb,
+            version,
+            metadata: Some(smd),
         }
     }
 }
@@ -471,8 +475,7 @@ impl MartianRover {
             threads: resource.threads.unwrap() as usize,
             vmem_gb: resource.vmem_gb.unwrap() as usize,
             version: Version::default(),
-            alarm_file: None,
-            update_journal: Box::new(|_| Ok(())),
+            metadata: None,
         }
     }
     ///
@@ -524,9 +527,8 @@ impl MartianRover {
     /// If this rover was not initialized with metadata, such as in test mode,
     /// log at warning level instead.
     pub fn alarm(&self, message: &str) -> Result<(), Error> {
-        if let Some(f) = &self.alarm_file {
-            f.appendln(message, true)?;
-            (self.update_journal)("alarm")?;
+        if let Some(md) = &self.metadata {
+            md.lock().unwrap().alarm(message)?;
         } else {
             warn!("{message}");
         }
@@ -705,9 +707,9 @@ pub trait MartianStage: MroMaker {
 /// A raw martian stage that works with untype metadata. It is recommended
 /// not to implement this directly. Use `MartianMain` or `MartianStage` traits instead
 pub trait RawMartianStage {
-    fn split(&self, metadata: &mut Metadata) -> Result<(), Error>;
-    fn main(&self, metadata: &mut Metadata) -> Result<(), Error>;
-    fn join(&self, metadata: &mut Metadata) -> Result<(), Error>;
+    fn split(&self, metadata: SharedMetadata) -> Result<(), Error>;
+    fn main(&self, metadata: SharedMetadata) -> Result<(), Error>;
+    fn join(&self, metadata: SharedMetadata) -> Result<(), Error>;
 }
 
 impl<T> MartianStage for T
@@ -777,32 +779,32 @@ impl<T> RawMartianStage for T
 where
     T: MartianStage,
 {
-    fn split(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
-        let rover: MartianRover = MartianRover::from(&*md);
-        let stage_defs = MartianStage::split(self, args, rover)?;
+    fn split(&self, md: SharedMetadata) -> Result<(), Error> {
+        let args: <T as MartianStage>::StageInputs = md.lock().unwrap().decode(ARGS_FN)?;
+        let stage_defs = MartianStage::split(self, args, md.clone().into())?;
         let stage_def_obj = obj_encode(&stage_defs)?;
-        md.complete_with("stage_defs", &stage_def_obj)
+        md.lock()
+            .unwrap()
+            .complete_with("stage_defs", &stage_def_obj)
     }
 
-    fn main(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
-        let chunk_args: <T as MartianStage>::ChunkInputs = md.decode(ARGS_FN)?;
-        let rover = MartianRover::from(&*md);
-        let outs = MartianStage::main(self, args, chunk_args, rover)?;
+    fn main(&self, md: SharedMetadata) -> Result<(), Error> {
+        let args: <T as MartianStage>::StageInputs = md.lock().unwrap().decode(ARGS_FN)?;
+        let chunk_args: <T as MartianStage>::ChunkInputs = md.lock().unwrap().decode(ARGS_FN)?;
+        let outs = MartianStage::main(self, args, chunk_args, md.clone().into())?;
         let outs_obj = obj_encode(&outs)?;
-        md.complete_with(OUTS_FN, &outs_obj)
+        md.lock().unwrap().complete_with(OUTS_FN, &outs_obj)
     }
 
-    fn join(&self, md: &mut Metadata) -> Result<(), Error> {
-        let args: <T as MartianStage>::StageInputs = md.decode(ARGS_FN)?;
-        let rover = MartianRover::from(&*md);
-        // let outs = md.read_json_obj("outs")?;
-        let chunk_defs: Vec<<T as MartianStage>::ChunkInputs> = md.decode("chunk_defs")?;
-        let chunk_outs: Vec<<T as MartianStage>::ChunkOutputs> = md.decode("chunk_outs")?;
-        let outs = MartianStage::join(self, args, chunk_defs, chunk_outs, rover)?;
+    fn join(&self, md: SharedMetadata) -> Result<(), Error> {
+        let args: <T as MartianStage>::StageInputs = md.lock().unwrap().decode(ARGS_FN)?;
+        let chunk_defs: Vec<<T as MartianStage>::ChunkInputs> =
+            md.lock().unwrap().decode("chunk_defs")?;
+        let chunk_outs: Vec<<T as MartianStage>::ChunkOutputs> =
+            md.lock().unwrap().decode("chunk_outs")?;
+        let outs = MartianStage::join(self, args, chunk_defs, chunk_outs, md.clone().into())?;
         let outs_obj = obj_encode(&outs)?;
-        md.complete_with(OUTS_FN, &outs_obj)
+        md.lock().unwrap().complete_with(OUTS_FN, &outs_obj)
     }
 }
 
