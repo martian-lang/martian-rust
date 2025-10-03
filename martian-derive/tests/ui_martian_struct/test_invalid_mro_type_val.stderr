@@ -5,7 +5,7 @@ error: "The usage of mro_type should be of form #[mro_type="type"] or #[mro_type
 9 | |     foo: Foo,
   | |____________^
 
-error: unexpected expression: `int`
+error: attribute value must be a literal
  --> tests/ui_martian_struct/test_invalid_mro_type_val.rs:8:16
   |
 8 |     #[mro_type=int] // Should be "int"
