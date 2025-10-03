@@ -1,7 +1,7 @@
 use crate::metadata::{Metadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
-use crate::{Error, SharedFile};
+use crate::{Error, JournalUpdater, SharedFile};
 use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
@@ -425,7 +425,10 @@ pub struct MartianRover {
     threads: usize,
     vmem_gb: usize,
     version: Version,
+    /// Thread-safe handle to the alarm file.
     alarm_file: Option<SharedFile>,
+    /// Opaque closure to write a journal file.
+    update_journal: JournalUpdater,
 }
 
 impl From<&Metadata> for MartianRover {
@@ -437,6 +440,7 @@ impl From<&Metadata> for MartianRover {
             vmem_gb: md.jobinfo.vmem_gb,
             version: md.jobinfo.version.clone(),
             alarm_file: Some(md.alarm_file().clone()),
+            update_journal: md.journal_updater(),
         }
     }
 }
@@ -445,6 +449,10 @@ impl MartianRover {
     /// Create a new martian rover with the files path and the resources
     /// Rover needs to know the resources explicitly, so none of the
     /// resource fields shoulbd be empty when invoking this function.
+    ///
+    /// This constructor is intended to be used in testing contexts, where a
+    /// full Metadata instance is not available because there is no parent mrp
+    /// process.
     pub fn new(files_path: impl AsRef<Path>, resource: Resource) -> Self {
         MartianRover::_new(files_path.as_ref(), resource)
     }
@@ -464,6 +472,7 @@ impl MartianRover {
             vmem_gb: resource.vmem_gb.unwrap() as usize,
             version: Version::default(),
             alarm_file: None,
+            update_journal: Box::new(|_| Ok(())),
         }
     }
     ///
@@ -516,11 +525,12 @@ impl MartianRover {
     /// log at warning level instead.
     pub fn alarm(&self, message: &str) -> Result<(), Error> {
         if let Some(f) = &self.alarm_file {
-            f.appendln(message, true)
+            f.appendln(message, true)?;
+            (self.update_journal)("alarm")?;
         } else {
             warn!("{message}");
-            Ok(())
         }
+        Ok(())
     }
 }
 

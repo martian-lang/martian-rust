@@ -179,27 +179,14 @@ impl Metadata {
 
     /// Update the Martian journal -- so that Martian knows what we've updated
     fn update_journal(&self, name: &str) -> Result<()> {
-        let journal_name: Cow<'_, str> = if self.stage_type != "main" {
-            format!("{}_{name}", self.stage_type).into()
-        } else {
-            name.into()
-        };
+        update_journal(&self.stage_type, &self.run_file, name)
+    }
 
-        let tmp_run_file = format!("{}.{journal_name}.tmp", self.run_file);
-        let run_file = &tmp_run_file[..tmp_run_file.len() - 4];
-
-        {
-            let mut f = File::create(&tmp_run_file)?;
-            if let Err(err) = f.write_all(make_timestamp_now().as_bytes()) {
-                // Pretty much ignore this error.  The only reason we need
-                // any content at all in this file is because some
-                // filesystems behave strangely with completely empty files.
-                eprintln!("Writing journal file {tmp_run_file}: {err}");
-            }
-        }
-        rename(tmp_run_file.as_str(), run_file).or_else(ignore_not_found)?;
-
-        Ok(())
+    /// Return a standalone closure that can update the journal file.
+    pub(crate) fn journal_updater(&self) -> JournalUpdater {
+        let stage_type = self.stage_type.clone();
+        let run_file = self.run_file.clone();
+        Box::new(move |name: &str| update_journal(&stage_type, &run_file, name))
     }
 
     /// Write JSON to a chunk file
@@ -334,6 +321,34 @@ impl Metadata {
 fn make_metadata_file_path(metadata_dir: &Path, name: &str) -> PathBuf {
     metadata_dir.join([METADATA_PREFIX, name].concat())
 }
+
+/// Create a journal file to tell mrp that we've created or updated a metadata file.
+fn update_journal(stage_type: &str, run_file: &str, name: &str) -> Result<()> {
+    let journal_name: Cow<'_, str> = if stage_type != "main" {
+        format!("{}_{name}", stage_type).into()
+    } else {
+        name.into()
+    };
+
+    let tmp_run_file = format!("{}.{journal_name}.tmp", run_file);
+    let run_file = &tmp_run_file[..tmp_run_file.len() - 4];
+
+    {
+        let mut f = File::create(&tmp_run_file)?;
+        if let Err(err) = f.write_all(make_timestamp_now().as_bytes()) {
+            // Pretty much ignore this error.  The only reason we need
+            // any content at all in this file is because some
+            // filesystems behave strangely with completely empty files.
+            eprintln!("Writing journal file {tmp_run_file}: {err}");
+        }
+    }
+    rename(tmp_run_file.as_str(), run_file).or_else(ignore_not_found)?;
+
+    Ok(())
+}
+
+/// A standalone callable that creates a journal file.
+pub(crate) type JournalUpdater = Box<dyn Fn(&str) -> Result<()>>;
 
 /// Manage shared access to a metadata file.
 #[derive(Debug, Clone)]
