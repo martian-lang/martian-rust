@@ -6,7 +6,7 @@ use serde_json::{self, Value};
 use std::any::type_name;
 use std::borrow::Cow;
 use std::ffi::OsString;
-use std::fs::{rename, File, OpenOptions};
+use std::fs::{remove_file, rename, File, OpenOptions};
 use std::io::{ErrorKind, Write};
 use std::os::unix::io::FromRawFd;
 use std::path::{Path, PathBuf};
@@ -173,18 +173,12 @@ impl Metadata {
     /// Append to a metadata file inside the chunk.
     ///
     /// This operation is not atomic at the file system level.
-    ///
-    /// Writing is done by providing a closure that is passed the writer.
-    pub fn append_metadata(
-        &mut self,
-        name: &str,
-        write: impl FnOnce(&mut dyn Write) -> Result<()>,
-    ) -> Result<()> {
+    pub fn append_metadata(&mut self, name: &str, content: &str) -> Result<()> {
         let mut f = OpenOptions::new()
             .create(true)
             .append(true)
             .open(self.make_path(name))?;
-        write(&mut f)?;
+        f.write_all(content.as_bytes())?;
         f.sync_all()?;
         drop(f);
         self.update_journal(name)
@@ -193,12 +187,8 @@ impl Metadata {
     /// Write to a metadata file, overwriting existing contents.
     ///
     /// The file write is fully atomic.
-    pub fn write_metadata(
-        &mut self,
-        name: &str,
-        write: impl FnOnce(&mut dyn Write) -> Result<()>,
-    ) -> Result<()> {
-        fully_atomic_write(&self.make_path(name), write)?;
+    pub fn write_metadata(&mut self, name: &str, content: &str) -> Result<()> {
+        fully_atomic_write(&self.make_path(name), |w| w.write_all(content.as_bytes()))?;
         self.update_journal(name)?;
         Ok(())
     }
@@ -211,15 +201,17 @@ impl Metadata {
             name.into()
         };
         let journal_file = format!("{}.{journal_name}.tmp", self.run_file);
+        let timestamp = make_timestamp_now();
         fully_atomic_write(Path::new(&journal_file), |w| {
-            if let Err(err) = w.write_all(make_timestamp_now().as_bytes()) {
+            if let Err(err) = w.write_all(timestamp.as_bytes()) {
                 // Pretty much ignore this error.  The only reason we need
                 // any content at all in this file is because some
                 // filesystems behave strangely with completely empty files.
                 eprintln!("Writing journal file {journal_file}.tmp: {err}");
             }
             Ok(())
-        })
+        })?;
+        Ok(())
     }
 
     /// Write JSON to a chunk file
@@ -282,11 +274,7 @@ impl Metadata {
 
     /// Write a message to the stage alarms.
     pub fn alarm(&mut self, message: &str) -> Result<()> {
-        self.append_metadata("alarm", |w| {
-            let timestamp = make_timestamp_now();
-            writeln!(w, "{timestamp} {message}")?;
-            Ok(())
-        })
+        self.append_metadata("alarm", &format!("{} {}", make_timestamp_now(), message))
     }
 
     #[cold]
@@ -296,10 +284,7 @@ impl Metadata {
 
     #[cold]
     pub fn stackvars(&mut self, message: &str) -> Result<()> {
-        self.write_metadata("stackvars", |w| {
-            write!(w, "{message}")?;
-            Ok(())
-        })
+        self.write_metadata("stackvars", message)
     }
 
     /// Write finalized _jobinfo data
@@ -363,14 +348,19 @@ pub(crate) type SharedMetadata = Arc<Mutex<Metadata>>;
 /// Write a new file atomically, by first writing to a temp file, fsync, then rename.
 ///
 /// The temp version will be the provided path with .tmp appended.
-fn fully_atomic_write(path: &Path, write: impl FnOnce(&mut dyn Write) -> Result<()>) -> Result<()> {
+fn fully_atomic_write(
+    path: &Path,
+    write: impl FnOnce(&mut dyn Write) -> std::io::Result<()>,
+) -> std::io::Result<()> {
     let mut tmp_path: OsString = path.into();
     tmp_path.push(".tmp");
-
     let mut f = File::create(&tmp_path)?;
-    write(&mut f)?;
-    f.sync_all()?;
+    let temp_write_result = write(&mut f).and_then(|_| f.sync_all());
     drop(f);
+    if let Err(err) = temp_write_result {
+        let _ = remove_file(&tmp_path);
+        return Err(err);
+    }
 
     rename(&tmp_path, path).or_else(ignore_not_found)?;
     Ok(())
