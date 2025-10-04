@@ -202,15 +202,18 @@ impl Metadata {
         };
         let journal_file = format!("{}.{journal_name}.tmp", self.run_file);
         let timestamp = make_timestamp_now();
-        fully_atomic_write(Path::new(&journal_file), |w| {
-            if let Err(err) = w.write_all(timestamp.as_bytes()) {
-                // Pretty much ignore this error.  The only reason we need
-                // any content at all in this file is because some
-                // filesystems behave strangely with completely empty files.
-                eprintln!("Writing journal file {journal_file}.tmp: {err}");
-            }
+        let mut write_err = Ok(());
+        let create_result = fully_atomic_write(Path::new(&journal_file), |w| {
+            write_err = w.write_all(timestamp.as_bytes());
             Ok(())
-        })?;
+        });
+        if let Err(err) = write_err {
+            // Pretty much ignore this error.  The only reason we need
+            // any content at all in this file is because some
+            // filesystems behave strangely with completely empty files.
+            eprintln!("Writing journal file {journal_file}.tmp: {err}");
+        }
+        create_result?;
         Ok(())
     }
 
