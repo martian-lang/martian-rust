@@ -173,7 +173,7 @@ impl Metadata {
     /// Append to a metadata file inside the chunk.
     ///
     /// This operation is not atomic at the file system level.
-    pub fn append_metadata(&mut self, name: &str, content: &str) -> Result<()> {
+    pub(crate) fn append_metadata(&mut self, name: &str, content: &str) -> Result<()> {
         let mut f = OpenOptions::new()
             .create(true)
             .append(true)
@@ -187,7 +187,7 @@ impl Metadata {
     /// Write to a metadata file, overwriting existing contents.
     ///
     /// The file write is fully atomic.
-    pub fn write_metadata(&mut self, name: &str, content: &str) -> Result<()> {
+    pub(crate) fn write_metadata(&mut self, name: &str, content: &str) -> Result<()> {
         fully_atomic_write(&self.make_path(name), |w| w.write_all(content.as_bytes()))?;
         self.update_journal(name)?;
         Ok(())
@@ -219,9 +219,7 @@ impl Metadata {
 
     /// Write JSON to a chunk file
     pub(crate) fn write_json_obj(&mut self, name: &str, object: &JsonDict) -> Result<()> {
-        serde_json::to_writer_pretty(File::create(self.make_path(name))?, object)?;
-        self.update_journal(name)?;
-        Ok(())
+        self.write_metadata(name, &serde_json::to_string_pretty(object)?)
     }
 
     pub(crate) fn decode<T: Sized + DeserializeOwned>(&self, name: &str) -> Result<T> {
