@@ -143,7 +143,7 @@ fn ignore_not_found(err: std::io::Error) -> std::io::Result<()> {
 }
 
 impl Metadata {
-    pub fn new(mut args: Vec<String>) -> Result<Metadata> {
+    pub(crate) fn new(mut args: Vec<String>) -> Result<Metadata> {
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
         args.truncate(5);
