@@ -201,7 +201,6 @@ impl Metadata {
             name.into()
         };
         let journal_file = format!("{}.{journal_name}", self.run_file);
-        println!("writing journal file {journal_file}");
         let timestamp = make_timestamp_now();
         let mut write_err = Ok(());
         let create_result = fully_atomic_write(Path::new(&journal_file), |w| {
@@ -364,13 +363,7 @@ fn fully_atomic_write(
         return Err(err);
     }
 
-    let rename_result = rename(&tmp_path, path);
-    println!(
-        "rename result from {} to {}: {rename_result:?}",
-        tmp_path.display(),
-        path.display()
-    );
-    rename_result.or_else(ignore_not_found)?;
+    rename(&tmp_path, path).or_else(ignore_not_found)?;
     Ok(())
 }
 
