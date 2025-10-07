@@ -275,7 +275,7 @@ impl Metadata {
 
     /// Write a message to the stage alarms.
     pub fn alarm(&mut self, message: &str) -> Result<()> {
-        self.append_metadata("alarm", &format!("{} {}", make_timestamp_now(), message))
+        self.append_metadata("alarm", message)
     }
 
     #[cold]
