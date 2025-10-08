@@ -9,24 +9,24 @@ jobs:
   clippy_check:
     runs-on: ubuntu-latest
     steps:
-    - uses: dtolnay/rust-toolchain@1.73.0
-      with:
-        components: clippy
-    - uses: actions/checkout@v4
-    - uses: Swatinem/rust-cache@v2
-    - uses: 10XGenomics/clippy-check@main
-      with:
-        args: |
-          --all-features --all-targets --
-          -D clippy::perf
-          -W clippy::wildcard_imports
-          -W clippy::redundant_closure_for_method_calls
-          -W clippy::enum_glob_use
-          -D clippy::unused_io_amount
-          -W future_incompatible
-          -W nonstandard_style
-          -D rust_2018_compatibility
-          -D rust_2021_compatibility
-          -D unused
-          -D clippy::unnecessary_mut_passed
-          -W clippy::uninlined_format_args
+      - uses: dtolnay/rust-toolchain@1.88.0
+        with:
+          components: clippy
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - uses: 10XGenomics/clippy-check@main
+        with:
+          args: |
+            --all-features --all-targets --
+            -D clippy::perf
+            -W clippy::wildcard_imports
+            -W clippy::redundant_closure_for_method_calls
+            -W clippy::enum_glob_use
+            -D clippy::unused_io_amount
+            -W future_incompatible
+            -W nonstandard_style
+            -D rust_2018_compatibility
+            -D rust_2021_compatibility
+            -D unused
+            -D clippy::unnecessary_mut_passed
+            -W clippy::uninlined_format_args

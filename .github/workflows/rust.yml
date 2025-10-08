@@ -2,37 +2,36 @@ name: Rust
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: dtolnay/rust-toolchain@1.73.0
-      with:
-        components: rustfmt
-    - uses: actions/checkout@v4
-    - name: Check Rust formatting
-      run: cargo fmt -- --check
-    - uses: Swatinem/rust-cache@v2
-    - name: Build
-      run: cargo build --verbose --all
-    - uses: EmbarkStudios/cargo-deny-action@v1
-    - name: Run tests
-      run: cargo test --verbose --all
-    - name: Martian Integration tests
-      run: |
-        cargo build --examples
-        cd martian-lab/tests/main_test
-        ../martian_test.py main_test.json
-        cd ../split_test
-        ../martian_test.py split_test.json
-        cd ../error_test
-        ../martian_test.py error_test.json
+      - uses: dtolnay/rust-toolchain@1.88.0
+        with:
+          components: rustfmt
+      - uses: actions/checkout@v4
+      - name: Check Rust formatting
+        run: cargo fmt -- --check
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --verbose --all
+      - uses: EmbarkStudios/cargo-deny-action@v2
+      - name: Run tests
+        run: cargo test --verbose --all
+      - name: Martian Integration tests
+        run: |
+          cargo build --examples
+          cd martian-lab/tests/main_test
+          ../martian_test.py main_test.json
+          cd ../split_test
+          ../martian_test.py split_test.json
+          cd ../error_test
+          ../martian_test.py error_test.json

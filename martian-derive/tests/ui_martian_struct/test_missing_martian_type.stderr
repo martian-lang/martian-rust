@@ -1,14 +1,13 @@
-error[E0277]: the trait bound `Foo: MartianFileType` is not satisfied
- --> tests/ui_martian_struct/test_missing_martian_type.rs:5:10
+error[E0277]: the trait bound `Foo: AsMartianBlanketType` is not satisfied
+ --> tests/ui_martian_struct/test_missing_martian_type.rs:8:10
   |
-5 | #[derive(MartianStruct)]
-  |          ^^^^^^^^^^^^^ the trait `MartianFileType` is not implemented for `Foo`
+8 |     foo: Foo, // Does not implement AsMartianPrimaryType
+  |          ^^^ the trait `MartianFileType` is not implemented for `Foo`
   |
   = help: the following other types implement trait `AsMartianBlanketType`:
             HashMap<K, V, H>
             HashSet<K, H>
-            Vec<T>
             Option<T>
+            Vec<T>
   = note: required for `Foo` to implement `AsMartianPrimaryType`
   = note: required for `Foo` to implement `AsMartianBlanketType`
-  = note: this error originates in the derive macro `MartianStruct` (in Nightly builds, run with -Z macro-backtrace for more info)
