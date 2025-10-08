@@ -1,5 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Efficient, configurable logging in Rust."><title>fern - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="fern" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../fern/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../fern/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate fern</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.6.2</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">fern</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/fern/lib.rs.html#1-414">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Efficient, configurable logging in Rust.</p>
-<h2 id="fern-044-05-06-security-warning---colored-feature--global-allocator"><a href="#fern-044-05-06-security-warning---colored-feature--global-allocator">fern 0.4.4, 0.5.*, 0.6.* security warning - <code>colored</code> feature + global allocator</a></h2>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Efficient, configurable logging in Rust."><title>fern - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-1a91846b.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="fern" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0 (6b00bc388 2025-06-23)" data-channel="1.88.0" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../static.files/storage-4e99c027.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../fern/index.html">fern</a><span class="version">0.6.2</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#fern-044-05-06-security-warning---colored-feature--global-allocator" title="fern 0.4.4, 0.5.*, 0.6.* security warning - `colored` feature + global allocator">fern 0.4.4, 0.5.*, 0.6.* security warning - <code>colored</code> feature + global allocator</a></li><li><a href="#depending-on-fern" title="Depending on fern">Depending on fern</a></li><li><a href="#example-setup" title="Example setup">Example setup</a></li><li><a href="#logging" title="Logging">Logging</a></li><li><a href="#more" title="More">More</a></li></ul><h3><a href="#modules">Crate Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#functions" title="Functions">Functions</a></li><li><a href="#types" title="Type Aliases">Type Aliases</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>fern</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/fern/lib.rs.html#1-414">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Efficient, configurable logging in Rust.</p>
+<h2 id="fern-044-05-06-security-warning---colored-feature--global-allocator"><a class="doc-anchor" href="#fern-044-05-06-security-warning---colored-feature--global-allocator">§</a>fern 0.4.4, 0.5.*, 0.6.* security warning - <code>colored</code> feature + global allocator</h2>
 <p>One of our downstream dependencies, <a href="https://docs.rs/atty/">atty</a>, through
 [colored], has an unsoundness issue:
 <a href="https://rustsec.org/advisories/RUSTSEC-2021-0145.html">https://rustsec.org/advisories/RUSTSEC-2021-0145.html</a></p>
@@ -13,8 +13,7 @@ may add another color crate, or may just document usage of alternatives
 removing the <code>fern/colored</code> feature.</p>
 <p>Or, for minimal code changes, you can also enable the <code>colored/no-colors</code>
 feature:</p>
-<div class="example-wrap"><pre class="language-text"><code>cargo add colored --features no-color
-</code></pre></div>
+<div class="example-wrap"><pre class="language-text"><code>cargo add colored --features no-color</code></pre></div>
 <p>With the <code>no-color</code> feature, the vulnerable code will still be present, but
 unless you use any of the following APIs manually, it will never be called:</p>
 <ul>
@@ -26,12 +25,11 @@ unless you use any of the following APIs manually, it will never be called:</p>
 vulnerable code)</li>
 </ul>
 <p>See <a href="https://github.com/daboross/fern/issues/113">https://github.com/daboross/fern/issues/113</a> for further discussion.</p>
-<h2 id="depending-on-fern"><a href="#depending-on-fern">Depending on fern</a></h2>
+<h2 id="depending-on-fern"><a class="doc-anchor" href="#depending-on-fern">§</a>Depending on fern</h2>
 <p>Ensure you require both fern and log in your project’s <code>Cargo.toml</code>:</p>
 <div class="example-wrap"><pre class="language-toml"><code>[dependencies]
 log = &quot;0.4&quot;
-fern = &quot;0.6&quot;
-</code></pre></div><h2 id="example-setup"><a href="#example-setup">Example setup</a></h2>
+fern = &quot;0.6&quot;</code></pre></div><h2 id="example-setup"><a class="doc-anchor" href="#example-setup">§</a>Example setup</h2>
 <p>With fern, all logger configuration is done via builder-like methods on
 instances of the <a href="struct.Dispatch.html" title="struct fern::Dispatch"><code>Dispatch</code></a> structure.</p>
 <p>Here’s an example logger which formats messages, and sends everything Debug
@@ -44,7 +42,7 @@ and above to both stdout and an output.log file:</p>
     fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(<span class="macro">format_args!</span>(
-                <span class="string">&quot;[{} {} {}] {}&quot;</span>,
+                <span class="string">"[{} {} {}] {}"</span>,
                 humantime::format_rfc3339_seconds(SystemTime::now()),
                 record.level(),
                 record.target(),
@@ -53,7 +51,7 @@ and above to both stdout and an output.log file:</p>
         })
         .level(log::LevelFilter::Debug)
         .chain(std::io::stdout())
-        .chain(fern::log_file(<span class="string">&quot;output.log&quot;</span>)<span class="question-mark">?</span>)
+        .chain(fern::log_file(<span class="string">"output.log"</span>)<span class="question-mark">?</span>)
         .apply()<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(())
 }
@@ -61,9 +59,9 @@ and above to both stdout and an output.log file:</p>
 <span class="kw">fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
     setup_logger()<span class="question-mark">?</span>;
 
-    <span class="macro">info!</span>(<span class="string">&quot;Hello, world!&quot;</span>);
-    <span class="macro">warn!</span>(<span class="string">&quot;Warning!&quot;</span>);
-    <span class="macro">debug!</span>(<span class="string">&quot;Now exiting.&quot;</span>);
+    <span class="macro">info!</span>(<span class="string">"Hello, world!"</span>);
+    <span class="macro">warn!</span>(<span class="string">"Warning!"</span>);
+    <span class="macro">debug!</span>(<span class="string">"Now exiting."</span>);
 
     <span class="prelude-val">Ok</span>(())
 }</code></pre></div>
@@ -74,7 +72,7 @@ and above to both stdout and an output.log file:</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>.format(|out, message, record| {
     out.finish(<span class="macro">format_args!</span>(
-        <span class="string">&quot;...&quot;
+        <span class="string">"..."
     </span>))
 })</code></pre></div>
 <p>This incantation sets the <code>Dispatch</code> format! The closure taking in
@@ -84,11 +82,11 @@ consumers.</p>
 <p>Do any work you want in this closure, and then call <code>out.finish</code> at the end.
 The callback-style result passing with <code>out.finish(format_args!())</code> lets us
 format without any intermediate string allocation.</p>
-<p><a href="https://doc.rust-lang.org/1.73.0/core/macro.format_args.html" title="macro core::format_args"><code>format_args!</code></a> has the same format as <a href="https://doc.rust-lang.org/1.73.0/std/macro.println.html" title="macro std::println"><code>println!</code></a>, just returning a
+<p><a href="https://doc.rust-lang.org/1.88.0/core/macro.format_args.html" title="macro core::format_args"><code>format_args!</code></a> has the same format as <a href="https://doc.rust-lang.org/1.88.0/std/macro.println.html" title="macro std::println"><code>println!</code></a>, just returning a
 not-yet-written result we can use internally.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>std::time::SystemTime::now()</code></pre></div>
-<p><a href="https://doc.rust-lang.org/1.73.0/std/time/struct.SystemTime.html#method.now" title="associated function std::time::SystemTime::now"><code>std::time::SystemTime::now</code></a> retrieves the current time.</p>
+<p><a href="https://doc.rust-lang.org/1.88.0/std/time/struct.SystemTime.html#method.now" title="associated function std::time::SystemTime::now"><code>std::time::SystemTime::now</code></a> retrieves the current time.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>humantime::format_rfc3339_seconds(
     <span class="comment">// ...
@@ -109,10 +107,10 @@ For more custom time formatting, I recommend
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>.chain(std::io::stdout())</code></pre></div>
 <p>Adds a child to the logger. With this, all messages which pass the filters
 will be sent to stdout.</p>
-<p><a href="struct.Dispatch.html#method.chain" title="method fern::Dispatch::chain"><code>Dispatch::chain</code></a> accepts <a href="https://doc.rust-lang.org/1.73.0/std/io/stdio/struct.Stdout.html" title="struct std::io::stdio::Stdout"><code>Stdout</code></a>, <a href="https://doc.rust-lang.org/1.73.0/std/io/stdio/struct.Stderr.html" title="struct std::io::stdio::Stderr"><code>Stderr</code></a>, <a href="https://doc.rust-lang.org/1.73.0/std/fs/struct.File.html" title="struct std::fs::File"><code>File</code></a> and other
+<p><a href="struct.Dispatch.html#method.chain" title="method fern::Dispatch::chain"><code>Dispatch::chain</code></a> accepts <a href="https://doc.rust-lang.org/1.88.0/std/io/stdio/struct.Stdout.html" title="struct std::io::stdio::Stdout"><code>Stdout</code></a>, <a href="https://doc.rust-lang.org/1.88.0/std/io/stdio/struct.Stderr.html" title="struct std::io::stdio::Stderr"><code>Stderr</code></a>, <a href="https://doc.rust-lang.org/1.88.0/std/fs/struct.File.html" title="struct std::fs::File"><code>File</code></a> and other
 <a href="struct.Dispatch.html" title="struct fern::Dispatch"><code>Dispatch</code></a> instances.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered"><code>.chain(fern::log_file(<span class="string">&quot;output.log&quot;</span>)<span class="question-mark">?</span>)</code></pre></div>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code>.chain(fern::log_file(<span class="string">"output.log"</span>)<span class="question-mark">?</span>)</code></pre></div>
 <p>Adds a second child sending messages to the file “output.log”.</p>
 <p>See <a href="fn.log_file.html" title="fn fern::log_file"><code>log_file</code></a>.</p>
 
@@ -130,8 +128,7 @@ than once.</p>
 <p>The final output will look like:</p>
 <div class="example-wrap"><pre class="language-text"><code>[2023-03-18T20:12:50Z INFO cmd_program] Hello, world!
 [2023-03-18T20:12:50Z WARN cmd_program] Warning!
-[2023-03-18T20:12:50Z DEBUG cmd_program] Now exiting.
-</code></pre></div><h2 id="logging"><a href="#logging">Logging</a></h2>
+[2023-03-18T20:12:50Z DEBUG cmd_program] Now exiting.</code></pre></div><h2 id="logging"><a class="doc-anchor" href="#logging">§</a>Logging</h2>
 <p>Once the logger has been set, it will pick up all logging calls from your
 crate and all libraries you depend on.</p>
 
@@ -140,12 +137,12 @@ fern::Dispatch::new()
     <span class="comment">// ...
     </span>.apply()<span class="question-mark">?</span>;
 
-<span class="macro">trace!</span>(<span class="string">&quot;Trace message&quot;</span>);
-<span class="macro">debug!</span>(<span class="string">&quot;Debug message&quot;</span>);
-<span class="macro">info!</span>(<span class="string">&quot;Info message&quot;</span>);
-<span class="macro">warn!</span>(<span class="string">&quot;Warning message&quot;</span>);
-<span class="macro">error!</span>(<span class="string">&quot;Error message&quot;</span>);</code></pre></div>
-<h2 id="more"><a href="#more">More</a></h2>
+<span class="macro">trace!</span>(<span class="string">"Trace message"</span>);
+<span class="macro">debug!</span>(<span class="string">"Debug message"</span>);
+<span class="macro">info!</span>(<span class="string">"Info message"</span>);
+<span class="macro">warn!</span>(<span class="string">"Warning message"</span>);
+<span class="macro">error!</span>(<span class="string">"Error message"</span>);</code></pre></div>
+<h2 id="more"><a class="doc-anchor" href="#more">§</a>More</h2>
 <p>The <a href="struct.Dispatch.html" title="struct fern::Dispatch"><code>Dispatch</code></a> documentation has example usages of each method, and the
 <a href="https://github.com/daboross/fern/tree/fern-0.6.2/examples/cmd-program.rs">full example program</a> might be useful for using fern in a larger
 application context.</p>
@@ -154,8 +151,8 @@ application context.</p>
 <a href="https://github.com/daboross/fern/tree/fern-0.6.2/examples/syslog.rs">syslog full example program</a> for a more realistic sample.</p>
 <p>See the <a href="meta/index.html" title="mod fern::meta">meta</a> module for information on getting logging-within-logging
 working correctly.</p>
-</div></details><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="meta/index.html" title="mod fern::meta">meta</a></div><div class="desc docblock-short">Fern supports logging most things by default, except for one kind of struct: structs which make log
-calls to the global logger from within their <code>Display</code> or <code>Debug</code> implementations.</div></li></ul><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Dispatch.html" title="struct fern::Dispatch">Dispatch</a></div><div class="desc docblock-short">The base dispatch logger.</div></li><li><div class="item-name"><a class="struct" href="struct.FormatCallback.html" title="struct fern::FormatCallback">FormatCallback</a></div><div class="desc docblock-short">Callback struct for use within a formatter closure</div></li><li><div class="item-name"><a class="struct" href="struct.Output.html" title="struct fern::Output">Output</a></div><div class="desc docblock-short">Configuration for a logger output.</div></li><li><div class="item-name"><a class="struct" href="struct.Panic.html" title="struct fern::Panic">Panic</a></div><div class="desc docblock-short">Logger which will panic whenever anything is logged. The panic
-will be exactly the message of the log.</div></li></ul><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.InitError.html" title="enum fern::InitError">InitError</a></div><div class="desc docblock-short">Convenience error combining possible errors which could occur while
-initializing logging.</div></li></ul><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.log_file.html" title="fn fern::log_file">log_file</a></div><div class="desc docblock-short">Convenience method for opening a log file with common options.</div></li></ul><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.Filter.html" title="type fern::Filter">Filter</a></div><div class="desc docblock-short">A type alias for a log filter. Returning true means the record should
-succeed - false means it should fail.</div></li><li><div class="item-name"><a class="type" href="type.Formatter.html" title="type fern::Formatter">Formatter</a></div><div class="desc docblock-short">A type alias for a log formatter.</div></li></ul></section></div></main></body></html>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="meta/index.html" title="mod fern::meta">meta</a></dt><dd>Fern supports logging most things by default, except for one kind of struct: structs which make log
+calls to the global logger from within their <code>Display</code> or <code>Debug</code> implementations.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Dispatch.html" title="struct fern::Dispatch">Dispatch</a></dt><dd>The base dispatch logger.</dd><dt><a class="struct" href="struct.FormatCallback.html" title="struct fern::FormatCallback">Format<wbr>Callback</a></dt><dd>Callback struct for use within a formatter closure</dd><dt><a class="struct" href="struct.Output.html" title="struct fern::Output">Output</a></dt><dd>Configuration for a logger output.</dd><dt><a class="struct" href="struct.Panic.html" title="struct fern::Panic">Panic</a></dt><dd>Logger which will panic whenever anything is logged. The panic
+will be exactly the message of the log.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.InitError.html" title="enum fern::InitError">Init<wbr>Error</a></dt><dd>Convenience error combining possible errors which could occur while
+initializing logging.</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.log_file.html" title="fn fern::log_file">log_<wbr>file</a></dt><dd>Convenience method for opening a log file with common options.</dd></dl><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><dl class="item-table"><dt><a class="type" href="type.Filter.html" title="type fern::Filter">Filter</a></dt><dd>A type alias for a log filter. Returning true means the record should
+succeed - false means it should fail.</dd><dt><a class="type" href="type.Formatter.html" title="type fern::Formatter">Formatter</a></dt><dd>A type alias for a log formatter.</dd></dl></section></div></main></body></html>

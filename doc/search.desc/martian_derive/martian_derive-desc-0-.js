@@ -1,0 +1,1 @@
+searchState.loadedDescShard("martian_derive", 0, "Structs which are used as associated types in <code>MartianMain</code> …\nCustom types which are fields of a <code>MartianStruct</code> need to …\nWhen this attribute is applied to the <code>MartianMain</code> or …\nA macro to define a new struct that implements …")
