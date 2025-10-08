@@ -195,9 +195,6 @@ where
         let mut stream = StreamDeserializer::<_, T>::new(io_read);
         match stream.next() {
             Some(Ok(t)) => Some(Ok(t)),
-            // In practice this is always initialized as a buffered reader, but
-            // we don't constrain that at the type level.
-            #[allow(clippy::unbuffered_bytes)]
             Some(Err(e)) => self
                 .reader
                 .by_ref()

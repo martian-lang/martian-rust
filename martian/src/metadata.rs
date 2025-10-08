@@ -5,8 +5,7 @@ use serde_json::map::Map;
 use serde_json::{self, Value};
 use std::any::type_name;
 use std::borrow::Cow;
-use std::ffi::OsString;
-use std::fs::{remove_file, rename, File, OpenOptions};
+use std::fs::{rename, File, OpenOptions};
 use std::io::{ErrorKind, Write};
 use std::os::unix::io::FromRawFd;
 use std::path::{Path, PathBuf};
@@ -19,24 +18,18 @@ type Result<T> = std::result::Result<T, Error>;
 
 const METADATA_PREFIX: &str = "_";
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, strum::Display, strum::EnumString)]
-#[strum(serialize_all = "lowercase")]
-pub enum StageType {
-    Split,
-    Main,
-    Join,
-}
-
 /// Tracking the metadata for one Martian chunk invocation
 #[derive(Debug)]
 pub struct Metadata {
     pub stage_name: String,
-    pub stage_type: StageType,
+    pub stage_type: String,
     metadata_path: String,
     pub files_path: String,
     run_file: String,
     raw_jobinfo: JsonDict,
     pub jobinfo: JobInfo, // Partially parsed Job info
+    /// Shared reference to the alarm file.
+    alarm_file: SharedFile,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -143,7 +136,7 @@ fn ignore_not_found(err: std::io::Error) -> std::io::Result<()> {
 }
 
 impl Metadata {
-    pub(crate) fn new(mut args: Vec<String>) -> Result<Metadata> {
+    pub fn new(mut args: Vec<String>) -> Metadata {
         // # Take options from command line.
         // shell_cmd, stagecode_path, metadata_path, files_path, run_file = argv
         args.truncate(5);
@@ -153,16 +146,18 @@ impl Metadata {
         let metadata_path = args.pop().unwrap();
         let stage_type = args.pop().unwrap();
         let stage_name = args.pop().unwrap();
+        let alarm_file = SharedFile::new(make_metadata_file_path(metadata_path.as_ref(), "alarm"));
 
-        Ok(Metadata {
+        Metadata {
             stage_name,
-            stage_type: stage_type.parse()?,
+            stage_type,
             metadata_path,
             files_path,
             run_file,
             raw_jobinfo: Map::new(),
             jobinfo: Default::default(),
-        })
+            alarm_file,
+        }
     }
 
     /// Path within chunk
@@ -170,56 +165,48 @@ impl Metadata {
         make_metadata_file_path(self.metadata_path.as_ref(), name)
     }
 
-    /// Append to a metadata file inside the chunk.
-    ///
-    /// This operation is not atomic at the file system level.
-    pub(crate) fn append_metadata(&mut self, name: &str, content: &str) -> Result<()> {
-        let mut f = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(self.make_path(name))?;
-        f.write_all(content.as_bytes())?;
-        f.sync_all()?;
+    /// Write to a file inside the chunk
+    pub fn write_raw(&mut self, name: &str, text: &str) -> Result<()> {
+        let mut f = File::create(self.make_path(name))?;
+        f.write_all(text.as_bytes())?;
+        // Ensure the file is closed before we write the journal, to reduce
+        // the chances that `mrp` sees the journal entry before the file content
+        // has be sync'ed.  This can be an issue on nfs systems.
         drop(f);
-        self.update_journal(name)
-    }
-
-    /// Write to a metadata file, overwriting existing contents.
-    ///
-    /// The file write is fully atomic.
-    pub(crate) fn write_metadata(&mut self, name: &str, content: &str) -> Result<()> {
-        fully_atomic_write(&self.make_path(name), |w| w.write_all(content.as_bytes()))?;
         self.update_journal(name)?;
         Ok(())
     }
 
     /// Update the Martian journal -- so that Martian knows what we've updated
     fn update_journal(&self, name: &str) -> Result<()> {
-        let journal_name: Cow<'_, str> = if self.stage_type != StageType::Main {
+        let journal_name: Cow<'_, str> = if self.stage_type != "main" {
             format!("{}_{name}", self.stage_type).into()
         } else {
             name.into()
         };
-        let journal_file = format!("{}.{journal_name}", self.run_file);
-        let timestamp = make_timestamp_now();
-        let mut write_err = Ok(());
-        let create_result = fully_atomic_write(Path::new(&journal_file), |w| {
-            write_err = w.write_all(timestamp.as_bytes());
-            Ok(())
-        });
-        if let Err(err) = write_err {
-            // Pretty much ignore this error.  The only reason we need
-            // any content at all in this file is because some
-            // filesystems behave strangely with completely empty files.
-            eprintln!("Writing journal file {journal_file}.tmp: {err}");
+
+        let tmp_run_file = format!("{}.{journal_name}.tmp", self.run_file);
+        let run_file = &tmp_run_file[..tmp_run_file.len() - 4];
+
+        {
+            let mut f = File::create(&tmp_run_file)?;
+            if let Err(err) = f.write_all(make_timestamp_now().as_bytes()) {
+                // Pretty much ignore this error.  The only reason we need
+                // any content at all in this file is because some
+                // filesystems behave strangely with completely empty files.
+                eprintln!("Writing journal file {tmp_run_file}: {err}");
+            }
         }
-        create_result?;
+        rename(tmp_run_file.as_str(), run_file).or_else(ignore_not_found)?;
+
         Ok(())
     }
 
     /// Write JSON to a chunk file
-    pub(crate) fn write_json_obj(&mut self, name: &str, object: &JsonDict) -> Result<()> {
-        self.write_metadata(name, &serde_json::to_string_pretty(object)?)
+    pub(crate) fn write_json_obj(&self, name: &str, object: &JsonDict) -> Result<()> {
+        serde_json::to_writer_pretty(File::create(self.make_path(name))?, object)?;
+        self.update_journal(name)?;
+        Ok(())
     }
 
     pub(crate) fn decode<T: Sized + DeserializeOwned>(&self, name: &str) -> Result<T> {
@@ -273,9 +260,13 @@ impl Metadata {
         Error::new(e).context(context)
     }
 
+    pub(crate) fn alarm_file(&self) -> &SharedFile {
+        &self.alarm_file
+    }
+
     /// Write a message to the stage alarms.
-    pub fn alarm(&mut self, message: &str) -> Result<()> {
-        self.append_metadata("alarm", message)
+    pub fn alarm(&self, message: &str) -> Result<()> {
+        self.alarm_file.appendln(message, true)
     }
 
     #[cold]
@@ -285,7 +276,7 @@ impl Metadata {
 
     #[cold]
     pub fn stackvars(&mut self, message: &str) -> Result<()> {
-        self.write_metadata("stackvars", message)
+        self.write_raw("stackvars", message)
     }
 
     /// Write finalized _jobinfo data
@@ -344,27 +335,28 @@ fn make_metadata_file_path(metadata_dir: &Path, name: &str) -> PathBuf {
     metadata_dir.join([METADATA_PREFIX, name].concat())
 }
 
-pub(crate) type SharedMetadata = Arc<Mutex<Metadata>>;
+/// Manage shared access to a metadata file.
+#[derive(Debug, Clone)]
+pub(crate) struct SharedFile(Arc<Mutex<PathBuf>>);
 
-/// Write a new file atomically, by first writing to a temp file, fsync, then rename.
-///
-/// The temp version will be the provided path with .tmp appended.
-fn fully_atomic_write(
-    path: &Path,
-    write: impl FnOnce(&mut dyn Write) -> std::io::Result<()>,
-) -> std::io::Result<()> {
-    let mut tmp_path: OsString = path.into();
-    tmp_path.push(".tmp");
-    let mut f = File::create(&tmp_path)?;
-    let temp_write_result = write(&mut f).and_then(|_| f.sync_all());
-    drop(f);
-    if let Err(err) = temp_write_result {
-        let _ = remove_file(&tmp_path);
-        return Err(err);
+impl SharedFile {
+    pub fn new(path: PathBuf) -> Self {
+        Self(Arc::new(Mutex::new(path)))
     }
 
-    rename(&tmp_path, path).or_else(ignore_not_found)?;
-    Ok(())
+    /// Append the provided contents to the file.
+    /// Creates the file if it does not exist.
+    /// Appends a newline after contents.
+    /// Prepends a timestamp if requested.
+    pub fn appendln(&self, contents: &str, prepend_timestamp: bool) -> Result<()> {
+        let path = self.0.lock().unwrap();
+        let mut file = OpenOptions::new().create(true).append(true).open(&*path)?;
+        if prepend_timestamp {
+            write!(file, "{} ", make_timestamp_now())?;
+        }
+        writeln!(file, "{contents}")?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -393,6 +385,6 @@ mod tests {
         }
 
         let e: Result<Foo> = Metadata::_decode("tests/invalid_args.json".into());
-        insta::assert_snapshot!(e.unwrap_err());
+        insta::assert_display_snapshot!(e.unwrap_err());
     }
 }

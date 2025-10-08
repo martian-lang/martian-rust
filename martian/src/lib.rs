@@ -14,7 +14,6 @@ use std::fs::File;
 use std::io::Write as IoWrite;
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::path::Path;
-use std::sync::{Arc, Mutex};
 use std::{io, panic};
 use time::format_description::modifier::{Day, Hour, Minute, Month, Second, Year};
 use time::format_description::FormatItem::Literal;
@@ -42,7 +41,7 @@ pub use mro::*;
 pub mod prelude;
 
 pub fn initialize(args: Vec<String>) -> Result<Metadata> {
-    let mut md = Metadata::new(args)?;
+    let mut md = Metadata::new(args);
     md.update_jobinfo()?;
 
     Ok(md)
@@ -185,7 +184,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
     // setup Martian metadata
     // special handler for error in stage setup
-    let md = match initialize(args).context("IO Error initializing stage") {
+    let mut md = match initialize(args).context("IO Error initializing stage") {
         Ok(m) => m,
         Err(e) => {
             let _ = write_errors(&format!("{e:?}"), false);
@@ -256,14 +255,14 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
         },
     ));
 
-    let stage_type = md.stage_type;
-
-    let md = Arc::new(Mutex::new(md));
-
-    let result = match stage_type {
-        StageType::Split => stage.split(md.clone()),
-        StageType::Main => stage.main(md.clone()),
-        StageType::Join => stage.join(md.clone()),
+    let result = if md.stage_type == "split" {
+        stage.split(&mut md)
+    } else if md.stage_type == "main" {
+        stage.main(&mut md)
+    } else if md.stage_type == "join" {
+        stage.join(&mut md)
+    } else {
+        panic!("Unrecognized stage type");
     };
 
     match result {
@@ -272,7 +271,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 
         // write message and stack trace, exit code = 1;
         Err(e) => {
-            report_error(&mut md.lock().unwrap(), &e, is_error_assert(&e));
+            report_error(&mut md, &e, is_error_assert(&e));
             (1, Some(e))
         }
     }
