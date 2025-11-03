@@ -1,10 +1,10 @@
-use crate::{write_errors, Error, DATE_FORMAT};
+use crate::{write_errors, DATE_FORMAT};
+use anyhow::{Context, Error, Result};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::map::Map;
 use serde_json::{self, Value};
 use std::any::type_name;
-use std::borrow::Cow;
 use std::ffi::OsString;
 use std::fs::{remove_file, rename, File, OpenOptions};
 use std::io::{ErrorKind, Write};
@@ -15,7 +15,6 @@ use std::time::SystemTime;
 use time::{OffsetDateTime, UtcOffset};
 
 pub type JsonDict = Map<String, Value>;
-type Result<T> = std::result::Result<T, Error>;
 
 const METADATA_PREFIX: &str = "_";
 
@@ -188,33 +187,18 @@ impl Metadata {
     ///
     /// The file write is fully atomic.
     pub(crate) fn write_metadata(&mut self, name: &str, content: &str) -> Result<()> {
-        fully_atomic_write(&self.make_path(name), |w| w.write_all(content.as_bytes()))?;
-        self.update_journal(name)?;
-        Ok(())
+        fully_atomic_write(&self.make_path(name), content)?;
+        self.update_journal(name)
     }
 
     /// Update the Martian journal -- so that Martian knows what we've updated
     fn update_journal(&self, name: &str) -> Result<()> {
-        let journal_name: Cow<'_, str> = if self.stage_type != StageType::Main {
-            format!("{}_{name}", self.stage_type).into()
+        let journal_filename = if self.stage_type == StageType::Main {
+            format!("{}.{name}", self.run_file)
         } else {
-            name.into()
+            format!("{}.{}_{name}", self.run_file, self.stage_type)
         };
-        let journal_file = format!("{}.{journal_name}", self.run_file);
-        let timestamp = make_timestamp_now();
-        let mut write_err = Ok(());
-        let create_result = fully_atomic_write(Path::new(&journal_file), |w| {
-            write_err = w.write_all(timestamp.as_bytes());
-            Ok(())
-        });
-        if let Err(err) = write_err {
-            // Pretty much ignore this error.  The only reason we need
-            // any content at all in this file is because some
-            // filesystems behave strangely with completely empty files.
-            eprintln!("Writing journal file {journal_file}.tmp: {err}");
-        }
-        create_result?;
-        Ok(())
+        fully_atomic_write(Path::new(&journal_filename), &make_timestamp_now())
     }
 
     /// Write JSON to a chunk file
@@ -349,20 +333,19 @@ pub(crate) type SharedMetadata = Arc<Mutex<Metadata>>;
 /// Write a new file atomically, by first writing to a temp file, fsync, then rename.
 ///
 /// The temp version will be the provided path with .tmp appended.
-fn fully_atomic_write(
-    path: &Path,
-    write: impl FnOnce(&mut dyn Write) -> std::io::Result<()>,
-) -> std::io::Result<()> {
-    let mut tmp_path: OsString = path.into();
+fn fully_atomic_write(path: &Path, content: &str) -> Result<()> {
+    let mut tmp_path = OsString::from(path);
     tmp_path.push(".tmp");
-    let mut f = File::create(&tmp_path)?;
-    let temp_write_result = write(&mut f).and_then(|_| f.sync_all());
+    let mut f = File::create(&tmp_path).with_context(|| tmp_path.display().to_string())?;
+    let write_result = f
+        .write_all(content.as_bytes())
+        .and_then(|_| f.sync_all())
+        .with_context(|| tmp_path.display().to_string());
     drop(f);
-    if let Err(err) = temp_write_result {
+    if let Err(err) = write_result {
         let _ = remove_file(&tmp_path);
         return Err(err);
     }
-
     rename(&tmp_path, path).or_else(ignore_not_found)?;
     Ok(())
 }
