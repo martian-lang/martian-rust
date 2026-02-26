@@ -184,11 +184,8 @@ impl Resource {
     /// assert_eq!(resource.get_vmem_gb(), None);
     /// assert_eq!(resource.get_threads(), None);
     /// ```
-    pub fn mem_gb<T: TryInto<f64>>(mut self, mem_gb: T) -> Self
-    where
-        <T as TryInto<f64>>::Error: std::fmt::Debug,
-    {
-        self.mem_gb = Some(mem_gb.try_into().unwrap());
+    pub fn mem_gb(mut self, mem_gb: isize) -> Self {
+        self.mem_gb = Some(mem_gb as f64);
         self
     }
 
@@ -215,11 +212,8 @@ impl Resource {
     /// assert_eq!(resource.get_vmem_gb(), Some(4.));
     /// assert_eq!(resource.get_threads(), None);
     /// ```
-    pub fn vmem_gb<T: TryInto<f64>>(mut self, vmem_gb: T) -> Self
-    where
-        <T as TryInto<f64>>::Error: std::fmt::Debug,
-    {
-        self.vmem_gb = Some(vmem_gb.try_into().unwrap());
+    pub fn vmem_gb(mut self, vmem_gb: isize) -> Self {
+        self.vmem_gb = Some(vmem_gb as f64);
         self
     }
 
@@ -249,9 +243,9 @@ impl Resource {
     /// assert_eq!(resource.get_vmem_gb(), None);
     /// assert_eq!(resource.get_threads(), None);
     /// ```
-    pub fn with_mem_gb<T: Into<f64>>(mem_gb: T) -> Self {
+    pub fn with_mem_gb(mem_gb: isize) -> Self {
         Resource {
-            mem_gb: Some(mem_gb.into()),
+            mem_gb: Some(mem_gb as f64),
             threads: None,
             vmem_gb: None,
             special: None,
