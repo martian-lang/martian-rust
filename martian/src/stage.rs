@@ -120,11 +120,11 @@ impl<T: MartianFileType> MartianMakePath for T {
 #[derive(Debug, Serialize, Deserialize, Copy, Clone, Default)]
 pub struct Resource {
     #[serde(rename = "__mem_gb", skip_serializing_if = "Option::is_none")]
-    mem_gb: Option<isize>,
+    mem_gb: Option<f64>,
     #[serde(rename = "__threads", skip_serializing_if = "Option::is_none")]
     threads: Option<isize>,
     #[serde(rename = "__vmem_gb", skip_serializing_if = "Option::is_none")]
-    vmem_gb: Option<isize>,
+    vmem_gb: Option<f64>,
     #[serde(
         rename = "__special",
         skip_serializing_if = "Option::is_none",
@@ -156,12 +156,12 @@ impl Resource {
     }
 
     /// Get the mem_gb
-    pub fn get_mem_gb(&self) -> Option<isize> {
+    pub fn get_mem_gb(&self) -> Option<f64> {
         self.mem_gb
     }
 
     /// Get the vmem_gb
-    pub fn get_vmem_gb(&self) -> Option<isize> {
+    pub fn get_vmem_gb(&self) -> Option<f64> {
         self.vmem_gb
     }
 
@@ -180,12 +180,12 @@ impl Resource {
     /// use martian::Resource;
     ///
     /// let resource = Resource::new().mem_gb(2);
-    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_mem_gb(), Some(2.));
     /// assert_eq!(resource.get_vmem_gb(), None);
     /// assert_eq!(resource.get_threads(), None);
     /// ```
     pub fn mem_gb(mut self, mem_gb: isize) -> Self {
-        self.mem_gb = Some(mem_gb);
+        self.mem_gb = Some(mem_gb as f64);
         self
     }
 
@@ -194,7 +194,7 @@ impl Resource {
     /// use martian::Resource;
     ///
     /// let resource = Resource::new().mem_gb(2).threads(4);
-    /// assert_eq!(resource.get_mem_gb(), Some(2));
+    /// assert_eq!(resource.get_mem_gb(), Some(2.));
     /// assert_eq!(resource.get_vmem_gb(), None);
     /// assert_eq!(resource.get_threads(), Some(4));
     /// ```
@@ -208,12 +208,12 @@ impl Resource {
     /// use martian::Resource;
     ///
     /// let resource = Resource::new().mem_gb(2).vmem_gb(4);
-    /// assert_eq!(resource.get_mem_gb(), Some(2));
-    /// assert_eq!(resource.get_vmem_gb(), Some(4));
+    /// assert_eq!(resource.get_mem_gb(), Some(2.));
+    /// assert_eq!(resource.get_vmem_gb(), Some(4.));
     /// assert_eq!(resource.get_threads(), None);
     /// ```
     pub fn vmem_gb(mut self, vmem_gb: isize) -> Self {
-        self.vmem_gb = Some(vmem_gb);
+        self.vmem_gb = Some(vmem_gb as f64);
         self
     }
 
@@ -222,8 +222,8 @@ impl Resource {
     /// use martian::Resource;
     ///
     /// let resource = Resource::new().mem_gb(2).vmem_gb(4).special("gpu_count1_mem8");
-    /// assert_eq!(resource.get_mem_gb(), Some(2));
-    /// assert_eq!(resource.get_vmem_gb(), Some(4));
+    /// assert_eq!(resource.get_mem_gb(), Some(2.));
+    /// assert_eq!(resource.get_vmem_gb(), Some(4.));
     /// assert_eq!(resource.get_threads(), None);
     /// assert_eq!(resource.get_special(), Some("gpu_count1_mem8"));
     /// ```
@@ -239,13 +239,13 @@ impl Resource {
     /// use martian::Resource;
     ///
     /// let resource = Resource::with_mem_gb(-2); // Same as Resource::new().mem_gb(-2);
-    /// assert_eq!(resource.get_mem_gb(), Some(-2));
+    /// assert_eq!(resource.get_mem_gb(), Some(-2.));
     /// assert_eq!(resource.get_vmem_gb(), None);
     /// assert_eq!(resource.get_threads(), None);
     /// ```
     pub fn with_mem_gb(mem_gb: isize) -> Self {
         Resource {
-            mem_gb: Some(mem_gb),
+            mem_gb: Some(mem_gb as f64),
             threads: None,
             vmem_gb: None,
             special: None,
@@ -421,9 +421,9 @@ impl<T> FromIterator<(T, Resource)> for StageDef<T> {
 /// martian run as well as the actual resources available for you.
 pub struct MartianRover {
     files_path: PathBuf,
-    mem_gb: usize,
+    mem_gb: f64,
     threads: usize,
-    vmem_gb: usize,
+    vmem_gb: f64,
     version: Version,
     /// Handle to the metadata, if this Rover was created by mrp.
     metadata: Option<SharedMetadata>,
@@ -464,16 +464,16 @@ impl MartianRover {
     fn _new(files_path: &Path, resource: Resource) -> Self {
         // Resource should both be full populated before creating a rover
         assert!(resource.mem_gb.is_some());
-        assert!(resource.mem_gb.unwrap() >= 0);
+        assert!(resource.mem_gb.unwrap() >= 0.);
         assert!(resource.threads.is_some());
         assert!(resource.threads.unwrap() >= 0);
         assert!(resource.vmem_gb.is_some());
-        assert!(resource.vmem_gb.unwrap() >= 0);
+        assert!(resource.vmem_gb.unwrap() >= 0.);
         MartianRover {
             files_path: PathBuf::from(files_path),
-            mem_gb: resource.mem_gb.unwrap() as usize,
+            mem_gb: resource.mem_gb.unwrap(),
             threads: resource.threads.unwrap() as usize,
-            vmem_gb: resource.vmem_gb.unwrap() as usize,
+            vmem_gb: resource.vmem_gb.unwrap(),
             version: Version::default(),
             metadata: None,
         }
@@ -504,13 +504,13 @@ impl MartianRover {
     {
         <T as MartianMakePath>::make_path(self.files_path.as_path(), filename.as_ref())
     }
-    pub fn get_mem_gb(&self) -> usize {
+    pub fn get_mem_gb(&self) -> f64 {
         self.mem_gb
     }
     pub fn get_threads(&self) -> usize {
         self.threads
     }
-    pub fn get_vmem_gb(&self) -> usize {
+    pub fn get_vmem_gb(&self) -> f64 {
         self.vmem_gb
     }
     pub fn files_path(&self) -> &Path {
@@ -822,11 +822,11 @@ fn _prep_path(path: &Path, subdir: &str) -> Result<PathBuf, Error> {
 
 fn fill_defaults(mut resource: Resource) -> Resource {
     if resource.mem_gb.is_none() {
-        resource.mem_gb.replace(1);
+        resource.mem_gb.replace(1.);
     }
 
     if resource.vmem_gb.is_none() {
-        resource.vmem_gb.replace(2);
+        resource.vmem_gb.replace(2.);
     }
 
     if resource.threads.is_none() {

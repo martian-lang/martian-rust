@@ -42,9 +42,9 @@ pub struct Metadata {
 pub struct JobInfo {
     pub threads: usize,
     #[serde(rename = "memGB")]
-    pub mem_gb: usize,
+    pub mem_gb: f64,
     #[serde(rename = "vmemGB")]
-    pub vmem_gb: usize,
+    pub vmem_gb: f64,
     pub version: Version,
     #[serde(default)]
     pub profile_mode: ProfileMode,
@@ -301,7 +301,7 @@ impl Metadata {
     }
 
     /// Get the amount of memory in GB allocated to this job by the runtime.
-    pub fn get_memory_allocation(&self) -> usize {
+    pub fn get_memory_allocation(&self) -> f64 {
         self.jobinfo.mem_gb
     }
 
@@ -311,7 +311,7 @@ impl Metadata {
     }
 
     /// Get the amount of virtual memory in GB allocated to this job by the runtime.
-    pub fn get_virtual_memory_allocation(&self) -> usize {
+    pub fn get_virtual_memory_allocation(&self) -> f64 {
         self.jobinfo.vmem_gb
     }
 
@@ -358,8 +358,8 @@ mod tests {
         let raw_jobinfo: JsonDict = serde_json::from_reader(File::open("tests/jobinfo.json")?)?;
         let jobinfo: JobInfo = serde_json::from_value(Value::Object(raw_jobinfo))?;
         assert_eq!(jobinfo.threads, 1);
-        assert_eq!(jobinfo.mem_gb, 1);
-        assert_eq!(jobinfo.vmem_gb, 4);
+        assert_eq!(jobinfo.mem_gb, 1.);
+        assert_eq!(jobinfo.vmem_gb, 4.);
         assert_eq!(jobinfo.version.martian, "v3.2.2");
         assert_eq!(jobinfo.version.pipelines, "7000.1.52-187");
         Ok(())
