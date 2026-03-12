@@ -44,6 +44,7 @@ pub struct JobInfo {
     #[serde(rename = "memGB")]
     pub mem_gb: f64,
     #[serde(rename = "vmemGB")]
+    #[serde(default)]
     pub vmem_gb: f64,
     pub version: Version,
     #[serde(default)]
