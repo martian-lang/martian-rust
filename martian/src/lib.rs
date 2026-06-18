@@ -282,7 +282,7 @@ fn martian_entry_point<S: std::hash::BuildHasher>(
 fn report_error(md: &mut Metadata, e: &Error, is_assert: bool) {
     let bt = e.backtrace();
     let _ = md.stackvars(&bt.to_string());
-    let _ = write_errors(&format!("{e:#}"), is_assert);
+    let _ = write_errors(&format!("Error: {e:#}"), is_assert);
 }
 
 /// Return the environment variable CARGO_PKG_NAME or the current executable name.
