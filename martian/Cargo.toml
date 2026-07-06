@@ -1,6 +1,6 @@
 [package]
 name = "martian"
-version = "0.26.0"
+version = "0.26.1"
 authors = [
     "Patrick Marks <patrick@10xgenomics.com>",
     "Sreenath Krishnan <sreenath.krishnan@10xgenomics.com>",
@@ -19,7 +19,7 @@ rayon = { version = "1", optional = true }
 rustc_version = ">=0.3, <0.5"
 serde = { version = "1", features = ['derive'] }
 serde_json = "1"
-strum = { version = "0.27.2", features = ["derive"] }
+strum = { version = "0.28", features = ["derive"] }
 tempfile = "3"
 time = { version = ">=0.3", features = ["formatting", "local-offset"] }
 
