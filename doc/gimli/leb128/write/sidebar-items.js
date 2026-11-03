@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["sleb128_size","uleb128_size"],"struct":["Leb128"]};
