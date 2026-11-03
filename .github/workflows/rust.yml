@@ -17,7 +17,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.88.0
         with:
           components: rustfmt
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check Rust formatting
         run: cargo fmt -- --check
       - uses: Swatinem/rust-cache@v2
