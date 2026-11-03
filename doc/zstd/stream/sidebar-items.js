@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["copy_decode","copy_encode","decode_all","encode_all"],"mod":["raw","read","write","zio"]};
+window.SIDEBAR_ITEMS = {"fn":["compress_file","compress_file_into","compress_sized","compress_sized_into","copy_decode","copy_encode","decode_all","decompressed_size","encode_all"],"mod":["raw","read","write","zio"]};

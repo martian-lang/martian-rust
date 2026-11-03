@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["DEFAULT_COMPRESSION_LEVEL"],"fn":["compression_level_range"],"mod":["bulk","dict","stream"]};
+window.SIDEBAR_ITEMS = {"constant":["DEFAULT_COMPRESSION_LEVEL"],"fn":["compress_bound","compression_level_range"],"mod":["bulk","dict","stream"]};
