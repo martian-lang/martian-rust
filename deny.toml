@@ -22,6 +22,7 @@ version = 2
 # [possible values: any SPDX 3.11 short identifier (+ optional exception)].
 allow = [
     "Apache-2.0",
+    "BSD-3-Clause",
     "MIT",
     "Unicode-DFS-2016",
 ]
