@@ -2,6 +2,7 @@ use crate::metadata::{SharedMetadata, Version};
 use crate::mro::{MartianStruct, MroMaker};
 use crate::utils::obj_encode;
 use crate::Error;
+use anyhow::{ensure, Context};
 use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
@@ -541,14 +542,73 @@ impl MartianRover {
     /// # Arguments
     ///
     /// * `src` - The path to the MartianFileType file
+    /// * `overwrite` - What to do if a file with the same name already exists
+    ///   in the rover's file directory. If `true`, the existing file is
+    ///   replaced. If `false`, an error is returned and the existing file is
+    ///   left untouched.
     ///
     /// # Returns
     ///
     /// * The path of the newly created link
-    pub fn hard_link_or_copy<M: MartianFileType>(&self, src: &M) -> Result<M, Error> {
-        let stem = src.as_ref().file_name().expect("Could not get file name.");
-        let dst: M = self.make_path(stem);
-        std::fs::hard_link(src, &dst).or_else(|_| std::fs::copy(src, &dst).map(|_| ()))?;
+    pub fn hard_link_or_copy<M: MartianFileType>(
+        &self,
+        src: &M,
+        overwrite: bool,
+    ) -> Result<M, Error> {
+        let src_path = src.as_ref();
+        let file_name = src_path.file_name().with_context(|| {
+            format!(
+                "Could not get the file name from the path {}",
+                src_path.display()
+            )
+        })?;
+        let dst: M = self.make_path(file_name);
+        let dst_path = dst.as_ref();
+
+        if dst_path.symlink_metadata().is_ok() {
+            ensure!(
+                overwrite,
+                "Cannot hard link or copy {} to {}: the destination already exists \
+                 and overwrite is false",
+                src_path.display(),
+                dst_path.display()
+            );
+            let same_file = match (src_path.canonicalize(), dst_path.canonicalize()) {
+                (Ok(src_canonical), Ok(dst_canonical)) => src_canonical == dst_canonical,
+                _ => false,
+            };
+            if same_file {
+                // The source already lives at the destination. Removing it
+                // would destroy the only copy of the data.
+                return Ok(dst);
+            }
+            std::fs::remove_file(dst_path).with_context(|| {
+                format!(
+                    "Failed to remove the existing file {} before replacing it with {}",
+                    dst_path.display(),
+                    src_path.display()
+                )
+            })?;
+        }
+
+        if let Err(link_err) = std::fs::hard_link(src_path, dst_path) {
+            // `std::fs::copy` would silently replace a destination that was
+            // created after the check above.
+            ensure!(
+                overwrite || link_err.kind() != std::io::ErrorKind::AlreadyExists,
+                "Cannot hard link or copy {} to {}: the destination already exists \
+                 and overwrite is false",
+                src_path.display(),
+                dst_path.display()
+            );
+            std::fs::copy(src_path, dst_path).with_context(|| {
+                format!(
+                    "Failed to copy {} to {} after hard linking failed ({link_err})",
+                    src_path.display(),
+                    dst_path.display()
+                )
+            })?;
+        }
         Ok(dst)
     }
 }
@@ -855,7 +915,9 @@ fn fill_defaults(mut resource: Resource) -> Resource {
 
 #[cfg(test)]
 mod test {
+    use super::{MartianFileType, MartianRover};
     use crate::{Resource, StageDef};
+    use std::path::{Path, PathBuf};
 
     #[test]
     fn test_stage_def_extend() {
@@ -865,5 +927,106 @@ mod test {
             .zip(std::iter::repeat(Resource::default()))
             .collect::<StageDef<usize>>()
             .join_resource(Resource::default());
+    }
+
+    struct TxtFile(PathBuf);
+
+    impl AsRef<Path> for TxtFile {
+        fn as_ref(&self) -> &Path {
+            &self.0
+        }
+    }
+
+    impl From<PathBuf> for TxtFile {
+        fn from(path: PathBuf) -> Self {
+            TxtFile(path)
+        }
+    }
+
+    impl MartianFileType for TxtFile {
+        fn extension() -> String {
+            "txt".to_string()
+        }
+
+        fn new(file_path: impl AsRef<Path>, file_name: impl AsRef<Path>) -> Self {
+            let mut path = file_path.as_ref().join(file_name);
+            path.set_extension(Self::extension());
+            TxtFile(path)
+        }
+    }
+
+    fn test_rover(files_path: &Path) -> MartianRover {
+        MartianRover::new(files_path, Resource::new().mem_gb(1).threads(1).vmem_gb(1))
+    }
+
+    #[test]
+    fn test_hard_link_or_copy() {
+        let src_dir = tempfile::tempdir().unwrap();
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        let src = TxtFile::new(src_dir.path(), "foo");
+        std::fs::write(&src, "hello").unwrap();
+
+        for overwrite in [false, true] {
+            let dst = rover.hard_link_or_copy(&src, overwrite).unwrap();
+            assert_eq!(dst.as_ref(), files_dir.path().join("foo.txt"));
+            assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
+            std::fs::remove_file(&dst).unwrap();
+        }
+    }
+
+    #[test]
+    fn test_hard_link_or_copy_existing_destination() {
+        let src_dir = tempfile::tempdir().unwrap();
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        let src = TxtFile::new(src_dir.path(), "foo");
+        std::fs::write(&src, "new").unwrap();
+        let existing = files_dir.path().join("foo.txt");
+        std::fs::write(&existing, "old").unwrap();
+
+        // Without overwrite, the existing file is left alone and both paths
+        // are reported in the error.
+        let err = rover.hard_link_or_copy(&src, false).err().unwrap();
+        let message = format!("{err:#}");
+        assert!(message.contains(&src.as_ref().display().to_string()));
+        assert!(message.contains(&existing.display().to_string()));
+        assert_eq!(std::fs::read_to_string(&existing).unwrap(), "old");
+
+        // With overwrite, the existing file is replaced without touching
+        // the source.
+        let dst = rover.hard_link_or_copy(&src, true).unwrap();
+        assert_eq!(dst.as_ref(), existing);
+        assert_eq!(std::fs::read_to_string(&dst).unwrap(), "new");
+        assert_eq!(std::fs::read_to_string(&src).unwrap(), "new");
+    }
+
+    #[test]
+    fn test_hard_link_or_copy_source_is_destination() {
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        let src = TxtFile::new(files_dir.path(), "foo");
+        std::fs::write(&src, "hello").unwrap();
+
+        assert!(rover.hard_link_or_copy(&src, false).is_err());
+        let dst = rover.hard_link_or_copy(&src, true).unwrap();
+        assert_eq!(dst.as_ref(), src.as_ref());
+        assert_eq!(std::fs::read_to_string(&src).unwrap(), "hello");
+    }
+
+    #[test]
+    fn test_hard_link_or_copy_missing_source() {
+        let src_dir = tempfile::tempdir().unwrap();
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        let src = TxtFile::new(src_dir.path(), "missing");
+        let err = rover.hard_link_or_copy(&src, false).err().unwrap();
+        let message = format!("{err:#}");
+        assert!(message.contains(&src.as_ref().display().to_string()));
+        assert!(message.contains(&files_dir.path().join("missing.txt").display().to_string()));
     }
 }
