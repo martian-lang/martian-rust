@@ -539,9 +539,20 @@ impl MartianRover {
     /// Creates a hard link (falls back to copy) to the given MartianFileType file
     /// within the rover's file directory
     ///
+    /// # Symbolic links
+    ///
+    /// If `src` is a symbolic link (or a chain of them), the link is resolved
+    /// first and the file it points to is hard linked or copied. The result in
+    /// the rover's file directory is therefore always a regular file, never a
+    /// symbolic link, and it stays valid if the original link is later moved or
+    /// deleted. The new file is named after `src` itself, not after the file
+    /// that `src` points to: linking `foo.txt`, which points to `data.txt`,
+    /// produces `foo.txt`. A link whose target does not exist is an error.
+    ///
     /// # Arguments
     ///
-    /// * `src` - The path to the MartianFileType file
+    /// * `src` - The path to the MartianFileType file. Symbolic links are
+    ///   followed, see above.
     /// * `overwrite` - What to do if a file with the same name already exists
     ///   in the rover's file directory. If `true`, the existing file is
     ///   replaced. If `false`, an error is returned and the existing file is
@@ -565,7 +576,18 @@ impl MartianRover {
         let dst: M = self.make_path(file_name);
         let dst_path = dst.as_ref();
 
-        if dst_path.symlink_metadata().is_ok() {
+        // `std::fs::hard_link` links a symbolic link itself rather than the
+        // file it points to, which leaves a dangling link if the target is
+        // relative. Link the resolved file instead.
+        let src_resolved = src_path.canonicalize().with_context(|| {
+            format!(
+                "Cannot hard link or copy {} to {}: failed to resolve the source path",
+                src_path.display(),
+                dst_path.display()
+            )
+        })?;
+
+        if let Ok(dst_metadata) = dst_path.symlink_metadata() {
             ensure!(
                 overwrite,
                 "Cannot hard link or copy {} to {}: the destination already exists \
@@ -573,10 +595,12 @@ impl MartianRover {
                 src_path.display(),
                 dst_path.display()
             );
-            let same_file = match (src_path.canonicalize(), dst_path.canonicalize()) {
-                (Ok(src_canonical), Ok(dst_canonical)) => src_canonical == dst_canonical,
-                _ => false,
-            };
+            // A destination that is a symbolic link can always be removed
+            // without losing the data it points to.
+            let same_file = !dst_metadata.file_type().is_symlink()
+                && dst_path
+                    .canonicalize()
+                    .is_ok_and(|dst_resolved| dst_resolved == src_resolved);
             if same_file {
                 // The source already lives at the destination. Removing it
                 // would destroy the only copy of the data.
@@ -591,7 +615,7 @@ impl MartianRover {
             })?;
         }
 
-        if let Err(link_err) = std::fs::hard_link(src_path, dst_path) {
+        if let Err(link_err) = std::fs::hard_link(&src_resolved, dst_path) {
             // `std::fs::copy` would silently replace a destination that was
             // created after the check above.
             ensure!(
@@ -601,7 +625,7 @@ impl MartianRover {
                 src_path.display(),
                 dst_path.display()
             );
-            std::fs::copy(src_path, dst_path).with_context(|| {
+            std::fs::copy(&src_resolved, dst_path).with_context(|| {
                 format!(
                     "Failed to copy {} to {} after hard linking failed ({link_err})",
                     src_path.display(),
@@ -1015,6 +1039,71 @@ mod test {
         let dst = rover.hard_link_or_copy(&src, true).unwrap();
         assert_eq!(dst.as_ref(), src.as_ref());
         assert_eq!(std::fs::read_to_string(&src).unwrap(), "hello");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_hard_link_or_copy_symlink_source() {
+        use std::os::unix::fs::symlink;
+
+        let src_dir = tempfile::tempdir().unwrap();
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        // foo.txt -> data.txt, a relative link that would not resolve from
+        // the rover's file directory.
+        std::fs::write(src_dir.path().join("data.txt"), "hello").unwrap();
+        let src = TxtFile::new(src_dir.path(), "foo");
+        symlink("data.txt", &src).unwrap();
+
+        let dst = rover.hard_link_or_copy(&src, false).unwrap();
+        // Named after the link, not after the file it points to.
+        assert_eq!(dst.as_ref(), files_dir.path().join("foo.txt"));
+        assert!(dst.as_ref().symlink_metadata().unwrap().is_file());
+        assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
+
+        // The result does not depend on the original link.
+        std::fs::remove_file(&src).unwrap();
+        assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_hard_link_or_copy_symlink_in_files_dir() {
+        use std::os::unix::fs::symlink;
+
+        let src_dir = tempfile::tempdir().unwrap();
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        // The source is a link that already sits at the destination path.
+        let target = src_dir.path().join("data.txt");
+        std::fs::write(&target, "hello").unwrap();
+        let src = TxtFile::new(files_dir.path(), "foo");
+        symlink(&target, &src).unwrap();
+
+        assert!(rover.hard_link_or_copy(&src, false).is_err());
+        let dst = rover.hard_link_or_copy(&src, true).unwrap();
+        assert!(dst.as_ref().symlink_metadata().unwrap().is_file());
+        assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
+        assert_eq!(std::fs::read_to_string(&target).unwrap(), "hello");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_hard_link_or_copy_dangling_symlink_source() {
+        use std::os::unix::fs::symlink;
+
+        let src_dir = tempfile::tempdir().unwrap();
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        let src = TxtFile::new(src_dir.path(), "foo");
+        symlink("does_not_exist.txt", &src).unwrap();
+
+        let err = rover.hard_link_or_copy(&src, false).err().unwrap();
+        assert!(format!("{err:#}").contains(&src.as_ref().display().to_string()));
+        assert!(files_dir.path().join("foo.txt").symlink_metadata().is_err());
     }
 
     #[test]
