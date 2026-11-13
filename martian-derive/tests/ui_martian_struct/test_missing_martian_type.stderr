@@ -5,6 +5,7 @@ error[E0277]: the trait bound `Foo: AsMartianBlanketType` is not satisfied
   |          ^^^ the trait `MartianFileType` is not implemented for `Foo`
   |
   = help: the following other types implement trait `AsMartianBlanketType`:
+            BTreeMap<K, V>
             HashMap<K, V, H>
             HashSet<K, H>
             Option<T>

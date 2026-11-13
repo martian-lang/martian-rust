@@ -371,14 +371,19 @@ impl<K: AsMartianPrimaryType, H> AsMartianBlanketType for HashSet<K, H> {
     }
 }
 
-// ideally we'd allow for any HashMap to be turned into a typed Map when possible, or an untyped Map by default
-// but a typed map can only be made for Rust HashMap with a key implementing Display + Eq + Hash
-// and a value implementing MartianPrimaryType
-// it is not possible to have multiple implementations ranked in priority without specialization, which is an unstable feature
-// and it is impossible to check what traits are implemented for a HashMap's K,V at runtime.
-// instead, the current solution is that any HashMap not meeting these trait bounds must manually specify the type
-// using #[mro_type = "map"]
+// A HashMap or BTreeMap becomes a typed map, `map<V>`, where `V` is the MRO
+// type of the values. Martian map keys are always strings, so the key type is
+// not constrained here; it only needs to serialize as a JSON object key. A map
+// whose value type does not implement `AsMartianBlanketType` must specify the
+// untyped map instead, using #[mro_type = "map"].
 impl<K, V: AsMartianBlanketType, H> AsMartianBlanketType for HashMap<K, V, H> {
+    fn as_martian_blanket_type() -> MartianBlanketType {
+        MartianBlanketType::TypedMap(Box::new(V::as_martian_blanket_type()))
+    }
+}
+
+// Martian maps are unordered, so key order does not affect the MRO type.
+impl<K, V: AsMartianBlanketType> AsMartianBlanketType for BTreeMap<K, V> {
     fn as_martian_blanket_type() -> MartianBlanketType {
         MartianBlanketType::TypedMap(Box::new(V::as_martian_blanket_type()))
     }
@@ -1816,6 +1821,20 @@ mod tests {
         assert_eq!(
             Vec::<Option<u32>>::as_martian_blanket_type(),
             MartianBlanketType::Array(MartianPrimaryType::Int.into())
+        );
+    }
+
+    #[test]
+    fn test_btree_map() {
+        assert_eq!(
+            BTreeMap::<String, i32>::as_martian_blanket_type(),
+            HashMap::<String, i32>::as_martian_blanket_type(),
+        );
+        assert_eq!(
+            BTreeMap::<usize, Vec<Option<BTreeMap<String, f64>>>>::as_martian_blanket_type(),
+            MartianBlanketType::TypedMap(Box::new(MartianBlanketType::Array(Box::new(
+                MartianBlanketType::TypedMap(MartianPrimaryType::Float.into())
+            ))))
         );
     }
 }
