@@ -5,7 +5,7 @@ use martian_derive::{make_mro, martian_filetype, MartianStruct, MartianType};
 use pretty_assertions::assert_eq;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::marker::PhantomData;
 use std::path::PathBuf;
 
@@ -521,6 +521,64 @@ fn test_typed_map() {
     #[derive(Serialize, Deserialize, MartianStruct)]
     pub struct SI {
         complicated_stuff: Vec<HashMap<usize, Vec<Option<ReadsStruct>>>>,
+        reads_struct: ReadsStruct,
+        complicated_struct: ComplicatedStruct,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SO {
+        multi_reads_struct: Vec<ReadsStruct>,
+        complicated_struct2: ComplicatedStruct,
+    }
+
+    pub struct StageName;
+
+    #[make_mro]
+    impl MartianMain for StageName {
+        type StageInputs = SI;
+        type StageOutputs = SO;
+
+        fn main(&self, _: Self::StageInputs, _: MartianRover) -> Result<Self::StageOutputs, Error> {
+            unimplemented!()
+        }
+    }
+
+    let expected = include_str!("mro/test_typed_map.mro");
+
+    assert_eq!(
+        make_mro_string(HEADER, &[StageName::stage_mro("my_adapter", "stage_name")]),
+        expected
+    );
+}
+
+#[test]
+fn test_typed_btree_map() {
+    // BTreeMap fields produce the same MRO as the HashMap fields in test_typed_map.
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct ReadsStruct {
+        // The reads name
+        name: String,
+        reads_map: BTreeMap<String, FastqFile>,
+        // The reads multi map
+        multi_reads_map: Vec<BTreeMap<String, FastqFile>>,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    struct ComplicatedStruct {
+        name: String,
+        matrix: Vec<Vec<usize>>,
+        map_of_struct: BTreeMap<String, ReadsStruct>,
+        map_vec_struct: BTreeMap<usize, Vec<ReadsStruct>>,
+        map_of_lists: BTreeMap<String, Vec<usize>>,
+        map_of_matrices: BTreeMap<String, Vec<Vec<usize>>>,
+        vec_of_maps: Vec<BTreeMap<String, FastqFile>>,
+        #[allow(clippy::type_complexity)]
+        ludicrous_map: Option<Vec<Vec<BTreeMap<String, Vec<Vec<FastqFile>>>>>>,
+    }
+
+    #[derive(Serialize, Deserialize, MartianStruct)]
+    pub struct SI {
+        complicated_stuff: Vec<BTreeMap<usize, Vec<Option<ReadsStruct>>>>,
         reads_struct: ReadsStruct,
         complicated_struct: ComplicatedStruct,
     }

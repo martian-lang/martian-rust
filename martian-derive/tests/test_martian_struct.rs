@@ -3,7 +3,7 @@ use martian::{
 };
 use martian_derive::{martian_filetype, MartianStruct};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::path::PathBuf;
 use MartianBlanketType::{Array, Primary, TypedMap};
 use MartianPrimaryType::{Bool, FileType, Float, Int, Map, Path, Str};
@@ -59,6 +59,10 @@ fn test_generic() {
     );
     assert_eq!(
         Generic::<HashMap<String, f32>>::mro_fields(),
+        vec![MroField::new("param", TypedMap(Float.into()), None, None)]
+    );
+    assert_eq!(
+        Generic::<BTreeMap<String, f32>>::mro_fields(),
         vec![MroField::new("param", TypedMap(Float.into()), None, None)]
     );
 }
