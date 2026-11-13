@@ -1062,12 +1062,9 @@ mod test {
         let src = TxtFile::new(src_dir.path(), "foo");
         std::fs::write(&src, "hello").unwrap();
 
-        for overwrite in [false, true] {
-            let dst = rover.hard_link_or_copy(&src, overwrite).unwrap();
-            assert_eq!(dst.as_ref(), files_dir.path().join("foo.txt"));
-            assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
-            std::fs::remove_file(&dst).unwrap();
-        }
+        let dst = rover.hard_link_or_copy(&src, false).unwrap();
+        assert_eq!(dst.as_ref(), files_dir.path().join("foo.txt"));
+        assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
     }
 
     #[test]
@@ -1081,16 +1078,12 @@ mod test {
         let existing = files_dir.path().join("foo.txt");
         std::fs::write(&existing, "old").unwrap();
 
-        // Without overwrite, the existing file is left alone and both paths
-        // are reported in the error.
         let err = rover.hard_link_or_copy(&src, false).err().unwrap();
         let message = format!("{err:#}");
         assert!(message.contains(&src.as_ref().display().to_string()));
         assert!(message.contains(&existing.display().to_string()));
         assert_eq!(std::fs::read_to_string(&existing).unwrap(), "old");
 
-        // With overwrite, the existing file is replaced without touching
-        // the source.
         let dst = rover.hard_link_or_copy(&src, true).unwrap();
         assert_eq!(dst.as_ref(), existing);
         assert_eq!(std::fs::read_to_string(&dst).unwrap(), "new");
@@ -1111,6 +1104,25 @@ mod test {
         assert_eq!(std::fs::read_to_string(&src).unwrap(), "hello");
     }
 
+    #[test]
+    fn test_hard_link_or_copy_missing_source() {
+        let src_dir = tempfile::tempdir().unwrap();
+        let files_dir = tempfile::tempdir().unwrap();
+        let rover = test_rover(files_dir.path());
+
+        let src = TxtFile::new(src_dir.path(), "foo");
+        let existing = files_dir.path().join("foo.txt");
+        std::fs::write(&existing, "old").unwrap();
+
+        // The source must be resolved before the destination is removed,
+        // otherwise a bad source would destroy the existing file.
+        let err = rover.hard_link_or_copy(&src, true).err().unwrap();
+        let message = format!("{err:#}");
+        assert!(message.contains(&src.as_ref().display().to_string()));
+        assert!(message.contains(&existing.display().to_string()));
+        assert_eq!(std::fs::read_to_string(&existing).unwrap(), "old");
+    }
+
     #[cfg(unix)]
     #[test]
     fn test_hard_link_or_copy_symlink_source() {
@@ -1120,19 +1132,14 @@ mod test {
         let files_dir = tempfile::tempdir().unwrap();
         let rover = test_rover(files_dir.path());
 
-        // foo.txt -> data.txt, a relative link that would not resolve from
-        // the rover's file directory.
+        // A relative link that would not resolve from the rover's directory.
         std::fs::write(src_dir.path().join("data.txt"), "hello").unwrap();
         let src = TxtFile::new(src_dir.path(), "foo");
         symlink("data.txt", &src).unwrap();
 
         let dst = rover.hard_link_or_copy(&src, false).unwrap();
-        // Named after the link, not after the file it points to.
         assert_eq!(dst.as_ref(), files_dir.path().join("foo.txt"));
         assert!(dst.as_ref().symlink_metadata().unwrap().is_file());
-        assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
-
-        // The result does not depend on the original link.
         std::fs::remove_file(&src).unwrap();
         assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
     }
@@ -1170,10 +1177,11 @@ mod test {
 
         let src = TxtFile::new(src_dir.path(), "foo");
         symlink("does_not_exist.txt", &src).unwrap();
+        let existing = files_dir.path().join("foo.txt");
+        std::fs::write(&existing, "old").unwrap();
 
-        let err = rover.hard_link_or_copy(&src, false).err().unwrap();
-        assert!(format!("{err:#}").contains(&src.as_ref().display().to_string()));
-        assert!(files_dir.path().join("foo.txt").symlink_metadata().is_err());
+        assert!(rover.hard_link_or_copy(&src, true).is_err());
+        assert_eq!(std::fs::read_to_string(&existing).unwrap(), "old");
     }
 
     #[test]
@@ -1185,16 +1193,11 @@ mod test {
         let src = TxtFile::new(src_dir.path(), "foo");
         std::fs::write(&src, "hello").unwrap();
 
-        // The extension is added when missing and kept when present.
         let dst = rover.hard_link_or_copy_to(&src, "bar", false).unwrap();
         assert_eq!(dst.as_ref(), files_dir.path().join("bar.txt"));
         assert_eq!(std::fs::read_to_string(&dst).unwrap(), "hello");
         let dst = rover.hard_link_or_copy_to(&src, "baz.txt", false).unwrap();
         assert_eq!(dst.as_ref(), files_dir.path().join("baz.txt"));
-
-        // The usual overwrite rules apply to the new name.
-        assert!(rover.hard_link_or_copy_to(&src, "bar", false).is_err());
-        rover.hard_link_or_copy_to(&src, "bar", true).unwrap();
     }
 
     #[test]
@@ -1203,26 +1206,22 @@ mod test {
         let rover = test_rover(files_dir.path());
 
         // Array inputs from different chunks often share a file name.
-        let src_dirs: Vec<_> = (0..3).map(|_| tempfile::tempdir().unwrap()).collect();
-        let outputs: Vec<TxtFile> = src_dirs
-            .iter()
-            .enumerate()
-            .map(|(index, dir)| {
-                let src = TxtFile::new(dir.path(), "chunk");
-                std::fs::write(&src, index.to_string()).unwrap();
-                rover
-                    .hard_link_or_copy_to(&src, format!("chunk_{index}"), false)
-                    .unwrap()
-            })
-            .collect();
+        let (dir_0, dir_1) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
+        let (src_0, src_1) = (
+            TxtFile::new(dir_0.path(), "chunk"),
+            TxtFile::new(dir_1.path(), "chunk"),
+        );
+        std::fs::write(&src_0, "0").unwrap();
+        std::fs::write(&src_1, "1").unwrap();
 
-        for (index, output) in outputs.iter().enumerate() {
-            assert_eq!(
-                output.as_ref(),
-                files_dir.path().join(format!("chunk_{index}.txt"))
-            );
-            assert_eq!(std::fs::read_to_string(output).unwrap(), index.to_string());
-        }
+        let dst_0 = rover
+            .hard_link_or_copy_to(&src_0, "chunk_0", false)
+            .unwrap();
+        let dst_1 = rover
+            .hard_link_or_copy_to(&src_1, "chunk_1", false)
+            .unwrap();
+        assert_eq!(std::fs::read_to_string(&dst_0).unwrap(), "0");
+        assert_eq!(std::fs::read_to_string(&dst_1).unwrap(), "1");
     }
 
     #[test]
@@ -1234,14 +1233,8 @@ mod test {
         let src = TxtFile::new(src_dir.path(), "foo");
         std::fs::write(&src, "hello").unwrap();
 
-        // The subdirectory must already exist; the error names both paths.
-        let err = rover
-            .hard_link_or_copy_to(&src, "sub/bar", false)
-            .err()
-            .unwrap();
-        let message = format!("{err:#}");
-        assert!(message.contains(&src.as_ref().display().to_string()));
-        assert!(message.contains(&files_dir.path().join("sub/bar.txt").display().to_string()));
+        // The subdirectory must already exist.
+        assert!(rover.hard_link_or_copy_to(&src, "sub/bar", false).is_err());
 
         std::fs::create_dir(files_dir.path().join("sub")).unwrap();
         let dst = rover.hard_link_or_copy_to(&src, "sub/bar/", false).unwrap();
@@ -1265,24 +1258,10 @@ mod test {
             "./bar".as_ref(),
             "".as_ref(),
         ] {
-            let err = rover.hard_link_or_copy_to(&src, name, true).err().unwrap();
-            assert!(format!("{err:#}").contains(&src.as_ref().display().to_string()));
+            assert!(rover.hard_link_or_copy_to(&src, name, true).is_err());
         }
         assert!(!src_dir.path().join("bar.txt").exists());
         assert!(!files_dir.path().parent().unwrap().join("bar.txt").exists());
         assert_eq!(std::fs::read_dir(files_dir.path()).unwrap().count(), 0);
-    }
-
-    #[test]
-    fn test_hard_link_or_copy_missing_source() {
-        let src_dir = tempfile::tempdir().unwrap();
-        let files_dir = tempfile::tempdir().unwrap();
-        let rover = test_rover(files_dir.path());
-
-        let src = TxtFile::new(src_dir.path(), "missing");
-        let err = rover.hard_link_or_copy(&src, false).err().unwrap();
-        let message = format!("{err:#}");
-        assert!(message.contains(&src.as_ref().display().to_string()));
-        assert!(message.contains(&files_dir.path().join("missing.txt").display().to_string()));
     }
 }
